@@ -2,6 +2,9 @@
 
 S3method(plot,strt_ev_tree)
 S3method(strt_ev_tree,data.frame)
+S3method(strt_ev_tree,default)
+S3method(strt_ev_tree,fit)
+S3method(strt_ev_tree,list)
 export(strt_ev_tree)
 importFrom(graphics,lines)
 importFrom(graphics,plot.new)

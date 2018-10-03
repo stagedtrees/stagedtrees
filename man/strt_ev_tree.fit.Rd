@@ -13,6 +13,9 @@
 
 \item{lambda}{the laplace smoothing}
 }
+\value{
+A stratified event tree object with the conditional probabilities fitted
+}
 \description{
 Fit a stratified event tree
 }
