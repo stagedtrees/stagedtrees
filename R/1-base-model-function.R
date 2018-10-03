@@ -29,7 +29,12 @@ strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE){
   return(evt)
 }
 
-
+#' Stratified event tree from list
+#'
+#' @param x a list with component named as the variables and containing the vector
+#'          of factor
+#' @details
+#'
 strt_ev_tree.list <- function(x){
  if (is.null(names(x))){ #if there are no names of variables
    #we assign variables names V1,V2,...
@@ -65,4 +70,12 @@ strt_ev_tree.fit <- function(evt, data, lambda = 0){
    names(evt$prob) <- order
    return(evt)
 }
+
+
+
+#' compute log lik [todo]
+#'
+#' @param
+#'
+#' @importFrom stats logLik
 
