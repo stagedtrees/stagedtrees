@@ -28,5 +28,30 @@ changes can happen.
 - [-] file remov
 - [upd] update (most used)
 - [f] fix of a bug or error
-- [doc] documentation 
+- [doc] documentation
+
+#### Guidelines
+
+- Trying not to use too much other external packages.
+- Previous point implies that for example plotting function try not to use
+  classical packages as graph and Rgraphviz. 
+- We should implement also more advanced plotting abilities using Rgraphviz
+  from bioconductor. 
+- Other way is to use ggplot2. 
+- Coherent function names. 
+- Well documented code, especially for the main functions.
+
+#### Roadmap 
+
+- [x] stratified event tree model 
+- [x] fitting stratified event tree
+- [ ] staged event tree
+- [ ] fitting staged event tree 
+- [ ] plotting: 
+     * [x] stratified event tree
+     * [ ] staged event tree (colors)
+- [ ] structure search:
+     * [ ] exhaustive search 
+     * [ ] heuristics 
+     
 
