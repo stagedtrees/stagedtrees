@@ -10,9 +10,9 @@
 \item{x}{a list with component named as the variables and containing the vector
 of factor}
 }
+\value{
+A stratified event tree object, that is a list with a `tree` component
+}
 \description{
 Stratified event tree from list
-}
-\details{
-
 }

@@ -10,6 +10,8 @@
 \item{x}{data.frame}
 
 \item{order}{vector of order to build the tree}
+
+\item{fit}{logical}
 }
 \description{
 Stratified event tree from data.frame
