@@ -127,6 +127,7 @@ staged_ev_tree.strt_ev_tree <-function(x, ...){
    }
    names(x$paths) <- names(x$tree)[-1]
    names(x$stages) <- names(x$tree)[-1]
+   class(x) <- "staged_ev_tree"
    ## to do trnasfer probabilities
    return(x)
 }
