@@ -45,11 +45,11 @@ changes can happen.
 
 - [x] stratified event tree model 
 - [x] fitting stratified event tree
-- [ ] staged event tree
-- [ ] fitting staged event tree 
+- [x] staged event tree
+- [x] fitting staged event tree 
 - [ ] plotting: 
      * [x] stratified event tree
-     * [ ] staged event tree (colors)
+     * [x] staged event tree (colors)
 - [ ] structure search:
      * [ ] exhaustive search 
      * [ ] heuristics 
