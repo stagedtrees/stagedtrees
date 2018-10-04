@@ -18,6 +18,5 @@ the equivalent staged event tree object
 Staged event tree
 }
 \details{
-The function expands the conditional probabilities into a full
-          stratified event tree
+The function creates a staged event tree equivalent to the stratified event tree
 }
