@@ -30,12 +30,12 @@ plot.strt_ev_tree <- function(evt, rmax=1, rmin= 0.1, step = 2, ...){
      yy <- c(yy,y)
      for (j in 1:nv){ #plot nodes
        node(c(x, y[j]), rmax/sqrt(nv*ns), label = nms[k+1])
-       edge(c(x-step, yyy[i]), c(x,y[j]), v[j] )
+       edge(c(x-step, yyy[i]), c(x,y[j]), v[j] ) #plot edge with previous nodes
      }
    }
    ns <- ns*nv
-   if ( nv %% 2 == 1   ) {
-     coef <- coef*0.4
+   if ( nv %% 2 == 1   ) { ## this is to avoid overlapping,
+     coef <- coef*0.4      ## not sure why it works like this but ok
    } else {
      coef <- 1*coef
    }
@@ -50,9 +50,9 @@ node <- function(x, r, label = "", col = "black", ...){
 
 edge <- function(from, to, label,col="black",...){
    lines(c(from[1], to[1]), c(from[2], to[2]), col = col, ...)
-   a <- 180 * atan2((to[2] - from[2]),(to[1] - from[1]))/pi
+   a <- 180 * atan2((to[2] - from[2]),(to[1] - from[1]))/pi   ## compute the angle of the line
    text(x = (from[1] + to[1]) / 2 , y = (from[2] + to[2]) / 2 ,
-        labels = label, srt = a, col=col)
+        labels = label, srt = a, col=col)  ## put the label rotated of the proper angle
 }
 
 # simple function to plot circle on existing plot
