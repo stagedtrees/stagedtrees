@@ -64,7 +64,7 @@ plot.staged_ev_tree <- function(evt, rmax=1, rmin= 0.1, step = 2, ...){
   y<-0
   yy <- 0
   coef <- 1
-  for (k in 1:(length(evt$tree)-1)){ #plot nodes for every strata
+  for (k in 1:(length(evt$tree))){ #plot nodes for every strata
     v <- evt$tree[[k]]
     yyy <- yy
     yy <- c()
@@ -76,9 +76,12 @@ plot.staged_ev_tree <- function(evt, rmax=1, rmin= 0.1, step = 2, ...){
       yy <- c(yy,y)
       for (j in 1:nv){ #plot nodes
         lj <- lj +1
-        dk <- dim(evt$paths[[k]])[2]
-        ### not working well
-        node(c(x, y[j]), rmax/sqrt(nv*ns), label = nms[k+1], col = evt$paths[[k]][lj , dk])
+
+        if (k < length(evt$tree)) {
+          dk <- dim(evt$paths[[k]])[2]
+          node(c(x, y[j]), rmax/sqrt(nv*ns),
+               label = nms[k+1], col = evt$paths[[k]][lj , dk])
+        }
         edge(c(x-step, yyy[i]), c(x,y[j]), v[j] ) #plot edge with previous nodes
       }
     }
@@ -109,3 +112,5 @@ circle<-function(x,r, col="black", ...){
  tt <- 2*pi*(-1:20)/20
  lines( x=x[1] + r*cos(tt), y=x[2] + r*sin(tt), col=col,...  )
 }
+
+

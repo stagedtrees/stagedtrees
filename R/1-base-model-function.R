@@ -73,17 +73,11 @@ strt_ev_tree.fit <- function(evt, data, lambda = 0){
      if (i == 1){
        return(tt/sum(tt))
      }
-     return(apply(tt, MARGIN=c(2:i),function(a) return(a/sum(a))))
+     return(ftable(apply(tt, MARGIN=c(2:i),function(a) return(a/sum(a))),
+                   col.vars = order[i], row.vars = order[1:(i-1)]))
    } )
    names(evt$prob) <- order
    return(evt)
 }
 
-
-
-#' compute log lik [todo]
-#'
-#' @param
-#'
-#' @importFrom stats logLik
 
