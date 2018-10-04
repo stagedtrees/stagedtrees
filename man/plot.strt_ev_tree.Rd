@@ -4,7 +4,7 @@
 \alias{plot.strt_ev_tree}
 \title{plot a stratified event tree}
 \usage{
-\method{plot}{strt_ev_tree}(evt, ...)
+\method{plot}{strt_ev_tree}(evt, rmax = 1, rmin = 0.1, step = 2, ...)
 }
 \arguments{
 \item{x}{event tree object}
