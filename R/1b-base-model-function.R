@@ -106,6 +106,7 @@ staged_ev_tree_fit <- function(sevt, data, lambda = 0, ... ){
       return(tt / sum(tt) ) #return normalized prob
     })
   }
+  sevt$data <- data
   return(sevt)
 }
 
