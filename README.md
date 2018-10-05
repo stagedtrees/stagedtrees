@@ -48,15 +48,15 @@ changes can happen.
 - [x] staged event tree
 - [x] fitting staged event tree 
 - [ ] plotting: 
-     * [x] stratified event tree
-     * [x] staged event tree (colors)
+    * [x] stratified event tree
+    * [x] staged event tree (colors)
 - [ ] inference:
-      * [ ] joint prob
-      * [x] logLik for full tree (thus AIC and BIC work automatically)
-      * [ ] logLik staged tree 
-      * [ ] classification 
-      * [ ] 
+    * [ ] joint prob
+    * [x] logLik for full tree (thus AIC and BIC work automatically)
+    * [ ] logLik staged tree 
+    * [ ] classification 
+    * [ ] 
 - [ ] structure search:
-     * [ ] exhaustive search 
-     * [ ] heuristics 
+    * [ ] exhaustive search 
+    * [ ] heuristics 
 
