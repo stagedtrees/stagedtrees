@@ -19,8 +19,7 @@ DD <- as.data.frame(sapply(1:n, function(i){
                                      nl <- sample(1:max_l,size=1)
                                      return(as.factor(sample(c(1:nl), size=N,
 				     replace = TRUE)))
-				     }  ) 
-
+				     }  ) )
 ```
 
 ##### Full stratified trees 
