@@ -4,7 +4,7 @@
 \alias{strt_ev_tree.fit}
 \title{Fit a stratified event tree}
 \usage{
-\method{strt_ev_tree}{fit}(evt, data, lambda = 0)
+\method{strt_ev_tree}{fit}(evt, data = NULL, lambda = 0)
 }
 \arguments{
 \item{evt}{The stratified event tree object to be fitted}

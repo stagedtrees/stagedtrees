@@ -24,6 +24,7 @@ strt_ev_tree.default <- function(x,...){
 #' @param x data.frame
 #' @param order vector of order to build the tree
 #' @param fit logical
+#' @param lambda laplace smoothing parameter
 #' @export
 strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda = 1){
   evt <- strt_ev_tree.list(lapply(x, function(v)
