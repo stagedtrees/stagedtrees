@@ -77,6 +77,7 @@ strt_ev_tree.fit <- function(evt, data, lambda = 0){
                    col.vars = order[i], row.vars = order[1:(i-1)]))
    } )
    names(evt$prob) <- order
+   evt$data <- data
    return(evt)
 }
 
