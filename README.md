@@ -127,6 +127,7 @@ changes can happen.
     * [ ] classification 
     * [ ] 
 - [ ] structure search:
+    * [ ] implement ``join_, split_, set_stage`` functions
     * [ ] exhaustive search 
     * [ ] heuristics
     * [ ] Penalized logLik (AIC, BIC)
