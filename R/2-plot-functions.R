@@ -29,13 +29,13 @@ plot.strt_ev_tree <- function(evt, rmax=1, rmin= 0.1, step = 2, ...){
      y <- yyy[i] + (step/2)*coef*d*seq(from=-1, to = 1, length.out = nv)/(ns * nv  ) #compute new y positions
      yy <- c(yy,y)
      for (j in 1:nv){ #plot nodes
-       node(c(x, y[j]), rmax/sqrt(nv*ns), label = nms[k+1])
+       node(c(x, y[j]), coef*rmax/sqrt(nv*ns), label = nms[k+1])
        edge(c(x-step, yyy[i]), c(x,y[j]), v[j] ) #plot edge with previous nodes
      }
    }
    ns <- ns*nv
    if ( nv %% 2 == 1   ) { ## this is to avoid overlapping,
-     coef <- coef*0.4      ## not sure why it works like this but ok
+     coef <- coef*0.5   ## not sure why it works like this but ok
    } else {
      coef <- 1*coef
    }
