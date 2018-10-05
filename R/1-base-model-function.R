@@ -25,11 +25,11 @@ strt_ev_tree.default <- function(x,...){
 #' @param order vector of order to build the tree
 #' @param fit logical
 #' @export
-strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE){
+strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda = 1){
   evt <- strt_ev_tree.list(lapply(x, function(v)
     return(levels(as.factor(v))) )[order])
   if (fit) {
-    evt <- strt_ev_tree.fit(evt,data = x, lambda = 1) }
+    evt <- strt_ev_tree.fit(evt, data = x, lambda = lambda) }
   return(evt)
 }
 
