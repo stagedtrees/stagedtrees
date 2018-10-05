@@ -8,3 +8,6 @@
 \description{
 stagedtrees: staged trees probability models
 }
+\examples{
+a <- c(1,2)
+}

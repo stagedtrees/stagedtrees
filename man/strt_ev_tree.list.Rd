@@ -16,3 +16,7 @@ A stratified event tree object, that is a list with a `tree` component
 \description{
 Stratified event tree from list
 }
+\details{
+Build the stratified event tree object from a named list containing the
+         levels of the variables. The output is an object with the `tree` component.
+}

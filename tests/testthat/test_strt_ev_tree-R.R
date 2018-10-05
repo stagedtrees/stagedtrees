@@ -31,10 +31,11 @@ context("fitting of stratified event tree")
 test_that("test that the stratified event tree is fitted", {
 
   DD <- data.frame(A = as.factor(c(1,2,2,1)), B = as.factor(c("a","b","a","b")))
-  ev <- strt_ev_tree( x = DD, fit = TRUE)
+  ev <- strt_ev_tree( x = DD, fit = TRUE, lambda=0)
   expect_equal(ev$prob$A, table(DD[ "A" ], dnn = c( "A" )) / sum(table(DD[ "A" ])))
-
 })
+
+
 
 
 

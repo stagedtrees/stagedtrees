@@ -7,7 +7,9 @@
 #' @param order Vector of variables names, the order to build the event tree
 #' @param fit If `TRUE` the conditional probability will be estimated from `data`
 #' @export
-strt_ev_tree <- function(x, order = NULL, fit = FALSE ){
+#' @examples
+#' a <- c(1,2)
+strt_ev_tree <- function(x, order = NULL, fit = FALSE, ... ){
   UseMethod("strt_ev_tree", object = x)
 }
 
@@ -26,11 +28,11 @@ strt_ev_tree.default <- function(x,...){
 #' @param fit logical
 #' @param lambda laplace smoothing parameter
 #' @export
-strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda = 1){
+strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda = 0){
   evt <- strt_ev_tree.list(lapply(x, function(v)
     return(levels(as.factor(v))) )[order])
   if (fit) {
-    evt <- strt_ev_tree.fit(evt, data = x, lambda = lambda) }
+    evt <- fit.strt_ev_tree(evt, data = x, lambda = lambda) }
   return(evt)
 }
 
@@ -39,7 +41,8 @@ strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda 
 #' @param x a list with component named as the variables and containing the vector
 #'          of factor
 #' @return A stratified event tree object, that is a list with a `tree` component
-#' @details
+#' @details Build the stratified event tree object from a named list containing the
+#'          levels of the variables. The output is an object with the `tree` component.
 #' @export
 #'
 strt_ev_tree.list <- function(x){
@@ -64,7 +67,10 @@ strt_ev_tree.list <- function(x){
 #' @param x a staged event tree object
 #' @param ... additional parameters
 #' @return A stratified event tree object, that is a list with a `tree` component
-#' @details
+#' @details This function build a stratified event tree object from a staged event tree.
+#'          The staged event tree returned will have a different stage for each path.
+#'          This is the function that can be used to initialize a staged event tree with
+#'          the more complex structure.
 #' @export
 #'
 strt_ev_tree.staged_ev_tree <- function(x, ...){
@@ -102,7 +108,7 @@ strt_ev_tree.staged_ev_tree <- function(x, ...){
 #' @param lambda the laplace smoothing
 #' @return A stratified event tree object with the conditional probabilities fitted
 #' @export
-strt_ev_tree.fit <- function(evt, data = NULL, lambda = 0){
+fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
    if (is.null(data)){
      data <- evt$data
      if (is.null(data)){
