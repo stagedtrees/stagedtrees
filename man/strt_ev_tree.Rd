@@ -4,7 +4,7 @@
 \alias{strt_ev_tree}
 \title{Stratified event tree}
 \usage{
-strt_ev_tree(x, order = NULL, fit = FALSE)
+strt_ev_tree(x, order = NULL, fit = FALSE, ...)
 }
 \arguments{
 \item{x}{data.frame or list}
@@ -16,4 +16,7 @@ strt_ev_tree(x, order = NULL, fit = FALSE)
 \description{
 Builds the complete stratified event tree for a set of categorical variables,
 the order can be specified.
+}
+\examples{
+a <- c(1,2)
 }

@@ -94,12 +94,29 @@ plot.staged_ev_tree <- function(evt, rmax=1, rmin= 0.1, step = 2, ...){
   }
 }
 
-
+#' Plot a node
+#'
+#' @param x the center
+#' @param the radius
+#' @param label the label
+#' @param col color
+#' @param cex.label cex parameter to be passed to text
+#' @param ... additional parameters passed to \code{par()}
+#' @importFrom graphics text lines
 node <- function(x, r, label = "", col = "black", cex.label = 2*sqrt(r),...){
   circle(x,r, col=col,...)
   text(x = x[1],y = x[2],labels = label, col=col, cex=cex.label,...)
 }
 
+
+#' Plot an edge
+#'
+#' @param from From
+#' @param to To
+#' @param label the label
+#' @param col color
+#' @param ... additional parameters passed to \code{par()}
+#' @importFrom graphics text lines
 edge <- function(from, to, label,col="black",...){
    lines(c(from[1], to[1]), c(from[2], to[2]), col = col, ...)
    a <- 180 * atan2((to[2] - from[2]),(to[1] - from[1]))/pi   ## compute the angle of the line

@@ -23,7 +23,7 @@ staged_ev_tree <- function(x, order = NULL, fit = FALSE , ... ){
 #' @return A staged event tree object
 #' @export
 staged_ev_tree.default <- function(x, ...){
-  return(strt_ev_tree.data.frame(as.data.frame(x, ...)))
+  return(staged_ev_tree.data.frame(as.data.frame(x, ...)))
 }
 
 
@@ -40,7 +40,7 @@ staged_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambd
   evt <- staged_ev_tree.list(lapply(x, function(v)
     return(levels(as.factor(v))) )[order])
   if (fit) {
-    evt <- staged_ev_tree.fit(evt,data = x, lambda = lambda) }
+    evt <- fit.staged_ev_tree(evt,data = x, lambda = lambda) }
   return(evt)
 }
 
@@ -86,7 +86,8 @@ staged_ev_tree.list <- function(x){
 #' @param data the data.frame used to fit the staged event tree
 #' @param lambda the laplace smoothing
 #' @return A staged event tree object with the conditional probabilities fitted
-staged_ev_tre.fit <- function(sevt, data, lambda = 0, ... ){
+#' @export
+fit.staged_ev_tree <- function(sevt, data, lambda = 0, ... ){
   if (is.null(data)){
     data <- evt$data
     if (is.null(data)){
@@ -135,7 +136,15 @@ staged_ev_tree.strt_ev_tree <-function(x, ...){
    names(x$paths) <- names(x$tree)[-1]
    names(x$stages) <- names(x$tree)[-1]
    class(x) <- "staged_ev_tree"
-   ## to do trnasfer probabilities
+
+  if (!is.null(x$prob)){ ## if the x is fitted
+    x$prob[[]]
+    for (i in 2:length(x$tree)){
+
+    }
+    names(x$prob) <- names(x$tree)
+  }
+
    return(x)
 }
 
