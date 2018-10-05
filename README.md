@@ -111,19 +111,28 @@ changes can happen.
 #### Roadmap 
 
 - [x] stratified event tree model 
-- [x] fitting stratified event tree
+- [x] fitting stratified event tree (mle)
 - [x] staged event tree
-- [x] fitting staged event tree 
-- [ ] plotting: 
+- [x] fitting staged event tree (mle)
+- [x] plotting: 
     * [x] stratified event tree
     * [x] staged event tree (colors)
+    * [ ] probabilities on plot
+    * [ ] ggplot2 (maybe) 
+    * [ ] Rgraphviz (....) 
 - [ ] inference:
-    * [ ] joint prob
+    * [ ] joint prob of a path from root 
     * [x] logLik for full tree (thus AIC and BIC work automatically)
-    * [ ] logLik staged tree 
+    * [x] logLik staged tree 
     * [ ] classification 
     * [ ] 
 - [ ] structure search:
     * [ ] exhaustive search 
-    * [ ] heuristics 
+    * [ ] heuristics
+    * [ ] Penalized logLik (AIC, BIC)
+- [ ] classifiers with staged trees 
+    * [ ] define class 
+    * [ ] define predict method
+    * [ ] eval 
+    * [ ] model selection (struct search ...)
 
