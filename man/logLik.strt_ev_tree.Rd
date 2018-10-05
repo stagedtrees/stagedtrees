@@ -4,7 +4,7 @@
 \alias{logLik.strt_ev_tree}
 \title{Compute log lik of a stratified tree}
 \usage{
-\method{logLik}{strt_ev_tree}(object, data, ...)
+\method{logLik}{strt_ev_tree}(object, data = NULL, ...)
 }
 \arguments{
 \item{object}{the startified event tree object}
