@@ -42,5 +42,20 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...){
 #' @importFrom stats logLik
 #' @export
 logLik.staged_ev_tree <- function(object, data = NULL, ...){
+  if (is.null(data)){
+    data <- object$data ## like this AIC and BIC works automatically
+  }
+  if (is.null(data)){
+    warning("Data should be attached to the object or provided")
+    return(NULL)
+  }
+  if (is.null(object$prob)){
+    warning("Object if not fitted, impossible compute logLik")
+    return(NULL)
+  }
 
+  attr(ll, "df") <- prod(sapply(object$tree, length)) - 1
+  attr(ll, "nobs") <- dim(data)[1]
+  class(ll) <- "logLik"
+  return(ll)
 }

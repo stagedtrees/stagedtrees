@@ -40,7 +40,7 @@ staged_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambd
   evt <- staged_ev_tree.list(lapply(x, function(v)
     return(levels(as.factor(v))) )[order])
   if (fit) {
-    evt <- staged_ev_tree_fit(evt,data = x, lambda = lambda) }
+    evt <- staged_ev_tree.fit(evt,data = x, lambda = lambda) }
   return(evt)
 }
 
@@ -86,8 +86,14 @@ staged_ev_tree.list <- function(x){
 #' @param data the data.frame used to fit the staged event tree
 #' @param lambda the laplace smoothing
 #' @return A staged event tree object with the conditional probabilities fitted
-#' @export
-staged_ev_tree_fit <- function(sevt, data, lambda = 0, ... ){
+staged_ev_tre.fit <- function(sevt, data, lambda = 0, ... ){
+  if (is.null(data)){
+    data <- evt$data
+    if (is.null(data)){
+      warning("Data must be provided or included in the model object")
+      return(evt)
+    }
+  }
   order <- names(sevt$tree)
   data <- data[order] #order the data
   dims <- lapply(sevt$tree, length)
