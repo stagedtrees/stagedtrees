@@ -6,6 +6,74 @@
   `devtools::install_github("https://github.com/gherardovarando/stagedtrees")`
 - 
 
+
+#### examples
+
+For all the examples we use stupid dataset created as:
+
+```
+N <- 100 ## number of observations
+n <- 4 ## number of variables
+max_l <- 5 ## max number of levels for each variable
+DD <- as.data.frame(sapply(1:n, function(i){
+                                     nl <- sample(1:max_l,size=1)
+                                     return(as.factor(sample(c(1:nl), size=N,
+				     replace = TRUE)))
+				     }  ) 
+
+```
+
+##### Full stratified trees 
+
+This objects just represent the full chain rule with a fixed order.
+
+We can create a stratified event tree object from a list containing the
+levels of the variables:
+``` 
+lvls <- lapply(DD, levels)
+
+evt <- strt_ev_tree(lvls)
+
+plot(evt) ## plotting is still a bit rough 
+```
+
+Alternatively we can create the stratified event tree directly from the
+dataset of observation. And we can choose to fit the conditional
+probabilities (lambda is the laplace smoothing parameter).
+
+```
+evt <- strt_ev_tree(DD, fit=TRUE, lambda = 2)
+
+plot(evt)
+
+evt$prob$V2 ### here probabilities table are stored
+
+```
+
+
+#### Staged event tree
+
+As stratified event trees, staged event trees can be created from a list or
+a data.frame, and fitted. By default the staged event tree created will be
+the full independent model (that is only one stage per variable). 
+
+```
+
+sevt <- staged_ev_tree(DD, fit =TRUE , laplace = 1)
+
+sevt$paths ## here for every path we indicate the stage (last column)
+
+
+
+plot(sevt)
+```
+
+#### Conversions
+
+
+
+
+
 ### Dev
 
 - Creating a project with Rstudio on the cloned folder is the easier way to
