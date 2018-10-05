@@ -57,6 +57,43 @@ strt_ev_tree.list <- function(x){
  return(evt)
 }
 
+
+#' Stratified event tree from a staged event tree
+#'
+#' @param x a staged event tree object
+#' @param ... additional parameters
+#' @return A stratified event tree object, that is a list with a `tree` component
+#' @details
+#' @export
+#'
+strt_ev_tree.staged_ev_tree <- function(x, ...){
+ if (!is.null(x$prob)){ #if the model was fitted we have to recompilate the probabilities
+   #the first one is easy we just have to forget the (only) stage
+   x$prob[[1]] <- x$prob[[1]][[1]]
+   for (i in 2:length(x$tree)){ #let's take care of the other variables
+     ## we will create manually the ftable
+     ## the dimension are the same as path (-1 for the column)
+     ft <- array(dim = c(dim(x$paths[[i - 1]])[1], length(x$tree[[i]])))
+     for (j in 1:(dim(ft)[1])){ ## fill the ftable
+       jstage <- x$paths[[i - 1]][j, dim(x$paths[[i - 1]])[2] ]
+       #print(jstage)
+       #print(x$prob[[i]][[ jstage ]])
+       #print(ft[j,])
+       ft[j, ] <- x$prob[[i]][[ jstage ]]
+     }
+     attr(ft, "row.vars") <- x$tree[1:(i-1)]
+     attr(ft, "col.vars") <- x$tree[i]
+     class(ft) <- "ftable"
+     x$prob[[i]] <- ft
+   }
+  }
+
+ x$stages <- NULL
+ x$paths <- NULL
+ class(x) <- "strt_ev_tree"
+ return(x)
+}
+
 #' Fit a stratified event tree
 #'
 #' @param  evt The stratified event tree object to be fitted
@@ -64,7 +101,14 @@ strt_ev_tree.list <- function(x){
 #' @param lambda the laplace smoothing
 #' @return A stratified event tree object with the conditional probabilities fitted
 #' @export
-strt_ev_tree.fit <- function(evt, data, lambda = 0){
+strt_ev_tree.fit <- function(evt, data = NULL, lambda = 0){
+   if (is.null(data)){
+     data <- evt$data
+     if (is.null(data)){
+       warning("Data must be provided or included in the model object")
+       return(evt)
+     }
+   }
    order <- names(evt$tree)
    dims <- lapply(evt$tree, length)
    evt$prob <- lapply(1:length(order), function(i){
@@ -80,5 +124,8 @@ strt_ev_tree.fit <- function(evt, data, lambda = 0){
    evt$data <- data
    return(evt)
 }
+
+
+
 
 
