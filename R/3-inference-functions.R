@@ -5,8 +5,17 @@
 #' @param object the startified event tree object
 #' @param data the dataset (default to `NULL``)
 #'
-#' @importFrom stats logLik
+#' @importFrom stats logLik ftable
 #' @export
+#'
+#' @examples
+#' DD <- DD <- as.data.frame(sapply(1:5, function(i){
+#'                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
+#'                      }))
+#' evt <- strt_ev_tree(DD, fit =TRUE)
+#' logLik(evt)
+#'
+#' logLik(evt, DD[1,])
 logLik.strt_ev_tree <- function(object, data = NULL, ...){
 
  if (is.null(data)){
@@ -41,6 +50,15 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...){
 #'
 #' @importFrom stats logLik
 #' @export
+#'
+#' @examples
+#' DD <- DD <- as.data.frame(sapply(1:5, function(i){
+#'                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
+#'                      }))
+#' sevt <- staged_ev_tree(DD, fit =TRUE)
+#' logLik(sevt)
+#'
+#' logLik(sevt, DD[1,])
 logLik.staged_ev_tree <- function(object, data = NULL, ...){
   if (is.null(data)){
     data <- object$data ## like this AIC and BIC works automatically
