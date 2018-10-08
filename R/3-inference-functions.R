@@ -53,8 +53,10 @@ logLik.staged_ev_tree <- function(object, data = NULL, ...){
     warning("Object if not fitted, impossible compute logLik")
     return(NULL)
   }
-  ll <- logLik(strt_ev_tree(object)) ## lazy way we should do better
+  ll <- logLik(strt_ev_tree(object), data=data) ## lazy way we should do better
   attr(ll, "df") <- sum(c(1, sapply(object$stages, length) ) *
                     (sapply(object$tree, length) - 1)   )    ## compute the degree of freedom
   return(ll)
 }
+
+
