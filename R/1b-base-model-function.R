@@ -138,9 +138,13 @@ staged_ev_tree.strt_ev_tree <-function(x, ...){
    class(x) <- "staged_ev_tree"
 
   if (!is.null(x$prob)){ ## if the x is fitted
-    x$prob[[]]
+    x$prob[[1]] <- list(x$prob[[1]])
     for (i in 2:length(x$tree)){
-
+      x$prob[[i]] <- lapply(1:(dim(x$prob[[i]])[1]), function(k){
+        pp <- x$prob[[i]][k,]
+        names(pp) <- x$tree[[i]]
+        return( pp )
+        })
     }
     names(x$prob) <- names(x$tree)
   }
