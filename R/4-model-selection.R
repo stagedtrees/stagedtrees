@@ -141,11 +141,13 @@ backward_hill_climb.staged_ev_tree <- function(object = NULL, data = NULL, order
     } ## end for over variables
     object <- temp
     now_score <- try_score
+    object$score <- now_score
     if (verbose){
       print(paste("joined stages:"))
     }
   } ## end while
   if (verbose){ print(paste("Exit after", iter, "iteration"))}
+  object$call <- NULL #todo
   return(object)
 }
 
