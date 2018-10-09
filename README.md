@@ -75,12 +75,18 @@ evt_back <- strt_ev_tree(sevt)
 
 We are still implementing model selection algorithm, now available:
 
-- ##### Hill-CLimbing 
+- ##### Independent model (default) 
   ```
-  sevt <- backword_hill_climb.staged_ev_tree(data = DD)
-  plot(sevt)
+  sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "indep")
   ```
-
+- ##### Full model 
+  ```
+  sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "full")
+  ```
+- ##### Backward Hill-Climbing 
+  ```
+  sevt <- staged_ev_tree(DD, model_sel = "back-HC")
+  ```
 
 ### Dev
 
