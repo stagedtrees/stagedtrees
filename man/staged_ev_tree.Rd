@@ -4,14 +4,13 @@
 \alias{staged_ev_tree}
 \title{Staged (stratified) event tree}
 \usage{
-staged_ev_tree(x, order = NULL, fit = FALSE, ...)
+staged_ev_tree(x, ...)
 }
 \arguments{
-\item{x}{data.frame or list}
+\item{x}{data.frame, list or stratified event tree object}
 
-\item{order}{Vector of variables names, the order to build the event tree}
-
-\item{fit}{If `TRUE` the conditional probability will be estimated from `data`}
+\item{...}{additional parameters to be passed
+to the appropiate method, see \link{staged_ev_tree.data.frame}}
 }
 \value{
 A staged event tree object (see Details)

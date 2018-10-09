@@ -5,12 +5,27 @@
 \title{Staged (stratified) event tree}
 \usage{
 \method{staged_ev_tree}{data.frame}(x, order = colnames(x), fit = FALSE,
-  lambda = 0)
+  model_sel = "indep", lambda = 0, score = function(object)
+  return(-BIC(object)), verbose = FALSE, max_iter = 1000, eps = 1e-05)
 }
 \arguments{
 \item{x}{data.frame with the observation}
 
 \item{order}{vector of order, default to the order in `x`}
+
+\item{fit}{If `TRUE` the conditional probability will be estimated from `data`}
+
+\item{model_sel}{String the type of model selection performed}
+
+\item{lambda}{the laplace smoothing}
+
+\item{score}{Function, the score function for the model_selection algorithm}
+
+\item{verbose}{Logical}
+
+\item{max_iter}{Maximum number of iterations}
+
+\item{eps}{Stopping criteria}
 }
 \value{
 the staged event tree object

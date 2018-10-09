@@ -4,7 +4,7 @@
 \alias{fit.staged_ev_tree}
 \title{Fit a staged event tree}
 \usage{
-fit.staged_ev_tree(sevt, data, lambda = 0, ...)
+fit.staged_ev_tree(sevt, data = NULL, lambda = 0, ...)
 }
 \arguments{
 \item{sevt}{The staged event tree object to be fitted}
@@ -12,6 +12,8 @@ fit.staged_ev_tree(sevt, data, lambda = 0, ...)
 \item{data}{the data.frame used to fit the staged event tree}
 
 \item{lambda}{the laplace smoothing}
+
+\item{...}{additional parameters}
 }
 \value{
 A staged event tree object with the conditional probabilities fitted

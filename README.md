@@ -46,7 +46,6 @@ evt <- strt_ev_tree(DD, fit=TRUE, lambda = 2)
 plot(evt)
 
 evt$prob$V2 ### here probabilities table are stored
-
 ```
 
 
@@ -57,20 +56,30 @@ a data.frame, and fitted. By default the staged event tree created will be
 the full independent model (that is only one stage per variable). 
 
 ```
-
 sevt <- staged_ev_tree(DD, fit =TRUE , laplace = 1)
 
 sevt$paths ## here for every path we indicate the stage (last column)
-
-
 
 plot(sevt)
 ```
 
 #### Conversions
 
+We can move from the staged event tree and the full stratified event tree:
+```
+evt <- strt_ev_tree(DD, fit =T)
+sevt <- staged_ev_tree(evt)
+evt_back <- strt_ev_tree(sevt)
+```
+#### Model selection
 
+We are still implementing model selection algorithm, now available:
 
+- ##### Hill-CLimbing 
+  ```
+  sevt <- backword_hill_climb.staged_ev_tree(data = DD)
+  plot(sevt)
+  ```
 
 
 ### Dev

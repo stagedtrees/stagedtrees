@@ -12,7 +12,7 @@
 \item{...}{additional parameters}
 }
 \value{
-the equivalent staged event tree object
+The equivalent staged event tree object
 }
 \description{
 Staged event tree

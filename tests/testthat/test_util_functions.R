@@ -6,7 +6,7 @@ test_that("find_stage find the correct stage", {
   sevt <- staged_ev_tree(ev)
   stg1 <- stagedtrees:::find_stage(paths = sevt$paths$A, path = c("a"))
   stg2 <- stagedtrees:::find_stage(paths = sevt$paths$A, path = c("b"))
-  expect_equal(c(stg1,stg2), c(1,2))
+  expect_equal(c(stg1,stg2), c("1","2"))
 })
 
 

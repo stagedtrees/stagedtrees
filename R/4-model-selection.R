@@ -1,5 +1,8 @@
 
 
+
+
+
 forward_select.staged_ev_treee <- function(object=NULL, data=NULL, lambda = 1,
                                            score = function(x) return(-BIC(x))){
   if (is.null(object)){
@@ -18,8 +21,6 @@ forward_select.staged_ev_treee <- function(object=NULL, data=NULL, lambda = 1,
   }
   now <- score(object)
 
-
-
 }
 
 #' backword naive random hill-climbing
@@ -35,7 +36,7 @@ forward_select.staged_ev_treee <- function(object=NULL, data=NULL, lambda = 1,
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed
 #' @export
-backward_hill_climb_random.staged_ev_tree <- function(object = NULL, data = NULL, order = NULL
+backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
                                            , lambda=1
                                            , score = function(x) return( - BIC(x) )
                                            , eps = 0.0001, max_iter = 100
@@ -81,9 +82,10 @@ backward_hill_climb_random.staged_ev_tree <- function(object = NULL, data = NULL
 }
 
 
+
 #' backword hill-climbing
 #'
-#' Each iter move to the best model
+#' Each iter move to the best model, from more complicated to simpler model
 #'
 #' @param object a staged event tree model (optional)
 #' @param data the data (can be not specified if it is attached to \code{object})
@@ -93,8 +95,7 @@ backward_hill_climb_random.staged_ev_tree <- function(object = NULL, data = NULL
 #' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed
-#' @export
-backward_hill_climb.staged_ev_tree <- function(object = NULL, data = NULL, order = NULL
+backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                                       , lambda=1
                                                       , score = function(x) return( - BIC(x) )
                                                       , eps = 0.0001, max_iter = 100

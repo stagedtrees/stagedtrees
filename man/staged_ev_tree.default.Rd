@@ -9,7 +9,8 @@
 \arguments{
 \item{x}{object that will be coerced to a data.frame}
 
-\item{...}{additional parameters that will be passed to the method}
+\item{...}{additional parameters that will be passed
+to the appropiate method, see \link{staged_ev_tree.data.frame}}
 }
 \value{
 A staged event tree object
