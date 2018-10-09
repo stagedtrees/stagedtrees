@@ -74,24 +74,25 @@ strt_ev_tree.list <- function(x){
 #' @export
 #'
 strt_ev_tree.staged_ev_tree <- function(x, ...){
+ vars <- names(x$tree)
  if (!is.null(x$prob)){ #if the model was fitted we have to recompilate the probabilities
-   #the first one is easy we just have to forget the (only) stage
-   x$prob[[1]] <- x$prob[[1]][[1]]
+   #the first one is easy we just have to forget the (only) stage (and we check validity)
+   if (length(x$prob[[vars[1]]]) > 1){
+     warning("Incorrect number of stages in first variable (should be one)")
+   }
+   x$prob[[vars[1]]] <- x$prob[[vars[1]]][[1]]
    for (i in 2:length(x$tree)){ #let's take care of the other variables
      ## we will create manually the ftable
      ## the dimension are the same as path (-1 for the column)
-     ft <- array(dim = c(dim(x$paths[[i - 1]])[1], length(x$tree[[i]])))
+     ft <- array(dim = c(dim(x$paths[[ vars[i] ]])[1], length(x$tree[[ vars[i] ]])))
      for (j in 1:(dim(ft)[1])){ ## fill the ftable
-       jstage <- x$paths[[i - 1]][j, dim(x$paths[[i - 1]])[2] ]
-       #print(jstage)
-       #print(x$prob[[i]][[ jstage ]])
-       #print(ft[j,])
-       ft[j, ] <- x$prob[[i]][[ jstage ]]
+       jstage <- x$paths[[ vars[i] ]][j, dim(x$paths[[ vars[i] ]])[2] ]
+       ft[j, ] <- x$prob[[ vars[i] ]][[ jstage ]]
      }
-     attr(ft, "row.vars") <- x$tree[1:(i-1)]
-     attr(ft, "col.vars") <- x$tree[i]
+     attr(ft, "row.vars") <- x$tree[ vars[1:(i-1)] ]
+     attr(ft, "col.vars") <- x$tree[ vars[i] ]
      class(ft) <- "ftable"
-     x$prob[[i]] <- ft
+     x$prob[[ vars[i] ]] <- ft
    }
   }
 
@@ -129,6 +130,7 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
    } )
    names(evt$prob) <- order
    evt$data <- data
+   evt$lambda <- lambda
    return(evt)
 }
 

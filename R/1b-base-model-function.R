@@ -71,10 +71,10 @@ staged_ev_tree.list <- function(x){
   evt$tree <- x
   evt$paths <- lapply(1:(length(x)-1), function(i){
      tt <- expand.grid(evt$tree[i:1])[i:1] ## create all the possible paths
-     tt[, dim(tt)[2] + 1] <- 1 #put the same color in all the paths
+     tt[, dim(tt)[2] + 1] <- "1" #put the same color in all the paths
      return(tt)
   })
-  evt$stages <- lapply(x[-1], function(xx) return(1))
+  evt$stages <- lapply(x[-1], function(xx) return("1"))
   names(evt$paths) <- names(x)[-1]
   class(evt) <- "staged_ev_tree"
   return(evt)
@@ -89,10 +89,10 @@ staged_ev_tree.list <- function(x){
 #' @export
 fit.staged_ev_tree <- function(sevt, data, lambda = 0, ... ){
   if (is.null(data)){
-    data <- evt$data
+    data <- sevt$data
     if (is.null(data)){
       warning("Data must be provided or included in the model object")
-      return(evt)
+      return(sevt)
     }
   }
   order <- names(sevt$tree)
@@ -112,8 +112,10 @@ fit.staged_ev_tree <- function(sevt, data, lambda = 0, ... ){
       tt <- table(dt[order[i]]) + lambda #table count plus lambda
       return(tt / sum(tt) ) #return normalized prob
     })
+    names(sevt$prob[[ order[i] ]]) <- sevt$stages[[ order[i] ]]
   }
   sevt$data <- data
+  sevt$lambda <- lambda
   return(sevt)
 }
 
@@ -127,10 +129,11 @@ fit.staged_ev_tree <- function(sevt, data, lambda = 0, ... ){
 staged_ev_tree.strt_ev_tree <-function(x, ...){
   x$stages <- list()
   x$paths <- list()
+  vars <- names(x$tree)
    for (i in 1:(length(x$tree)-1) ){
      tt <- expand.grid(x$tree[i:1])[i:1] ## create all the possible paths
-     tt[, dim(tt)[2] + 1] <- 1:(dim(tt)[1]) #put different colors/stages
-     x$stages[[i]] <- 1:(dim(tt)[1])
+     tt[, dim(tt)[2] + 1] <- as.character(1:(dim(tt)[1])) #put different colors/stages
+     x$stages[[i]] <- as.character(1:(dim(tt)[1]))
      x$paths[[i]] <- tt
    }
    names(x$paths) <- names(x$tree)[-1]
@@ -138,17 +141,17 @@ staged_ev_tree.strt_ev_tree <-function(x, ...){
    class(x) <- "staged_ev_tree"
 
   if (!is.null(x$prob)){ ## if the x is fitted
-    x$prob[[1]] <- list(x$prob[[1]])
+    x$prob[[vars[1]]] <- list("1" = x$prob[[vars[1]]])
     for (i in 2:length(x$tree)){
-      x$prob[[i]] <- lapply(1:(dim(x$prob[[i]])[1]), function(k){
-        pp <- x$prob[[i]][k,]
-        names(pp) <- x$tree[[i]]
+      x$prob[[vars[i]]] <- lapply(1:(dim(x$prob[[ vars[i] ]])[1]), function(k){
+        pp <- x$prob[[ vars[i] ]][k,]
+        names(pp) <- x$tree[[vars[i]]]
         return( pp )
         })
+      names(x$prob[[vars[i]]]) <- as.character( 1:length(x$prob[[vars[i]]]) )
     }
     names(x$prob) <- names(x$tree)
   }
-
    return(x)
 }
 
@@ -160,20 +163,38 @@ staged_ev_tree.strt_ev_tree <-function(x, ...){
 #' @param path Vector of the path
 #' @param stage stage to be assigned
 set_stage <- function(sevt, path, stage){
- k <- length(path)
- d <- dim(sevt$paths[[order[k]]])[1]
- for (a in 1:d){
-
- }
-
+  ## to do
+  return(sevt)
 }
 
-
-join_stages <- function(sevt, level,  s1, s2){
-
+#' probabilitites are the recomputed
+#' @export
+join_stages <- function(sevt, v,  s1, s2){
+  s1 <- as.character(s1)
+  s2 <- as.character(s2)
+  dt <- sevt$data[names(sevt$tree)]
+  stgs <- sevt$stages[[v]]
+  stgs[stgs == s2] <- s1
+  sevt$stages[[v]] <- unique(stgs)
+  pths <- sevt$paths[[v]]
+  d <- dim(pths)[2]
+  st <- pths[,d]
+  sevt$paths[[v]][st == s2, d] <- s1
+  if (!is.null(sevt$prob)){
+    lambda <- sevt$lambda
+    sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
+    pths <- find_paths(paths = sevt$paths[[v]], s1) #find all the paths in that stage
+    for (j in 1:(length(pths) - 1) ){  #for every step in the path ( -1 because last var is stage name)
+      dt <- dt[ dt[ , j ] %in% pths[,j] ,  ] #reduce dt to the observation that we need
+    }
+    tt <- table(dt[v]) + lambda #table count plus lambda
+    sevt$prob[[v]][[s1]] <- tt / sum(tt)  #normalized prob
+  }
+  return(sevt)
 }
 
 
 split_stage <- function(sevt, level,  stage, method = "rand"){
-
+  ## to do
+  return(sevt)
 }
