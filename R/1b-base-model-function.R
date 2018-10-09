@@ -3,13 +3,13 @@
 #' Builds the staged event tree for a set of categorical variables,
 #' the order can be specified.
 #'
-#' @param x data.frame or list
-#' @param order Vector of variables names, the order to build the event tree
-#' @param fit If `TRUE` the conditional probability will be estimated from `data`
+#' @param x data.frame, list or stratified event tree object
+#' @param ... additional parameters to be passed
+#'            to the appropiate method, see \link{staged_ev_tree.data.frame}
 #' @return A staged event tree object (see Details)
 #' @details A staged event tree object consist
 #' @export
-staged_ev_tree <- function(x, order = NULL, fit = FALSE , ... ){
+staged_ev_tree <- function(x, ... ){
   UseMethod("staged_ev_tree", object = x)
 }
 
@@ -19,7 +19,8 @@ staged_ev_tree <- function(x, order = NULL, fit = FALSE , ... ){
 #' the order can be specified.
 #'
 #' @param x object that will be coerced to a data.frame
-#' @param ... additional parameters that will be passed to the method
+#' @param ... additional parameters that will be passed
+#'            to the appropiate method, see \link{staged_ev_tree.data.frame}
 #' @return A staged event tree object
 #' @export
 staged_ev_tree.default <- function(x, ...){
@@ -34,13 +35,39 @@ staged_ev_tree.default <- function(x, ...){
 #'
 #' @param x data.frame with the observation
 #' @param order vector of order, default to the order in `x`
+#' @param fit If `TRUE` the conditional probability will be estimated from `data`
+#' @param model_sel String the type of model selection performed
+#' @param lambda the laplace smoothing
+#' @param score Function, the score function for the model_selection algorithm
+#' @param verbose Logical
+#' @param max_iter Maximum number of iterations
+#' @param eps  Stopping criteria
 #' @return the staged event tree object
 #' @export
-staged_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda = 0){
-  evt <- staged_ev_tree.list(lapply(x, function(v)
-    return(levels(as.factor(v))) )[order])
-  if (fit) {
-    evt <- fit.staged_ev_tree(evt,data = x, lambda = lambda) }
+staged_ev_tree.data.frame <- function(x, order = colnames(x)
+                                      , fit = FALSE, model_sel = "indep"
+                                      , lambda = 0
+                                      , score = function(object) return(-BIC(object))
+                                      , verbose = FALSE
+                                      , max_iter = 1000
+                                      , eps = 0.00001
+                                      ){
+  if (model_sel == "full"){
+    evt <- staged_ev_tree(strt_ev_tree(x, fit = fit))
+  }
+  if (model_sel == "indep"){
+    evt <- staged_ev_tree.list(lapply(x, function(v)
+      return(levels(as.factor(v))) )[order])
+    if (fit) { evt <- fit.staged_ev_tree(evt,data = x, lambda = lambda) }
+  }
+  if (model_sel == "back_HC"){
+    if (verbose) print("Start backward hill-climbing algorithm..")
+    evt <- backward_hill_climb(data = x, order = order, lambda = lambda, score = score
+                        , max_iter = max_iter, eps = eps, verbose = verbose )
+  }
+  if (model_sel == "forw_HC"){
+
+  }
   return(evt)
 }
 
@@ -85,9 +112,10 @@ staged_ev_tree.list <- function(x){
 #' @param sevt The staged event tree object to be fitted
 #' @param data the data.frame used to fit the staged event tree
 #' @param lambda the laplace smoothing
+#' @param ... additional parameters
 #' @return A staged event tree object with the conditional probabilities fitted
 #' @export
-fit.staged_ev_tree <- function(sevt, data, lambda = 0, ... ){
+fit.staged_ev_tree <- function(sevt, data = NULL, lambda = 0, ... ){
   if (is.null(data)){
     data <- sevt$data
     if (is.null(data)){
@@ -123,7 +151,7 @@ fit.staged_ev_tree <- function(sevt, data, lambda = 0, ... ){
 #'
 #' @param x A stratified event tree object
 #' @param ... additional parameters
-#' @return the equivalent staged event tree object
+#' @return The equivalent staged event tree object
 #' @details The function creates a staged event tree equivalent to the stratified event tree
 #' @export
 staged_ev_tree.strt_ev_tree <-function(x, ...){
