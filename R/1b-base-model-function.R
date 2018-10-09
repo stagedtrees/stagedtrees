@@ -53,7 +53,7 @@ staged_ev_tree.data.frame <- function(x, order = colnames(x)
                                       , eps = 0.00001
                                       ){
   if (model_sel == "full"){
-    evt <- staged_ev_tree(strt_ev_tree(x, fit = fit))
+    evt <- staged_ev_tree(strt_ev_tree(x, fit = fit, lambda = lambda))
   }
   if (model_sel == "indep"){
     evt <- staged_ev_tree.list(lapply(x, function(v)
