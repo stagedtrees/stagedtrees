@@ -8,7 +8,7 @@
 find_stage <- function(paths, path){
   k <- dim(paths)[2]
   for (i in 1:(dim(paths)[1])){
-    if (all(paths[i,-k] == path)) return(paths[i,k])
+    if (all(paths[i,-k] == path)) return(as.character(paths[i,k]))
   }
 }
 
@@ -16,7 +16,7 @@ find_stage <- function(paths, path){
 # paths is a data.frame as the ones obtained with expand.grid
 # stage is an integer, the stage index
 find_paths <- function(paths, stage){
-  return(paths[paths[,dim(paths)[2]] == stage, ])
+  return(paths[paths[,dim(paths)[2]] == as.character(stage), ])
 }
 
 #' Compute the KL matrix
