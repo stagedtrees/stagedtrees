@@ -80,11 +80,16 @@ We are still implementing model selection algorithm, now available:
   ```
 - ##### Full model 
   ```
+  ## if fit=FALSE (default) model will be returned without fitted
+  ####  probabilities
   sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "full")
   ```
 - ##### Backward Hill-Climbing 
   ```
-  sevt <- staged_ev_tree(DD, model_sel = "back-HC")
+  ## no need to set fit = TRUE, models will be fitted anyway
+  sevt <- staged_ev_tree(DD, model_sel = "back_HC")
+
+  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC") #sligthly faster 
   ```
 
 ### Dev
