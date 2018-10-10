@@ -3,7 +3,7 @@
 ### Use
 
 - install with
-  `devtools::install_github("https://github.com/gherardovarando/stagedtrees")`
+  `devtools::install_github("gherardovarando/stagedtrees")`
 
 
 #### examples
