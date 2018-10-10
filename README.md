@@ -90,7 +90,11 @@ We are still implementing model selection algorithm, now available:
   ## no need to set fit = TRUE, models will be fitted anyway
   sevt <- staged_ev_tree(DD, model_sel = "back_HC")
 
-  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC", eps=0, max_iter=Inf) #sligthly faster 
+  # A slightly faster version, that should obtain the same results
+  ## we use verbose = TRUE  to obtain messages 
+  ## eps = 0 and max_iter = Inf to search until no increase is possible
+  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC"
+                           , eps=0, max_iter = Inf, verbose = TRUE)  
   ```
   The default score function is `function(object) return(-BIC(object))`. 
   But it can be changed with the `score` parameter as follow:
