@@ -4,7 +4,6 @@
 
 - install with
   `devtools::install_github("https://github.com/gherardovarando/stagedtrees")`
-- 
 
 
 #### examples
@@ -101,7 +100,7 @@ In general check [Wickham's R packages](http://r-pkgs.had.co.nz/) to learn
 how to develop R packages. 
 
 
-####  Commit message
+####  Commit messages
 
 We try to keep commit messages cleaned, but sometimes big commit with lot of
 changes can happen. 
@@ -139,13 +138,13 @@ changes can happen.
     * [ ] joint prob of a path from root 
     * [x] logLik for full tree (thus AIC and BIC work automatically)
     * [x] logLik staged tree 
-    * [ ] classification 
-    * [ ] 
 - [ ] structure search:
     * [ ] implement ``join_, split_, set_stage`` functions
     * [ ] exhaustive search 
-    * [ ] heuristics
-    * [ ] Penalized logLik (AIC, BIC)
+    * [ ] heuristics:
+         - [x] backward hill-climbing (3 variants)
+	 - [ ] forward hill-climbing
+    * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
     * [ ] define class 
     * [ ] define predict method
