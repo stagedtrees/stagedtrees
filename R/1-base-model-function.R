@@ -51,7 +51,7 @@ strt_ev_tree.list <- function(x){
    names(x) <- paste0("V", 1 : length(x))
  }
 
- if (any(is.null(sapply(x, length)))){ #naive check if levels are vector with lenght
+ if (any(is.null(vapply(x, FUN = length, FUN.VALUE = 1)))){ #naive check if levels are vector with lenght
    warning("Levels should be well defined")
    return(NULL) #exit without nothing
  }
@@ -86,7 +86,7 @@ strt_ev_tree.staged_ev_tree <- function(x, ...){
      ## the dimension are the same as path (-1 for the column)
      ft <- array(dim = c(dim(x$paths[[ vars[i] ]])[1], length(x$tree[[ vars[i] ]])))
      for (j in 1:(dim(ft)[1])){ ## fill the ftable
-       jstage <- x$paths[[ vars[i] ]][j, dim(x$paths[[ vars[i] ]])[2] ]
+       jstage <-  .subset2(x$paths[[ vars[i] ]], dim(x$paths[[ vars[i] ]])[2] )[j]    #x$paths[[ vars[i] ]][j, dim(x$paths[[ vars[i] ]])[2] ]
        ft[j, ] <- x$prob[[ vars[i] ]][[ jstage ]]
      }
      attr(ft, "row.vars") <- x$tree[ vars[1:(i-1)] ]
@@ -118,7 +118,6 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
      }
    }
    order <- names(evt$tree)
-   dims <- lapply(evt$tree, length)
    evt$prob <- lapply(1:length(order), function(i){
      path <- order[i:1]
      tt <- table(data[path],dnn = path ) + lambda
