@@ -94,7 +94,7 @@ staged_ev_tree.list <- function(x){
     names(x) <- paste0("V", 1 : length(x))
   }
 
-  if (any(is.null(sapply(x, length)))){ #naive check if levels are vector with lenght
+  if (any(is.null(vapply(x, FUN = length, FUN.VALUE = 1)))){ #naive check if levels are vector with lenght
     warning("Levels should be well defined")
     return(NULL) #exit without nothing
   }
