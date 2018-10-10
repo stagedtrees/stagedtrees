@@ -23,7 +23,7 @@ backward_hill_climb(object = NULL, data = NULL, order = NULL,
 
 \item{max_iter}{the maximum number of iteration}
 
-\item{verbose}{If info should be printed}
+\item{verbose}{If info should be printed (via \code{message})}
 }
 \description{
 Each iter move to the best model, from more complicated to simpler model

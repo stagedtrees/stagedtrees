@@ -61,12 +61,12 @@ staged_ev_tree.data.frame <- function(x, order = colnames(x)
     if (fit) { evt <- fit.staged_ev_tree(evt,data = x, lambda = lambda) }
   }
   if (model_sel == "back_HC"){
-    if (verbose) print("Start backward hill-climbing algorithm..")
+    if (verbose) message("Start backward hill-climbing algorithm..")
     evt <- backward_hill_climb(data = x, order = order, lambda = lambda, score = score
                         , max_iter = max_iter, eps = eps, verbose = verbose )
   }
   if (model_sel == "fast_back_HC"){
-    if (verbose) print("Start fast backward hill-climbing algorithm..")
+    if (verbose) message("Start fast backward hill-climbing algorithm..")
     evt <- fast_backward_hill_climb(data = x, order = order, lambda = lambda, score = score
                                , max_iter = max_iter, eps = eps, verbose = verbose )
   }
