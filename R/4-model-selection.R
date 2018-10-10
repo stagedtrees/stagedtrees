@@ -209,8 +209,10 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
               temp_score <- try_score
               s1_select <- s1 #just to message it if verbose
               s2_select <- s2 #just to message it if verose
+              break
             }
           }
+          if (!is.null(s1_select)) break
         }
       } ##end if there are more than 1 stage
       r <- abs((temp_score - now_score) / now_score) ##compute relative score increase
