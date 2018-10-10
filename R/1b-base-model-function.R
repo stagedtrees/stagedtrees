@@ -65,6 +65,11 @@ staged_ev_tree.data.frame <- function(x, order = colnames(x)
     evt <- backward_hill_climb(data = x, order = order, lambda = lambda, score = score
                         , max_iter = max_iter, eps = eps, verbose = verbose )
   }
+  if (model_sel == "fast_back_HC"){
+    if (verbose) print("Start fast backward hill-climbing algorithm..")
+    evt <- fast_backward_hill_climb(data = x, order = order, lambda = lambda, score = score
+                               , max_iter = max_iter, eps = eps, verbose = verbose )
+  }
   if (model_sel == "forw_HC"){
 
   }
@@ -191,11 +196,20 @@ staged_ev_tree.strt_ev_tree <-function(x, ...){
 #' @param path Vector of the path
 #' @param stage stage to be assigned
 set_stage <- function(sevt, path, stage){
-  ## to do
+  stage <- as.character(stage)
+
   return(sevt)
 }
 
-#' probabilitites are the recomputed
+#' Join two stages
+#'
+#' Probabilities are recomputed
+#'
+#' @param sevt staged event tree
+#' @param v variable
+#' @param s1 first stage
+#' @param s2 second stage
+#' @return the staged event tree where \code{s1} and \code{s2} are joined
 #' @export
 join_stages <- function(sevt, v,  s1, s2){
   s1 <- as.character(s1)
