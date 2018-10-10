@@ -90,7 +90,7 @@ We are still implementing model selection algorithm, now available:
   ## no need to set fit = TRUE, models will be fitted anyway
   sevt <- staged_ev_tree(DD, model_sel = "back_HC")
 
-  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC") #sligthly faster 
+  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC", eps=0, max_iter=Inf) #sligthly faster 
   ```
   The default score function is `function(object) return(-BIC(object))`. 
   But it can be changed with the `score` parameter as follow:
