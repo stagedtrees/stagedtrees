@@ -165,8 +165,8 @@ changes can happen.
     * [ ] implement ``join_, split_, set_stage`` functions
     * [ ] exhaustive search 
     * [ ] heuristics:
-          - [x] backward hill-climbing (3 variants)
-	  - [ ] forward hill-climbing
+        - [x] backward hill-climbing (3 variants)
+        - [ ] forward hill-climbing
     * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
     * [ ] define class 
