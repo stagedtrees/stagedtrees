@@ -2,10 +2,22 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{join_stages}
 \alias{join_stages}
-\title{probabilitites are the recomputed}
+\title{Join two stages}
 \usage{
 join_stages(sevt, v, s1, s2)
 }
+\arguments{
+\item{sevt}{staged event tree}
+
+\item{v}{variable}
+
+\item{s1}{first stage}
+
+\item{s2}{second stage}
+}
+\value{
+the staged event tree where \code{s1} and \code{s2} are joined
+}
 \description{
-probabilitites are the recomputed
+Probabilities are recomputed
 }
