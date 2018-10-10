@@ -31,11 +31,11 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...){
  }
  order <- names(object$tree)
  ll <- sum(log(object$prob[[order[1]]] ) * table(data[order[1]]) ) +
-             sum(vapply(2:length(order),FUN = function(i){
+             sum(sapply(2:length(order), function(i){
    sum(log(object$prob[[order[i]]])*ftable(data,col.vars = order[i],
                                            row.vars = order[1:(i-1)]) )
- }, FUN.VALUE = 1) )
- attr(ll, "df") <- prod(vapply(object$tree, FUN = length, FUN.VALUE = 1)) - 1
+ }) )
+ attr(ll, "df") <- prod(sapply(object$tree, length)) - 1
  attr(ll, "nobs") <- dim(data)[1]
  class(ll) <- "logLik"
  return(ll)
@@ -72,8 +72,8 @@ logLik.staged_ev_tree <- function(object, data = NULL, ...){
     return(NULL)
   }
   ll <- logLik(strt_ev_tree(object), data=data) ## lazy way we should do better
-  attr(ll, "df") <- sum(c(1, vapply(object$stages, FUN = length, FUN.VALUE = 1) ) *
-                    (vapply(object$tree, FUN = length, FUN.VALUE = 1) - 1)   )    ## compute the degree of freedom
+  attr(ll, "df") <- sum(c(1, sapply(object$stages, length) ) *
+                    (sapply(object$tree, length) - 1)   )    ## compute the degree of freedom
   return(ll)
 }
 
