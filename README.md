@@ -67,7 +67,8 @@ plot(sevt)
 We can move from the staged event tree and the full stratified event tree:
 ```
 evt <- strt_ev_tree(DD, fit =T)
-sevt <- staged_ev_tree(evt)
+sevt <- staged_ev_tree(evt) ## this will be a full staged event tree,
+                            ## that is one different stage per path
 evt_back <- strt_ev_tree(sevt)
 ```
 #### Model selection
@@ -81,15 +82,27 @@ We are still implementing model selection algorithm, now available:
 - ##### Full model 
   ```
   ## if fit=FALSE (default) model will be returned without fitted
-  ####  probabilities
+  ##  probabilities
   sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "full")
   ```
-- ##### Backward Hill-Climbing 
+- ##### Backward Hill-Climbing
   ```
   ## no need to set fit = TRUE, models will be fitted anyway
   sevt <- staged_ev_tree(DD, model_sel = "back_HC")
 
   sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC") #sligthly faster 
+  ```
+  The default score function is `function(object) return(-BIC(object))`. 
+  But it can be changed with the `score` parameter as follow:
+
+  ```
+  ## using logLik will not merge any stage as expected since we are not
+  ## penalizing complexity 
+  sevt <- staged_ev_tree(DD, model_sel="fast_back_HC", score = logLik)
+
+  ## instead penalizing a lot complexity
+  score <- function(object) return(-AIC(object, k=100))
+  sevt <- staged_ev_tree(DD, model_sel="fast_back_HC", score = score)
   ```
 
 ### Dev
