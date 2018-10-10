@@ -150,6 +150,7 @@ changes can happen.
 - [x] fitting stratified event tree (mle)
 - [x] staged event tree
 - [x] fitting staged event tree (mle)
+- [ ] print method for staged and stratified event tree
 - [x] plotting: 
     * [x] stratified event tree
     * [x] staged event tree (colors)
