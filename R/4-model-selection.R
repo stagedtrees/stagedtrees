@@ -34,7 +34,7 @@ forward_select.staged_ev_treee <- function(object=NULL, data=NULL, lambda = 1,
 #' @param score the score function to be maximized
 #' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
-#' @param verbose If info should be printed
+#' @param verbose If info should be printed (via \code{message})
 #' @export
 backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
                                            , lambda=1
@@ -72,12 +72,12 @@ backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
         r <- abs((try_score - now_score) / now_score) ##compute relative score increase
         now_score <- try_score
         if (verbose){
-           print(paste("joined for", v, "stages: ", stgs[1], "and", stgs[2]))
+           message(paste("joined for", v, "stages: ", stgs[1], "and", stgs[2]))
         }
       }
     }
   }
-  if (verbose){ print(paste("Exit after", iter, "iteration"))}
+  if (verbose){ message(paste("Exit after", iter, "iteration"))}
   return(object)
 }
 
@@ -94,7 +94,7 @@ backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
 #' @param score the score function to be maximized
 #' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
-#' @param verbose If info should be printed
+#' @param verbose If info should be printed (via \code{message})
 backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                                       , lambda=1
                                                       , score = function(x) return( - BIC(x) )
@@ -144,10 +144,10 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
     now_score <- temp_score
     object$score <- now_score
     if (verbose){
-      print(paste("joined stages:"))
+      message(paste("joined stages:"))
     }
   } ## end while
-  if (verbose){ print(paste("Exit after", iter, "iteration"))}
+  if (verbose){ message(paste("Exit after", iter, "iteration"))}
   object$call <- NULL #todo
   return(object)
 }
@@ -165,7 +165,7 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
 #' @param score the score function to be maximized
 #' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
-#' @param verbose If info should be printed
+#' @param verbose If info should be printed (via \code{message})
 fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                 , lambda=1
                                 , score = function(x) return( - BIC(x) )
@@ -195,6 +195,8 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
       iter <- iter + 1
       temp <- object #clone the object
       temp_score <- now_score #clone the score
+      s1_select <- NULL
+      s2_select <- NULL
       if (length(object$stages[[ v ]]) > 1 ){
         for (i in 2:length(object$stages[[ v ]])){ ##try all stages pair
           s1 <- object$stages[[ v ]][i]
@@ -205,6 +207,8 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
             if (try_score > temp_score){
               temp <- try
               temp_score <- try_score
+              s1_select <- s1 #just to message it if verbose
+              s2_select <- s2 #just to message it if verose
             }
           }
         }
@@ -213,10 +217,13 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
       object <- temp
       now_score <- temp_score
       object$score <- now_score
+      if (verbose && !is.null(s1_select)) message(paste("Joined stage:",
+                                                      s1_select, "and",s2_select))
     } ## end while
-
+    if (verbose){ message(paste("Hill-Climb over variable",
+                              v ,"done after", iter, "iterations."))}
   } ## end for over variables
-  if (verbose){ print(paste("Exit after", iter, "iteration"))}
+
   object$call <- NULL #todo
   return(object)
 }

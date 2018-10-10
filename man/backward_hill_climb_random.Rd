@@ -23,7 +23,7 @@ backward_hill_climb_random(object = NULL, data = NULL, order = NULL,
 
 \item{max_iter}{the maximum number of iteration}
 
-\item{verbose}{If info should be printed}
+\item{verbose}{If info should be printed (via \code{message})}
 }
 \description{
 Randomly select a model and selct it if it increase the score
