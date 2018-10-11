@@ -79,6 +79,8 @@ backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
     }
   }
   if (verbose){ message(paste("Exit after", iter, "iteration"))}
+  object$call <- sys.call()
+  object$score <- list(value = now_score, f= score)
   return(object)
 }
 
@@ -125,6 +127,7 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
     iter <- iter + 1
     temp <- object #clone the object
     temp_score <- now_score
+    v_sel <- NULL
     for (v in names(object$tree)[-1]){
       if (length(object$stages[[ v ]]) > 1 ){
         for (i in 2:length(object$stages[[ v ]])){ ##try all stages pair
@@ -136,6 +139,9 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
              if (try_score > temp_score){
                temp <- try
                temp_score <- try_score
+               s1a <- s1
+               s2a <- s2
+               v_sel <- v
              }
           }
         }
@@ -144,13 +150,13 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
     r <- abs((temp_score - now_score) / now_score) ##compute relative score increase
     object <- temp
     now_score <- temp_score
-    object$score <- now_score
-    if (verbose){
-      message(paste("joined stages:"))
+    if (verbose && !is.null(v_sel)){
+      message(paste("Variable", v_sel, "joined stages:", s1a, "and", s2a))
     }
   } ## end while
   if (verbose){ message(paste("Exit after", iter, "iteration"))}
-  object$call <- NULL #todo
+  object$call <- sys.call()
+  object$score <- list(value = now_score, f= score)
   return(object)
 }
 
@@ -175,8 +181,7 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                 , verbose = FALSE){
   if (is.null(object)){
     if (is.null(data)){
-      warning("Provide something: the fitted staged event tree or data")
-      return(NULL)
+      stop("Provide something: the fitted staged event tree or data")
     }
     ## if the staged event tree is not provided initialize it to the full model
     object <- staged_ev_tree(strt_ev_tree(data, fit = TRUE,
@@ -220,7 +225,6 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
       r <- abs((temp_score - now_score) / now_score) ##compute relative score increase
       object <- temp
       now_score <- temp_score
-      object$score <- now_score
       if (verbose && !is.null(s1_select)) message(paste("Joined stage:",
                                                       s1_select, "and",s2_select))
     } ## end while
@@ -228,7 +232,8 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                               v ,"done after", iter, "iterations."))}
   } ## end for over variables
 
-  object$call <- NULL #todo
+  object$call <- sys.call()
+  object$score <- list(value = now_score, f= score)
   return(object)
 }
 
