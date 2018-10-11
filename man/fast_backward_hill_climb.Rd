@@ -6,7 +6,7 @@
 \usage{
 fast_backward_hill_climb(object = NULL, data = NULL, order = NULL,
   lambda = 1, score = function(x) return(-BIC(x)), eps = 0,
-  max_iter = 1000, verbose = FALSE)
+  max_iter = Inf, verbose = FALSE)
 }
 \arguments{
 \item{object}{a staged event tree model (optional)}
@@ -26,6 +26,5 @@ fast_backward_hill_climb(object = NULL, data = NULL, order = NULL,
 \item{verbose}{If info should be printed (via \code{message})}
 }
 \description{
-Each iter move to the best model, from more complicated to simpler model
-It's fast because we iterate over the variable just once and not at every while iteration
+Move to the first model that increase the score
 }
