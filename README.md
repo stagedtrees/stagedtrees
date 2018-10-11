@@ -86,15 +86,13 @@ We are still implementing model selection algorithm, now available:
   sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "full")
   ```
 - ##### Backward Hill-Climbing
+
+  The algorithm moves to the **best** model that increase the score.
   ```
   ## no need to set fit = TRUE, models will be fitted anyway
-  sevt <- staged_ev_tree(DD, model_sel = "back_HC")
-
-  # A slightly faster version, that should obtain the same results
-  ## we use verbose = TRUE  to obtain messages 
-  ## eps = 0 and max_iter = Inf to search until no increase is possible
-  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC"
-                           , eps=0, max_iter = Inf, verbose = TRUE)  
+  sevt <- staged_ev_tree(DD, model_sel = "back_HC", verbose = T)
+  sevt$score$value
+  plot(sevt)
   ```
   The default score function is `function(object) return(-BIC(object))`. 
   But it can be changed with the `score` parameter as follow:
@@ -102,14 +100,29 @@ We are still implementing model selection algorithm, now available:
   ```
   ## using logLik will not merge any stage as expected since we are not
   ## penalizing complexity 
-  sevt <- staged_ev_tree(DD, model_sel="fast_back_HC", score = logLik)
+  sevt <- staged_ev_tree(DD, model_sel="back_HC", score = logLik)
 
   ## instead penalizing a lot complexity
   score <- function(object) return(-AIC(object, k=100))
-  sevt <- staged_ev_tree(DD, model_sel="fast_back_HC", score = score)
+  sevt <- staged_ev_tree(DD, model_sel="back_HC", score = score)
+  sevt$score$value
+  sevt$stages
+  plot(sevt)
   ```
 
-### Dev
+
+- ##### Fast Backward Hill-Climbing
+  
+  The algorithm moves to the **first** model that increase the score.
+  ```
+  ## we use verbose = TRUE  to obtain messages 
+  ## We can use score as in the back_HC method
+  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC"
+                           , eps=0, max_iter = Inf, verbose = TRUE)  
+  ```
+
+
+  ### Dev
 
 - Creating a project with Rstudio on the cloned folder is the easier way to
 develop. 
