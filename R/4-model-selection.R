@@ -36,6 +36,7 @@ forward_select.staged_ev_treee <- function(object=NULL, data=NULL, lambda = 1,
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
 #' @export
+#' @importFrom stats  BIC
 backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
                                            , lambda=1
                                            , score = function(x) return( - BIC(x) )
@@ -95,6 +96,7 @@ backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
 #' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
+#' @importFrom stats  BIC
 backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                                       , lambda=1
                                                       , score = function(x) return( - BIC(x) )
@@ -155,8 +157,7 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
 
 #' Fast backword hill-climbing
 #'
-#' Each iter move to the best model, from more complicated to simpler model
-#' It's fast because we iterate over the variable just once and not at every while iteration
+#' Move to the first model that increase the score
 #'
 #' @param object a staged event tree model (optional)
 #' @param data the data (can be not specified if it is attached to \code{object})
@@ -166,10 +167,11 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
 #' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
+#' @importFrom stats  BIC
 fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                 , lambda=1
                                 , score = function(x) return( - BIC(x) )
-                                , eps = 0, max_iter = 1000
+                                , eps = 0, max_iter = Inf
                                 , verbose = FALSE){
   if (is.null(object)){
     if (is.null(data)){
