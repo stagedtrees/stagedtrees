@@ -121,6 +121,14 @@ We are still implementing model selection algorithm, now available:
                            , eps=0, max_iter = Inf, verbose = TRUE)  
   ```
 
+- ##### Backward joining based on KL
+  For every variable the algorithm iterates and at every step try to join the two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
+```
+ sevt <- staged_ev_tree(DD, model_sel = "back_join_KL", thr = 0.01)
+ plot(sevt) 
+``` 
+
+
 
   ### Dev
 
@@ -179,6 +187,7 @@ changes can happen.
     * [ ] exhaustive search 
     * [ ] heuristics:
         - [x] backward hill-climbing (3 variants)
+        - backward joining of stage based on KL distance
         - [ ] forward hill-climbing
     * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
