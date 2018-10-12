@@ -1,8 +1,4 @@
 
-
-
-
-
 forward_select.staged_ev_treee <- function(object=NULL, data=NULL, lambda = 1,
                                            score = function(x) return(-BIC(x))){
   if (is.null(object)){
@@ -123,7 +119,8 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
   now_score <- score(object)
   r <- 1
   iter <- 0
-  while (r > eps && iter < max_iter){ ## chose randomly one of the variable and try to perform a stage-merging
+  ## chose randomly one of the variable and try to perform a stage-merging
+  while (r > eps && iter < max_iter){
     iter <- iter + 1
     temp <- object #clone the object
     temp_score <- now_score
@@ -146,8 +143,9 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
           }
         }
       } ##end if there are more than 1 stage
-    } ## end for over variables now in temp there is the best possible incremented model
-    r <- abs((temp_score - now_score) / now_score) ##compute relative score increase
+    } ## end for over variables now in temp there is the best possible
+      ## incremented model
+    r <- abs((temp_score - now_score) / now_score) ## relative score increase
     object <- temp
     now_score <- temp_score
     if (verbose && !is.null(v_sel)){
@@ -166,7 +164,8 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
 #' Move to the first model that increase the score
 #'
 #' @param object a staged event tree model (optional)
-#' @param data the data (can be not specified if it is attached to \code{object})
+#' @param data the data (can be not specified
+#'             if it is attached to \code{object})
 #' @param order the order of the tree (optional)
 #' @param lambda the laplace smoothing factor
 #' @param score the score function to be maximized
@@ -198,7 +197,7 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
   for (v in names(object$tree)[-1]){
     iter <- 0
     r <- 1
-    while (r > eps && iter < max_iter){ ## chose randomly one of the variable and try to perform a stage-merging
+    while (r > eps && iter < max_iter){
       iter <- iter + 1
       temp <- object #clone the object
       temp_score <- now_score #clone the score
@@ -222,18 +221,76 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
           if (!is.null(s1_select)) break
         }
       } ##end if there are more than 1 stage
-      r <- abs((temp_score - now_score) / now_score) ##compute relative score increase
+
+      r <- abs((temp_score - now_score) / now_score) ##relative score increase
       object <- temp
       now_score <- temp_score
       if (verbose && !is.null(s1_select)) message(paste("Joined stage:",
-                                                      s1_select, "and",s2_select))
+                                                  s1_select, "and",s2_select))
     } ## end while
     if (verbose){ message(paste("Hill-Climb over variable",
-                              v ,"done after", iter, "iterations."))}
+                                 v ,"done after", iter, "iterations."))}
   } ## end for over variables
 
   object$call <- sys.call()
   object$score <- list(value = now_score, f= score)
+  return(object)
+}
+
+
+#' Backword joining of stages
+#'
+#' Join stages from more complex to simpler models
+#' using entropy do decide if join or not a stage
+#'
+#' @param object the staged event tree from where to start
+#' @param data the dataset
+#' @param order the order of the variables
+#' @param lambda the laplace smoothing
+#' @param thr the threshold for joining stages
+#' @param verbose logical
+#' @return the learned staged event tree
+backward_joining <- function(object = NULL, data = NULL, order = NULL
+                             , lambda=1
+                             , thr = 0.01
+                             , verbose = FALSE){
+  if (is.null(object)){
+    if (is.null(data)){
+      stop("Provide something: the fitted staged event tree or data")
+    }
+    ## if the staged event tree is not provided initialize it to the full model
+    object <- staged_ev_tree(strt_ev_tree(data, fit = TRUE,
+                                          order = order, lambda = lambda))
+  }
+  if (is.null(data)){
+    data <- sevt$data
+    if (is.null(data)){
+      warning("Provide data")
+      return(object)
+    }
+  }
+  for (v in names(object$tree)[-1]){
+    finish <- FALSE
+    while (!finish){
+      finish <- TRUE
+      if (length(object$stages[[ v ]]) > 1 ){
+        M <- KL_mat_stages(object$prob[[ v ]]) #compute KL matrix
+        diag(M) <- Inf
+        idx <- which.min(M)
+        i <- ceiling(idx / dim(M)[1])
+        j <- idx - (i-1)*dim(M)[1]
+        s1 <- object$stages[[ v ]][i]
+        s2 <- object$stages[[ v ]][j]
+        if ( abs(M[i,j]) < thr ){
+          if (verbose) message( "Variable ",v , " Joined stages ", s1,
+                                " and ", s2)
+          object <- join_stages(object, v, s1, s2) ## join the 2 stages
+          finish <- FALSE #if joined the stages we are not finish
+        }
+      } ## end if there are more than 1 stage
+    } ## end while
+  } ## end for over variables
+   object$call <- sys.call()
   return(object)
 }
 
