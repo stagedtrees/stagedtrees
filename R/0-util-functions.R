@@ -34,11 +34,13 @@ KL_mat_prob <- function(x){
   return(M + t(M))
 }
 
+
+
 #' Compute the KL matrix
 #' @param x list of conditional probabilities for each stage
 #' @return The matrix witht the symmetric KL (KL(i,j) + KL(j,i))
 KL_mat_stages <- function(x){
-  d <- dim(x)[1]
+  d <- length(x)
   M <- matrix(nrow = d, ncol=d)
   for (i in 1 : d){
     for (j in 1 : d){
@@ -72,4 +74,13 @@ simple_clustering <- function(M){
   return(list(I = I, J =J , i =i , j =j ))
 }
 
+#' compute the entropy
+#' @param p the vector of normalized probability
+#' @return the entropy as \code{-sum(p*log(p))}
+entr <- function(p){
+  return(-sum(p*log(p)))
+}
 
+kl <- function(p, q){
+  return( sum( p *(log(p) - log(q))))
+}

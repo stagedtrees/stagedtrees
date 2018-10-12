@@ -50,30 +50,34 @@ staged_ev_tree.data.frame <- function(x, order = colnames(x)
                                       , score = function(object) return(-BIC(object))
                                       , verbose = FALSE
                                       , max_iter = 1000
-                                      , eps = 0.00001
+                                      , eps = 0.00001, thr = 0.01
                                       ){
-  if (model_sel == "full"){
-    evt <- staged_ev_tree(strt_ev_tree(x, fit = fit, lambda = lambda))
-  }
-  if (model_sel == "indep"){
-    evt <- staged_ev_tree.list(lapply(x, function(v)
-      return(levels(as.factor(v))) )[order])
-    if (fit) { evt <- fit.staged_ev_tree(evt,data = x, lambda = lambda) }
-  }
-  if (model_sel == "back_HC"){
-    if (verbose) message("Start backward hill-climbing algorithm..")
-    evt <- backward_hill_climb(data = x, order = order, lambda = lambda, score = score
-                        , max_iter = max_iter, eps = eps, verbose = verbose )
-  }
-  if (model_sel == "fast_back_HC"){
-    if (verbose) message("Start fast backward hill-climbing algorithm..")
-    evt <- fast_backward_hill_climb(data = x, order = order, lambda = lambda, score = score
-                               , max_iter = max_iter, eps = eps, verbose = verbose )
-  }
-  if (model_sel == "forw_HC"){
-
-  }
-  return(evt)
+  switch (model_sel,
+    full = return(staged_ev_tree(strt_ev_tree(x, fit = fit, lambda = lambda))),
+    indep = {
+      evt <- staged_ev_tree.list(lapply(x, function(v)
+        return(levels(as.factor(v))) )[order])
+      if (fit) { return(fit.staged_ev_tree(evt,data = x, lambda = lambda))
+      }else {
+          return(evt)
+        }
+    },
+    back_HC = return(backward_hill_climb(data = x,
+                                         order = order, lambda = lambda,
+                                         score = score,
+                                         max_iter = max_iter,
+                                         eps = eps, verbose = verbose )),
+    fast_back_HC = return(fast_backward_hill_climb(data = x, order = order,
+                                                   lambda = lambda,
+                                                   score = score
+                                                   , max_iter = max_iter,
+                                                   eps = eps,
+                                                   verbose = verbose )),
+    forw_HC = return(NULL),
+    back_join_KL = return(backward_joining(data = x, order = order, lambda = lambda,
+                                    thr = thr, verbose = verbose)),
+    return(staged_ev_tree(strt_ev_tree(x, fit = fit, lambda = lambda)))
+  )
 }
 
 
