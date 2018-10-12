@@ -187,7 +187,7 @@ changes can happen.
     * [ ] exhaustive search 
     * [ ] heuristics:
         - [x] backward hill-climbing (3 variants)
-        - backward joining of stage based on KL distance
+        - [ ] backward joining of stage based on KL distance
         - [ ] forward hill-climbing
     * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
