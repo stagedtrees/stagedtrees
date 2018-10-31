@@ -177,7 +177,7 @@ changes can happen.
     * [ ] ggplot2 (maybe) 
     * [ ] Rgraphviz (....) 
 - [ ] inference:
-    * [ ] joint prob of a path from root 
+    * [x] joint prob of a path from root 
     * [x] logLik for full tree (thus AIC and BIC work automatically)
     * [x] logLik staged tree 
 - [ ] structure search:
@@ -185,12 +185,12 @@ changes can happen.
     * [ ] exhaustive search 
     * [ ] heuristics:
         - [x] backward hill-climbing (3 variants)
-        - [ ] backward joining of stage based on KL distance
+        - [x] backward joining of stage based on KL distance
         - [ ] forward hill-climbing
     * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
-    * [ ] define class 
-    * [ ] define predict method
+    * [x] define class 
+    * [x] define predict method
     * [ ] eval 
     * [ ] model selection (struct search ...)
 
