@@ -8,7 +8,7 @@
 find_stage <- function(paths, path){
   k <- dim(paths)[2]
   for (i in 1:(dim(paths)[1])){
-    if (all(paths[i,-k] == path)) return(as.character(paths[i,k]))
+    if (all(paths[i,-k] == path[1:(k-1)])) return(as.character(paths[i,k]))
   }
 }
 
