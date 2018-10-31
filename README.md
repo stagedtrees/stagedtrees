@@ -77,20 +77,20 @@ We are still implementing model selection algorithm, now available:
 
 - ##### Independent model (default) 
   ```
-  sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "indep")
+  sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
   ```
 - ##### Full model 
   ```
   ## if fit=FALSE (default) model will be returned without fitted
   ##  probabilities
-  sevt <- staged_ev_tree(DD, fit = TRUE, model_sel = "full")
+  sevt <- staged_ev_tree(DD, fit = TRUE, method = "full")
   ```
 - ##### Backward Hill-Climbing
 
   The algorithm moves to the **best** model that increase the score.
   ```
   ## no need to set fit = TRUE, models will be fitted anyway
-  sevt <- staged_ev_tree(DD, model_sel = "back_HC", verbose = T)
+  sevt <- staged_ev_tree(DD, method = "back_HC", verbose = T)
   sevt$score$value
   plot(sevt)
   ```
@@ -100,11 +100,11 @@ We are still implementing model selection algorithm, now available:
   ```
   ## using logLik will not merge any stage as expected since we are not
   ## penalizing complexity 
-  sevt <- staged_ev_tree(DD, model_sel="back_HC", score = logLik)
+  sevt <- staged_ev_tree(DD, method="back_HC", score = logLik)
 
   ## instead penalizing a lot complexity
   score <- function(object) return(-AIC(object, k=100))
-  sevt <- staged_ev_tree(DD, model_sel="back_HC", score = score)
+  sevt <- staged_ev_tree(DD, method="back_HC", score = score)
   sevt$score$value
   sevt$stages
   plot(sevt)
@@ -117,14 +117,14 @@ We are still implementing model selection algorithm, now available:
   ```
   ## we use verbose = TRUE  to obtain messages 
   ## We can use score as in the back_HC method
-  sevt <- staged_ev_tree(DD, model_sel = "fast_back_HC"
+  sevt <- staged_ev_tree(DD, method = "fast_back_HC"
                            , eps=0, max_iter = Inf, verbose = TRUE)  
   ```
 
 - ##### Backward joining based on KL
   For every variable the algorithm iterates and at every step try to join the two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
 ```
- sevt <- staged_ev_tree(DD, model_sel = "back_join_KL", thr = 0.01)
+ sevt <- staged_ev_tree(DD, method = "back_join_KL", thr = 0.01)
  plot(sevt) 
 ``` 
 
