@@ -1,4 +1,26 @@
 
+#' Compute probability of a path
+#'
+#' @param object a staged event tree object
+#' @param x the path
+#' @param log logical
+#' @return The probability of the given path or its logarithm if \code{log=TRUE}
+#' @export
+path_probability.staged_ev_tree <- function(object, x, log = FALSE) {
+  if (!is.null(names(x))) {
+    #if it's a named vector just order it
+    x <- x[names(object$tree)]
+  }
+  l <- log(object$prob[[1]][[1]][x[1]])
+  for (i in 2:length(x)) {
+    s <- find_stage(object$paths[[i - 1]], x)
+    l <- l + log(object$prob[[i]][[s]][x[i]])
+  }
+  if (log)
+    return(l)
+  else
+    return(exp(l))
+}
 
 #' Compute log lik of a stratified tree
 #'
