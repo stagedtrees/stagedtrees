@@ -44,53 +44,39 @@ staged_ev_tree.default <- function(x, ...){
 
 #' Staged (stratified) event tree
 #'
-#' Builds the staged event tree for a set of categorical variables,
+#' Builds the staged event tree from a data set of categorical variables,
 #' the order can be specified.
 #'
 #' @param x data.frame with the observation
-#' @param order vector of order, default to the order in `x`
-#' @param fit If `TRUE` the conditional probability will be estimated from `data`
-#' @param model_sel String the type of model selection performed
-#' @param lambda the laplace smoothing
-#' @param score Function, the score function for the model_selection algorithm
-#' @param verbose Logical
-#' @param max_iter Maximum number of iterations
-#' @param eps  Stopping criteria
-#' @return the staged event tree object
+#' @param order vector of order, default to the order of the columns of `x`
+#' @param method String the type of model selection performed
+#' @param fit logical
+#' @param ... additional parameters to be passed to other methods (see details)
+#' @return A staged event tree object
+#' @details
 #' @export
 staged_ev_tree.data.frame <- function(x, order = colnames(x)
-                                      , fit = FALSE, model_sel = "indep"
-                                      , lambda = 0
-                                      , score = function(object) return(-BIC(object))
-                                      , verbose = FALSE
-                                      , max_iter = 1000
-                                      , eps = 0.00001, thr = 0.01
+                                      , method = "indep"
+                                      , fit = TRUE
+                                      , ...
                                       ){
-  switch (model_sel,
-    full = return(staged_ev_tree(strt_ev_tree(x, fit = fit, lambda = lambda))),
+  switch (method,
+    full = return(staged_ev_tree(strt_ev_tree(x, ...))),
     indep = {
       evt <- staged_ev_tree.list(lapply(x, function(v)
         return(levels(as.factor(v))) )[order])
-      if (fit) { return(fit.staged_ev_tree(evt,data = x, lambda = lambda))
+      if (fit) { return(fit.staged_ev_tree(evt,data = x, ...))
       }else {
           return(evt)
         }
     },
     back_HC = return(backward_hill_climb(data = x,
-                                         order = order, lambda = lambda,
-                                         score = score,
-                                         max_iter = max_iter,
-                                         eps = eps, verbose = verbose )),
-    fast_back_HC = return(fast_backward_hill_climb(data = x, order = order,
-                                                   lambda = lambda,
-                                                   score = score
-                                                   , max_iter = max_iter,
-                                                   eps = eps,
-                                                   verbose = verbose )),
+                                         order = order, ...)),
+    fast_back_HC = return(fast_backward_hill_climb(data = x,
+                                                   order = order, ...)),
     forw_HC = return(NULL),
-    back_join_KL = return(backward_joining(data = x, order = order, lambda = lambda,
-                                    thr = thr, verbose = verbose)),
-    return(staged_ev_tree(strt_ev_tree(x, fit = fit, lambda = lambda)))
+    back_join_KL = return(backward_joining(data = x, order = order, ...)),
+    return(staged_ev_tree(strt_ev_tree(x, fit = fit, ...)))
   )
 }
 
