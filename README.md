@@ -13,10 +13,8 @@ For all the examples we use stupid dataset created as:
 ```
 N <- 100 ## number of observations
 n <- 4 ## number of variables
-max_l <- 5 ## max number of levels for each variable
 DD <- as.data.frame(sapply(1:n, function(i){
-                                     nl <- sample(2:max_l,size=1)
-                                     return(as.factor(sample(c(1:nl), size=N,
+                                     return(as.factor(sample(c(0,1), size=N,
 				     replace = TRUE)))
 				     }  ) )
 ```
