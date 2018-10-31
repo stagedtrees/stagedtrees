@@ -4,7 +4,8 @@
 \alias{plot.staged_ev_tree}
 \title{plot a staged event tree}
 \usage{
-\method{plot}{staged_ev_tree}(evt, rmax = 1, rmin = 0.1, step = 2, ...)
+\method{plot}{staged_ev_tree}(evt, rmax = 1, rmin = 0.1, step = 2,
+  ...)
 }
 \arguments{
 \item{x}{event tree object}

@@ -11,7 +11,8 @@ fast_backward_hill_climb(object = NULL, data = NULL, order = NULL,
 \arguments{
 \item{object}{a staged event tree model (optional)}
 
-\item{data}{the data (can be not specified if it is attached to \code{object})}
+\item{data}{the data (can be not specified
+if it is attached to \code{object})}
 
 \item{order}{the order of the tree (optional)}
 

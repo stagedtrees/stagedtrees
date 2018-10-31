@@ -4,9 +4,10 @@
 \alias{staged_ev_tree.data.frame}
 \title{Staged (stratified) event tree}
 \usage{
-\method{staged_ev_tree}{data.frame}(x, order = colnames(x), fit = FALSE,
-  model_sel = "indep", lambda = 0, score = function(object)
-  return(-BIC(object)), verbose = FALSE, max_iter = 1000, eps = 1e-05)
+\method{staged_ev_tree}{data.frame}(x, order = colnames(x),
+  fit = FALSE, model_sel = "indep", lambda = 0,
+  score = function(object) return(-BIC(object)), verbose = FALSE,
+  max_iter = 1000, eps = 1e-05, thr = 0.01)
 }
 \arguments{
 \item{x}{data.frame with the observation}
