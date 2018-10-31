@@ -7,7 +7,21 @@
 #' @param ... additional parameters to be passed
 #'            to the appropiate method, see \link{staged_ev_tree.data.frame}
 #' @return A staged event tree object (see Details)
-#' @details A staged event tree object consist
+#' @details A staged event tree object is a list with components:
+#'\itemize{
+#'          \item tree: A named list where for each variable, the levels of
+#'                  such variable are listed. The order of the variable is the
+#'                  order of the event tree.
+#'          \item stages: A named list where each component stores the stages
+#'                    for the given variable, stages are represented by numbers
+#'                    that do not need to be consecutive.
+#'          \item paths: A named list where for each variable we list in a
+#'          data.frame object all the possible paths up to that point and the
+#'          assigned stages.
+#'          \item prob: The conditional probability tables for every variable
+#'          and every stage (present only if the staged event tree has been
+#'          fitted)
+#'          }
 #' @export
 staged_ev_tree <- function(x, ... ){
   UseMethod("staged_ev_tree", object = x)
@@ -138,7 +152,7 @@ fit.staged_ev_tree <- function(sevt, data = NULL, lambda = 0, ... ){
   sevt$prob <- list()
   tt <- table(data[order[1]]) + lambda
   tt <- tt / sum(tt)
-  sevt$prob[[order[1]]] <- list(tt)
+  sevt$prob[[order[1]]] <- list("1" = tt)
   for (i in 2:length(order)){
     sevt$prob[[order[i]]] <-  lapply(sevt$stages[[order[i]]], function(s){
       dt <- data[,1:i] #copy relevant data in dt
@@ -243,4 +257,14 @@ join_stages <- function(sevt, v,  s1, s2){
 split_stage <- function(sevt, level,  stage, method = "rand"){
   ## to do
   return(sevt)
+}
+
+#' Check if a staged event tree is fitted
+#'
+#' @param x a staged event tree object
+#' @return logical
+#'
+#' @export
+is_fitted.staged_ev_tree <- function(x){
+  return( !is.null(x$prob))
 }
