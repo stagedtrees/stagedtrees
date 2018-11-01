@@ -1,5 +1,7 @@
 ## stagedtrees 
 
+[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
+
 ### Use
 
 - install with
