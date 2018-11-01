@@ -5,7 +5,7 @@
 \title{Stratified event tree from data.frame}
 \usage{
 \method{strt_ev_tree}{data.frame}(x, order = colnames(x), fit = FALSE,
-  lambda = 0)
+  lambda = 0, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -15,6 +15,8 @@
 \item{fit}{logical}
 
 \item{lambda}{laplace smoothing parameter}
+
+\item{...}{additional parameters}
 }
 \description{
 Stratified event tree from data.frame

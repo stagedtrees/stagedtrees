@@ -12,6 +12,8 @@ strt_ev_tree(x, order = NULL, fit = FALSE, ...)
 \item{order}{Vector of variables names, the order to build the event tree}
 
 \item{fit}{If `TRUE` the conditional probability will be estimated from `data`}
+
+\item{...}{additional parameters}
 }
 \description{
 Builds the complete stratified event tree for a set of categorical variables,

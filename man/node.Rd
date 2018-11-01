@@ -9,6 +9,8 @@ node(x, r, label = "", col = "black", cex.label = 2 * sqrt(r), ...)
 \arguments{
 \item{x}{the center}
 
+\item{r}{the radius}
+
 \item{label}{the label}
 
 \item{col}{color}
@@ -16,8 +18,6 @@ node(x, r, label = "", col = "black", cex.label = 2 * sqrt(r), ...)
 \item{cex.label}{cex parameter to be passed to text}
 
 \item{...}{additional parameters passed to \code{par()}}
-
-\item{the}{radius}
 }
 \description{
 Plot a node

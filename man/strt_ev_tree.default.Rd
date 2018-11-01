@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{object to be coerced to data.frame}
+
+\item{...}{additional parameters}
 }
 \description{
 Stratified event tree

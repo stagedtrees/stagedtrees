@@ -98,6 +98,7 @@ kl <- function(p, q) {
 #' @param x a vector of +1 nad -1
 #' @param eps the uniform noise amount
 #' @return the computed noisy xor
+#' @importFrom stats runif
 xor <- function(x, eps = 0) {
   #set.seed(seed = 0)
   return(sign(prod(x) + runif(
@@ -112,6 +113,7 @@ xor <- function(x, eps = 0) {
 #' @param eps error
 #'
 #' @return
+#' @importFrom stats runif
 generate_xor_dataset <- function(n = 2,
                                  N = 100,
                                  eps = 1.2) {

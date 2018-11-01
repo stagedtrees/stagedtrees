@@ -48,7 +48,7 @@ backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
                                           order = order, lambda = lambda))
   }
   if (is.null(data)){
-    data <- sevt$data
+    data <- object$data
     if (is.null(data)){
       warning("Provide data")
       return(object)
@@ -110,7 +110,7 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                           order = order, lambda = lambda))
   }
   if (is.null(data)){
-    data <- sevt$data
+    data <- object$data
     if (is.null(data)){
       warning("Provide data")
       return(object)
@@ -187,7 +187,7 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
                                           order = order, lambda = lambda))
   }
   if (is.null(data)){
-    data <- sevt$data
+    data <- object$data
     if (is.null(data)){
       warning("Provide data")
       return(object)
@@ -263,7 +263,7 @@ backward_joining <- function(object = NULL, data = NULL, order = NULL
                                           order = order, lambda = lambda))
   }
   if (is.null(data)){
-    data <- sevt$data
+    data <- object$data
     if (is.null(data)){
       warning("Provide data")
       return(object)

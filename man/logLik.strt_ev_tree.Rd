@@ -10,6 +10,8 @@
 \item{object}{the startified event tree object}
 
 \item{data}{the dataset (default to `NULL``)}
+
+\item{...}{additional parameters}
 }
 \description{
 Compute log lik of a stratified tree

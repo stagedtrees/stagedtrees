@@ -95,11 +95,12 @@ staged_ev_tree.data.frame <- function(x,
 #'
 #' @param x list named as the variable and containing the vector of the levels
 #'          for each variable
+#' @param ... additional parameters
 #' @return The staged event tree object
 #' @details The staged (stratified) event tree returned is the minimal one,
 #'          that is the one with just one stage per variable (equivalent to a complete independent model).
 #' @export
-staged_ev_tree.list <- function(x) {
+staged_ev_tree.list <- function(x, ...) {
   if (is.null(names(x))) {
     #if there are no names of variables
     #we assign variables names V1,V2,...

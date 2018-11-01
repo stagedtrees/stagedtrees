@@ -6,6 +6,7 @@
 #' @param x data.frame or list
 #' @param order Vector of variables names, the order to build the event tree
 #' @param fit If `TRUE` the conditional probability will be estimated from `data`
+#' @param ... additional parameters
 #' @export
 #' @examples
 #' a <- c(1,2)
@@ -16,8 +17,9 @@ strt_ev_tree <- function(x, order = NULL, fit = FALSE, ... ){
 #' Stratified event tree
 #'
 #' @param x object to be coerced to data.frame
+#' @param ... additional parameters
 #' @export
-strt_ev_tree.default <- function(x,...){
+strt_ev_tree.default <- function(x, ...){
   return(strt_ev_tree.data.frame(as.data.frame(x, ...)))
 }
 
@@ -27,8 +29,10 @@ strt_ev_tree.default <- function(x,...){
 #' @param order vector of order to build the tree
 #' @param fit logical
 #' @param lambda laplace smoothing parameter
+#' @param ... additional parameters
 #' @export
-strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda = 0){
+strt_ev_tree.data.frame <- function(x, order = colnames(x),
+                                    fit = FALSE, lambda = 0, ...){
   evt <- strt_ev_tree.list(lapply(x, function(v)
     return(levels(as.factor(v))) )[order])
   if (fit) {
@@ -40,12 +44,13 @@ strt_ev_tree.data.frame <- function(x, order = colnames(x), fit = FALSE, lambda 
 #'
 #' @param x a list with component named as the variables and containing the vector
 #'          of factor
+#' @param ... additional parameters
 #' @return A stratified event tree object, that is a list with a `tree` component
 #' @details Build the stratified event tree object from a named list containing the
 #'          levels of the variables. The output is an object with the `tree` component.
 #' @export
 #'
-strt_ev_tree.list <- function(x){
+strt_ev_tree.list <- function(x, ...){
  if (is.null(names(x))){ #if there are no names of variables
    #we assign variables names V1,V2,...
    names(x) <- paste0("V", 1 : length(x))
