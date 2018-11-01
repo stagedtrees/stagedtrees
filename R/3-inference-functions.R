@@ -26,6 +26,7 @@ path_probability.staged_ev_tree <- function(object, x, log = FALSE) {
 #'
 #' @param object the startified event tree object
 #' @param data the dataset (default to `NULL``)
+#' @param ... additional parameters
 #'
 #' @importFrom stats logLik ftable
 #' @export

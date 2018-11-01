@@ -12,6 +12,11 @@
 
 \item{newdata}{The newdata to perform predictions}
 
+\item{class}{A string indicating the name of the variable to use as
+the class variable}
+
+\item{prob}{logical, if \code{TRUE} the probabilities of class are returned}
+
 \item{...}{additional parameters, see details}
 }
 \value{

@@ -4,11 +4,13 @@
 \alias{strt_ev_tree.list}
 \title{Stratified event tree from list}
 \usage{
-\method{strt_ev_tree}{list}(x)
+\method{strt_ev_tree}{list}(x, ...)
 }
 \arguments{
 \item{x}{a list with component named as the variables and containing the vector
 of factor}
+
+\item{...}{additional parameters}
 }
 \value{
 A stratified event tree object, that is a list with a `tree` component

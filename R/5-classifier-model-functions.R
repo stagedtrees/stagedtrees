@@ -5,6 +5,9 @@
 #'
 #' @param object A staged event tree
 #' @param newdata The newdata to perform predictions
+#' @param class A string indicating the name of the variable to use as
+#' the class variable
+#' @param prob logical, if \code{TRUE} the probabilities of class are returned
 #' @param ... additional parameters, see details
 #' @return A vector of predicitons
 #' @export
@@ -41,7 +44,7 @@ predict.staged_ev_tree <-
       stop("class is not one of the variable of the model")
     }
     class_idx <-
-      (1:length(var))[vars %in% class] #find class index in the order
+      (1:length(vars))[vars %in% class] #find class index in the order
     preds <- vars[!(vars %in% class)] #define the predictors
     newdata <- newdata[, vars]
     pred <- t(apply(newdata, MARGIN = 1, function(x) {
@@ -58,7 +61,7 @@ predict.staged_ev_tree <-
       return(pred)
     else{
       class_values <- colnames(pred)
-      return(apply(pred, MARGIN = 1, function(x) {sev
+      return(apply(pred, MARGIN = 1, function(x) {
         factor(class_values[which.max(x)], levels = class_values)
       }))
     }
