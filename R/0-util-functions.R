@@ -113,6 +113,7 @@ xor <- function(x, eps = 0) {
 #' @param eps error
 #'
 #' @return
+#' @export
 #' @importFrom stats runif
 generate_xor_dataset <- function(n = 2,
                                  N = 100,
@@ -143,19 +144,28 @@ generate_xor_dataset <- function(n = 2,
 }
 
 
-### TO CHANGE DO NOT USE
+#' generate a random dataset for classification
+#'
+#' @param n number of variables
+#' @param N number of observations
+#' @param eps noise
+#' @param gamma numeric
+#' @param alpha numeric vector of length \code{n}
+#' @return A data.frame with \code{n} independent random variables and
+#'  one class variable \code{C} computed as
+#'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+#' @export
+#' @importFrom stats runif
 generate_random_dataset <-
   function(n = 2,
            N = 10000,
            eps = 1.2,
            gamma = runif(1, min = -n, max = n),
-           alpha = runif(n, min = -n, max = n),
-           beta = runif(n, min = -1, max = 1)) {
+           alpha = runif(n, min = -n, max = n)) {
     DD <- data.frame(observation = 1:N)
     for (i in 1:n) {
       DD[[paste("X", i, sep = "")]] <- sample(c(-1, +1),
-                                              prob = rep(1, 2),
-                                              #prob=runif(4,min = 1,max = 1),
+                                              prob = runif(2),
                                               size = N,
                                               replace = TRUE)
     }
@@ -164,7 +174,7 @@ generate_random_dataset <-
       MARGIN = 1,
       FUN = function(x) {
         return(sign(
-          sum(x[-1] * alpha) + sum((beta * x[-1]) %*% t(x[-1])) + runif(
+          sum(x[-1] * alpha) + runif(
             n = 1,
             min = -eps,
             max = eps
@@ -173,12 +183,11 @@ generate_random_dataset <-
       }
     )
     DD$C[DD$C == 0] <- 1
-    datafactor <- as.data.frame(sapply(DD, FUN = as.factor))
-    return(list(
-      data = DD[, -1],
-      datafactor = datafactor[, -1],
-      alpha = alpha ,
-      gamma = gamma,
-      beta = beta
+    DD <- as.data.frame(sapply(
+      DD,
+      FUN = function(x) {
+        factor(x, levels = c(-1, 1))
+      }
     ))
+    return(DD[,-1])
   }
