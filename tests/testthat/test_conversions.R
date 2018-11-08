@@ -28,18 +28,20 @@ test_that("test that staged_ev_tree to strt_ev_tree keeps probabilities",{
 })
 
 test_that("test strt_ev_tree -> staged_ev_tree -> strt_ev_tree",{
-  DD <- as.data.frame(sapply(1:4, function(i){
+  DD <- as.data.frame(sapply(1:6, function(i){
     return(as.factor(sample(c(0,1,2), size=100,
                             replace = TRUE)))
   }  ) )
   ev <- strt_ev_tree(DD, fit = TRUE, lambda = 1)
   sev <- staged_ev_tree(ev)
   evback <- strt_ev_tree(sev)
-  k <- sample(1:4, size = 1)
-  expect_equal(
-    ev$prob[[k]],
-    evback$prob[[k]]
-  )
+  for (k in 1:6){
+    expect_equal(
+      ev$prob[[k]],
+      evback$prob[[k]]
+    )  
+  }
+  
 })
 
 
