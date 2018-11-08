@@ -5,7 +5,7 @@
 # to do implement TEST
 # paths is a data.frame as the ones obtained with expand.grid
 # plus one last column with the stage index.
-# path is a vector of length = dim(paths)[2] - 1
+# path is a vector of length = dim(paths)[2] - 1 or longer 
 find_stage <- function(paths, path) {
   k <- dim(paths)[2]
   for (i in 1:(dim(paths)[1])) {

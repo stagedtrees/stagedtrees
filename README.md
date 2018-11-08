@@ -149,6 +149,7 @@ changes can happen.
 - [f] fix of a bug or error
 - [doc] documentation
 
+
 #### Roadmap 
 
 - [x] stratified event tree model 
