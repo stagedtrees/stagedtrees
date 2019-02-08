@@ -2,7 +2,7 @@
 % Please edit documentation in R/3-inference-functions.R
 \name{path_probability.staged_ev_tree}
 \alias{path_probability.staged_ev_tree}
-\title{Compute probability of a path}
+\title{Compute probability of a path from root}
 \usage{
 path_probability.staged_ev_tree(object, x, log = FALSE)
 }
@@ -17,5 +17,5 @@ path_probability.staged_ev_tree(object, x, log = FALSE)
 The probability of the given path or its logarithm if \code{log=TRUE}
 }
 \description{
-Compute probability of a path
+Compute probability of a path from root
 }
