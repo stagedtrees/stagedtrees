@@ -18,5 +18,6 @@ The equivalent staged event tree object
 Staged event tree
 }
 \details{
-The function creates a staged event tree equivalent to the stratified event tree
+The function creates a staged event tree equivalent to 
+the stratified event tree
 }

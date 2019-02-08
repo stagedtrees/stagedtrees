@@ -1,5 +1,5 @@
 
-#' Compute probability of a path
+#' Compute probability of a path from root
 #'
 #' @param object a staged event tree object
 #' @param x the path
