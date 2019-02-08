@@ -128,6 +128,18 @@ We are still implementing model selection algorithm, now available:
  plot(sevt) 
 ``` 
 
+- ##### Using staged trees as classifiers
+
+```
+D <- generate_xor_dataset(n = 5, N = 100) 
+
+model <- staged_ev_tree(D[1:500,6:1], method = "back_join_KL")
+
+pr <- predict(model, class = "C", newdata = D[501:1000,])
+
+table(pr, D$C[501:1000])
+
+```
 
 
 ### Dev
