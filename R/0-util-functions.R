@@ -140,7 +140,7 @@ generate_xor_dataset <- function(n = 2,
       factor(x, levels = c(-1, 1))
     }
   ))
-  return(DD[,-1])
+  return(DD[(n + 1):1,-1])
 }
 
 
@@ -189,5 +189,5 @@ generate_random_dataset <-
         factor(x, levels = c(-1, 1))
       }
     ))
-    return(DD[,-1])
+    return(DD[(n + 1):1,-1])
   }

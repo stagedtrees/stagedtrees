@@ -60,7 +60,6 @@ strt_ev_tree.list <- function(x, ...){
    warning("Levels should be well defined")
    return(NULL) #exit without nothing
  }
-
  evt <- list( tree = x )
  class(evt) <- "strt_ev_tree"
  return(evt)
