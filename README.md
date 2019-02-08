@@ -186,6 +186,7 @@ changes can happen.
         - [x] backward hill-climbing (3 variants)
         - [x] backward joining of stage based on KL distance
         - [ ] forward hill-climbing
+	- [ ] other distances (CD, total variation ..) (general function)
     * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
     * [x] define class 
