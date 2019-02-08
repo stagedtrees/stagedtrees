@@ -119,7 +119,6 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
   now_score <- score(object)
   r <- 1
   iter <- 0
-  ## chose randomly one of the variable and try to perform a stage-merging
   while (r > eps && iter < max_iter){
     iter <- iter + 1
     temp <- object #clone the object

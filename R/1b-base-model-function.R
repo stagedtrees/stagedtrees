@@ -95,12 +95,13 @@ staged_ev_tree.data.frame <- function(x,
 #'
 #' @param x list named as the variable and containing the vector of the levels
 #'          for each variable
+#' @param full if the full models should be created instead
 #' @param ... additional parameters
 #' @return The staged event tree object
 #' @details The staged (stratified) event tree returned is the minimal one,
 #'          that is the one with just one stage per variable (equivalent to a complete independent model).
 #' @export
-staged_ev_tree.list <- function(x, ...) {
+staged_ev_tree.list <- function(x, full = FALSE, ...) {
   if (is.null(names(x))) {
     #if there are no names of variables
     #we assign variables names V1,V2,...
@@ -111,14 +112,12 @@ staged_ev_tree.list <- function(x, ...) {
     x, FUN = length, FUN.VALUE = 1
   )))) {
     #naive check if levels are vector with lenght
-    warning("Levels should be well defined")
-    return(NULL) #exit without nothing
+    stop("Levels should be well defined")
   }
   evt <- list()
-
   evt$tree <- x
   evt$paths <- lapply(1:(length(x) - 1), function(i) {
-    tt <-
+    tt <- 
       expand.grid(evt$tree[i:1])[i:1] ## create all the possible paths
     tt[, dim(tt)[2] + 1] <-
       "1" #put the same color in all the paths
@@ -130,7 +129,6 @@ staged_ev_tree.list <- function(x, ...) {
   class(evt) <- "staged_ev_tree"
   return(evt)
 }
-
 #' Fit a staged event tree
 #'
 #' @param sevt The staged event tree object to be fitted
@@ -183,7 +181,8 @@ fit.staged_ev_tree <- function(sevt,
 #' @param x A stratified event tree object
 #' @param ... additional parameters
 #' @return The equivalent staged event tree object
-#' @details The function creates a staged event tree equivalent to the stratified event tree
+#' @details The function creates a staged event tree equivalent to 
+#' the stratified event tree
 #' @export
 staged_ev_tree.strt_ev_tree <- function(x, ...) {
   x$stages <- list()
@@ -264,6 +263,9 @@ join_stages <- function(sevt, v,  s1, s2) {
     }
     tt <- table(dt[v]) + lambda #table count plus lambda
     sevt$prob[[v]][[s1]] <- tt / sum(tt)  #normalized prob
+    if (!is.null(sevt$ll)){## update log likelihood
+      
+    }
   }
   return(sevt)
 }
