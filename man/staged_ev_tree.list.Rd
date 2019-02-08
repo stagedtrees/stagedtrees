@@ -4,11 +4,13 @@
 \alias{staged_ev_tree.list}
 \title{Staged (stratified) event tree}
 \usage{
-\method{staged_ev_tree}{list}(x, ...)
+\method{staged_ev_tree}{list}(x, full = FALSE, ...)
 }
 \arguments{
 \item{x}{list named as the variable and containing the vector of the levels
 for each variable}
+
+\item{full}{if the full models should be created instead}
 
 \item{...}{additional parameters}
 }
