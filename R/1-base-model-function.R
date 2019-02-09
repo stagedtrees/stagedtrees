@@ -131,9 +131,8 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
      }
      return(ftable(apply(tt, MARGIN=c(2:i), FUN = function(a){
        return(a/sum(a))
-     }),
-                   col.vars = order[i], row.vars = order[1:(i-1)]))
-   } )
+     }),col.vars = order[i], row.vars = order[1:(i-1)]))
+   })
    names(evt$prob) <- order
    evt$data <- data
    evt$lambda <- lambda
