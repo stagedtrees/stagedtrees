@@ -65,7 +65,10 @@ staged_ev_tree.data.frame <- function(x,
                                       ...) {
   switch (
     method,
-    full = return(staged_ev_tree(strt_ev_tree(x, fit = fit, ...))),
+    full = {
+      evt <- staged_ev_tree(strt_ev_tree(x, fit = FALSE, ...))
+      return(fit.staged_ev_tree(evt, data = x, ...))
+      },
     indep = {
       evt <- staged_ev_tree.list(lapply(x, function(v)
         return(levels(as.factor(
@@ -153,7 +156,8 @@ fit.staged_ev_tree <- function(sevt,
   dims <- lapply(sevt$tree, length)
   sevt$prob <- list()
   tt <- table(data[order[1]]) + lambda
-  tt <- tt / sum(tt)
+  attr(tt, "n") <- sum(tt)
+  tt <- tt / attr(tt, "n") 
   sevt$prob[[order[1]]] <- list("1" = tt)
   for (i in 2:length(order)) {
     sevt$prob[[order[i]]] <-
@@ -167,12 +171,14 @@ fit.staged_ev_tree <- function(sevt,
             dt[dt[, j] %in% pths[, j] ,] #reduce dt to the observation that we need
         }
         tt <- table(dt[order[i]]) + lambda #table count plus lambda
-        return(tt / sum(tt)) #return normalized prob
+        attr(tt, "n") <- sum(tt)
+        return(tt / attr(tt, "n")) #return normalized prob
       })
     names(sevt$prob[[order[i]]]) <- sevt$stages[[order[i]]]
   }
   sevt$data <- data
   sevt$lambda <- lambda
+  sevt$ll <- logLik(sevt)
   return(sevt)
 }
 
@@ -202,11 +208,13 @@ staged_ev_tree.strt_ev_tree <- function(x, ...) {
   if (!is.null(x$prob)) {
     ## if the x is fitted
     x$prob[[vars[1]]] <- list("1" = x$prob[[vars[1]]])
+    attr(x$prob[[vars[1]]][["1"]], "n") <- 1
     for (i in 2:length(x$tree)) {
       x$prob[[vars[i]]] <-
         lapply(1:(dim(x$prob[[vars[i]]])[1]), function(k) {
           pp <- x$prob[[vars[i]]][k, ]
           names(pp) <- x$tree[[vars[i]]]
+          attr(pp, "n") <- 1
           return(pp)
         })
       names(x$prob[[vars[i]]]) <-
@@ -226,7 +234,7 @@ staged_ev_tree.strt_ev_tree <- function(x, ...) {
 #' @param stage stage to be assigned
 set_stage <- function(sevt, path, stage) {
   stage <- as.character(stage)
-
+  ## TO DO
   return(sevt)
 }
 
@@ -252,19 +260,19 @@ join_stages <- function(sevt, v,  s1, s2) {
   st <- pths[, d]
   sevt$paths[[v]][st == s2, d] <- s1
   if (!is.null(sevt$prob)) {
-    lambda <- sevt$lambda
+    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+    n1 <- attr(sevt$prob[[v]][[s1]], "n")
+    dll <- sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) + 
+      sum(sevt$prob[[v]][[s1]] * n1 * log(sevt$prob[[v]][[s1]]))
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s2]] * n2 +
+                            sevt$prob[[v]][[s1]] * n1    
+    attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / attr(sevt$prob[[v]][[s1]], "n")
     sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
-    pths <-
-      find_paths(paths = sevt$paths[[v]], s1) #find all the paths in that stage
-    for (j in 1:(length(pths) - 1)) {
-      #for every step in the path ( -1 because last var is stage name)
-      dt <-
-        dt[dt[, j] %in% pths[, j] ,] #reduce dt to the observation that we need
-    }
-    tt <- table(dt[v]) + lambda #table count plus lambda
-    sevt$prob[[v]][[s1]] <- tt / sum(tt)  #normalized prob
     if (!is.null(sevt$ll)){## update log likelihood
-      
+      sevt$ll <- sevt$ll - dll + sum(sevt$prob[[v]][[s1]] * (n2 + n1) * 
+        log(sevt$prob[[v]][[s1]]))
+      attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1 
     }
   }
   return(sevt)
