@@ -83,6 +83,9 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...){
 #'
 #' logLik(sevt, DD[1,])
 logLik.staged_ev_tree <- function(object, data = NULL, ...){
+  if (!is.null(object$ll)){
+    return(object$ll)
+  }
   if (is.null(data)){
     data <- object$data ## like this AIC and BIC works automatically
   }

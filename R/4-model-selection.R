@@ -44,9 +44,9 @@ backward_hill_climb_random <- function(object = NULL, data = NULL, order = NULL
       return(NULL)
     }
     ## if the staged event tree is not provided initialize it to the full model
-    object <- staged_ev_tree(strt_ev_tree(data, fit = TRUE,
-                                          order = order, lambda = lambda))
-  }
+    object <- staged_ev_tree(x = data, fit = TRUE, order = order, 
+                             lambda = lambda, method = "full")
+    }
   if (is.null(data)){
     data <- object$data
     if (is.null(data)){
@@ -106,9 +106,9 @@ backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
       return(NULL)
     }
     ## if the staged event tree is not provided initialize it to the full model
-    object <- staged_ev_tree(strt_ev_tree(data, fit = TRUE,
-                                          order = order, lambda = lambda))
-  }
+    object <- staged_ev_tree(x = data, fit = TRUE, order = order, 
+                             lambda = lambda, method = "full")
+    }
   if (is.null(data)){
     data <- object$data
     if (is.null(data)){
@@ -182,9 +182,8 @@ fast_backward_hill_climb <- function(object = NULL, data = NULL, order = NULL
       stop("Provide something: the fitted staged event tree or data")
     }
     ## if the staged event tree is not provided initialize it to the full model
-    object <- staged_ev_tree(strt_ev_tree(data, fit = TRUE,
-                                          order = order, lambda = lambda))
-  }
+    object <- staged_ev_tree(x = data, fit = TRUE, order = order, 
+                             lambda = lambda, method = "full")  }
   if (is.null(data)){
     data <- object$data
     if (is.null(data)){
@@ -258,8 +257,8 @@ backward_joining <- function(object = NULL, data = NULL, order = NULL
       stop("Provide something: the fitted staged event tree or data")
     }
     ## if the staged event tree is not provided initialize it to the full model
-    object <- staged_ev_tree(strt_ev_tree(data, fit = TRUE,
-                                          order = order, lambda = lambda))
+    object <- staged_ev_tree(x = data, fit = TRUE, order = order, 
+                             lambda = lambda, method = "full")
   }
   if (is.null(data)){
     data <- object$data
@@ -293,4 +292,16 @@ backward_joining <- function(object = NULL, data = NULL, order = NULL
   return(object)
 }
 
+
+#' join all situations with 0 observations
+#' 
+#' @param object a staged event tree object
+#' @return a staged event tree object where equal probabilities are in
+#' the same stage 
+join0stages <- function(object){
+  for (a in names(object$tree)){
+    
+  }
+  return(object)
+}
 
