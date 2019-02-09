@@ -125,11 +125,11 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
    evt$prob <- lapply(1:length(order), function(i){
      path <- order[i:1]
      tt <- table(data[path],dnn = path ) + lambda
-     attr(tt, "n") <- sum(tt)
+     #attr(tt, "n") <- sum(tt)
      if (i == 1){
        return(tt/sum(tt))
      }
-     return(ftable(apply(tt, MARGIN=c(2:i),function(a){
+     return(ftable(apply(tt, MARGIN=c(2:i), FUN = function(a){
        return(a/sum(a))
      }),
                    col.vars = order[i], row.vars = order[1:(i-1)]))
