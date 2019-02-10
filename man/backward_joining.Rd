@@ -4,21 +4,19 @@
 \alias{backward_joining}
 \title{Backword joining of stages}
 \usage{
-backward_joining(object = NULL, data = NULL, order = NULL,
-  lambda = 1, thr = 0.01, verbose = FALSE)
+backward_joining(object = NULL, lambda = 1, thr = 0.01,
+  verbose = FALSE)
 }
 \arguments{
 \item{object}{the staged event tree from where to start}
-
-\item{data}{the dataset}
-
-\item{order}{the order of the variables}
 
 \item{lambda}{the laplace smoothing}
 
 \item{thr}{the threshold for joining stages}
 
 \item{verbose}{logical}
+
+\item{data}{the dataset}
 }
 \value{
 the learned staged event tree

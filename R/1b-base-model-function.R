@@ -80,12 +80,6 @@ staged_ev_tree.data.frame <- function(x,
         return(evt)
       }
     },
-    back_HC = return(backward_hill_climb(data = x,
-                                         order = order, ...)),
-    fast_back_HC = return(fast_backward_hill_climb(data = x,
-                                                   order = order, ...)),
-    forw_HC = return(NULL),
-    back_join_KL = return(backward_joining(data = x, order = order, ...)),
     return(staged_ev_tree(strt_ev_tree(x, fit = fit, ...)))
   )
 }
@@ -132,6 +126,8 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
   class(evt) <- "staged_ev_tree"
   return(evt)
 }
+
+
 #' Fit a staged event tree
 #'
 #' @param sevt The staged event tree object to be fitted
@@ -151,12 +147,14 @@ fit.staged_ev_tree <- function(sevt,
       return(sevt)
     }
   }
+  sevt$lambda <- lambda
   order <- names(sevt$tree)
   data <- data[order] #order the data
-  dims <- lapply(sevt$tree, length)
+  dims <- sapply(sevt$tree, length)
   sevt$prob <- list()
   tt <- table(data[order[1]]) + lambda
   attr(tt, "n") <- sum(tt)
+  lambda <- lambda / dims[1]
   tt <- tt / attr(tt, "n") 
   sevt$prob[[order[1]]] <- list("1" = tt)
   for (i in 2:length(order)) {
@@ -175,9 +173,9 @@ fit.staged_ev_tree <- function(sevt,
         return(tt / attr(tt, "n")) #return normalized prob
       })
     names(sevt$prob[[order[i]]]) <- sevt$stages[[order[i]]]
+    lambda <- lambda / dims[i]
   }
   sevt$data <- data
-  sevt$lambda <- lambda
   sevt$ll <- logLik(sevt)
   return(sevt)
 }
@@ -212,7 +210,7 @@ staged_ev_tree.strt_ev_tree <- function(x, ...) {
     for (i in 2:length(x$tree)) {
       x$prob[[vars[i]]] <-
         lapply(1:(dim(x$prob[[vars[i]]])[1]), function(k) {
-          pp <- x$prob[[vars[i]]][k, ]
+          pp <- x$prob[[ vars[i] ]][k, ]
           names(pp) <- x$tree[[vars[i]]]
           attr(pp, "n") <- 1
           return(pp)
@@ -260,7 +258,7 @@ join_stages <- function(sevt, v,  s1, s2) {
   st <- pths[, d]
   sevt$paths[[v]][st == s2, d] <- s1
   if (!is.null(sevt$prob)) {
-    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+    n2 <- attr(sevt$prob[[v]][[s2]], "n") 
     n1 <- attr(sevt$prob[[v]][[s1]], "n")
     dll <- sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) + 
       sum(sevt$prob[[v]][[s1]] * n1 * log(sevt$prob[[v]][[s1]]))
@@ -270,8 +268,8 @@ join_stages <- function(sevt, v,  s1, s2) {
     sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / attr(sevt$prob[[v]][[s1]], "n")
     sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
     if (!is.null(sevt$ll)){## update log likelihood
-      sevt$ll <- sevt$ll - dll + sum(sevt$prob[[v]][[s1]] * (n2 + n1) * 
-        log(sevt$prob[[v]][[s1]]))
+      sevt$ll <- sevt$ll - dll + (n2 + n1) * sum(sevt$prob[[v]][[s1]] *  
+        log(sevt$prob[[v]][[s1]] ))
       attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1 
     }
   }

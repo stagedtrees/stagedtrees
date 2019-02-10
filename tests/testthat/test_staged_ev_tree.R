@@ -46,7 +46,7 @@ test_that("test that the staged event tree is fitted", {
                D = as.factor(c("a", "uu", "a", "uu")))
   ev <- staged_ev_tree(x = DD, fit = TRUE, lambda = 0)
   for (var in c("A","B","C","D")){
-    expect_equal(ev$prob[[var]][[1]], table(DD[var]) / sum(table(DD[var])))
+    expect_equal(as.numeric(ev$prob[[var]][[1]]), as.numeric(table(DD[var]) / sum(table(DD[var]))))
   }
 })
 
