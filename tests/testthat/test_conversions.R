@@ -37,8 +37,8 @@ test_that("test strt_ev_tree -> staged_ev_tree -> strt_ev_tree",{
   evback <- strt_ev_tree(sev)
   for (k in 1:6){
     expect_equal(
-      ev$prob[[k]],
-      evback$prob[[k]]
+      as.numeric(ev$prob[[k]]),
+      as.numeric(evback$prob[[k]])
     )  
   }
   

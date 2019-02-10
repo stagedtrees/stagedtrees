@@ -90,12 +90,10 @@ logLik.staged_ev_tree <- function(object, data = NULL, ...){
     data <- object$data ## like this AIC and BIC works automatically
   }
   if (is.null(data)){
-    warning("Data should be attached to the object or provided")
-    return(NULL)
+    stop("Data should be attached to the object or provided")
   }
   if (is.null(object$prob)){
-    warning("Object if not fitted, impossible compute logLik")
-    return(NULL)
+    stop("Object if not fitted, impossible compute logLik")
   }
   ll <- logLik(strt_ev_tree(object), data=data) ## lazy way we should do better
   attr(ll, "df") <- sum(c(1, vapply(object$stages, FUN = length, FUN.VALUE = 1) ) *

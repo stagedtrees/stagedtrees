@@ -10,20 +10,15 @@
 
 #### examples
 
-For all the examples we use stupid dataset created as:
+For the example we use a simulated dataset with 6 binary variables:
 
 ```
-N <- 100 ## number of observations
-n <- 4 ## number of variables
-DD <- as.data.frame(sapply(1:n, function(i){
-                                     return(as.factor(sample(c(0,1), size=N,
-				     replace = TRUE)))
-				     }  ) )
+DD <- generate_random_dataset(n = 5, 1000)
 ```
 
 ##### Full stratified trees 
 
-This objects just represent the full chain rule with a fixed order.
+This object just represent the full chain rule with a fixed order.
 
 We can create a stratified event tree object from a list containing the
 levels of the variables:
@@ -44,7 +39,7 @@ evt <- strt_ev_tree(DD, fit=TRUE, lambda = 2)
 
 plot(evt)
 
-evt$prob$V2 ### here probabilities table are stored
+evt$prob$X1 ### here probabilities table are stored
 ```
 
 
@@ -89,8 +84,8 @@ We are still implementing model selection algorithm, now available:
 
   The algorithm moves to the **best** model that increase the score.
   ```
-  ## no need to set fit = TRUE, models will be fitted anyway
-  sevt <- staged_ev_tree(DD, method = "back_HC", verbose = T)
+  sevt_full <- staged_ev_tree(DD, method = "full", verbose = T)
+  sevt <- backward_hill_climb(sevt, verbose = FALSE)
   sevt$score$value
   plot(sevt)
   ```
@@ -98,13 +93,12 @@ We are still implementing model selection algorithm, now available:
   But it can be changed with the `score` parameter as follow:
 
   ```
-  ## using logLik will not merge any stage as expected since we are not
-  ## penalizing complexity 
-  sevt <- staged_ev_tree(DD, method="back_HC", score = logLik)
+  ## using logLik will merge only equal probabilities stages 
+  sevt1 <- backward_hill_climb(sevt_full, score = logLik)
 
   ## instead penalizing a lot complexity
   score <- function(object) return(-AIC(object, k=100))
-  sevt <- staged_ev_tree(DD, method="back_HC", score = score)
+  sevt2 <- backward_hill_climb(sevt_full, score = score)
   sevt$score$value
   sevt$stages
   plot(sevt)
@@ -117,8 +111,7 @@ We are still implementing model selection algorithm, now available:
   ```
   ## we use verbose = TRUE  to obtain messages 
   ## We can use score as in the back_HC method
-  sevt <- staged_ev_tree(DD, method = "fast_back_HC"
-                           , eps=0, max_iter = Inf, verbose = TRUE)  
+  sevt3 <- fast_backward_hill_climb(sevt_full)
   ```
 
 - ##### Backward joining based on KL
@@ -141,14 +134,11 @@ table(pr, D$C[501:1000])
 
 ```
 
-
 ### Dev
 
 - `testthat` is used to test the package..
 - `roxygen2` is used to generate automatically the documentation.
 - `Travis CI` is used to check automatically at every push. 
-
-
 
 ####  Commit messages
 
@@ -169,6 +159,8 @@ changes can happen.
 - [x] staged event tree
 - [x] fitting staged event tree (mle)
 - [ ] print method for staged and stratified event tree
+- [ ] conversion BN to staged event tree
+- [ ] extracting sub tree
 - [x] plotting: 
     * [x] stratified event tree
     * [x] staged event tree (colors)
@@ -179,6 +171,7 @@ changes can happen.
     * [x] joint prob of a path from root 
     * [x] logLik for full tree (thus AIC and BIC work automatically)
     * [x] logLik staged tree 
+    * [x] lazy logLik
 - [ ] structure search:
     * [ ] implement ``join_, split_, set_stage`` functions
     * [ ] exhaustive search 
@@ -186,7 +179,7 @@ changes can happen.
         - [x] backward hill-climbing (3 variants)
         - [x] backward joining of stage based on KL distance
         - [ ] forward hill-climbing
-	- [ ] other distances (CD, total variation ..) (general function)
+	  * [ ] other distances (CD, total variation ..) (general function)
     * [x] Penalized logLik (AIC, BIC)
 - [ ] classifiers with staged trees 
     * [x] define class 
