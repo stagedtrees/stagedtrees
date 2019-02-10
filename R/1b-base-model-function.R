@@ -72,7 +72,8 @@ staged_ev_tree.data.frame <- function(x,
         return(levels(as.factor(
         v
        ))))[order]
-      sevt <- staged_ev_tree.list(tree, full = full, ...)
+      sevt <- staged_ev_tree.list(tree, full = full, ...) 
+
       if (fit) {
         return(fit.staged_ev_tree(sevt, data = x, ...))
       } else {
@@ -108,6 +109,9 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
   )))) {
     #naive check if levels are vector with lenght
     stop("Levels should be well defined")
+  }
+  if (full){
+    return(staged_ev_tree.strt_ev_tree(strt_ev_tree.list(x, ...)))
   }
   evt <- list()
   evt$tree <- x
