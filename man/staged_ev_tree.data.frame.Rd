@@ -25,3 +25,6 @@ A staged event tree object
 Builds the staged event tree from a data set of categorical variables,
 the order can be specified.
 }
+\details{
+The staged event trees
+}

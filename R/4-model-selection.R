@@ -36,6 +36,7 @@ forward_select.staged_ev_treee <-
 #' @param verbose If info should be printed (via \code{message})
 #' @export
 #' @importFrom stats  BIC
+#' @importFrom  methods is
 backward_hill_climb_random <-
   function(object = NULL,
            score = function(x)
@@ -91,6 +92,7 @@ backward_hill_climb_random <-
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
 #' @importFrom stats  BIC
+#' @importFrom  methods is
 #' @export
 backward_hill_climb <-
   function(object = NULL,
@@ -157,6 +159,7 @@ backward_hill_climb <-
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
 #' @importFrom stats  BIC
+#' @importFrom  methods is
 #' @export
 fast_backward_hill_climb <-
   function(object = NULL,
@@ -229,11 +232,11 @@ fast_backward_hill_climb <-
 #' using entropy do decide if join or not a stage
 #'
 #' @param object the staged event tree from where to start
-#' @param data the dataset
 #' @param lambda the laplace smoothing
 #' @param thr the threshold for joining stages
 #' @param verbose logical
 #' @return the learned staged event tree
+#' @importFrom  methods is
 backward_joining <-
   function(object = NULL,
            lambda = 1,
