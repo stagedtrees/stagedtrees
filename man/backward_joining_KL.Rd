@@ -4,13 +4,10 @@
 \alias{backward_joining_KL}
 \title{Backword joining of stages}
 \usage{
-backward_joining_KL(object = NULL, lambda = 1, thr = 0.01,
-  verbose = FALSE)
+backward_joining_KL(object = NULL, thr = 0.01, verbose = FALSE)
 }
 \arguments{
 \item{object}{the staged event tree from where to start}
-
-\item{lambda}{the laplace smoothing}
 
 \item{thr}{the threshold for joining stages}
 
