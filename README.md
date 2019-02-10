@@ -158,6 +158,7 @@ changes can happen.
 - [ ] print method for staged and stratified event tree
 - [ ] conversion BN to staged event tree
 - [ ] extracting sub tree
+- [ ] sampling from a staged tree and strt event tree
 - [x] plotting: 
     * [x] stratified event tree
     * [x] staged event tree (colors)
@@ -169,6 +170,8 @@ changes can happen.
     * [x] logLik for full tree (thus AIC and BIC work automatically)
     * [x] logLik staged tree 
     * [x] lazy logLik
+    * [ ] Bayes factor, LRT
+    * [ ] conditional probabilities 
 - [ ] structure search:
     * [ ] implement ``join_, split_, set_stage`` functions
     * [ ] exhaustive search 
@@ -178,9 +181,11 @@ changes can happen.
         - [ ] forward hill-climbing
 	  * [ ] other distances (CD, total variation ..) (general function)
     * [x] Penalized logLik (AIC, BIC)
+    * [ ] Stage strenght (inspired by arc strenght in bnlearn) - bootstrap
 - [ ] classifiers with staged trees 
     * [x] define class 
     * [x] define predict method
-    * [ ] eval 
     * [ ] model selection (struct search ...)
+    * [ ] define a staged event trees classifier
+    * [ ] cross validation scores (as in bnlearn)
 
