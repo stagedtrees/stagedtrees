@@ -7,7 +7,6 @@
 - install with
   `devtools::install_github("gherardovarando/stagedtrees")`
 
-
 #### examples
 
 For the example we use a simulated dataset with 6 binary variables:
