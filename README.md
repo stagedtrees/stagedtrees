@@ -136,6 +136,8 @@ We are still implementing model selection algorithm, now available:
 - `roxygen2` is used to generate automatically the documentation.
 - `Travis CI` is used to check automatically at every push. 
 
+
+
 ####  Commit messages
 
 We try to keep commit messages cleaned, but sometimes big commit with lot of
@@ -158,6 +160,7 @@ changes can happen.
 - [ ] conversion BN to staged event tree
 - [ ] extracting sub tree
 - [ ] sampling from a staged tree and strt event tree
+- [ ] discretize strategy 
 - [x] plotting: 
     * [x] stratified event tree
     * [x] staged event tree (colors)
