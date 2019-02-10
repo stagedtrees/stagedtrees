@@ -13,6 +13,12 @@ generate_xor_dataset(n = 2, N = 100, eps = 1.2)
 
 \item{eps}{error}
 }
+\value{
+The xor dataset
+}
 \description{
 generate a xor dataset
+}
+\examples{
+DD <- generate_xor_dataset(n = 5, N = 1000, eps = 1.2)
 }

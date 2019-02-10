@@ -21,3 +21,9 @@ A staged event tree object with the conditional probabilities fitted
 \description{
 Fit a staged event tree
 }
+\examples{
+model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+D <- data.frame(X = c("good", "good", "bad"), 
+                Y = c("high", "low", "low"))
+model.fit <- fit.staged_ev_tree(model, data = D, lambda = 1)
+}
