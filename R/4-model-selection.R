@@ -232,14 +232,13 @@ fast_backward_hill_climb <-
 #' using entropy do decide if join or not a stage
 #'
 #' @param object the staged event tree from where to start
-#' @param lambda the laplace smoothing
 #' @param thr the threshold for joining stages
 #' @param verbose logical
 #' @return the learned staged event tree
 #' @importFrom  methods is
-backward_joining <-
+#' @export
+backward_joining_KL <-
   function(object = NULL,
-           lambda = 1,
            thr = 0.01,
            verbose = FALSE) {
     stopifnot(is(object, "staged_ev_tree"))

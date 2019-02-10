@@ -82,9 +82,10 @@ We are still implementing model selection algorithm, now available:
   ```
 - ##### Backward Hill-Climbing
 
-  The algorithm moves to the **best** model that increase the score.
+  The algorithm moves to the **best** model that increase the score. 
+  We need to avoid 0 probabilitites (`lambda = 1`).
   ```
-  sevt_full <- staged_ev_tree(DD, method = "full", verbose = T)
+  sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
   sevt <- backward_hill_climb(sevt, verbose = FALSE)
   sevt$score$value
   plot(sevt)
@@ -115,24 +116,20 @@ We are still implementing model selection algorithm, now available:
   ```
 
 - ##### Backward joining based on KL
-  For every variable the algorithm iterates and at every step try to join the two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
-```
- sevt <- staged_ev_tree(DD, method = "back_join_KL", thr = 0.01)
- plot(sevt) 
-``` 
+  For every variable the algorithm iterates and at every step try to join the
+  two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
+  ```
+  sevt <- backward_joining_KL(sevt_full)
+  plot(sevt) 
+  ``` 
 
 - ##### Using staged trees as classifiers
 
-```
-D <- generate_xor_dataset(n = 5, N = 100) 
+  ```
+  pr <- predict(sevt, class = "C", newdata = D[1:10,])
 
-model <- staged_ev_tree(D[1:500,6:1], method = "back_join_KL")
-
-pr <- predict(model, class = "C", newdata = D[501:1000,])
-
-table(pr, D$C[501:1000])
-
-```
+  table(pr, D$C[1:10])
+  ```
 
 ### Dev
 
