@@ -15,8 +15,6 @@ backward_joining(object = NULL, lambda = 1, thr = 0.01,
 \item{thr}{the threshold for joining stages}
 
 \item{verbose}{logical}
-
-\item{data}{the dataset}
 }
 \value{
 the learned staged event tree

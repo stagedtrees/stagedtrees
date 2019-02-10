@@ -53,7 +53,7 @@ staged_ev_tree.default <- function(x, ...) {
 #' @param fit logical
 #' @param ... additional parameters to be passed to other methods (see details)
 #' @return A staged event tree object
-#' @details
+#' @details The staged event trees
 #' @export
 staged_ev_tree.data.frame <- function(x,
                                       order = colnames(x)
