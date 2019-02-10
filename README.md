@@ -86,7 +86,7 @@ We are still implementing model selection algorithm, now available:
   We need to avoid 0 probabilitites (`lambda = 1`).
   ```
   sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
-  sevt <- backward_hill_climb(sevt, verbose = FALSE)
+  sevt <- backward_hill_climb(sevt_full, verbose = FALSE)
   sevt$score$value
   plot(sevt)
   ```
@@ -126,9 +126,9 @@ We are still implementing model selection algorithm, now available:
 - ##### Using staged trees as classifiers
 
   ```
-  pr <- predict(sevt, class = "C", newdata = D[1:10,])
+  pr <- predict(sevt, class = "C", newdata = DD[1:10,])
 
-  table(pr, D$C[1:10])
+  table(pr, DD$C[1:10])
   ```
 
 ### Dev
