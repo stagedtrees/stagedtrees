@@ -72,20 +72,20 @@ We are still implementing model selection algorithm, now available:
 
 - ##### Independent model (default) 
   ```
-  sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
+  sevt <- staged_ev_tree(DD, fit = TRUE)
   ```
 - ##### Full model 
   ```
   ## if fit=FALSE (default) model will be returned without fitted
   ##  probabilities
-  sevt <- staged_ev_tree(DD, fit = TRUE, method = "full")
+  sevt <- staged_ev_tree(DD, fit = TRUE, full = TRUE)
   ```
 - ##### Backward Hill-Climbing
 
   The algorithm moves to the **best** model that increase the score. 
   We need to avoid 0 probabilitites (`lambda = 1`).
   ```
-  sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
+  sevt_full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
   sevt <- backward_hill_climb(sevt_full, verbose = FALSE)
   sevt$score$value
   plot(sevt)

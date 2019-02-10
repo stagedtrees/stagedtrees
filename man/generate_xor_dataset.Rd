@@ -19,3 +19,6 @@ The xor dataset
 \description{
 generate a xor dataset
 }
+\examples{
+DD <- generate_xor_dataset(n = 5, N = 1000, eps = 1.2)
+}

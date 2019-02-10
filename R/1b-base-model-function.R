@@ -23,6 +23,10 @@
 #'          fitted)
 #'          }
 #' @export
+#' @examples 
+#' DD <- generate_random_dataset(n = 5, 1000)
+#' sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
+#' sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
 staged_ev_tree <- function(x, ...) {
   UseMethod("staged_ev_tree", object = x)
 }
@@ -48,46 +52,38 @@ staged_ev_tree.default <- function(x, ...) {
 #' the order can be specified.
 #'
 #' @param x data.frame with the observation
-#' @param order vector of order, default to the order of the columns of `x`
-#' @param method String the type of model selection performed
+#' @param order vector of order, default to the order of the columns of \code{x}
+#' @param full logical, if the full model should be built instead
 #' @param fit logical
-#' @param ... additional parameters to be passed to other methods (see details)
+#' @param ... additional parameters to be passed to other methods (mainly 
+#' \link{fit.staged_ev_tree})
 #' @return A staged event tree object
 #' @details The staged event trees
+#' @examples
+#' DD <- generate_random_dataset(n = 5, 1000)
+#' sevt <- staged_ev_tree(DD, fit = TRUE, full = FALSE)
 #' @export
 staged_ev_tree.data.frame <- function(x,
-                                      order = colnames(x)
-                                      ,
-                                      method = "indep"
-                                      ,
-                                      fit = TRUE
-                                      ,
+                                      order = colnames(x),
+                                      full = FALSE,
+                                      fit = TRUE,
                                       ...) {
-  switch (
-    method,
-    full = {
-      evt <- staged_ev_tree(strt_ev_tree(x, fit = FALSE, ...))
-      return(fit.staged_ev_tree(evt, data = x, ...))
-      },
-    indep = {
-      evt <- staged_ev_tree.list(lapply(x, function(v)
+     tree <- lapply(x, function(v)
         return(levels(as.factor(
-          v
-        ))))[order])
+        v
+       ))))[order]
+      sevt <- staged_ev_tree.list(tree, full = full, ...)
       if (fit) {
-        return(fit.staged_ev_tree(evt, data = x, ...))
+        return(fit.staged_ev_tree(sevt, data = x, ...))
       } else {
-        return(evt)
+        return(sevt)
       }
-    },
-    return(staged_ev_tree(strt_ev_tree(x, fit = fit, ...)))
-  )
 }
 
 
 #' Staged (stratified) event tree
 #'
-#' Builds the staged event tree for a set of categorical variables,
+#' Build the staged event tree for a set of categorical variables,
 #' the order can be specified.
 #'
 #' @param x list named as the variable and containing the vector of the levels
@@ -97,6 +93,8 @@ staged_ev_tree.data.frame <- function(x,
 #' @return The staged event tree object
 #' @details The staged (stratified) event tree returned is the minimal one,
 #'          that is the one with just one stage per variable (equivalent to a complete independent model).
+#'
+#' @examples #' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
 #' @export
 staged_ev_tree.list <- function(x, full = FALSE, ...) {
   if (is.null(names(x))) {
@@ -136,6 +134,11 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
 #' @param ... additional parameters
 #' @return A staged event tree object with the conditional probabilities fitted
 #' @export
+#' @examples 
+#' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+#' D <- data.frame(X = c("good", "good", "bad"), 
+#'                 Y = c("high", "low", "low"))
+#' model.fit <- fit.staged_ev_tree(model, data = D, lambda = 1)
 fit.staged_ev_tree <- function(sevt,
                                data = NULL,
                                lambda = 0,
