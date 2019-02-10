@@ -4,23 +4,13 @@
 \alias{fast_backward_hill_climb}
 \title{Fast backword hill-climbing}
 \usage{
-fast_backward_hill_climb(object = NULL, data = NULL, order = NULL,
-  lambda = 1, score = function(x) return(-BIC(x)), eps = 0,
-  max_iter = Inf, verbose = FALSE)
+fast_backward_hill_climb(object = NULL, score = function(x)
+  return(-BIC(x)), max_iter = Inf, verbose = FALSE)
 }
 \arguments{
-\item{object}{a staged event tree model (optional)}
-
-\item{data}{the data (can be not specified
-if it is attached to \code{object})}
-
-\item{order}{the order of the tree (optional)}
-
-\item{lambda}{the laplace smoothing factor}
+\item{object}{a staged event tree model}
 
 \item{score}{the score function to be maximized}
-
-\item{eps}{the stopping criteria for the relative score increase}
 
 \item{max_iter}{the maximum number of iteration}
 

@@ -27,3 +27,6 @@ A data.frame with \code{n} independent random variables and
 \description{
 generate a random binary dataset for classification
 }
+\examples{
+DD <- generate_random_dataset(n = 5, 1000)
+}
