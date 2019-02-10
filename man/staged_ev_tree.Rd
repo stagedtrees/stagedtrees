@@ -36,3 +36,8 @@ A staged event tree object is a list with components:
          fitted)
          }
 }
+\examples{
+DD <- generate_random_dataset(n = 5, 1000)
+sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
+sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
+}
