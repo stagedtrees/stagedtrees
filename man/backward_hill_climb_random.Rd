@@ -4,18 +4,11 @@
 \alias{backward_hill_climb_random}
 \title{backword naive random hill-climbing}
 \usage{
-backward_hill_climb_random(object = NULL, data = NULL, order = NULL,
-  lambda = 1, score = function(x) return(-BIC(x)), eps = 1e-04,
-  max_iter = 100, verbose = FALSE)
+backward_hill_climb_random(object = NULL, score = function(x)
+  return(-BIC(x)), eps = 1e-04, max_iter = 100, verbose = FALSE)
 }
 \arguments{
-\item{object}{a staged event tree model (optional)}
-
-\item{data}{the data (can be not specified if it is attached to \code{object})}
-
-\item{order}{the order of the tree (optional)}
-
-\item{lambda}{the laplace smoothing factor}
+\item{object}{a staged event tree model}
 
 \item{score}{the score function to be maximized}
 

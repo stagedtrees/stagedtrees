@@ -13,4 +13,5 @@ Suggests: testthat
 Url: https://github.com/gherardovarando/stagedtrees
 BugReports: https://github.com/gherardovarando/stagedtrees/issues
 Imports: stats,
-         graphics
+         graphics,
+         methods

@@ -5,18 +5,19 @@
 \title{Staged (stratified) event tree}
 \usage{
 \method{staged_ev_tree}{data.frame}(x, order = colnames(x),
-  method = "indep", fit = TRUE, ...)
+  full = FALSE, fit = TRUE, ...)
 }
 \arguments{
 \item{x}{data.frame with the observation}
 
-\item{order}{vector of order, default to the order of the columns of `x`}
+\item{order}{vector of order, default to the order of the columns of \code{x}}
 
-\item{method}{String the type of model selection performed}
+\item{full}{logical, if the full model should be built instead}
 
 \item{fit}{logical}
 
-\item{...}{additional parameters to be passed to other methods (see details)}
+\item{...}{additional parameters to be passed to other methods (mainly 
+\link{fit.staged_ev_tree})}
 }
 \value{
 A staged event tree object
@@ -24,4 +25,11 @@ A staged event tree object
 \description{
 Builds the staged event tree from a data set of categorical variables,
 the order can be specified.
+}
+\details{
+The staged event trees
+}
+\examples{
+DD <- generate_random_dataset(n = 5, 1000)
+sevt <- staged_ev_tree(DD, fit = TRUE, full = FALSE)
 }

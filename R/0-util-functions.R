@@ -110,9 +110,10 @@ xor <- function(x, eps = 0) {
 #' @param N number of observations
 #' @param eps error
 #'
-#' @return
+#' @return The xor dataset
 #' @export
 #' @importFrom stats runif
+#' @examples DD <- generate_xor_dataset(n = 5, N = 1000, eps = 1.2)
 generate_xor_dataset <- function(n = 2,
                                  N = 100,
                                  eps = 1.2) {
@@ -138,7 +139,7 @@ generate_xor_dataset <- function(n = 2,
       factor(x, levels = c(-1, 1))
     }
   ))
-  return(DD[,-1])
+  return(DD[, -1])
 }
 
 
@@ -154,6 +155,7 @@ generate_xor_dataset <- function(n = 2,
 #'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 #' @export
 #' @importFrom stats runif
+#' @examples DD <- generate_random_dataset(n = 5, 1000)
 generate_random_dataset <-
   function(n = 2,
            N = 10000,
@@ -187,5 +189,5 @@ generate_random_dataset <-
         factor(x, levels = c(-1, 1))
       }
     ))
-    return(DD[,-1])
+    return(DD[, -1])
   }
