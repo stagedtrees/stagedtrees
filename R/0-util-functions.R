@@ -1,10 +1,54 @@
+
+#' return path index
+#' 
+#' @param path a path from root in the tree
+#' @param tree a symmetric tree given as a list of levels 
+#' 
+#' This function return the integer index of the node associated with the 
+#' given path in a symmetric tree defined by \code{tree}.
+#' 
+#' @return an integer, the index of the node corresponding to \code{path}
+#' @export
+tree_idx <- function(path, tree){
+ k <- length(path)
+ ls <- sapply(tree, length)
+ is <- vapply(1:k, FUN = function(i){
+   (1:ls[i])[ tree[[i]] %in% path[i]  ]
+ }, FUN.VALUE = 1) 
+ if (k <= 1){
+   return(is[1])
+ }
+ sum(vapply(1:(k-1), FUN = function(i){
+   prod(ls[(i+1):(k)])
+ }, FUN.VALUE = 1) * (is[1:(k - 1)] - 1))  + is[k]  
+ ##index in the strata now otherwise remove the -1, the following
+ ## function is the complete indexing
+ ## sum(vapply(1:(k-1), FUN = function(i){
+ ## prod(ls[(i+1):(k)])
+ ## }, FUN.VALUE = 1) * is[1:(k - 1)])  + is[k]
+ ##
+ ##
+}
+
+
+
 # find the stage in the path
 # no checking, be careful how to use it
 # to do implement TEST
 # paths is a data.frame as the ones obtained with expand.grid
 # plus one last column with the stage index.
 # path is a vector of length = dim(paths)[2] - 1 or longer 
-find_stage <- function(paths, path) {
+#'
+#'@export
+find_stage <- function(paths, path, tree) {
+  k <- dim(paths)[2]
+  ix <- tree_idx(path = path[1:(k-1)], tree = tree)
+  return(paths[ix, k])
+}
+
+
+#' slow version (can be used to test)
+old_find_stage <- function(paths, path, tree) {
   k <- dim(paths)[2]
   for (i in 1:(dim(paths)[1])) {
     if (all(paths[i, -k] == path[1:(k - 1)]))
