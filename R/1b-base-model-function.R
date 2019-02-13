@@ -183,6 +183,7 @@ fit.staged_ev_tree <- function(sevt,
     lambda <- lambda / dims[i]
   }
   sevt$data <- data
+  sevt$ll <- NULL
   sevt$ll <- logLik(sevt)
   return(sevt)
 }
@@ -284,9 +285,34 @@ join_stages <- function(sevt, v,  s1, s2) {
 }
 
 
-split_stage <- function(sevt, level,  stage, method = "rand") {
-  ## to do
-  return(sevt)
+#' split randomly a stage 
+#' 
+#' Randomly assign some of the path to a new stage
+#' 
+#' @param object a staged event tree object
+#' @param stratum the variable where to split the stage
+#' @param stage the name of the stage
+#' @param p probability
+#' 
+#' @return a staged event tree object
+#' @export
+split_stage_random <- function(object, stratum,  stage, p = 0.5) {
+  if (!(stage %in% object$stages[stratum])){
+    return(object)
+  }
+  label <- new_label(object$stages[[stratum]])
+  d <- dim(object$paths[[stratum]])
+  ix <- (object$paths[[stratum]][,d[2]] == stage ) & sample(x = c(TRUE, FALSE), size = d[1], 
+                                                         prob = c(p, 1 - p), replace = TRUE )
+  if (any(ix)){
+    object$paths[[stratum]][ix, d[2]] <- label
+    object$stages[[stratum]] <- c(object$stages[[stratum]], label)
+    
+    if (is_fitted.staged_ev_tree(object)){
+      object <- fit.staged_ev_tree(object)
+    }
+  }
+  return(object)
 }
 
 #' Check if a staged event tree is fitted
@@ -297,4 +323,21 @@ split_stage <- function(sevt, level,  stage, method = "rand") {
 #' @export
 is_fitted.staged_ev_tree <- function(x) {
   return(!is.null(x$prob))
+}
+
+#' give a safe-to-add label that is not in \code{labels}
+#' INTERNAL USE
+#' 
+#' @param labels vector of labels (strings)
+#' 
+#' @return a string label that is different from each \code{labels}
+new_label <- function(labels){
+  k <- 1
+  labels <- as.character(labels)
+  while (TRUE){
+    if (!(as.character(k) %in% labels)){
+      return(as.character(k))
+    }
+    k <- k + 1
+  }
 }

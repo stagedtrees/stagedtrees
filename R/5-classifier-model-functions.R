@@ -1,6 +1,3 @@
-
-
-
 #' Predcict method for staged event tree
 #'
 #' @param object A staged event tree

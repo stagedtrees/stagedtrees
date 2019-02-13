@@ -1,4 +1,5 @@
 
+
 #' Compute probability of a path from root
 #'
 #' @param object a staged event tree object
@@ -6,21 +7,24 @@
 #' @param log logical
 #' @return The probability of the given path or its logarithm if \code{log=TRUE}
 #' @export
-path_probability.staged_ev_tree <- function(object, x, log = FALSE) {
-  if (!is.null(names(x))) {
-    #if it's a named vector just order it
-    x <- x[names(object$tree)]
+path_probability.staged_ev_tree <-
+  function(object, x, log = FALSE) {
+    if (!is.null(names(x))) {
+      #if it's a named vector just order it
+      x <- x[names(object$tree)]
+    }
+    l <- log(object$prob[[1]][[1]][x[1]])
+    if (length(x) > 1) {
+      for (i in 2:length(x)) {
+        s <- find_stage(object$paths[[i - 1]], x, object$tree)
+        l <- l + log(object$prob[[i]][[s]][x[i]])
+      }
+    }
+    if (log)
+      return(l)
+    else
+      return(exp(l))
   }
-  l <- log(object$prob[[1]][[1]][x[1]])
-  for (i in 2:length(x)) {
-    s <- find_stage(object$paths[[i - 1]], x)
-    l <- l + log(object$prob[[i]][[s]][x[i]])
-  }
-  if (log)
-    return(l)
-  else
-    return(exp(l))
-}
 
 #' Compute log lik of a stratified tree
 #'
@@ -39,29 +43,33 @@ path_probability.staged_ev_tree <- function(object, x, log = FALSE) {
 #' logLik(evt)
 #'
 #' logLik(evt, DD[1,])
-logLik.strt_ev_tree <- function(object, data = NULL, ...){
-
- if (is.null(data)){
-   data <- object$data ## like this AIC and BIC works automatically
- }
- if (is.null(data)){
-   warning("Data should be attached to the object or provided")
-   return(NULL)
- }
- if (is.null(object$prob)){
-   warning("Object if not fitted, impossible compute logLik")
-   return(NULL)
- }
- order <- names(object$tree)
- ll <- sum(log(object$prob[[order[1]]] ) * table(data[order[1]]) ) +
-             sum(vapply(2:length(order),FUN = function(i){
-   sum(log(object$prob[[order[i]]])*ftable(data,col.vars = order[i],
-                                           row.vars = order[1:(i-1)]) )
- }, FUN.VALUE = 1) )
- attr(ll, "df") <- prod(vapply(object$tree, FUN = length, FUN.VALUE = 1)) - 1
- attr(ll, "nobs") <- dim(data)[1]
- class(ll) <- "logLik"
- return(ll)
+logLik.strt_ev_tree <- function(object, data = NULL, ...) {
+  if (is.null(data)) {
+    data <- object$data ## like this AIC and BIC works automatically
+  }
+  if (is.null(data)) {
+    warning("Data should be attached to the object or provided")
+    return(NULL)
+  }
+  if (is.null(object$prob)) {
+    warning("Object if not fitted, impossible compute logLik")
+    return(NULL)
+  }
+  order <- names(object$tree)
+  ll <- sum(log(object$prob[[order[1]]]) * table(data[order[1]])) +
+    sum(vapply(
+      2:length(order),
+      FUN = function(i) {
+        sum(log(object$prob[[order[i]]]) * ftable(data, col.vars = order[i],
+                                                  row.vars = order[1:(i - 1)]))
+      },
+      FUN.VALUE = 1
+    ))
+  attr(ll, "df") <-
+    prod(vapply(object$tree, FUN = length, FUN.VALUE = 1)) - 1
+  attr(ll, "nobs") <- dim(data)[1]
+  class(ll) <- "logLik"
+  return(ll)
 }
 
 
@@ -82,23 +90,27 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...){
 #' logLik(sevt)
 #'
 #' logLik(sevt, DD[1,])
-logLik.staged_ev_tree <- function(object, data = NULL, ...){
-  if (!is.null(object$ll)){
+logLik.staged_ev_tree <- function(object, data = NULL, ...) {
+  if (!is.null(object$ll) && is.null(data)) {
     return(object$ll)
   }
-  if (is.null(data)){
+  if (is.null(data)) {
     data <- object$data ## like this AIC and BIC works automatically
   }
-  if (is.null(data)){
+  if (is.null(data)) {
     stop("Data should be attached to the object or provided")
   }
-  if (is.null(object$prob)){
+  if (is.null(object$prob)) {
     stop("Object if not fitted, impossible compute logLik")
   }
-  ll <- logLik(strt_ev_tree(object), data=data) ## lazy way we should do better
-  attr(ll, "df") <- sum(c(1, vapply(object$stages, FUN = length, FUN.VALUE = 1) ) *
-                    (vapply(object$tree, FUN = length, FUN.VALUE = 1) - 1)   )    ## compute the degree of freedom
+  ll <-
+    logLik(strt_ev_tree(object), data = data) ## lazy way we should do better
+  attr(ll, "df") <-
+    sum(c(1, vapply(
+      object$stages, FUN = length, FUN.VALUE = 1
+    )) *
+      (vapply(
+        object$tree, FUN = length, FUN.VALUE = 1
+      ) - 1))    ## compute the degree of freedom
   return(ll)
 }
-
-
