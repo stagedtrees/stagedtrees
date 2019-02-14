@@ -4,7 +4,8 @@
 \alias{plot.staged_ev_tree}
 \title{plot a staged event tree}
 \usage{
-\method{plot}{staged_ev_tree}(x, rmax = 1, rmin = 0.1, step = 2, ...)
+\method{plot}{staged_ev_tree}(x, rmax = 1, rmin = 0.1, step = 2,
+  limit = 10, ...)
 }
 \arguments{
 \item{x}{event tree object}
@@ -14,6 +15,8 @@
 \item{rmin}{graphical parameter}
 
 \item{step}{graphical parameter}
+
+\item{limit}{maximum number of levels plotted}
 
 \item{...}{additional graphical parameters}
 }

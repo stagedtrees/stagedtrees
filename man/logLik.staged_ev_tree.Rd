@@ -4,14 +4,14 @@
 \alias{logLik.staged_ev_tree}
 \title{Compute log lik of a staged tree}
 \usage{
-\method{logLik}{staged_ev_tree}(object, data = NULL, ...)
+\method{logLik}{staged_ev_tree}(object, ...)
 }
 \arguments{
 \item{object}{the staged event tree object}
 
-\item{data}{the dataset (default to `NULL``)}
-
 \item{...}{additional parameters}
+
+\item{data}{the dataset (default to `NULL``)}
 }
 \description{
 Compute log lik of a staged tree
