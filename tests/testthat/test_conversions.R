@@ -19,7 +19,7 @@ test_that("test that staged_ev_tree to strt_ev_tree works",{
 
 test_that("test that staged_ev_tree to strt_ev_tree keeps probabilities",{
   DD <- data.frame(A = as.factor(c(1,2,2,1)), B = as.factor(c("a","b","a","b")))
-  sev <- staged_ev_tree(x = DD,order = c("B","A"), fit = TRUE, lambda = 1)
+  sev <- staged_ev_tree(x = DD, order = c("B","A"), fit = TRUE, lambda = 1)
   sev$prob$A$`1`[1]<-runif(1)
   sev$prob$A$`1`[2]<-1 - sev$prob$A$`1`[1]
   ev <- strt_ev_tree(sev)
@@ -32,16 +32,20 @@ test_that("test strt_ev_tree -> staged_ev_tree -> strt_ev_tree",{
     return(as.factor(sample(c(0,1,2), size=100,
                             replace = TRUE)))
   }  ) )
-  ev <- strt_ev_tree(DD, fit = TRUE, lambda = 1)
-  sev <- staged_ev_tree(ev)
+  ev <- strt_ev_tree(DD, fit = TRUE)
+  sev <- staged_ev_tree(ev, lambda = 1)
   evback <- strt_ev_tree(sev)
+  sevback <- staged_ev_tree(evback, lambda = 1)
   for (k in 1:6){
     expect_equal(
-      as.numeric(ev$prob[[k]]),
-      as.numeric(evback$prob[[k]])
-    )  
+      as.numeric(ev$ctables[[k]]),
+      as.numeric(evback$ctables[[k]])
+    )
+    expect_equal(
+      as.numeric(sev$prob[[k]][[1]]),
+      as.numeric(sevback$prob[[k]][[1]])
+    )
   }
-  
 })
 
 

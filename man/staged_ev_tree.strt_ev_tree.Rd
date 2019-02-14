@@ -4,10 +4,12 @@
 \alias{staged_ev_tree.strt_ev_tree}
 \title{Staged event tree}
 \usage{
-\method{staged_ev_tree}{strt_ev_tree}(x, ...)
+\method{staged_ev_tree}{strt_ev_tree}(x, lambda = 0, ...)
 }
 \arguments{
 \item{x}{A stratified event tree object}
+
+\item{lambda}{smoothing of probabilities}
 
 \item{...}{additional parameters}
 }

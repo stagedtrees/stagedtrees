@@ -4,17 +4,18 @@
 #' @param rmax graphical parameter
 #' @param rmin graphical parameter
 #' @param step graphical parameter
+#' @param limit maximum number of plotted levels
 #' @param ... additional graphical parameters
 #' @export
 #' @importFrom graphics lines plot.new plot.window
 
-plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, ...){
+plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
  plot.new()
- plot.window(xlim=c(0,step*length(x$tree)),
-             ylim=c(-step*length(x$tree)/2-0.5,step*length(x$tree)/2+0.5),
-             asp=1, ...)
+ d <- min(length(x$tree), limit) ##avoid too much plotting
+ plot.window(xlim = c(0, step * d),
+             ylim = c(- step * d/2 - 0.5,step * d / 2 + 0.5),
+             asp = 1, ...)
  nms <- names(x$tree)
- d <- length(x$tree)
  node(c(0,0),rmax,label = nms[1]) #plot first node
  ns <- 1
  xx<-0
@@ -51,25 +52,26 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, ...){
 #' @param rmax graphical parameter
 #' @param rmin graphical parameter
 #' @param step graphical parameter
+#' @param limit maximum number of levels plotted
 #' @param ... additional graphical parameters
 #' @export
 #' @importFrom graphics lines plot.new plot.window
 
-plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, ...){
+plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,...){
   plot.new()
-  plot.window(xlim=c(0,step*length(x$tree)),
-              ylim=c(-step*length(x$tree)/2-0.5,step*length(x$tree)/2+0.5),
-              asp=1, ...)
+  d <- min(length(x$tree), limit) ##avoid too much plotting
+  plot.window(xlim = c(0,step * d),
+              ylim = c( - step * d / 2 - 0.5, step * d / 2 + 0.5),
+              asp = 1, ...)
   n <- x$tree
   nms <- names(x$tree)
-  d <- length(x$tree)
   node(c(0,0),rmax,label = nms[1]) #plot first node
   ns <- 1
   xx<-0
   y<-0
   yy <- 0
   coef <- 1
-  for (k in 1:(length(x$tree))){ #plot nodes for every strata
+  for (k in 1:d){ #plot nodes for every strata
     v <- x$tree[[k]]
     yyy <- yy
     yy <- c()
@@ -83,9 +85,8 @@ plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, ...){
         lj <- lj +1
 
         if (k < length(x$tree)) {
-          dk <- dim(x$paths[[k]])[2]
           node(c(xx, y[j]), rmax/sqrt(nv*ns),
-               label = nms[k+1], col = x$paths[[k]][lj , dk])
+               label = nms[k+1], col = x$stages[[k]][lj])
         }
         edge(c(xx-step, yyy[i]), c(xx,y[j]), v[j] ) #plot edge with previous nodes
       }

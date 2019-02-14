@@ -16,7 +16,7 @@ path_probability.staged_ev_tree <-
     l <- log(object$prob[[1]][[1]][x[1]])
     if (length(x) > 1) {
       for (i in 2:length(x)) {
-        s <- find_stage(object$paths[[i - 1]], x, object$tree)
+        s <- find_stage(object, x[1:(i-1)])
         l <- l + log(object$prob[[i]][[s]][x[i]])
       }
     }
@@ -29,7 +29,6 @@ path_probability.staged_ev_tree <-
 #' Compute log lik of a stratified tree
 #'
 #' @param object the startified event tree object
-#' @param data the dataset (default to `NULL``)
 #' @param ... additional parameters
 #'
 #' @importFrom stats logLik ftable
@@ -39,35 +38,24 @@ path_probability.staged_ev_tree <-
 #' DD <- DD <- as.data.frame(sapply(1:5, function(i){
 #'                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
 #'                      }))
-#' evt <- strt_ev_tree(DD, fit =TRUE)
+#' sevt <- staged_ev_tree(DD, fit = TRUE)
+#' evt <- strt_ev_tree(sevt)
 #' logLik(evt)
-#'
-#' logLik(evt, DD[1,])
-logLik.strt_ev_tree <- function(object, data = NULL, ...) {
-  if (is.null(data)) {
-    data <- object$data ## like this AIC and BIC works automatically
-  }
-  if (is.null(data)) {
-    warning("Data should be attached to the object or provided")
-    return(NULL)
-  }
-  if (is.null(object$prob)) {
-    warning("Object if not fitted, impossible compute logLik")
-    return(NULL)
-  }
-  order <- names(object$tree)
-  ll <- sum(log(object$prob[[order[1]]]) * table(data[order[1]])) +
-    sum(vapply(
-      2:length(order),
+logLik.strt_ev_tree <- function(object, ...) {
+  stopifnot(!is.null(object$ctables)) 
+  stopifnot(!is.null(object$prob))
+  ll <- sum(vapply(
+      1:length(object$tree),
       FUN = function(i) {
-        sum(log(object$prob[[order[i]]]) * ftable(data, col.vars = order[i],
-                                                  row.vars = order[1:(i - 1)]))
+        ix <- object$prob[[ i ]] > 0
+        sum( (log(object$prob[[ i ]][ix])  ) * 
+          object$ctables[[ i ]][ix] )
       },
       FUN.VALUE = 1
     ))
   attr(ll, "df") <-
     prod(vapply(object$tree, FUN = length, FUN.VALUE = 1)) - 1
-  attr(ll, "nobs") <- dim(data)[1]
+  attr(ll, "nobs") <- sum(object$ctables[[1]])
   class(ll) <- "logLik"
   return(ll)
 }
@@ -76,7 +64,6 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...) {
 #' Compute log lik of a staged tree
 #'
 #' @param object the staged event tree object
-#' @param data the dataset (default to `NULL``)
 #' @param ... additional parameters
 #'
 #' @importFrom stats logLik
@@ -88,26 +75,16 @@ logLik.strt_ev_tree <- function(object, data = NULL, ...) {
 #'                      }))
 #' sevt <- staged_ev_tree(DD, fit =TRUE)
 #' logLik(sevt)
-#'
-#' logLik(sevt, DD[1,])
-logLik.staged_ev_tree <- function(object, data = NULL, ...) {
-  if (!is.null(object$ll) && is.null(data)) {
+logLik.staged_ev_tree <- function(object, ...) {
+  if (!is.null(object$ll)) {
     return(object$ll)
   }
-  if (is.null(data)) {
-    data <- object$data ## like this AIC and BIC works automatically
-  }
-  if (is.null(data)) {
-    stop("Data should be attached to the object or provided")
-  }
-  if (is.null(object$prob)) {
-    stop("Object if not fitted, impossible compute logLik")
-  }
-  ll <-
-    logLik(strt_ev_tree(object), data = data) ## lazy way we should do better
+  stopifnot(!is.null(object$prob))
+  stopifnot(!is.null(object$ctables))
+  ll <- logLik(strt_ev_tree.staged_ev_tree(object))
   attr(ll, "df") <-
     sum(c(1, vapply(
-      object$stages, FUN = length, FUN.VALUE = 1
+      object$stages, FUN = function(x) length(unique(x)), FUN.VALUE = 1
     )) *
       (vapply(
         object$tree, FUN = length, FUN.VALUE = 1

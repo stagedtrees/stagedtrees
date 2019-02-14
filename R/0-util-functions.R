@@ -38,29 +38,19 @@ tree_idx <- function(path, tree){
 # paths is a data.frame as the ones obtained with expand.grid
 # plus one last column with the stage index.
 # path is a vector of length = dim(paths)[2] - 1 or longer 
-#'
-#'@export
-find_stage <- function(paths, path, tree) {
-  k <- dim(paths)[2]
-  ix <- tree_idx(path = path[1:(k-1)], tree = tree)
-  return(paths[ix, k])
+find_stage <- function(object, path) {
+  k <- length(path)
+  ix <- tree_idx(path = path, tree = object$tree)
+  return(object$stages[[k]][ix])
 }
 
-
-#' slow version (can be used to test)
-old_find_stage <- function(paths, path, tree) {
-  k <- dim(paths)[2]
-  for (i in 1:(dim(paths)[1])) {
-    if (all(paths[i, -k] == path[1:(k - 1)]))
-      return(as.character(paths[i, k]))
-  }
-}
 
 # find the paths for a given stage index
 # paths is a data.frame as the ones obtained with expand.grid
 # stage is an integer, the stage index
-find_paths <- function(paths, stage) {
-  return(paths[paths[, dim(paths)[2]] == as.character(stage),])
+find_paths <- function(obj, stage, var) {
+  ##to do
+  ###return(paths[paths[, dim(paths)[2]] == as.character(stage),])
 }
 
 #' Compute the KL matrix
