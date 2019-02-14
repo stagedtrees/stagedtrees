@@ -30,11 +30,11 @@ plot(evt) ## plotting is still a bit rough
 ```
 
 Alternatively we can create the stratified event tree directly from the
-dataset of observation. And we can choose to fit the conditional
-probabilities (lambda is the laplace smoothing parameter).
+dataset of observation. If we set `fit = TRUE` the contingency tables will
+be created.
 
 ```
-evt <- strt_ev_tree(DD, fit=TRUE, lambda = 2)
+evt <- strt_ev_tree(DD, fit = TRUE)
 
 plot(evt)
 
@@ -51,7 +51,6 @@ the full independent model (that is only one stage per variable).
 ```
 sevt <- staged_ev_tree(DD, fit =TRUE , laplace = 1)
 
-sevt$paths ## here for every path we indicate the stage (last column)
 
 plot(sevt)
 ```
@@ -60,10 +59,10 @@ plot(sevt)
 
 We can move from the staged event tree and the full stratified event tree:
 ```
-evt <- strt_ev_tree(DD, fit =T)
-sevt <- staged_ev_tree(evt) ## this will be a full staged event tree,
-                            ## that is one different stage per path
-evt_back <- strt_ev_tree(sevt)
+evt <- strt_ev_tree(DD, fit = TRUE)
+## this will be a full staged event tree,
+sevt <- staged_ev_tree(evt, lambda = 1) 
+evt_back <- strt_ev_tree(sevt) ####here we have also probability 
 ```
 #### Model selection
 
@@ -77,7 +76,7 @@ We are still implementing model selection algorithm, now available:
   ```
   ## if fit=FALSE (default) model will be returned without fitted
   ##  probabilities
-  sevt <- staged_ev_tree(DD, fit = TRUE, full = TRUE)
+  sevt <- staged_ev_tree(strt_ev_tree(DD, fit = TRUE), lambda = 1)
   ```
 - ##### Backward Hill-Climbing
 

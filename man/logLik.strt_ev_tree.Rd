@@ -4,12 +4,10 @@
 \alias{logLik.strt_ev_tree}
 \title{Compute log lik of a stratified tree}
 \usage{
-\method{logLik}{strt_ev_tree}(object, data = NULL, ...)
+\method{logLik}{strt_ev_tree}(object, ...)
 }
 \arguments{
 \item{object}{the startified event tree object}
-
-\item{data}{the dataset (default to `NULL``)}
 
 \item{...}{additional parameters}
 }
@@ -20,8 +18,7 @@ Compute log lik of a stratified tree
 DD <- DD <- as.data.frame(sapply(1:5, function(i){
                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
                      }))
-evt <- strt_ev_tree(DD, fit =TRUE)
+sevt <- staged_ev_tree(DD, fit = TRUE)
+evt <- strt_ev_tree(sevt)
 logLik(evt)
-
-logLik(evt, DD[1,])
 }

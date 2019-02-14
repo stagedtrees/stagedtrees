@@ -73,7 +73,6 @@ staged_ev_tree.data.frame <- function(x,
         v
        ))))[order]
       sevt <- staged_ev_tree.list(tree, full = full, ...) 
-
       if (fit) {
         return(fit.staged_ev_tree(sevt, data = x, ...))
       } else {
@@ -103,28 +102,27 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
     #we assign variables names V1,V2,...
     names(x) <- paste0("V", 1:length(x))
   }
-
-  if (any(is.null(vapply(
+  
+  dims <- vapply(
     x, FUN = length, FUN.VALUE = 1
-  )))) {
+  )
+  if (any(is.null(dims))) {
     #naive check if levels are vector with lenght
     stop("Levels should be well defined")
   }
-  if (full){
-    return(staged_ev_tree.strt_ev_tree(strt_ev_tree.list(x, ...)))
-  }
+  
   evt <- list()
   evt$tree <- x
-  evt$paths <- lapply(1:(length(x) - 1), function(i) {
-    tt <- 
-      expand.grid(evt$tree[i:1])[i:1] ## create all the possible paths
-    tt[, dim(tt)[2] + 1] <-
-      "1" #put the same color in all the paths
-    return(tt)
-  })
-  evt$stages <- lapply(x[-1], function(xx)
-    return("1"))
-  names(evt$paths) <- names(x)[-1]
+  if (full){
+    evt$stages <- lapply(2 : length(x), function(i){
+      as.character(1 : prod(dims[1 : (i - 1)]))   
+    })
+  }else{
+    evt$stages <- lapply(2 : length(x), function(i){
+      rep( "1", prod(dims[1 : (i - 1)]))   
+    })  
+  }
+  names(evt$stages) <- names(x)[-1]
   class(evt) <- "staged_ev_tree"
   return(evt)
 }
@@ -148,41 +146,45 @@ fit.staged_ev_tree <- function(sevt,
                                lambda = 0,
                                ...) {
   if (is.null(data)) {
-    data <- sevt$data
-    if (is.null(data)) {
+    if (is.null(sevt$ctables)){
       warning("Data must be provided or included in the model object")
       return(sevt)
     }
   }
+  if (is(data, "srt_ev_tree")){
+    sevt$ctables <- data$ctables  
+  }else if(!is.null(data)){
+    sevt$ctables <- strt_ev_tree(data, order = names(sevt$tree), fit = TRUE)$ctables
+  }
   sevt$lambda <- lambda
   order <- names(sevt$tree)
-  data <- data[order] #order the data
   dims <- sapply(sevt$tree, length)
   sevt$prob <- list()
-  tt <- table(data[order[1]]) + lambda
-  attr(tt, "n") <- sum(tt)
+  n <- sum(sevt$ctables[[order[1]]])
+  pp <- sevt$ctables[[order[1]]] + lambda
+  pp <- pp / sum(pp)
+  attr(pp, "n") <- n
+  sevt$prob[[order[1]]] <- list("1" = pp)
   lambda <- lambda / dims[1]
-  tt <- tt / attr(tt, "n") 
-  sevt$prob[[order[1]]] <- list("1" = tt)
   for (i in 2:length(order)) {
+    stages <- unique(sevt$stages[[order[i]]])
     sevt$prob[[order[i]]] <-
-      lapply(sevt$stages[[order[i]]], function(s) {
-        dt <- data[, 1:i] #copy relevant data in dt
-        pths <-
-          find_paths(paths = sevt$paths[[order[i]]], s) #find all the paths in that stage
-        for (j in 1:(length(pths) - 1)) {
-          #for every step in the path ( -1 because last var is stage name)
-          dt <-
-            dt[dt[, j] %in% pths[, j] ,] #reduce dt to the observation that we need
+      lapply(stages, function(s) {
+        ix <- sevt$stages[[order[i]]] == s
+        if (sum(ix) > 1){
+          tt <- apply(sevt$ctables[[order[i]]][ix,], MARGIN = 2, sum) 
+        }else{
+          tt <- sevt$ctables[[order[i]]][ix,]
         }
-        tt <- table(dt[order[i]]) + lambda #table count plus lambda
-        attr(tt, "n") <- sum(tt)
-        return(tt / attr(tt, "n")) #return normalized prob
+        n <- sum(tt) ##compute sample size
+        tt <- (tt + lambda) ##smoothing 
+        tt <- tt / sum(tt)  ##normalize
+        attr(tt, "n") <- n ##save sample size
+        return(tt) #return normalized prob
       })
-    names(sevt$prob[[order[i]]]) <- sevt$stages[[order[i]]]
+    names(sevt$prob[[order[i]]]) <- stages
     lambda <- lambda / dims[i]
   }
-  sevt$data <- data
   sevt$ll <- NULL
   sevt$ll <- logLik(sevt)
   return(sevt)
@@ -191,44 +193,42 @@ fit.staged_ev_tree <- function(sevt,
 #' Staged event tree
 #'
 #' @param x A stratified event tree object
+#' @param lambda smoothing of probabilities
 #' @param ... additional parameters
 #' @return The equivalent staged event tree object
 #' @details The function creates a staged event tree equivalent to 
 #' the stratified event tree
 #' @export
-staged_ev_tree.strt_ev_tree <- function(x, ...) {
-  x$stages <- list()
-  x$paths <- list()
+staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
+  obj <- staged_ev_tree.list(x$tree, full = TRUE)
   vars <- names(x$tree)
-  for (i in 1:(length(x$tree) - 1)) {
-    tt <- expand.grid(x$tree[i:1])[i:1] ## create all the possible paths
-    tt[, dim(tt)[2] + 1] <-
-      as.character(1:(dim(tt)[1])) #put different colors/stages
-    x$stages[[i]] <- as.character(1:(dim(tt)[1]))
-    x$paths[[i]] <- tt
-  }
-  names(x$paths) <- names(x$tree)[-1]
-  names(x$stages) <- names(x$tree)[-1]
-  class(x) <- "staged_ev_tree"
-
-  if (!is.null(x$prob)) {
-    ## if the x is fitted
-    x$prob[[vars[1]]] <- list("1" = x$prob[[vars[1]]])
-    attr(x$prob[[vars[1]]][["1"]], "n") <- 1
+  dims <- sapply(x$tree, length)
+  if (!is.null(x$ctables)) {
+    obj$ctables <- x$ctables
+    ## if the x is fitted we can just copy the probabilitites
+    n <- sum(x$ctables[[ vars[1] ]] + lambda)
+    pp <- x$ctables[[ vars[1] ]] + lambda
+    pp <- pp / n
+    obj$prob[[vars[1]]] <- list("1" = pp)
+    attr(obj$prob[[vars[1]]][["1"]], "n") <- n
+    lambda <- lambda / dims[1]
     for (i in 2:length(x$tree)) {
-      x$prob[[vars[i]]] <-
-        lapply(1:(dim(x$prob[[vars[i]]])[1]), function(k) {
-          pp <- x$prob[[ vars[i] ]][k, ]
+      obj$prob[[vars[i]]] <-
+        lapply(1:(dim(x$ctables[[vars[i]]])[1]), function(k) {
+          n <- sum(x$ctables[[ vars[i] ]][k, ] + lambda)
+          pp <- (x$ctables[[ vars[i] ]][k, ] + lambda)
+          pp <- pp / n
           names(pp) <- x$tree[[vars[i]]]
-          attr(pp, "n") <- 1
+          attr(pp, "n") <- n
           return(pp)
         })
-      names(x$prob[[vars[i]]]) <-
-        as.character(1:length(x$prob[[vars[i]]]))
+      lambda <- lambda / dims[i]
+      names(obj$prob[[vars[i]]]) <-
+        as.character(1:length(obj$prob[[vars[i]]]))
     }
-    names(x$prob) <- names(x$tree)
+    names(obj$prob) <- names(x$tree)
   }
-  return(x)
+  return(obj)
 }
 
 
@@ -257,14 +257,9 @@ set_stage <- function(sevt, path, stage) {
 join_stages <- function(sevt, v,  s1, s2) {
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  dt <- sevt$data[names(sevt$tree)]
-  stgs <- sevt$stages[[v]]
-  stgs[stgs == s2] <- s1
-  sevt$stages[[v]] <- unique(stgs)
-  pths <- sevt$paths[[v]]
-  d <- dim(pths)[2]
-  st <- pths[, d]
-  sevt$paths[[v]][st == s2, d] <- s1
+  d <- dim(sevt$paths[[v]])[2]
+  st <- sevt$stages[[v]]
+  sevt$stages[[v]][st == s2] <- s1
   if (!is.null(sevt$prob)) {
     n2 <- attr(sevt$prob[[v]][[s2]], "n") 
     n1 <- attr(sevt$prob[[v]][[s1]], "n")
@@ -290,26 +285,24 @@ join_stages <- function(sevt, v,  s1, s2) {
 #' Randomly assign some of the path to a new stage
 #' 
 #' @param object a staged event tree object
-#' @param stratum the variable where to split the stage
+#' @param var the variable where to split the stage
 #' @param stage the name of the stage
 #' @param p probability
 #' 
 #' @return a staged event tree object
 #' @export
-split_stage_random <- function(object, stratum,  stage, p = 0.5) {
-  if (!(stage %in% object$stages[stratum])){
+split_stage_random <- function(object, var,  stage, p = 0.5) {
+  if (!(stage %in% object$stages[[var]])){
     return(object)
   }
-  label <- new_label(object$stages[[stratum]])
-  d <- dim(object$paths[[stratum]])
-  ix <- (object$paths[[stratum]][,d[2]] == stage ) & sample(x = c(TRUE, FALSE), size = d[1], 
+  d <- length(object$stages[[var]])
+  label <- new_label(object$stages[[var]])
+  ix <- (object$stages[[var]] == stage ) & sample(x = c(TRUE, FALSE), size = d, 
                                                          prob = c(p, 1 - p), replace = TRUE )
   if (any(ix)){
-    object$paths[[stratum]][ix, d[2]] <- label
-    object$stages[[stratum]] <- c(object$stages[[stratum]], label)
-    
+    object$stages[[var]][ix] <- label
     if (is_fitted.staged_ev_tree(object)){
-      object <- fit.staged_ev_tree(object)
+      object <- fit.staged_ev_tree(object, lambda = 1)
     }
   }
   return(object)
