@@ -4,12 +4,12 @@
 \alias{split_stage_random}
 \title{split randomly a stage}
 \usage{
-split_stage_random(object, stratum, stage, p = 0.5)
+split_stage_random(object, var, stage, p = 0.5)
 }
 \arguments{
 \item{object}{a staged event tree object}
 
-\item{stratum}{the variable where to split the stage}
+\item{var}{the variable where to split the stage}
 
 \item{stage}{the name of the stage}
 

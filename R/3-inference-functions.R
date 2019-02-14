@@ -29,7 +29,6 @@ path_probability.staged_ev_tree <-
 #' Compute log lik of a stratified tree
 #'
 #' @param object the startified event tree object
-#' @param data the dataset (default to `NULL``)
 #' @param ... additional parameters
 #'
 #' @importFrom stats logLik ftable
@@ -39,10 +38,9 @@ path_probability.staged_ev_tree <-
 #' DD <- DD <- as.data.frame(sapply(1:5, function(i){
 #'                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
 #'                      }))
-#' evt <- strt_ev_tree(DD, fit =TRUE)
+#' sevt <- staged_ev_tree(DD, fit = TRUE)
+#' evt <- strt_ev_tree(sevt)
 #' logLik(evt)
-#'
-#' logLik(evt, DD[1,])
 logLik.strt_ev_tree <- function(object, ...) {
   stopifnot(!is.null(object$ctables)) 
   stopifnot(!is.null(object$prob))
@@ -66,7 +64,6 @@ logLik.strt_ev_tree <- function(object, ...) {
 #' Compute log lik of a staged tree
 #'
 #' @param object the staged event tree object
-#' @param data the dataset (default to `NULL``)
 #' @param ... additional parameters
 #'
 #' @importFrom stats logLik
@@ -78,8 +75,6 @@ logLik.strt_ev_tree <- function(object, ...) {
 #'                      }))
 #' sevt <- staged_ev_tree(DD, fit =TRUE)
 #' logLik(sevt)
-#'
-#' logLik(sevt, DD[1,])
 logLik.staged_ev_tree <- function(object, ...) {
   if (!is.null(object$ll)) {
     return(object$ll)
