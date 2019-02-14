@@ -5,7 +5,7 @@
 #'
 #' @param x data.frame or list
 #' @param order Vector of variables names, the order to build the event tree
-#' @param fit If `TRUE` the conditional probability will be estimated from `data`
+#' @param fit If `TRUE` the contingency tables will be computed from `data`
 #' @param ... additional parameters
 #' @export
 #' @examples
@@ -79,19 +79,22 @@ strt_ev_tree.list <- function(x, ...){
 #'
 strt_ev_tree.staged_ev_tree <- function(x, ...){
  vars <- names(x$tree)
- if (!is.null(x$prob)){ #if the model was fitted we have to recompilate the probabilities
+ dims <- vapply(x$tree, length, FUN.VALUE = 1)
+ if (!is.null(x$prob)){ #if the model was fitted we have to recompilate the ctables
    #the first one is easy we just have to forget the (only) stage (and we check validity)
    if (length(x$prob[[vars[1]]]) > 1){
      warning("Incorrect number of stages in first variable (should be one)")
    }
+   ## we recover the ctbales from the probability and the sample size
    x$prob[[vars[1]]] <- x$prob[[vars[1]]][[1]]
    for (i in 2:length(x$tree)){ #let's take care of the other variables
      ## we will create manually the ftable
      ## the dimension are the same as path (-1 for the column)
-     ft <- array(dim = c(dim(x$paths[[ vars[i] ]])[1], length(x$tree[[ vars[i] ]])))
+     ft <- array(dim = c(prod(dims[1 : (i - 1)]), dims[i] ))
      for (j in 1:(dim(ft)[1])){ ## fill the ftable
-       jstage <-  .subset2(x$paths[[ vars[i] ]], dim(x$paths[[ vars[i] ]])[2] )[j]    #x$paths[[ vars[i] ]][j, dim(x$paths[[ vars[i] ]])[2] ]
+       jstage <- x$stages[[ vars[i] ]][ j ]
        ft[j, ] <- x$prob[[ vars[i] ]][[ jstage ]]
+       ###here we divide by the number of path in the same stage
      }
      attr(ft, "row.vars") <- x$tree[ vars[1:(i-1)] ]
      attr(ft, "col.vars") <- x$tree[ vars[i] ]
@@ -99,9 +102,7 @@ strt_ev_tree.staged_ev_tree <- function(x, ...){
      x$prob[[ vars[i] ]] <- ft
    }
   }
-
  x$stages <- NULL
- x$paths <- NULL
  class(x) <- "strt_ev_tree"
  return(x)
 }
@@ -122,20 +123,16 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
      }
    }
    order <- names(evt$tree)
-   evt$prob <- lapply(1:length(order), function(i){
+   
+   evt$ctables <- lapply(1:length(order), function(i){
      path <- order[i:1]
-     tt <- table(data[path],dnn = path ) + lambda
-     attr(tt, "n") <- sum(tt)
+     tt <- table(data[path],dnn = path )
      if (i == 1){
-       return(tt/sum(tt))
+       return(tt)
      }
-     return(ftable(apply(tt, MARGIN=c(2:i), FUN = function(a){
-       attr(a, "n") <- sum(a)
-       return(a/sum(a))
-     }),col.vars = order[i], row.vars = order[1:(i-1)]))
+     return(ftable(tt,col.vars = order[i], row.vars = order[1 : (i-1)]))
    })
-   names(evt$prob) <- order
-   evt$data <- data
+   names(evt$ctables) <- order
    evt$lambda <- lambda
    return(evt)
 }

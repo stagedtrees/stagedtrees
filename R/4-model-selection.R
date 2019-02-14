@@ -114,12 +114,13 @@ backward_hill_climb <-
         temp_score <- now_score
         v_sel <- NULL
         done <- TRUE
-        if (length(object$stages[[v]]) > 1) {
-          for (i in 2:length(object$stages[[v]])) {
+        stages <- unique(object$stages[[v]])
+        if (length(stages) > 1) {
+          for (i in 2:length(stages)) {
             ##try all stages pair
-            s1 <- object$stages[[v]][i]
+            s1 <- stages[i]
             for (j in 1:(i - 1)) {
-              s2 <- object$stages[[v]][j]
+              s2 <- stages[j]
               try <-
                 join_stages(object, v, s1, s2) ## join the 2 stages
               try_score <- score(try)
@@ -181,12 +182,13 @@ fast_backward_hill_climb <-
         s1_select <- NULL
         s2_select <- NULL
         done <- TRUE
-        if (length(object$stages[[v]]) > 1) {
-          for (i in 2:length(object$stages[[v]])) {
+        stages <- unique(object$stages[[v]])
+        if (length(stages) > 1) {
+          for (i in 2:length(stages)) {
             ##try all stages pair
-            s1 <- object$stages[[v]][i]
+            s1 <- stages[i]
             for (j in 1:(i - 1)) {
-              s2 <- object$stages[[v]][j]
+              s2 <- stages[j]
               try <-
                 join_stages(object, v, s1, s2) ## join the 2 stages
               try_score <- score(try)
@@ -247,14 +249,15 @@ backward_joining_KL <-
       finish <- FALSE
       while (!finish) {
         finish <- TRUE
-        if (length(object$stages[[v]]) > 1) {
+        stages <- unique(object$stages[[v]])
+        if (length(stages) > 1) {
           M <- KL_mat_stages(object$prob[[v]]) #compute KL matrix
           diag(M) <- Inf
           idx <- which.min(M)
           i <- ceiling(idx / dim(M)[1])
           j <- idx - (i - 1) * dim(M)[1]
-          s1 <- object$stages[[v]][i]
-          s2 <- object$stages[[v]][j]
+          s1 <- stages[i]
+          s2 <- stages[j]
           if (abs(M[i, j]) < thr) {
             if (verbose)
               message("Variable ", v , " Joined stages ", s1,
