@@ -153,14 +153,14 @@ fit.staged_ev_tree <- function(sevt,
   }
   if (is(data, "srt_ev_tree")){
     sevt$ctables <- data$ctables  
-  }else{
+  }else if(!is.null(data)){
     sevt$ctables <- strt_ev_tree(data, order = names(sevt$tree), fit = TRUE)$ctables
   }
   sevt$lambda <- lambda
   order <- names(sevt$tree)
   dims <- sapply(sevt$tree, length)
   sevt$prob <- list()
-  n <- sum(data$ctables[[order[1]]])
+  n <- sum(sevt$ctables[[order[1]]])
   pp <- sevt$ctables[[order[1]]] + lambda
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
@@ -292,7 +292,7 @@ join_stages <- function(sevt, v,  s1, s2) {
 #' @return a staged event tree object
 #' @export
 split_stage_random <- function(object, var,  stage, p = 0.5) {
-  if (!(stage %in% object$stages[var])){
+  if (!(stage %in% object$stages[[var]])){
     return(object)
   }
   d <- length(object$stages[[var]])
@@ -302,7 +302,7 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
   if (any(ix)){
     object$stages[[var]][ix] <- label
     if (is_fitted.staged_ev_tree(object)){
-      object <- fit.staged_ev_tree(object)
+      object <- fit.staged_ev_tree(object, lambda = 1)
     }
   }
   return(object)
