@@ -154,7 +154,7 @@ fit.staged_ev_tree <- function(sevt,
   if (is(data, "srt_ev_tree")){
     sevt$ctables <- data$ctables  
   }else{
-    sevt$ctables <- strt_ev_tree(data, fit = TRUE)$ctables
+    sevt$ctables <- strt_ev_tree(data, order = names(sevt$tree), fit = TRUE)$ctables
   }
   sevt$lambda <- lambda
   order <- names(sevt$tree)
@@ -285,21 +285,22 @@ join_stages <- function(sevt, v,  s1, s2) {
 #' Randomly assign some of the path to a new stage
 #' 
 #' @param object a staged event tree object
-#' @param stratum the variable where to split the stage
+#' @param var the variable where to split the stage
 #' @param stage the name of the stage
 #' @param p probability
 #' 
 #' @return a staged event tree object
 #' @export
-split_stage_random <- function(object, stratum,  stage, p = 0.5) {
-  if (!(stage %in% object$stages[stratum])){
+split_stage_random <- function(object, var,  stage, p = 0.5) {
+  if (!(stage %in% object$stages[var])){
     return(object)
   }
-  label <- new_label(object$stages[[stratum]])
-  ix <- (object$stages[[stratum]] == stage ) & sample(x = c(TRUE, FALSE), size = d[1], 
+  d <- length(object$stages[[var]])
+  label <- new_label(object$stages[[var]])
+  ix <- (object$stages[[var]] == stage ) & sample(x = c(TRUE, FALSE), size = d, 
                                                          prob = c(p, 1 - p), replace = TRUE )
   if (any(ix)){
-    object$stages[[stratum]][ix] <- label
+    object$stages[[var]][ix] <- label
     if (is_fitted.staged_ev_tree(object)){
       object <- fit.staged_ev_tree(object)
     }

@@ -10,8 +10,6 @@
 \item{object}{the staged event tree object}
 
 \item{...}{additional parameters}
-
-\item{data}{the dataset (default to `NULL``)}
 }
 \description{
 Compute log lik of a staged tree
@@ -22,6 +20,4 @@ DD <- DD <- as.data.frame(sapply(1:5, function(i){
                      }))
 sevt <- staged_ev_tree(DD, fit =TRUE)
 logLik(sevt)
-
-logLik(sevt, DD[1,])
 }
