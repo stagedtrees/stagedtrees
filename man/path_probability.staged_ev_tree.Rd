@@ -19,3 +19,10 @@ The probability of the given path or its logarithm if \code{log=TRUE}
 \description{
 Compute probability of a path from root
 }
+\examples{
+DD <- generate_random_dataset(4, 100)
+model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
+path_probability.staged_ev_tree(model, c("1", "-1"))
+path_probability.staged_ev_tree(model, c("1", "-1", "1", "-1", "1"),
+ log = TRUE)
+}
