@@ -176,6 +176,7 @@ fit.staged_ev_tree <- function(sevt,
         }else{
           tt <- sevt$ctables[[order[i]]][ix,]
         }
+        names(tt) <- sevt$tree[[order[i]]]
         n <- sum(tt) ##compute sample size
         tt <- (tt + lambda) ##smoothing 
         tt <- tt / sum(tt)  ##normalize
