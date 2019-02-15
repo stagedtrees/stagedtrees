@@ -77,13 +77,17 @@ We are still implementing model selection algorithm, now available:
   ## if fit=FALSE (default) model will be returned without fitted
   ##  probabilities
   sevt <- staged_ev_tree(strt_ev_tree(DD, fit = TRUE), lambda = 1)
+  ##or
+  sevt <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
   ```
 - ##### Backward Hill-Climbing
 
   The algorithm moves to the **best** model that increase the score. 
   We need to avoid 0 probabilitites (`lambda = 1`).
   ```
+  ## we initialize the full model
   sevt_full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
+  ## then we merge stages
   sevt <- backward_hill_climb(sevt_full, verbose = FALSE)
   sevt$score$value
   plot(sevt)
@@ -110,14 +114,14 @@ We are still implementing model selection algorithm, now available:
   ```
   ## we use verbose = TRUE  to obtain messages 
   ## We can use score as in the back_HC method
-  sevt3 <- fast_backward_hill_climb(sevt_full)
+  sevt3 <- fast_backward_hill_climb(sevt_full, verbose = TRUE)
   ```
 
 - ##### Backward joining based on KL
   For every variable the algorithm iterates and at every step try to join the
   two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
   ```
-  sevt <- backward_joining_KL(sevt_full)
+  sevt <- backward_joining_KL(sevt_full, thr = 0.01)
   plot(sevt) 
   ``` 
 
