@@ -207,23 +207,23 @@ staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
   if (!is.null(x$ctables)) {
     obj$ctables <- x$ctables
     ## if the x is fitted we can just copy the probabilitites
-    n <- sum(x$ctables[[ vars[1] ]] + lambda)
+    n <- sum(x$ctables[[ vars[1] ]])
     pp <- x$ctables[[ vars[1] ]] + lambda
-    pp <- pp / n
+    pp <- pp / sum(pp)
     obj$prob[[vars[1]]] <- list("1" = pp)
     attr(obj$prob[[vars[1]]][["1"]], "n") <- n
-    lambda <- lambda / dims[1]
+    #lambda <- lambda / dims[1]
     for (i in 2:length(x$tree)) {
       obj$prob[[vars[i]]] <-
         lapply(1:(dim(x$ctables[[vars[i]]])[1]), function(k) {
-          n <- sum(x$ctables[[ vars[i] ]][k, ] + lambda)
+          n <- sum(x$ctables[[ vars[i] ]][k, ])
           pp <- (x$ctables[[ vars[i] ]][k, ] + lambda)
-          pp <- pp / n
+          pp <- pp / sum(pp)
           names(pp) <- x$tree[[vars[i]]]
           attr(pp, "n") <- n
           return(pp)
         })
-      lambda <- lambda / dims[i]
+      #lambda <- lambda / dims[i]
       names(obj$prob[[vars[i]]]) <-
         as.character(1:length(obj$prob[[vars[i]]]))
     }
@@ -267,9 +267,9 @@ join_stages <- function(sevt, v,  s1, s2) {
     dll <- sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) + 
       sum(sevt$prob[[v]][[s1]] * n1 * log(sevt$prob[[v]][[s1]]))
     sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s2]] * n2 +
-                            sevt$prob[[v]][[s1]] * n1    
+                            sevt$prob[[v]][[s1]] * n1 + sevt$lambda    
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
-    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / attr(sevt$prob[[v]][[s1]], "n")
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
     sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
     if (!is.null(sevt$ll)){## update log likelihood
       sevt$ll <- sevt$ll - dll + (n2 + n1) * sum(sevt$prob[[v]][[s1]] *  
@@ -303,7 +303,7 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
   if (any(ix)){
     object$stages[[var]][ix] <- label
     if (is_fitted.staged_ev_tree(object)){
-      object <- fit.staged_ev_tree(object, lambda = 1)
+      object <- fit.staged_ev_tree(object, lambda = object$lambda)
     }
   }
   return(object)
