@@ -6,6 +6,18 @@
 #' the class variable
 #' @param prob logical, if \code{TRUE} the probabilities of class are returned
 #' @param ... additional parameters, see details
+#' @return A vector of predictions or the corresponding probabilities
+#' @examples 
+#' DD <- generate_xor_dataset(n = 5, 1000)
+#' train <- DD[1:500,]
+#' test <- DD[501:1000,]
+#' order <- c("C", "X1", "X2", "X3", "X4", "X5")
+#' model <- staged_ev_tree(train, order = order, full = TRUE, 
+#' fit = TRUE, lambda = 1)
+#' model <- backward_hill_climb(model)
+#' pr <- predict(model, class = "C", newdata = test)
+#' table(pr, test$C)
+#' predict(model, class = "C", newdata = test, prob = TRUE)
 #' @return A vector of predicitons
 #' @export
 #' @importFrom stats predict

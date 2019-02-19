@@ -1,11 +1,15 @@
-
-
 #' Compute probability of a path from root
 #'
 #' @param object a staged event tree object
 #' @param x the path
 #' @param log logical
 #' @return The probability of the given path or its logarithm if \code{log=TRUE}
+#' @examples 
+#' DD <- generate_random_dataset(4, 100)
+#' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
+#' path_probability.staged_ev_tree(model, c("1", "-1"))
+#' path_probability.staged_ev_tree(model, c("1", "-1", "1", "-1", "1"),
+#'  log = TRUE)
 #' @export
 path_probability.staged_ev_tree <-
   function(object, x, log = FALSE) {
