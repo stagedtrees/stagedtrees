@@ -335,3 +335,24 @@ new_label <- function(labels){
     k <- k + 1
   }
 }
+
+
+#' Print a staged event tree
+#' 
+#' @param x the staged event tree obejct
+#' @param ... additional parameters (compatibility)
+#' 
+#' @return An invisible copy of \code{x}
+#' @export
+print.staged_ev_tree <- function(x, ...){
+  cat("Staged event tree", 
+      ifelse(is_fitted.staged_ev_tree(x), "(fitted) \n", "\n"))
+  ls <- vapply(x$tree, length, 1)
+  cat(paste( paste0(names(x$tree), "[", ls, "] ") , collapse = "->"), "\n")
+  #nstages <- vapply(x$stages, function(s) length(unique(s)), FUN.VALUE = 1)
+  #cat("n.stages: \n")
+  #print(nstages)
+  if (x$ll){
+    print(x$ll)
+  }
+}
