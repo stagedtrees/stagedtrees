@@ -1,29 +1,41 @@
 
 
-
-forward_select.staged_ev_treee <-
-  function(object = NULL,
-           data = NULL,
-           lambda = 1,
-           score = function(x)
-             return(-BIC(x))) {
-    if (is.null(object)) {
-      if (is.null(data)) {
-        warning("Provide something fitted staged event tree or data")
-        return(NULL)
-      }
-      object <- staged_ev_tree(data, fit = TRUE, lambda = lambda)
-    }
-    if (is.null(data)) {
-      data <- object$data
-      if (is.null(data)) {
-        warning("Provide data")
-        return(object)
-      }
-    }
-    now <- score(object)
-    
+#' Join situations with no observations
+#' 
+#' @param object a fitted staged event tree
+#' @param fit if the probability should be re-computed
+#' 
+#' @return a staged event tree with situations with 0 
+#' observations merged
+#' @export
+join_zero_counts <- function(object, fit = TRUE){
+  stopifnot(is(object, "staged_ev_tree"))
+  for (v in names(object$tree)[-1]){
+    new <- new_label(unique(object$stages[[v]]))
+    ix <- rowSums(object$ctables[[ v ]]) == 0
+    object$stages[[v]][ ix ] <- new   
   }
+  object$prob <- NULL
+  object$ll <- NULL
+  if (fit){
+    object <- fit.staged_ev_tree(object, lambda = object$lambda)
+  }
+  return(object)
+}
+
+
+#' 
+#' @export
+naive_staged_ev_tree <- function(data, lambda){
+  obj <- staged_ev_tree.data.frame(data, lambda = lambda , fit = TRUE)
+  for (v in names(obj$tree)[-1]){
+    M <- KL_mat_prob(obj$ctables[[v]] + lambda)
+    groups <- simple_clustering(M)
+    obj$stages[[v]][ groups$J ] <- "2"   
+    print(v)
+  }
+  return(fit.staged_ev_tree(obj))
+}
 
 #' backword naive random hill-climbing
 #'

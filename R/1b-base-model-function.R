@@ -186,7 +186,7 @@ fit.staged_ev_tree <- function(sevt,
     names(sevt$prob[[order[i]]]) <- stages
     lambda <- lambda / dims[i]
   }
-  sevt$ll <- NULL
+  sevt$ll <- NULL ##force recompute log-likelihood
   sevt$ll <- logLik(sevt)
   return(sevt)
 }
@@ -316,25 +316,10 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
 #'
 #' @export
 is_fitted.staged_ev_tree <- function(x) {
-  return(!is.null(x$prob))
+  return(!is.null(x$prob) && !is.null(x$ctables))
 }
 
-#' give a safe-to-add label that is not in \code{labels}
-#' INTERNAL USE
-#' 
-#' @param labels vector of labels (strings)
-#' 
-#' @return a string label that is different from each \code{labels}
-new_label <- function(labels){
-  k <- 1
-  labels <- as.character(labels)
-  while (TRUE){
-    if (!(as.character(k) %in% labels)){
-      return(as.character(k))
-    }
-    k <- k + 1
-  }
-}
+
 
 
 #' Print a staged event tree
