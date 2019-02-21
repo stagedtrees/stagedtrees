@@ -49,7 +49,7 @@ a data.frame, and fitted. By default the staged event tree created will be
 the full independent model (that is only one stage per variable). 
 
 ```
-sevt <- staged_ev_tree(DD, fit =TRUE , laplace = 1)
+sevt <- staged_ev_tree(DD, fit = TRUE , laplace = 1)
 
 
 plot(sevt)
@@ -88,7 +88,7 @@ We are still implementing model selection algorithm, now available:
   ## we initialize the full model
   sevt_full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
   ## then we merge stages
-  sevt <- backward_hill_climb(sevt_full, verbose = FALSE)
+  sevt <- backward_hill_climb(sevt_full, trace = 1)
   sevt$score$value
   plot(sevt)
   ```
@@ -112,16 +112,16 @@ We are still implementing model selection algorithm, now available:
   
   The algorithm moves to the **first** model that increase the score.
   ```
-  ## we use verbose = TRUE  to obtain messages 
+  ## we use trace = 2  to obtain all messages 
   ## We can use score as in the back_HC method
-  sevt3 <- fast_backward_hill_climb(sevt_full, verbose = TRUE)
+  sevt3 <- fast_backward_hill_climb(sevt_full, trace = 2)
   ```
 
 - ##### Backward joining based on KL
   For every variable the algorithm iterates and at every step try to join the
   two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
   ```
-  sevt <- backward_joining_KL(sevt_full, thr = 0.01)
+  sevt <- backward_joining_KL(sevt_full, thr = 0.01, trace = 2)
   plot(sevt) 
   ``` 
 

@@ -5,17 +5,24 @@
 \title{backword hill-climbing}
 \usage{
 backward_hill_climb(object = NULL, score = function(x) return(-BIC(x)),
-  max_iter = Inf, verbose = FALSE)
+  max_iter = Inf, trace = 0)
 }
 \arguments{
 \item{object}{a staged event tree model}
 
 \item{score}{the score function to be maximized}
 
-\item{max_iter}{the maximum number of iteration}
+\item{max_iter}{the maximum number of iterations per variable}
 
-\item{verbose}{If info should be printed (via \code{message})}
+\item{trace}{if >0 increasingly amount of info 
+is printed (via \code{message})}
 }
 \description{
 Each iter move to the best model, from more complicated to simpler model
+}
+\examples{
+DD <- generate_random_dataset(n = 5, N = 1000)
+model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+model <- backward_hill_climb(model_full)
+BIC(model_full, model)
 }

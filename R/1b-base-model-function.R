@@ -186,7 +186,7 @@ fit.staged_ev_tree <- function(sevt,
     names(sevt$prob[[order[i]]]) <- stages
     lambda <- lambda / dims[i]
   }
-  sevt$ll <- NULL
+  sevt$ll <- NULL ##force recompute log-likelihood
   sevt$ll <- logLik(sevt)
   return(sevt)
 }
@@ -316,22 +316,28 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
 #'
 #' @export
 is_fitted.staged_ev_tree <- function(x) {
-  return(!is.null(x$prob))
+  return(!is.null(x$prob) && !is.null(x$ctables))
 }
 
-#' give a safe-to-add label that is not in \code{labels}
-#' INTERNAL USE
+
+
+
+#' Print a staged event tree
 #' 
-#' @param labels vector of labels (strings)
+#' @param x the staged event tree obejct
+#' @param ... additional parameters (compatibility)
 #' 
-#' @return a string label that is different from each \code{labels}
-new_label <- function(labels){
-  k <- 1
-  labels <- as.character(labels)
-  while (TRUE){
-    if (!(as.character(k) %in% labels)){
-      return(as.character(k))
-    }
-    k <- k + 1
+#' @return An invisible copy of \code{x}
+#' @export
+print.staged_ev_tree <- function(x, ...){
+  cat("Staged event tree", 
+      ifelse(is_fitted.staged_ev_tree(x), "(fitted) \n", "\n"))
+  ls <- vapply(x$tree, length, 1)
+  cat(paste( paste0(names(x$tree), "[", ls, "] ") , collapse = "->"), "\n")
+  #nstages <- vapply(x$stages, function(s) length(unique(s)), FUN.VALUE = 1)
+  #cat("n.stages: \n")
+  #print(nstages)
+  if (x$ll){
+    print(x$ll)
   }
 }

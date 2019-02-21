@@ -4,14 +4,15 @@
 \alias{backward_joining_KL}
 \title{Backword joining of stages}
 \usage{
-backward_joining_KL(object = NULL, thr = 0.01, verbose = FALSE)
+backward_joining_KL(object = NULL, thr = 0.01, trace = 0)
 }
 \arguments{
 \item{object}{the staged event tree from where to start}
 
 \item{thr}{the threshold for joining stages}
 
-\item{verbose}{logical}
+\item{trace}{if >0 increasingly amount of info 
+is printed (via \code{message})}
 }
 \value{
 the learned staged event tree
@@ -19,4 +20,10 @@ the learned staged event tree
 \description{
 Join stages from more complex to simpler models
 using entropy do decide if join or not a stage
+}
+\examples{
+DD <- generate_random_dataset(n = 5, N = 1000)
+model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+model <- backward_joining_KL(model_full)
+BIC(model_full, model)
 }
