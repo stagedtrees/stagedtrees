@@ -19,3 +19,9 @@ fast_backward_hill_climb(object = NULL, score = function(x)
 \description{
 Move to the first model that increase the score
 }
+\examples{
+DD <- generate_random_dataset(n = 5, N = 1000)
+model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+model <- fast_backward_hill_climb(model_full)
+BIC(model_full, model)
+}

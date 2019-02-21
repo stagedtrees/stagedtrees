@@ -1,5 +1,3 @@
-
-
 #' Join situations with no observations
 #' 
 #' @param object a fitted staged event tree
@@ -8,6 +6,14 @@
 #' @return a staged event tree with situations with 0 
 #' observations merged
 #' @export
+#' 
+#' @examples 
+#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+#' model <- join_zero_counts(model_full, fit = TRUE)
+#' logLik(model_full)
+#' logLik(model)
+#' BIC(model_full, model)
 join_zero_counts <- function(object, fit = TRUE){
   stopifnot(is(object, "staged_ev_tree"))
   for (v in names(object$tree)[-1]){
@@ -24,8 +30,6 @@ join_zero_counts <- function(object, fit = TRUE){
 }
 
 
-#' 
-#' @export
 naive_staged_ev_tree <- function(data, lambda){
   obj <- staged_ev_tree.data.frame(data, lambda = lambda , fit = TRUE)
   for (v in names(obj$tree)[-1]){
@@ -103,6 +107,11 @@ backward_hill_climb_random <-
 #' @param score the score function to be maximized
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
+#' @examples 
+#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+#' model <- backward_hill_climb(model_full)
+#' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
@@ -171,6 +180,11 @@ backward_hill_climb <-
 #' @param score the score function to be maximized
 #' @param max_iter the maximum number of iteration
 #' @param verbose If info should be printed (via \code{message})
+#' @examples 
+#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+#' model <- fast_backward_hill_climb(model_full)
+#' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
@@ -249,6 +263,12 @@ fast_backward_hill_climb <-
 #' @param thr the threshold for joining stages
 #' @param verbose logical
 #' @return the learned staged event tree
+#' 
+#' @examples 
+#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+#' model <- backward_joining_KL(model_full)
+#' BIC(model_full, model)
 #' @importFrom  methods is
 #' @export
 backward_joining_KL <-

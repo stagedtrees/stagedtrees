@@ -18,3 +18,11 @@ observations merged
 \description{
 Join situations with no observations
 }
+\examples{
+DD <- generate_random_dataset(n = 5, N = 1000)
+model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+model <- join_zero_counts(model_full, fit = TRUE)
+logLik(model_full)
+logLik(model)
+BIC(model_full, model)
+}
