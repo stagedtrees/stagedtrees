@@ -1,3 +1,22 @@
+#' New label
+#' 
+#' give a safe-to-add label that is not in \code{labels}
+#' INTERNAL USE
+#' 
+#' @param labels vector of labels (strings)
+#' 
+#' @return a string label that is different from each \code{labels}
+new_label <- function(labels){
+  k <- 1
+  labels <- as.character(labels)
+  while (TRUE){
+    if (!(as.character(k) %in% labels)){
+      return(as.character(k))
+    }
+    k <- k + 1
+  }
+}
+
 
 #' return path index
 #' 
@@ -62,7 +81,8 @@ KL_mat_prob <- function(x) {
   M <- matrix(nrow = d, ncol = d)
   for (i in 1:d) {
     for (j in 1:d) {
-      M[i, j] <- sum(x[i, ] * (log(x[i, ]) - log(x[j, ])))
+      M[i, j] <- sum( (x[i, ] / sum(x[i, ]) ) * (log(x[i, ] / sum(x[i, ])) - log(x[j, ] /
+                                                                 sum(x[j, ]))))
     }
   }
   return(M + t(M))
@@ -108,9 +128,7 @@ simple_clustering <- function(M) {
   }
   return(list(
     I = I,
-    J = J ,
-    i = i ,
-    j = j
+    J = J 
   ))
 }
 
