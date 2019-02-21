@@ -5,7 +5,7 @@
 \title{backword naive random hill-climbing}
 \usage{
 backward_hill_climb_random(object = NULL, score = function(x)
-  return(-BIC(x)), eps = 1e-04, max_iter = 100, verbose = FALSE)
+  return(-BIC(x)), eps = 1e-04, max_iter = 100, trace = 0)
 }
 \arguments{
 \item{object}{a staged event tree model}
@@ -16,7 +16,8 @@ backward_hill_climb_random(object = NULL, score = function(x)
 
 \item{max_iter}{the maximum number of iteration}
 
-\item{verbose}{If info should be printed (via \code{message})}
+\item{trace}{if >0 increasingly amount of info 
+is printed (via \code{message})}
 }
 \description{
 Randomly select a model and selct it if it increase the score

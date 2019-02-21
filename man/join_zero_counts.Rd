@@ -4,12 +4,14 @@
 \alias{join_zero_counts}
 \title{Join situations with no observations}
 \usage{
-join_zero_counts(object, fit = TRUE)
+join_zero_counts(object, fit = TRUE, trace = 0)
 }
 \arguments{
 \item{object}{a fitted staged event tree}
 
 \item{fit}{if the probability should be re-computed}
+
+\item{trace}{if \code{>0} print information to console}
 }
 \value{
 a staged event tree with situations with 0 
