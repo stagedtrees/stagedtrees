@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{backward_hill_climb}
 \alias{backward_hill_climb}
-\title{backword hill-climbing}
+\title{Backword hill-climbing}
 \usage{
 backward_hill_climb(object = NULL, score = function(x) return(-BIC(x)),
   max_iter = Inf, trace = 0)
@@ -17,12 +17,21 @@ backward_hill_climb(object = NULL, score = function(x) return(-BIC(x)),
 \item{trace}{if >0 increasingly amount of info 
 is printed (via \code{message})}
 }
+\value{
+The final staged event tree object
+}
 \description{
-Each iter move to the best model, from more complicated to simpler model
+Hill-climbing search of staged event trees with 
+iterative joining of stages
+}
+\details{
+For each variable the algorithm try to join stages 
+and move to the best model that increase the score. When no 
+increase is possible it moves to the next variable.
 }
 \examples{
-DD <- generate_random_dataset(n = 5, N = 1000)
+DD <- generate_random_dataset(n = 4, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-model <- backward_hill_climb(model_full)
+model <- backward_hill_climb(model_full, trace = 2)
 BIC(model_full, model)
 }

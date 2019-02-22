@@ -17,12 +17,21 @@ fast_backward_hill_climb(object = NULL, score = function(x)
 \item{trace}{if >0 increasingly amount of info 
 is printed (via \code{message})}
 }
+\value{
+The final staged event tree obtained
+}
 \description{
-Move to the first model that increase the score
+Fast hill-climbing search of staged event trees with 
+iterative joining of stages.
+}
+\details{
+For each variable the algorithm try to join stages 
+and move to the first model that increase the score. When no 
+increase is possible it moves to the next variable.
 }
 \examples{
 DD <- generate_random_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-model <- fast_backward_hill_climb(model_full)
+model <- fast_backward_hill_climb(model_full, trace = 2)
 BIC(model_full, model)
 }
