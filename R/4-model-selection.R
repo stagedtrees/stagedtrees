@@ -77,6 +77,7 @@ naive_staged_ev_tree <- function(object){
       object$stages[[v]][ groups[[ s ]] ] <- s
     }
   }
+  object$call <- sys.call()
   return(fit.staged_ev_tree(object, lambda = object$lambda))
 }
 
