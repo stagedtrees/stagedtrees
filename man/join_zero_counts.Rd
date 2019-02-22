@@ -20,6 +20,16 @@ observations merged
 \description{
 Join situations with no observations
 }
+\details{
+This function takes as input a (fitted) staged event tree object 
+and looking at the \code{ctables} join all the situations with zero 
+recorded observations in the same stage. Since such joining does not change
+the log-likelihood of the model, it is a useful (time-wise) 
+pre-processing before
+others model selection algorithms.
+If \code{fit=TRUE} the model will be then re-fitted, if user sets 
+\code{fit = FALSE} the returned model will have no probabilities.
+}
 \examples{
 DD <- generate_random_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)

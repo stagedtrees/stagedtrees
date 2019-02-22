@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{backward_hill_climb_random}
 \alias{backward_hill_climb_random}
-\title{backword naive random hill-climbing}
+\title{Backword random hill-climbing}
 \usage{
 backward_hill_climb_random(object = NULL, score = function(x)
   return(-BIC(x)), eps = 1e-04, max_iter = 100, trace = 0)
@@ -20,5 +20,5 @@ backward_hill_climb_random(object = NULL, score = function(x)
 is printed (via \code{message})}
 }
 \description{
-Randomly select a model and selct it if it increase the score
+Randomly try to join stages
 }

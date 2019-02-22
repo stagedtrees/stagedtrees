@@ -6,6 +6,16 @@
 #' 
 #' @return a staged event tree with situations with 0 
 #' observations merged
+#' 
+#' @details This function takes as input a (fitted) staged event tree object 
+#' and looking at the \code{ctables} join all the situations with zero 
+#' recorded observations in the same stage. Since such joining does not change
+#' the log-likelihood of the model, it is a useful (time-wise) 
+#' pre-processing before
+#' others model selection algorithms.
+#' If \code{fit=TRUE} the model will be then re-fitted, if user sets 
+#' \code{fit = FALSE} the returned model will have no probabilities. 
+#'  
 #' @importFrom  methods is
 #' @export
 #' 
@@ -18,6 +28,7 @@
 #' BIC(model_full, model)
 join_zero_counts <- function(object, fit = TRUE, trace = 0){
   stopifnot(is(object, "staged_ev_tree"))
+  stopifnot(is_fitted.staged_ev_tree(object))
   tot <- 0
   for (v in names(object$tree)[-1]){
     new <- new_label(unique(object$stages[[v]]))
@@ -48,15 +59,16 @@ naive_staged_ev_tree <- function(data, lambda){
   for (v in names(obj$tree)[-1]){
     M <- KL_mat_prob(obj$ctables[[v]] + lambda)
     groups <- simple_clustering(M)
-    obj$stages[[v]][ groups$J ] <- "2"   
+    obj$stages[[v]][ groups$J ] <- "2"  
+    ###here we could also compute probabilities
     print(v)
   }
   return(fit.staged_ev_tree(obj))
 }
 
-#' backword naive random hill-climbing
+#' Backword random hill-climbing
 #'
-#' Randomly select a model and selct it if it increase the score
+#' Randomly try to join stages
 #'
 #' @param object a staged event tree model 
 #' @param score the score function to be maximized
@@ -86,9 +98,9 @@ backward_hill_climb_random <-
       ## chose randomly one of the variable and try to perform a stage-merging
       iter <- iter + 1
       v <- sample(names(object$tree)[-1], size = 1)
-      if (length(object$stages[[v]]) > 1) {
+      if (length(unique(object$stages[[v]])) > 1) {
         stgs <-
-          sample(object$stages[[v]], size = 2, replace = FALSE) ##select randomly two stages
+          sample(unique(object$stages[[v]]), size = 2, replace = FALSE) ##select randomly two stages
         try <-
           join_stages(object, v, stgs[1], stgs[2]) ## join the 2 stages
         try_score <- score(try)
