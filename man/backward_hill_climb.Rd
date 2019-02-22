@@ -4,7 +4,7 @@
 \alias{backward_hill_climb}
 \title{Backword hill-climbing}
 \usage{
-backward_hill_climb(object = NULL, score = function(x) return(-BIC(x)),
+backward_hill_climb(object, score = function(x) return(-BIC(x)),
   max_iter = Inf, trace = 0)
 }
 \arguments{
