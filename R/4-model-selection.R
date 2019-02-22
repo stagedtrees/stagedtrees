@@ -54,16 +54,30 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 }
 
 
-naive_staged_ev_tree <- function(data, lambda){
-  obj <- staged_ev_tree.data.frame(data, lambda = lambda , fit = TRUE)
-  for (v in names(obj$tree)[-1]){
-    M <- KL_mat_prob(obj$ctables[[v]] + lambda)
+#' Naive staged event tree
+#' 
+#' Build a stage event tree with two stages for each variable
+#' @param object a staged event tree object with ctables 
+#' @return A staged event tree with two stages per variable
+#' @export
+#' @examples 
+#' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
+#' model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
+#' naive_model <- naive_staged_ev_tree(model_0)
+#' pr <- predict(naive_model, newdata = DD[501:1000,])
+#' table(pr,DD$C[501:1000])
+naive_staged_ev_tree <- function(object){
+  stopifnot(is_fitted.staged_ev_tree(object))
+  for (v in names(object$tree)[-1]){
+    M <- KL_mat_prob(object$ctables[[v]] + object$lambda)
     groups <- simple_clustering(M)
-    obj$stages[[v]][ groups$J ] <- "2"  
-    ###here we could also compute probabilities
-    print(v)
+    ### compute probabilitites and assign stages
+    object$prob[[ v ]] <- list()
+    for (s in c("1", "2")){
+      object$stages[[v]][ groups[[ s ]] ] <- s
+    }
   }
-  return(fit.staged_ev_tree(obj))
+  return(fit.staged_ev_tree(object, lambda = object$lambda))
 }
 
 #' Backword random hill-climbing
@@ -86,7 +100,7 @@ naive_staged_ev_tree <- function(data, lambda){
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 backward_hill_climb_random <-
-  function(object = NULL,
+  function(object,
            score = function(x)
              return(-BIC(x))
            , max_iter = 100
@@ -150,7 +164,7 @@ backward_hill_climb_random <-
 #' @importFrom  methods is
 #' @export
 backward_hill_climb <-
-  function(object = NULL,
+  function(object,
            score = function(x)
              return(-BIC(x))
            ,

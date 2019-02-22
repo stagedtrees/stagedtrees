@@ -4,8 +4,8 @@
 \alias{backward_hill_climb_random}
 \title{Backword random hill-climbing}
 \usage{
-backward_hill_climb_random(object = NULL, score = function(x)
-  return(-BIC(x)), max_iter = 100, trace = 0)
+backward_hill_climb_random(object, score = function(x) return(-BIC(x)),
+  max_iter = 100, trace = 0)
 }
 \arguments{
 \item{object}{a staged event tree model}
