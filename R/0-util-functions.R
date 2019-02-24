@@ -185,13 +185,14 @@ generate_xor_dataset <- function(n = 2,
     FUN = function(x) {
       return(xor(x = x[-1], eps = eps))
     })
-  DD <- as.data.frame(sapply(
-    DD,
-    FUN = function(x) {
-      factor(x, levels = c(-1, 1))
+  DD <- DD[,-1]
+  sapply(
+    1:(n+1),
+    FUN = function(i) {
+      DD[[i]] <- factor(DD[[i]], levels = c(-1, 1))
     }
-  ))
-  return(DD[, -1])
+  )
+  return(DD)
 }
 
 
@@ -235,11 +236,12 @@ generate_random_dataset <-
       }
     )
     DD$C[DD$C == 0] <- 1
-    DD <- as.data.frame(sapply(
-      DD,
-      FUN = function(x) {
-        factor(x, levels = c(-1, 1))
+    DD <- DD[,-1]
+    sapply(
+      1:(n+1),
+      FUN = function(i) {
+        DD[[i]] <- factor(DD[[i]], levels = c(-1, 1))
       }
-    ))
-    return(DD[, -1])
+    )
+    return(DD)
   }
