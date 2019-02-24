@@ -127,8 +127,8 @@ simple_clustering <- function(M) {
     }
   }
   return(list(
-    I = I,
-    J = J 
+    "1" = I,
+    "2" = J 
   ))
 }
 

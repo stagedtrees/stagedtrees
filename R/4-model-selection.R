@@ -6,6 +6,16 @@
 #' 
 #' @return a staged event tree with situations with 0 
 #' observations merged
+#' 
+#' @details This function takes as input a (fitted) staged event tree object 
+#' and looking at the \code{ctables} join all the situations with zero 
+#' recorded observations in the same stage. Since such joining does not change
+#' the log-likelihood of the model, it is a useful (time-wise) 
+#' pre-processing before
+#' others model selection algorithms.
+#' If \code{fit=TRUE} the model will be then re-fitted, if user sets 
+#' \code{fit = FALSE} the returned model will have no probabilities. 
+#'  
 #' @importFrom  methods is
 #' @export
 #' 
@@ -18,6 +28,7 @@
 #' BIC(model_full, model)
 join_zero_counts <- function(object, fit = TRUE, trace = 0){
   stopifnot(is(object, "staged_ev_tree"))
+  stopifnot(is_fitted.staged_ev_tree(object))
   tot <- 0
   for (v in names(object$tree)[-1]){
     new <- new_label(unique(object$stages[[v]]))
@@ -43,52 +54,70 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 }
 
 
-naive_staged_ev_tree <- function(data, lambda){
-  obj <- staged_ev_tree.data.frame(data, lambda = lambda , fit = TRUE)
-  for (v in names(obj$tree)[-1]){
-    M <- KL_mat_prob(obj$ctables[[v]] + lambda)
+#' Naive staged event tree
+#' 
+#' Build a stage event tree with two stages for each variable
+#' @param object a staged event tree object with ctables 
+#' @return A staged event tree with two stages per variable
+#' @export
+#' @examples 
+#' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
+#' model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
+#' naive_model <- naive_staged_ev_tree(model_0)
+#' pr <- predict(naive_model, newdata = DD[501:1000,])
+#' table(pr,DD$C[501:1000])
+naive_staged_ev_tree <- function(object){
+  stopifnot(is_fitted.staged_ev_tree(object))
+  for (v in names(object$tree)[-1]){
+    M <- KL_mat_prob(object$ctables[[v]] + object$lambda)
     groups <- simple_clustering(M)
-    obj$stages[[v]][ groups$J ] <- "2"   
-    print(v)
+    ### compute probabilitites and assign stages
+    object$prob[[ v ]] <- list()
+    for (s in c("1", "2")){
+      object$stages[[v]][ groups[[ s ]] ] <- s
+    }
   }
-  return(fit.staged_ev_tree(obj))
+  object$call <- sys.call()
+  return(fit.staged_ev_tree(object, lambda = object$lambda))
 }
 
-#' backword naive random hill-climbing
+#' Backword random hill-climbing
 #'
-#' Randomly select a model and selct it if it increase the score
+#' Randomly try to join stages
 #'
 #' @param object a staged event tree model 
 #' @param score the score function to be maximized
-#' @param eps the stopping criteria for the relative score increase
 #' @param max_iter the maximum number of iteration
 #' @param trace if >0 increasingly amount of info 
 #' is printed (via \code{message})
+#' 
+#' @details At each iteration a variable and 
+#' two of its stages are randomly selected. 
+#' If joining the stages increase the score, the model is 
+#' updated. The procedure is repeated until the 
+#' number of iterations reach \code{max_iter}.
+#' @return The final staged event tree object
 #' @export
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 backward_hill_climb_random <-
-  function(object = NULL,
+  function(object,
            score = function(x)
              return(-BIC(x))
-           ,
-           eps = 0.0001,
-           max_iter = 100
-           ,
-           trace = 0) {
+           , max_iter = 100
+           , trace = 0) {
     stopifnot(is(object, "staged_ev_tree"))
     stopifnot(is_fitted.staged_ev_tree(object))
     now_score <- score(object)
     r <- 1
     iter <- 0
-    while (r > eps &&
-           iter < max_iter) {
+    while (iter < max_iter) {
       ## chose randomly one of the variable and try to perform a stage-merging
       iter <- iter + 1
       v <- sample(names(object$tree)[-1], size = 1)
-      if (length(object$stages[[v]]) > 1) {
+      if (length(unique(object$stages[[v]])) > 1) {
         stgs <-
-          sample(object$stages[[v]], size = 2, replace = FALSE) ##select randomly two stages
+          sample(unique(object$stages[[v]]), size = 2, replace = FALSE) ##select randomly two stages
         try <-
           join_stages(object, v, stgs[1], stgs[2]) ## join the 2 stages
         try_score <- score(try)
@@ -113,25 +142,30 @@ backward_hill_climb_random <-
 
 
 
-#' backword hill-climbing
+#' Backword hill-climbing
 #'
-#' Each iter move to the best model, from more complicated to simpler model
-#'
+#' Hill-climbing search of staged event trees with 
+#' iterative joining of stages
+#' 
 #' @param object a staged event tree model
 #' @param score the score function to be maximized
 #' @param max_iter the maximum number of iterations per variable
 #' @param trace if >0 increasingly amount of info 
 #' is printed (via \code{message})
+#' @details For each variable the algorithm try to join stages 
+#' and move to the best model that increase the score. When no 
+#' increase is possible it moves to the next variable.
+#' @return The final staged event tree object
 #' @examples 
-#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' DD <- generate_random_dataset(n = 4, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- backward_hill_climb(model_full)
+#' model <- backward_hill_climb(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
 backward_hill_climb <-
-  function(object = NULL,
+  function(object,
            score = function(x)
              return(-BIC(x))
            ,
@@ -191,17 +225,22 @@ backward_hill_climb <-
 
 #' Fast backword hill-climbing
 #'
-#' Move to the first model that increase the score
+#' Fast hill-climbing search of staged event trees with 
+#' iterative joining of stages.
 #'
 #' @param object a staged event tree model
 #' @param score the score function to be maximized
 #' @param max_iter the maximum number of iteration
 #' @param trace if >0 increasingly amount of info 
 #' is printed (via \code{message})
+#' @details For each variable the algorithm try to join stages 
+#' and move to the first model that increase the score. When no 
+#' increase is possible it moves to the next variable.
+#' @return The final staged event tree obtained
 #' @examples 
 #' DD <- generate_random_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- fast_backward_hill_climb(model_full)
+#' model <- fast_backward_hill_climb(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
@@ -288,7 +327,7 @@ fast_backward_hill_climb <-
 #' @examples 
 #' DD <- generate_random_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- backward_joining_KL(model_full)
+#' model <- backward_joining_KL(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom  methods is
 #' @export

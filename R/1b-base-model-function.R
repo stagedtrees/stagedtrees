@@ -328,6 +328,10 @@ is_fitted.staged_ev_tree <- function(x) {
 #' @param ... additional parameters (compatibility)
 #' 
 #' @return An invisible copy of \code{x}
+#' @details The order of the variables in the stratified tree
+#'  is printed (from root). In addition the number of levels of each 
+#'  variable is shown in square brackets. 
+#'  If available the log-likelihood of the model is printed.  
 #' @export
 print.staged_ev_tree <- function(x, ...){
   cat("Staged event tree", 
@@ -340,4 +344,5 @@ print.staged_ev_tree <- function(x, ...){
   if (x$ll){
     print(x$ll)
   }
+  invisible(x)
 }

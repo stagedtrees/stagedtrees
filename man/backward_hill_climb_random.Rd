@@ -2,23 +2,31 @@
 % Please edit documentation in R/4-model-selection.R
 \name{backward_hill_climb_random}
 \alias{backward_hill_climb_random}
-\title{backword naive random hill-climbing}
+\title{Backword random hill-climbing}
 \usage{
-backward_hill_climb_random(object = NULL, score = function(x)
-  return(-BIC(x)), eps = 1e-04, max_iter = 100, trace = 0)
+backward_hill_climb_random(object, score = function(x) return(-BIC(x)),
+  max_iter = 100, trace = 0)
 }
 \arguments{
 \item{object}{a staged event tree model}
 
 \item{score}{the score function to be maximized}
 
-\item{eps}{the stopping criteria for the relative score increase}
-
 \item{max_iter}{the maximum number of iteration}
 
 \item{trace}{if >0 increasingly amount of info 
 is printed (via \code{message})}
 }
+\value{
+The final staged event tree object
+}
 \description{
-Randomly select a model and selct it if it increase the score
+Randomly try to join stages
+}
+\details{
+At each iteration a variable and 
+two of its stages are randomly selected. 
+If joining the stages increase the score, the model is 
+updated. The procedure is repeated until the 
+number of iterations reach \code{max_iter}.
 }
