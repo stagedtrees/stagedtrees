@@ -38,7 +38,7 @@ evt <- strt_ev_tree(DD, fit = TRUE)
 
 plot(evt)
 
-evt$prob$X1 ### here probabilities table are stored
+evt$ctables$X1 ### here contingency tables are stored
 ```
 
 
@@ -124,6 +124,17 @@ We are still implementing model selection algorithm, now available:
   sevt <- backward_joining_KL(sevt_full, thr = 0.01, trace = 2)
   plot(sevt) 
   ``` 
+  
+- ##### Naive staged event tree 
+  Build a staged event tree wiht two stages per variable (same number of 
+  parameters of a classical NB classifier)
+  
+  ```
+  ### we initialize as the independence model
+  model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
+  naive_model <- naive_staged_ev_tree(model_0)
+  naive_model
+  ```
 
 - ##### Using staged trees as classifiers
 
