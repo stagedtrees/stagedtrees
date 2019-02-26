@@ -66,9 +66,9 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 #' naive_model <- naive_staged_ev_tree(model_0)
 #' pr <- predict(naive_model, newdata = DD[501:1000,])
 #' table(pr,DD$C[501:1000])
-naive_staged_ev_tree <- function(object){
+naive_staged_ev_tree <- function(object, k = length(object$tree)){
   stopifnot(is_fitted.staged_ev_tree(object))
-  for (v in names(object$tree)[-1]){
+  for (v in names(object$tree)[2:k]){
     M <- KL_mat_prob(object$ctables[[v]] + object$lambda)
     groups <- simple_clustering(M)
     ### compute probabilitites and assign stages
