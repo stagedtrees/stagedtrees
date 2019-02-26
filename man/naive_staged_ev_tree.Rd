@@ -4,10 +4,12 @@
 \alias{naive_staged_ev_tree}
 \title{Naive staged event tree}
 \usage{
-naive_staged_ev_tree(object)
+naive_staged_ev_tree(object, k = length(object$tree))
 }
 \arguments{
 \item{object}{a staged event tree object with ctables}
+
+\item{k}{the maximum number of variable to consider}
 }
 \value{
 A staged event tree with two stages per variable
