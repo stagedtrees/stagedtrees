@@ -165,7 +165,7 @@ fit.staged_ev_tree <- function(sevt,
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
   sevt$prob[[order[1]]] <- list("1" = pp)
-  lambda <- lambda / dims[1]
+  #lambda <- lambda / dims[1]
   for (i in 2:length(order)) {
     stages <- unique(sevt$stages[[order[i]]])
     sevt$prob[[order[i]]] <-
@@ -184,7 +184,7 @@ fit.staged_ev_tree <- function(sevt,
         return(tt) #return normalized prob
       })
     names(sevt$prob[[order[i]]]) <- stages
-    lambda <- lambda / dims[i]
+    #lambda <- lambda / dims[i]
   }
   sevt$ll <- NULL ##force recompute log-likelihood
   sevt$ll <- logLik(sevt)
