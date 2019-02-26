@@ -58,6 +58,7 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 #' 
 #' Build a stage event tree with two stages for each variable
 #' @param object a staged event tree object with ctables 
+#' @param k the maximum number of variable to consider
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples 
