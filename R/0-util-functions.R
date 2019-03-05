@@ -60,7 +60,8 @@ tree_idx <- function(path, tree){
 find_stage <- function(object, path) {
   k <- length(path)
   ix <- tree_idx(path = path, tree = object$tree)
-  return(object$stages[[k]][ix])
+  l <- length(object$stages[[k]])
+  return(object$stages[[k]][(ix - 1) %% l + 1]) ### stages can be defined in a reduced fashion
 }
 
 

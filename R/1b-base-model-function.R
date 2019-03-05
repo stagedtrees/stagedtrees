@@ -320,7 +320,34 @@ is_fitted.staged_ev_tree <- function(x) {
 }
 
 
-
+#' Built (efficently) an independent event tree
+#' 
+#' @param x data
+#' @param lambda the smoothing parameter
+#' @export
+effindep.staged_ev_tree <- function(x, lambda, ctables = TRUE){
+  x <- as.data.frame(x)
+  model <- staged_ev_tree(x, fit = FALSE, full = FALSE)
+  model$prob <- list()
+  var <- names(model$tree)
+  model$lambda <- lambda
+  model$ll <- 0
+  for ( v in var){
+    ctab <- table(x[[v]])
+    n <- sum(ctab)
+    model$prob[[v]] <- list( "1" =  ctab + lambda  )
+    model$prob[[v]][[1]] <- model$prob[[v]][[1]] / sum(model$prob[[v]][[1]])  
+    attr(model$prob[[v]][[1]], "n") <- n
+    ix <- ctab > 0 
+    model$ll <- model$ll + sum(ctab[ix] * log(model$prob[[v]][[1]][ix]))
+  }
+  attr(model$ll, "df") <- sum(vapply(model$tree, length, FUN.VALUE = 1) - 1 )
+  class(model$ll) <- "logLik"
+  if (ctables){
+    model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
+  }
+  return(model)
+}
 
 #' Print a staged event tree
 #' 
@@ -337,11 +364,11 @@ print.staged_ev_tree <- function(x, ...){
   cat("Staged event tree", 
       ifelse(is_fitted.staged_ev_tree(x), "(fitted) \n", "\n"))
   ls <- vapply(x$tree, length, 1)
-  cat(paste( paste0(names(x$tree), "[", ls, "] ") , collapse = "->"), "\n")
+  cat(paste( paste0(names(x$tree), "[", ls, "] ") , collapse = "-> "), "\n")
   #nstages <- vapply(x$stages, function(s) length(unique(s)), FUN.VALUE = 1)
   #cat("n.stages: \n")
   #print(nstages)
-  if (x$ll){
+  if (!is.null(x$ll)){
     print(x$ll)
   }
   invisible(x)
