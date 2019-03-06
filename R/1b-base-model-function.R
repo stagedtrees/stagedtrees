@@ -53,6 +53,7 @@ staged_ev_tree.default <- function(x, ...) {
 #' Builds the staged event tree from data provided as a \code{table}
 #'
 #' @param x table with the observation
+#' @param order vector of order of the variables
 #' @param full logical, if the full model should be built instead
 #' @param fit logical
 #' @param ... additional parameters to be passed to other methods (mainly
