@@ -12,7 +12,7 @@
 For the example we use a simulated dataset with 6 binary variables:
 
 ```
-DD <- generate_random_dataset(n = 5, 1000)
+DD <- generate_xor_dataset(n = 5, 1000)
 ```
 
 ##### Full stratified trees 
@@ -38,7 +38,7 @@ evt <- strt_ev_tree(DD, fit = TRUE)
 
 plot(evt)
 
-evt$ctables$X1 ### here contingency tables are stored
+evt$ctables$X2 ### here contingency tables are stored
 ```
 
 
@@ -63,6 +63,7 @@ data("Titanic")
 model_T <- staged_ev_tree(Titanic, 
            order = c("Survived", "Class", "Sex", "Age"),
            fit = TRUE, full = TRUE)
+plot(model_T)
 ```
 
 
@@ -83,7 +84,16 @@ We are still implementing model selection algorithm, now available:
   ```
   sevt <- staged_ev_tree(DD, fit = TRUE)
   ```
+  
+  Alternatively there is a more efficient function to build 
+  inependent models (useful when the number of variables is more than 7):
+  
+  ```
+  sevt <- effindep.staged_ev_tree(DD, lambda = 1, ctables = TRUE)
+  ```
+  
 - ##### Full model 
+  
   ```
   ## if fit=FALSE (default) model will be returned without fitted
   ##  probabilities
