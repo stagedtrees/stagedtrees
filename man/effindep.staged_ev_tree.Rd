@@ -10,7 +10,19 @@ effindep.staged_ev_tree(x, lambda, ctables = TRUE)
 \item{x}{data}
 
 \item{lambda}{the smoothing parameter}
+
+\item{ctables}{logical, if \code{TRUE} ctables will be computed and attached}
+}
+\value{
+A fitted staged event tree with one stage per variable
 }
 \description{
 Built (efficently) an independent event tree
+}
+\examples{
+DD <- generate_xor_dataset(15, 100)
+system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
+system.time(model2 <- effindep.staged_ev_tree(DD, lambda = 1, ctables = TRUE))
+model1
+model2
 }

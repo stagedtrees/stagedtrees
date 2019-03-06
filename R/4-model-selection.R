@@ -20,7 +20,7 @@
 #' @export
 #' 
 #' @examples 
-#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- join_zero_counts(model_full, fit = TRUE)
 #' logLik(model_full)
@@ -158,7 +158,7 @@ backward_hill_climb_random <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree object
 #' @examples 
-#' DD <- generate_random_dataset(n = 4, N = 1000)
+#' DD <- generate_xor_dataset(n = 4, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- backward_hill_climb(model_full, trace = 2)
 #' BIC(model_full, model)
@@ -239,7 +239,7 @@ backward_hill_climb <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree obtained
 #' @examples 
-#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- fast_backward_hill_climb(model_full, trace = 2)
 #' BIC(model_full, model)
@@ -326,7 +326,7 @@ fast_backward_hill_climb <-
 #' @return the learned staged event tree
 #' 
 #' @examples 
-#' DD <- generate_random_dataset(n = 5, N = 1000)
+#' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- backward_joining_KL(model_full, trace = 2)
 #' BIC(model_full, model)

@@ -2,22 +2,14 @@
 % Please edit documentation in R/0-util-functions.R
 \name{generate_random_dataset}
 \alias{generate_random_dataset}
-\title{generate a random binary dataset for classification}
+\title{generate a random binary dataset}
 \usage{
-generate_random_dataset(n = 2, N = 10000, eps = 1.2,
-  gamma = runif(1, min = -n, max = n), alpha = runif(n, min = -n, max =
-  n))
+generate_random_dataset(n = 2, N = 10000)
 }
 \arguments{
 \item{n}{number of variables}
 
 \item{N}{number of observations}
-
-\item{eps}{noise}
-
-\item{gamma}{numeric}
-
-\item{alpha}{numeric vector of length \code{n}}
 }
 \value{
 A data.frame with \code{n} independent random variables and
@@ -25,7 +17,7 @@ A data.frame with \code{n} independent random variables and
  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 }
 \description{
-generate a random binary dataset for classification
+generate a random binary dataset
 }
 \examples{
 DD <- generate_random_dataset(n = 5, 1000)
