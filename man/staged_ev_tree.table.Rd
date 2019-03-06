@@ -10,6 +10,8 @@
 \arguments{
 \item{x}{table with the observation}
 
+\item{order}{vector of order of the variables}
+
 \item{full}{logical, if the full model should be built instead}
 
 \item{fit}{logical}
