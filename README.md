@@ -12,7 +12,7 @@
 For the example we use a simulated dataset with 6 binary variables:
 
 ```
-DD <- generate_random_dataset(n = 5, 1000)
+DD <- generate_xor_dataset(n = 5, 1000)
 ```
 
 ##### Full stratified trees 
@@ -38,7 +38,7 @@ evt <- strt_ev_tree(DD, fit = TRUE)
 
 plot(evt)
 
-evt$ctables$X1 ### here contingency tables are stored
+evt$ctables$X2 ### here contingency tables are stored
 ```
 
 
@@ -49,11 +49,23 @@ a data.frame, and fitted. By default the staged event tree created will be
 the full independent model (that is only one stage per variable). 
 
 ```
-sevt <- staged_ev_tree(DD, fit = TRUE , laplace = 1)
+sevt <- staged_ev_tree(DD, fit = TRUE , lambda = 1)
 
 
 plot(sevt)
 ```
+
+Staged event tree can also be built from contingency tables
+
+```
+data("Titanic")
+
+model_T <- staged_ev_tree(Titanic, 
+           order = c("Survived", "Class", "Sex", "Age"),
+           fit = TRUE, full = TRUE)
+plot(model_T)
+```
+
 
 #### Conversions
 
@@ -72,7 +84,16 @@ We are still implementing model selection algorithm, now available:
   ```
   sevt <- staged_ev_tree(DD, fit = TRUE)
   ```
+  
+  Alternatively there is a more efficient function to build 
+  inependent models (useful when the number of variables is more than 7):
+  
+  ```
+  sevt <- effindep.staged_ev_tree(DD, lambda = 1, ctables = TRUE)
+  ```
+  
 - ##### Full model 
+  
   ```
   ## if fit=FALSE (default) model will be returned without fitted
   ##  probabilities
@@ -170,7 +191,7 @@ changes can happen.
 - [x] fitting stratified event tree (mle)
 - [x] staged event tree
 - [x] fitting staged event tree (mle)
-- [ ] print method for staged and stratified event tree
+- [x] print method for staged  event tree
 - [ ] conversion BN to staged event tree
 - [ ] extracting sub tree
 - [ ] sampling from a staged tree and strt event tree
@@ -186,7 +207,7 @@ changes can happen.
     * [x] logLik for full tree (thus AIC and BIC work automatically)
     * [x] logLik staged tree 
     * [x] lazy logLik
-    * [ ] Bayes factor, LRT
+    * [ ] Bayes factor
     * [ ] conditional probabilities 
 - [ ] structure search:
     * [ ] implement ``join_, split_, set_stage`` functions

@@ -22,7 +22,7 @@ Join stages from more complex to simpler models
 using entropy do decide if join or not a stage
 }
 \examples{
-DD <- generate_random_dataset(n = 5, N = 1000)
+DD <- generate_xor_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 model <- backward_joining_KL(model_full, trace = 2)
 BIC(model_full, model)

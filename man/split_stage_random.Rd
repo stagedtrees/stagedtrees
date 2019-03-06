@@ -21,3 +21,7 @@ a staged event tree object
 \description{
 Randomly assign some of the path to a new stage
 }
+\examples{
+DD <- generate_random_dataset(2, 100)
+model <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+}
