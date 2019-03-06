@@ -30,7 +30,7 @@ and move to the first model that increase the score. When no
 increase is possible it moves to the next variable.
 }
 \examples{
-DD <- generate_random_dataset(n = 5, N = 1000)
+DD <- generate_xor_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 model <- fast_backward_hill_climb(model_full, trace = 2)
 BIC(model_full, model)

@@ -49,11 +49,22 @@ a data.frame, and fitted. By default the staged event tree created will be
 the full independent model (that is only one stage per variable). 
 
 ```
-sevt <- staged_ev_tree(DD, fit = TRUE , laplace = 1)
+sevt <- staged_ev_tree(DD, fit = TRUE , lambda = 1)
 
 
 plot(sevt)
 ```
+
+Staged event tree can also be built from contingency tables
+
+```
+data("Titanic")
+
+model_T <- staged_ev_tree(Titanic, 
+           order = c("Survived", "Class", "Sex", "Age"),
+           fit = TRUE, full = TRUE)
+```
+
 
 #### Conversions
 
@@ -170,7 +181,7 @@ changes can happen.
 - [x] fitting stratified event tree (mle)
 - [x] staged event tree
 - [x] fitting staged event tree (mle)
-- [ ] print method for staged and stratified event tree
+- [x] print method for staged  event tree
 - [ ] conversion BN to staged event tree
 - [ ] extracting sub tree
 - [ ] sampling from a staged tree and strt event tree
@@ -186,7 +197,7 @@ changes can happen.
     * [x] logLik for full tree (thus AIC and BIC work automatically)
     * [x] logLik staged tree 
     * [x] lazy logLik
-    * [ ] Bayes factor, LRT
+    * [ ] Bayes factor
     * [ ] conditional probabilities 
 - [ ] structure search:
     * [ ] implement ``join_, split_, set_stage`` functions
