@@ -23,7 +23,7 @@
 #'          fitted)
 #'          }
 #' @export
-#' @examples 
+#' @examples
 #' DD <- generate_random_dataset(n = 5, 1000)
 #' sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
 #' sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
@@ -46,6 +46,39 @@ staged_ev_tree.default <- function(x, ...) {
 }
 
 
+
+
+#' Staged (stratified) event tree
+#'
+#' Builds the staged event tree from data provided as a \code{table}
+#'
+#' @param x table with the observation
+#' @param order vector of order of the variables
+#' @param full logical, if the full model should be built instead
+#' @param fit logical
+#' @param ... additional parameters to be passed to other methods (mainly
+#' \link{fit.staged_ev_tree})
+#' @return A staged event tree object
+#' @details The staged event trees
+#' @examples
+#' data("Titanic")
+#' model <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
+#' plot(model)
+#' @export
+staged_ev_tree.table <- function(x, order = names(dimnames(x)),
+                                 full = FALSE, fit = TRUE, ...) {
+  tree <- dimnames(x)[order]
+  vars <- names(tree)
+  k <- length(tree)
+  stopifnot(!is.null(tree))
+  model <- staged_ev_tree.list(tree, full = full, ...)
+  if (fit) {
+    model <- fit.staged_ev_tree(model, data = x, ...)
+  }
+  return(model)
+}
+
+
 #' Staged (stratified) event tree
 #'
 #' Builds the staged event tree from a data set of categorical variables,
@@ -55,7 +88,7 @@ staged_ev_tree.default <- function(x, ...) {
 #' @param order vector of order, default to the order of the columns of \code{x}
 #' @param full logical, if the full model should be built instead
 #' @param fit logical
-#' @param ... additional parameters to be passed to other methods (mainly 
+#' @param ... additional parameters to be passed to other methods (mainly
 #' \link{fit.staged_ev_tree})
 #' @return A staged event tree object
 #' @details The staged event trees
@@ -68,16 +101,14 @@ staged_ev_tree.data.frame <- function(x,
                                       full = FALSE,
                                       fit = TRUE,
                                       ...) {
-     tree <- lapply(x, function(v)
-        return(levels(as.factor(
-        v
-       ))))[order]
-      sevt <- staged_ev_tree.list(tree, full = full, ...) 
-      if (fit) {
-        return(fit.staged_ev_tree(sevt, data = x, ...))
-      } else {
-        return(sevt)
-      }
+  tree <- lapply(x, function(v)
+    return(levels(as.factor(v))))[order]
+  sevt <- staged_ev_tree.list(tree, full = full, ...)
+  if (fit) {
+    return(fit.staged_ev_tree(sevt, data = x, ...))
+  } else {
+    return(sevt)
+  }
 }
 
 
@@ -103,9 +134,7 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
     names(x) <- paste0("V", 1:length(x))
   }
   
-  dims <- vapply(
-    x, FUN = length, FUN.VALUE = 1
-  )
+  dims <- vapply(x, FUN = length, FUN.VALUE = 1)
   if (any(is.null(dims))) {
     #naive check if levels are vector with lenght
     stop("Levels should be well defined")
@@ -113,14 +142,14 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
   
   evt <- list()
   evt$tree <- x
-  if (full){
-    evt$stages <- lapply(2 : length(x), function(i){
-      as.character(1 : prod(dims[1 : (i - 1)]))   
+  if (full) {
+    evt$stages <- lapply(2:length(x), function(i) {
+      as.character(1:prod(dims[1:(i - 1)]))
     })
-  }else{
-    evt$stages <- lapply(2 : length(x), function(i){
-      rep( "1", prod(dims[1 : (i - 1)]))   
-    })  
+  } else{
+    evt$stages <- lapply(2:length(x), function(i) {
+      rep("1", prod(dims[1:(i - 1)]))
+    })
   }
   names(evt$stages) <- names(x)[-1]
   class(evt) <- "staged_ev_tree"
@@ -136,9 +165,9 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
 #' @param ... additional parameters
 #' @return A staged event tree object with the conditional probabilities fitted
 #' @export
-#' @examples 
+#' @examples
 #' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
-#' D <- data.frame(X = c("good", "good", "bad"), 
+#' D <- data.frame(X = c("good", "good", "bad"),
 #'                 Y = c("high", "low", "low"))
 #' model.fit <- fit.staged_ev_tree(model, data = D, lambda = 1)
 fit.staged_ev_tree <- function(sevt,
@@ -146,15 +175,18 @@ fit.staged_ev_tree <- function(sevt,
                                lambda = 0,
                                ...) {
   if (is.null(data)) {
-    if (is.null(sevt$ctables)){
+    if (is.null(sevt$ctables)) {
       warning("Data must be provided or included in the model object")
       return(sevt)
     }
   }
-  if (is(data, "srt_ev_tree")){
-    sevt$ctables <- data$ctables  
-  }else if(!is.null(data)){
-    sevt$ctables <- strt_ev_tree(data, order = names(sevt$tree), fit = TRUE)$ctables
+  if (is(data, "strt_ev_tree")) {
+    sevt$ctables <- data$ctables
+  } else{
+    if (!is.null(data)) {
+      sevt$ctables <-
+        strt_ev_tree(data, order = names(sevt$tree), fit = TRUE)$ctables
+    }
   }
   sevt$lambda <- lambda
   order <- names(sevt$tree)
@@ -171,14 +203,14 @@ fit.staged_ev_tree <- function(sevt,
     sevt$prob[[order[i]]] <-
       lapply(stages, function(s) {
         ix <- sevt$stages[[order[i]]] == s
-        if (sum(ix) > 1){
-          tt <- apply(sevt$ctables[[order[i]]][ix,], MARGIN = 2, sum) 
-        }else{
-          tt <- sevt$ctables[[order[i]]][ix,]
+        if (sum(ix) > 1) {
+          tt <- apply(sevt$ctables[[order[i]]][ix, ], MARGIN = 2, sum)
+        } else{
+          tt <- sevt$ctables[[order[i]]][ix, ]
         }
         names(tt) <- sevt$tree[[order[i]]]
         n <- sum(tt) ##compute sample size
-        tt <- (tt + lambda) ##smoothing 
+        tt <- (tt + lambda) ##smoothing
         tt <- tt / sum(tt)  ##normalize
         attr(tt, "n") <- n ##save sample size
         return(tt) #return normalized prob
@@ -197,7 +229,7 @@ fit.staged_ev_tree <- function(sevt,
 #' @param lambda smoothing of probabilities
 #' @param ... additional parameters
 #' @return The equivalent staged event tree object
-#' @details The function creates a staged event tree equivalent to 
+#' @details The function creates a staged event tree equivalent to
 #' the stratified event tree
 #' @export
 staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
@@ -207,8 +239,8 @@ staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
   if (!is.null(x$ctables)) {
     obj$ctables <- x$ctables
     ## if the x is fitted we can just copy the probabilitites
-    n <- sum(x$ctables[[ vars[1] ]])
-    pp <- x$ctables[[ vars[1] ]] + lambda
+    n <- sum(x$ctables[[vars[1]]])
+    pp <- x$ctables[[vars[1]]] + lambda
     pp <- pp / sum(pp)
     obj$prob[[vars[1]]] <- list("1" = pp)
     attr(obj$prob[[vars[1]]][["1"]], "n") <- n
@@ -216,8 +248,8 @@ staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
     for (i in 2:length(x$tree)) {
       obj$prob[[vars[i]]] <-
         lapply(1:(dim(x$ctables[[vars[i]]])[1]), function(k) {
-          n <- sum(x$ctables[[ vars[i] ]][k, ])
-          pp <- (x$ctables[[ vars[i] ]][k, ] + lambda)
+          n <- sum(x$ctables[[vars[i]]][k,])
+          pp <- (x$ctables[[vars[i]]][k,] + lambda)
           pp <- pp / sum(pp)
           names(pp) <- x$tree[[vars[i]]]
           attr(pp, "n") <- n
@@ -262,47 +294,62 @@ join_stages <- function(sevt, v,  s1, s2) {
   st <- sevt$stages[[v]]
   sevt$stages[[v]][st == s2] <- s1
   if (!is.null(sevt$prob)) {
-    n2 <- attr(sevt$prob[[v]][[s2]], "n") 
+    n2 <- attr(sevt$prob[[v]][[s2]], "n")
     n1 <- attr(sevt$prob[[v]][[s1]], "n")
-    dll <- sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) + 
+    dll <-
+      sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) +
       sum(sevt$prob[[v]][[s1]] * n1 * log(sevt$prob[[v]][[s1]]))
     sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s2]] * n2 +
-                            sevt$prob[[v]][[s1]] * n1 + sevt$lambda    
+      sevt$prob[[v]][[s1]] * n1 + sevt$lambda
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
-    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
+    sevt$prob[[v]][[s1]] <-
+      sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
     sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
-    if (!is.null(sevt$ll)){## update log likelihood
-      sevt$ll <- sevt$ll - dll + (n2 + n1) * sum(sevt$prob[[v]][[s1]] *  
-        log(sevt$prob[[v]][[s1]] ))
-      attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1 
+    if (!is.null(sevt$ll)) {
+      ## update log likelihood
+      sevt$ll <-
+        sevt$ll - dll + (n2 + n1) * sum(sevt$prob[[v]][[s1]] *
+                                          log(sevt$prob[[v]][[s1]]))
+      attr(sevt$ll, "df") <-
+        attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
     }
   }
   return(sevt)
 }
 
 
-#' split randomly a stage 
-#' 
+#' split randomly a stage
+#'
 #' Randomly assign some of the path to a new stage
-#' 
+#'
 #' @param object a staged event tree object
 #' @param var the variable where to split the stage
 #' @param stage the name of the stage
 #' @param p probability
-#' 
+#'
 #' @return a staged event tree object
+#' @examples
+#' DD <- generate_random_dataset(2, 100)
+#' model <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' @export
 split_stage_random <- function(object, var,  stage, p = 0.5) {
-  if (!(stage %in% object$stages[[var]])){
+  if (!(stage %in% object$stages[[var]])) {
     return(object)
   }
   d <- length(object$stages[[var]])
   label <- new_label(object$stages[[var]])
-  ix <- (object$stages[[var]] == stage ) & sample(x = c(TRUE, FALSE), size = d, 
-                                                         prob = c(p, 1 - p), replace = TRUE )
-  if (any(ix)){
+  ix <-
+    (object$stages[[var]] == stage) &
+    sample(
+      x = c(TRUE, FALSE),
+      size = d,
+      prob = c(p, 1 - p),
+      replace = TRUE
+    )
+  if (any(ix)) {
     object$stages[[var]][ix] <- label
-    if (is_fitted.staged_ev_tree(object)){
+    if (is_fitted.staged_ev_tree(object)) {
+      ### we should do better than this
       object <- fit.staged_ev_tree(object, lambda = object$lambda)
     }
   }
@@ -320,28 +367,71 @@ is_fitted.staged_ev_tree <- function(x) {
 }
 
 
-
+#' Built (efficently) an independent event tree
+#'
+#' @param x data
+#' @param lambda the smoothing parameter
+#' @param ctables logical, if \code{TRUE} ctables will be computed and attached
+#' @return A fitted staged event tree with one stage per variable
+#' @examples
+#' DD <- generate_xor_dataset(15, 100)
+#' system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
+#' system.time(model2 <- effindep.staged_ev_tree(DD, lambda = 1, ctables = TRUE))
+#' model1
+#' model2
+#' @export
+effindep.staged_ev_tree <- function(x, lambda, ctables = TRUE) {
+  x <- as.data.frame(x)
+  model <- staged_ev_tree(x, fit = FALSE, full = FALSE)
+  model$prob <- list()
+  var <- names(model$tree)
+  model$lambda <- lambda
+  model$ll <- 0
+  for (v in var) {
+    ctab <- table(x[[v]])
+    n <- sum(ctab)
+    model$prob[[v]] <- list("1" =  ctab + lambda)
+    model$prob[[v]][[1]] <-
+      model$prob[[v]][[1]] / sum(model$prob[[v]][[1]])
+    attr(model$prob[[v]][[1]], "n") <- n
+    ix <- ctab > 0
+    model$ll <-
+      model$ll + sum(ctab[ix] * log(model$prob[[v]][[1]][ix]))
+  }
+  attr(model$ll, "df") <-
+    sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
+  attr(model$ll, "nobs") <- nrow(x)
+  class(model$ll) <- "logLik"
+  if (ctables) {
+    model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
+  }
+  return(model)
+}
 
 #' Print a staged event tree
-#' 
+#'
 #' @param x the staged event tree obejct
 #' @param ... additional parameters (compatibility)
-#' 
+#'
 #' @return An invisible copy of \code{x}
 #' @details The order of the variables in the stratified tree
-#'  is printed (from root). In addition the number of levels of each 
-#'  variable is shown in square brackets. 
-#'  If available the log-likelihood of the model is printed.  
+#'  is printed (from root). In addition the number of levels of each
+#'  variable is shown in square brackets.
+#'  If available the log-likelihood of the model is printed.
 #' @export
-print.staged_ev_tree <- function(x, ...){
-  cat("Staged event tree", 
+#' @examples
+#' DD <- generate_xor_dataset(5, 100)
+#' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
+#' print(model)
+print.staged_ev_tree <- function(x, ...) {
+  cat("Staged event tree",
       ifelse(is_fitted.staged_ev_tree(x), "(fitted) \n", "\n"))
   ls <- vapply(x$tree, length, 1)
-  cat(paste( paste0(names(x$tree), "[", ls, "] ") , collapse = "->"), "\n")
+  cat(paste(paste0(names(x$tree), "[", ls, "] ") , collapse = "-> "), "\n")
   #nstages <- vapply(x$stages, function(s) length(unique(s)), FUN.VALUE = 1)
   #cat("n.stages: \n")
   #print(nstages)
-  if (x$ll){
+  if (!is.null(x$ll)) {
     print(x$ll)
   }
   invisible(x)

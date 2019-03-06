@@ -1,7 +1,7 @@
 Package: stagedtrees
 Type: Package
 Title: Staged Event Trees 
-Version: 0.0.3
+Version: 0.0.4
 Author: gherardo varando
 Maintainer: gherardo varando <gherardo.varando@gmail.com>
 Description: Package to define and fit staged event tree probability models.

@@ -60,7 +60,8 @@ tree_idx <- function(path, tree){
 find_stage <- function(object, path) {
   k <- length(path)
   ix <- tree_idx(path = path, tree = object$tree)
-  return(object$stages[[k]][ix])
+  l <- length(object$stages[[k]])
+  return(object$stages[[k]][(ix - 1) %% l + 1]) ### stages can be defined in a reduced fashion
 }
 
 
@@ -205,8 +206,8 @@ generate_xor_dataset <- function(n = 2,
 #'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 #' @export
 #' @importFrom stats runif
-#' @examples DD <- generate_random_dataset(n = 5, 1000)
-generate_random_dataset <-
+#' @examples DD <- generate_linear_dataset(n = 5, 1000)
+generate_linear_dataset <-
   function(n = 2,
            N = 10000,
            eps = 1.2,
@@ -235,6 +236,35 @@ generate_random_dataset <-
     DD$C[DD$C == 0] <- 1
     DD <- DD[,-1]
     for (i in 1:(n+1)){
+      DD[[i]] <- factor(DD[[i]], levels = c(-1, 1))
+    }
+    return(DD)
+  }
+
+
+
+#' generate a random binary dataset
+#'
+#' @param n number of variables
+#' @param N number of observations
+#' @return A data.frame with \code{n} independent random variables and
+#'  one class variable \code{C} computed as
+#'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+#' @export
+#' @importFrom stats runif
+#' @examples DD <- generate_random_dataset(n = 5, 1000)
+generate_random_dataset <-
+  function(n = 2,
+           N = 10000) {
+    DD <- data.frame(observation = 1:N)
+    for (i in 1:n) {
+      DD[[paste("X", i, sep = "")]] <- sample(c(-1, +1),
+                                              prob = runif(2),
+                                              size = N,
+                                              replace = TRUE)
+    }
+    DD <- DD[,-1]
+    for (i in 1:(n)){
       DD[[i]] <- factor(DD[[i]], levels = c(-1, 1))
     }
     return(DD)

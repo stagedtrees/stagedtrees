@@ -23,6 +23,22 @@ strt_ev_tree.default <- function(x, ...){
   return(strt_ev_tree.data.frame(as.data.frame(x, ...)))
 }
 
+#' Stratified event tree from a table
+#'
+#' @param x table
+#' @param order vector of order to build the tree
+#' @param fit logical
+#' @param lambda laplace smoothing parameter 
+#' @param ... additional parameters
+#' @export
+strt_ev_tree.table <- function(x, order = names(dimnames(x)),
+                                    fit = FALSE, lambda = 0, ...){
+  evt <- strt_ev_tree.list(dimnames(x)[order])
+  if (fit) {
+    evt <- fit.strt_ev_tree(evt, data = x, lambda = lambda) }
+  return(evt)
+}
+
 #' Stratified event tree from data.frame
 #'
 #' @param x data.frame
@@ -122,11 +138,15 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0){
        return(evt)
      }
    }
+   if (is.data.frame(data)){
+     data <- table(data)
+   }
+   
    order <- names(evt$tree)
    
    evt$ctables <- lapply(1:length(order), function(i){
      path <- order[i:1]
-     tt <- table(data[path],dnn = path )
+     tt <- apply(data, MARGIN = path, sum)
      if (i == 1){
        return(tt)
      }
