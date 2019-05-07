@@ -291,6 +291,7 @@ join_stages <- function(sevt, v,  s1, s2) {
   s1 <- as.character(s1)
   s2 <- as.character(s2)
   d <- dim(sevt$paths[[v]])[2]
+  k <- length(sevt$tree[v])
   st <- sevt$stages[[v]]
   sevt$stages[[v]][st == s2] <- s1
   if (!is.null(sevt$prob)) {
@@ -299,8 +300,8 @@ join_stages <- function(sevt, v,  s1, s2) {
     dll <-
       sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) +
       sum(sevt$prob[[v]][[s1]] * n1 * log(sevt$prob[[v]][[s1]]))
-    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s2]] * n2 +
-      sevt$prob[[v]][[s1]] * n1 + sevt$lambda
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) +
+      sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k ) - sevt$lambda
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
     sevt$prob[[v]][[s1]] <-
       sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
