@@ -60,8 +60,9 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
 plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
+  ttt <- prod(sapply(x$tree[1:d], length))
   plot.window(xlim = c(0,step * d),
-              ylim = c( - step * d / 2 - 0.5, step * d / 2 + 0.5),
+              ylim = c( - step * (d+2) / 2 - 0.5, step * (d+2) / 2 + 0.5),
               asp = 1, ...)
   n <- x$tree
   nms <- names(x$tree)
@@ -70,7 +71,6 @@ plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,...){
   xx<-0
   y<-0
   yy <- 0
-  coef <- 1
   for (k in 1:d){ #plot nodes for every strata
     v <- x$tree[[k]]
     yyy <- yy
@@ -79,11 +79,10 @@ plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,...){
     xx <- step*k #increase x position
     nv <- length(v)
     for (i in 1:ns){ #for every old node
-      y <- yyy[i] + (step/2)*coef*d*seq(from=-1, to = 1, length.out = nv)/(ns * nv  ) #compute new y positions
+      y <- yyy[i] +  (step) * d  * seq(from=-1, to = 1, length.out = nv) / (ns * nv  + 2) #compute new y positions
       yy <- c(yy,y)
       for (j in 1:nv){ #plot nodes
         lj <- lj +1
-
         if (k < length(x$tree)) {
           node(c(xx, y[j]), rmax/sqrt(nv*ns),
                label = nms[k+1], col = x$stages[[k]][lj])
@@ -91,12 +90,7 @@ plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,...){
         edge(c(xx-step, yyy[i]), c(xx,y[j]), v[j] ) #plot edge with previous nodes
       }
     }
-    ns <- ns*nv
-    if ( nv %% 2 == 1   ) { ## this is to avoid overlapping,
-      coef <- coef*0.4      ## not sure why it works like this but ok
-    } else {
-      coef <- 1*coef
-    }
+    ns <- ns * nv
   }
 }
 

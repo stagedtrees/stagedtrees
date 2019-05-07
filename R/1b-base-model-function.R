@@ -157,6 +157,20 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
 }
 
 
+
+staged_ev_tree.tree <- function(object, ...){
+  ######
+  
+  return(sevt)
+}
+
+
+staged_ev_tree.bn <- function(object, ...){
+  ######
+  
+  return(sevt)
+}
+
 #' Fit a staged event tree
 #'
 #' @param sevt The staged event tree object to be fitted
