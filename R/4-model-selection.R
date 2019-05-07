@@ -372,3 +372,60 @@ backward_joining_KL <-
     object$call <- sys.call()
     return(object)
   }
+
+
+
+#' forward
+#' 
+#' @export
+forward_hill_climb <- function(object,
+                               score = function(x)
+                                 return(-BIC(x)),
+                               max_iter = Inf,
+                               trace = 0 ){
+  stopifnot(is(object, "staged_ev_tree"))
+  stopifnot(is_fitted.staged_ev_tree(object))
+  stopifnot(!is.null(object$ctables))
+  now_score <- score(object)
+  for (v in names(object$tree)[-1]){
+    done <- FALSE
+    iter <- 1
+    while (!done & iter < max_iter){
+      iter <- iter + 1
+      temp <- object #clone the object
+      temp_score <- now_score #clone the score
+      stages <- object$stages[[v]]
+      ustages <- unique(stages)
+      newname <- new_label(ustages)
+      done <- TRUE
+      for (j in 1:length(ustages)){
+        s1 <- ustages[j]
+        idx <- (1:length(stages))[stages == s1]
+          for (i in idx){
+            try <- object
+            for (s2 in c(ustages[-j], newname)){
+              try$stages[[v]][i] <- s2
+              try <- fit.staged_ev_tree(try, lambda = object$lambda)
+              try_score <- score(try)
+              if (try_score >= temp_score) {
+                temp <- try
+                temp_score <- try_score
+                ia <- i #just to message it if verbose
+                s1a <- s1
+                s2a <- s2
+                done <- FALSE
+              }
+              }
+          }
+      }##end for over stages
+      object <- temp
+      now_score <- temp_score
+      if ( (trace > 1) && !done) {
+        message(v, " moved ", ia, " from stage ", s1a, " to stage ",
+                s2a)
+      }
+    }##end while
+  }##end for over variables
+  
+  return(object)
+}
