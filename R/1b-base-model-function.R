@@ -291,17 +291,18 @@ join_stages <- function(sevt, v,  s1, s2) {
   s1 <- as.character(s1)
   s2 <- as.character(s2)
   d <- dim(sevt$paths[[v]])[2]
-  k <- length(sevt$tree[v])
+  k <- length(sevt$tree[[v]])
   st <- sevt$stages[[v]]
   sevt$stages[[v]][st == s2] <- s1
   if (!is.null(sevt$prob)) {
     n2 <- attr(sevt$prob[[v]][[s2]], "n")
     n1 <- attr(sevt$prob[[v]][[s1]], "n")
+    ct1 <- sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k ) - sevt$lambda
+    ct2 <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
     dll <-
-      sum(sevt$prob[[v]][[s2]] * n2 * log(sevt$prob[[v]][[s2]])) +
-      sum(sevt$prob[[v]][[s1]] * n1 * log(sevt$prob[[v]][[s1]]))
-    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) +
-      sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k ) - sevt$lambda
+      sum(ct2 * log(sevt$prob[[v]][[s2]])) +
+      sum(ct1 * log(sevt$prob[[v]][[s1]]))
+    sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
     sevt$prob[[v]][[s1]] <-
       sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
@@ -309,7 +310,7 @@ join_stages <- function(sevt, v,  s1, s2) {
     if (!is.null(sevt$ll)) {
       ## update log likelihood
       sevt$ll <-
-        sevt$ll - dll + (n2 + n1) * sum(sevt$prob[[v]][[s1]] *
+        sevt$ll - dll +  sum( (ct1 + ct2) *
                                           log(sevt$prob[[v]][[s1]]))
       attr(sevt$ll, "df") <-
         attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
