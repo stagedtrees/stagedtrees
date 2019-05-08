@@ -152,20 +152,82 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
   return(evt)
 }
 
+#' Conversion from BN to staged event tree
+#' 
+#' @param x \code{bn.fit} object
+#' @param ... additional parameters
+#' @export
+staged_ev_tree.bn.fit <- function(x, ...){
+  bn <- bnlearn::bn.net(x)
+  tree <- lapply(x, 
+                 function(tt) 
+                   if(length(tt$parents) == 0) names(tt$prob)
+                 else rownames(tt$prob))
+  order <- bnlearn::node.ordering(bn)
+  tree <- tree[order]
+  object <- staged_ev_tree(tree)
+  parents <- lapply(bn$nodes[order], function(n){
+    if (identical(n$parents,character(0))){
+      return(NULL)
+    }else{
+      return(n$parents)
+    }
+  })
+  for(i in 2:length(order)){
+    if (i <= 2){
+      if (order[i - 1] %in% parents[[i]]){
+        object$stages[[i - 1]] <- 1:length(tree[[i - 1]])
+      }
+    }else{
+      grid <- expand.grid(tree[(i - 1):1])[, (i - 1):1]
+      grid$stages <- 1:nrow(grid) 
+      if(length(parents[[i]]) > 0){
+        ind <- match(parents[[i]], colnames(grid))
+        grid <- data.frame(grid[, c(ind, ncol(grid))])
+        colnames(grid) <- c(parents[[i]], "stages")
+        for(j in 1:(nrow(grid)-1))
+        {
+          for(k in (j+1):(nrow(grid)))
+          {
+            if ( sum(grid[j, - ncol(grid)] == grid[k, - ncol(grid)]) == 
+                 length(grid[j, - ncol(grid)]))
+            {
+              grid$stages[k] <- grid$stages[j]
+            }
+          }
+        }
+        values <- unique(grid$stages)
+        unique_values <- 1:length(values)
+        for(l in 1:length(values))
+        {
+          for(m in 1:length(grid$stages))
+          {
+            if(grid$stages[m] == values[l])
+            {
+              grid$stages[m] <- unique_values[l] 
+            }
+          }
+        }
+      }else if(length(parents[[i]]) == 0){
+        grid$stages <- rep(1, nrow(grid))
+      }
+      object$stages[[ i - 1 ]] <- grid$stages
+    }
+  }
+  object$stages <- lapply(object$stages, as.character)
+  return(object)
+}
 
-# 
-# staged_ev_tree.tree <- function(object, ...){
-#   ######
-#   
-#   return(NULL)
-# }
-# 
-# 
-# staged_ev_tree.bn <- function(object, ...){
-#   ######
-#   
-#   return(NULL)
-# }
+#' #' conversion
+#' #' @param x Adj matrix
+#' #' @param tree variables tree
+#' #' @param ...
+#' staged_ev_tree.matrix <- function(x, tree, ...){
+#'   order <- gRbase::topoSort(adj_mat)
+#'   object <- staged_ev_tree(tree[order])
+#'   
+#' }
+
 
 #' Fit a staged event tree
 #'
