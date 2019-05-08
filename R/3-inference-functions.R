@@ -7,12 +7,13 @@
 #' @examples 
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
-#' path_probability.staged_ev_tree(model, c("1", "-1"))
-#' path_probability.staged_ev_tree(model, c("1", "-1", "1", "-1", "1"),
+#' path_probability.sevt(model, c("1", "-1"))
+#' path_probability.sevt(model, c("1", "-1", "1", "-1", "1"),
 #'  log = TRUE)
 #' @export
-path_probability.staged_ev_tree <-
+path_probability.sevt <-
   function(object, x, log = FALSE) {
+    stopifnot(is(object, "sevt"))
     if (!is.null(names(x))) {
       #if it's a named vector just order it
       x <- x[names(object$tree)]
@@ -79,13 +80,14 @@ logLik.strt_ev_tree <- function(object, ...) {
 #'                      }))
 #' sevt <- staged_ev_tree(DD, fit =TRUE)
 #' logLik(sevt)
-logLik.staged_ev_tree <- function(object, ...) {
+logLik.sevt <- function(object, ...) {
   if (!is.null(object$ll)) {
     return(object$ll)
   }
+  stopifnot(is(object, "sevt"))
   stopifnot(!is.null(object$prob))
   stopifnot(!is.null(object$ctables))
-  ll <- logLik(strt_ev_tree.staged_ev_tree(object))
+  ll <- logLik(strt_ev_tree.sevt(object))
   attr(ll, "df") <-
     sum(c(1, vapply(
       object$stages, FUN = function(x) length(unique(x)), FUN.VALUE = 1

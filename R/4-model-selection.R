@@ -27,8 +27,8 @@
 #' logLik(model)
 #' BIC(model_full, model)
 join_zero_counts <- function(object, fit = TRUE, trace = 0){
-  stopifnot(is(object, "staged_ev_tree"))
-  stopifnot(is_fitted.staged_ev_tree(object))
+  stopifnot(is(object, "sevt"))
+  stopifnot(is_fitted.sevt(object))
   tot <- 0
   for (v in names(object$tree)[-1]){
     new <- new_label(unique(object$stages[[v]]))
@@ -45,7 +45,7 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
   object$prob <- NULL
   object$ll <- NULL
   if (fit){
-    object <- fit.staged_ev_tree(object, lambda = object$lambda)
+    object <- fit.sevt(object, lambda = object$lambda)
     if (trace > 0){
       message("object fitted using lambda = ", object$lambda)
     }
@@ -64,11 +64,11 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 #' @examples 
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
 #' model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
-#' naive_model <- naive_staged_ev_tree(model_0)
+#' naive_model <- naive.sevt(model_0)
 #' pr <- predict(naive_model, newdata = DD[501:1000,])
 #' table(pr,DD$C[501:1000])
-naive_staged_ev_tree <- function(object, k = length(object$tree)){
-  stopifnot(is_fitted.staged_ev_tree(object))
+naive.sevt <- function(object, k = length(object$tree)){
+  stopifnot(is_fitted.sevt(object))
   for (v in names(object$tree)[2:k]){
     M <- KL_mat_prob(object$ctables[[v]] + object$lambda)
     groups <- simple_clustering(M)
@@ -79,7 +79,7 @@ naive_staged_ev_tree <- function(object, k = length(object$tree)){
     }
   }
   object$call <- sys.call()
-  return(fit.staged_ev_tree(object, lambda = object$lambda))
+  return(fit.sevt(object, lambda = object$lambda))
 }
 
 #' Backword random hill-climbing
@@ -101,14 +101,14 @@ naive_staged_ev_tree <- function(object, k = length(object$tree)){
 #' @export
 #' @importFrom stats  BIC
 #' @importFrom  methods is
-backward_hill_climb_random <-
+bhcr.sevt <-
   function(object,
            score = function(x)
              return(-BIC(x))
            , max_iter = 100
            , trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
     r <- 1
     iter <- 0
@@ -160,20 +160,20 @@ backward_hill_climb_random <-
 #' @examples 
 #' DD <- generate_xor_dataset(n = 4, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- backward_hill_climb(model_full, trace = 2)
+#' model <- bhc.sevt(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-backward_hill_climb <-
+bhc.sevt <-
   function(object,
            score = function(x)
              return(-BIC(x))
            ,
            max_iter = Inf,
            trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
  
     for (v in names(object$tree)[-1]) {
@@ -212,11 +212,11 @@ backward_hill_climb <-
         }
       } ## end while
       if (trace > 0){
-        message("HC over ", v, " done after ", iter, " iterations")
+        message("BHC over ", v, " done after ", iter, " iterations")
       }
     } ## end for over variables
     if (trace > 0) {
-      message("Backword HC done")
+      message("BHC done")
     }
     object$call <- sys.call()
     object$score <- list(value = now_score, f = score)
@@ -241,19 +241,19 @@ backward_hill_climb <-
 #' @examples 
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- fast_backward_hill_climb(model_full, trace = 2)
+#' model <- fbhc.sevt(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-fast_backward_hill_climb <-
+fbhc.sevt <-
   function(object = NULL,
            score = function(x)
              return(-BIC(x)),
            max_iter = Inf,
            trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
     for (v in names(object$tree)[-1]) {
       iter <- 0
@@ -336,8 +336,8 @@ backward_joining_KL <-
   function(object = NULL,
            thr = 0.01,
            trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     for (v in names(object$tree)[-1]) {
       finish <- FALSE
       while (!finish) {
@@ -375,21 +375,28 @@ backward_joining_KL <-
 
 
 
-#' forward
+#' Hill-Climb Score optimization
 #' 
+#' @param object a staged event tree object
+#' @param score a function that score staged event tree objects
+#' @param max_iter the maximum number of iterations per variable
+#' @param trace integer, if positive information on the progress is
+#'              printed to console
+#' @details TO WRITE
+#' @return A staged event tree object, the output of the optimization
 #' @export
-forward_hill_climb <- function(object,
+hc.sevt <- function(object,
                                score = function(x)
                                  return(-BIC(x)),
                                max_iter = Inf,
                                trace = 0 ){
-  stopifnot(is(object, "staged_ev_tree"))
-  stopifnot(is_fitted.staged_ev_tree(object))
+  stopifnot(is(object, "sevt"))
+  stopifnot(is_fitted.sevt(object))
   stopifnot(!is.null(object$ctables))
   now_score <- score(object)
   for (v in names(object$tree)[-1]){
     done <- FALSE
-    iter <- 1
+    iter <- 0
     while (!done & iter < max_iter){
       iter <- iter + 1
       temp <- object #clone the object
@@ -405,9 +412,9 @@ forward_hill_climb <- function(object,
             try <- object
             for (s2 in c(ustages[-j], newname)){
               try$stages[[v]][i] <- s2
-              try <- fit.staged_ev_tree(try, lambda = object$lambda)
+              try <- fit.sevt(try, lambda = object$lambda)
               try_score <- score(try)
-              if (try_score >= temp_score) {
+              if (try_score > temp_score) {
                 temp <- try
                 temp_score <- try_score
                 ia <- i #just to message it if verbose
@@ -425,7 +432,19 @@ forward_hill_climb <- function(object,
                 s2a)
       }
     }##end while
+    if (trace >0){
+      message(v, " HC done")
+    }
   }##end for over variables
-  
+  if (trace > 0 ) {
+    message(
+      "HC over ",
+      v ,
+      " done after ",
+      iter,
+      " iterations."
+    )
+  }
+  object$call <- sys.call()
   return(object)
 }

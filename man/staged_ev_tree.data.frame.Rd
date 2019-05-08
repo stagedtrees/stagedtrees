@@ -17,7 +17,7 @@
 \item{fit}{logical}
 
 \item{...}{additional parameters to be passed to other methods (mainly
-\link{fit.staged_ev_tree})}
+\link{fit.sevt})}
 }
 \value{
 A staged event tree object
