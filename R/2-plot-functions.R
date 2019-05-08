@@ -9,7 +9,8 @@
 #' @export
 #' @importFrom graphics lines plot.new plot.window
 
-plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
+plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,
+                              ...){
  plot.new()
  d <- min(length(x$tree), limit) ##avoid too much plotting
  plot.window(xlim = c(0, step * d),
@@ -50,7 +51,6 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
 #'
 #' @param x staged event tree object
 #' @param limit maximum number of variables plotted
-#' @param radius graphical parameter
 #' @param xlim graphical parameter
 #' @param ylim graphical parameter
 #' @param asp graphical parameter
@@ -58,11 +58,13 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
 #' @param col color mapping for the stages, a named list with 
 #'        names equal to the variables names in the model and 
 #'        vectors named with stages names as components 
+#' @param cex.nodes 
 #' @param ... additional graphical parameters
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
-plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 1), 
-                      asp = 1, cex.label = 1, col = NULL,...){
+plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1), 
+                      asp = 1, cex.label = 1, col = NULL, cex.nodes = 1,
+                      ...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
   if (is.null(col)){
@@ -74,12 +76,12 @@ plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 
     })
   }
   M <- prod(sapply(x$tree[1:d], length))
-  radius <- rep(radius, d)[1:d]
+  cex.nodes <- rep(cex.nodes, d)[1:d]
   plot.window(xlim = xlim,
               ylim = ylim,
               asp = asp, ...)
   title(...)
-  ### for denugging:
+  ### for debugging:
   #abline(v = xlim[1])
   #abline(v = xlim[2])
   #abline(h = ylim[1])
@@ -103,8 +105,8 @@ plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 
     ns <- ns / nv
     As[i - 1] <- Ls[i - 1] / (ns  + (ns - 1)/ (nv - 1))
   }
-  node(c(xlim[1], mean(ylim) ), radius[1], label = nms[1],
-       cex.label = cex.label) #plot first node
+  node(c(xlim[1], mean(ylim) ), label = nms[1],
+       cex.label = cex.label, cex.node = cex.nodes[1], ...) #plot first node
   ns <- 1
   xx <- xlim[1]
   y <- yy <- mean(ylim)
@@ -123,13 +125,14 @@ plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 
       for (j in 1:nv){ #plot nodes
         lj <- lj +1
         if (k < length(x$tree)) {
-          node(c(xx, y[j]), radius[k],
+          node(c(xx, y[j]),
                label = nms[k+1], cex.label = cex.label,
-               col = col[[k]][ x$stages[[k]][lj] ] )
+               col = col[[k]][ x$stages[[k]][lj] ],
+               cex.node = cex.nodes[k], ...)
         }
         edge(c(xx-step, 
                yyy[i]), c(xx,y[j]),
-              v[j] ) #plot edge with previous nodes
+              v[j], cex.label = cex.label) #plot edge with previous nodes
       }
     }
     ns <- ns * nv
@@ -139,15 +142,19 @@ plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 
 #' Plot a node
 #'
 #' @param x the center
-#' @param r the radius
 #' @param label the label
 #' @param col color
 #' @param cex.label cex parameter to be passed to text
+#' @param fill logical
 #' @param ... additional parameters passed to \code{par()}
 #' @importFrom graphics text lines
-node <- function(x, r, label = "", col = "black", cex.label = 2*sqrt(r),...){
-  circle(x,r, col=col,...)
-  text(x = x[1],y = x[2],labels = label, col=col, cex=cex.label,...)
+node <- function(x, label = "", col = "black", cex.label = 1, 
+                 fill = FALSE, cex.node = 1,
+                 ...){
+  points(x[1], x[2], col = col, cex = cex.node, ...)
+  if (cex.label > 0){
+    text(x = x[1], y = x[2], labels = label, col=col, cex = cex.label, ...)    
+  }
 }
 
 
@@ -157,19 +164,18 @@ node <- function(x, r, label = "", col = "black", cex.label = 2*sqrt(r),...){
 #' @param to To
 #' @param label the label
 #' @param col color
+#' @param cex.label numerical 
 #' @param ... additional parameters passed to \code{par()}
 #' @importFrom graphics text lines
-edge <- function(from, to, label = "" ,col="black",...){
+edge <- function(from, to, label = "" ,col="black", cex.label = 1, ...){
    lines(c(from[1], to[1]), c(from[2], to[2]), col = col, ...)
    a <- 180 * atan2((to[2] - from[2]),(to[1] - from[1]))/pi   ## compute the angle of the line
-   text(x = (from[1] + to[1]) / 2 , y = (from[2] + to[2]) / 2 ,
-        labels = label, srt = a, col=col)  ## put the label rotated of the proper angle
-}
+   if (cex.label > 0){
+     ## put the label rotated of the proper angle
+     text(x = (from[1] + to[1]) / 2 , y = (from[2] + to[2]) / 2 ,
+          labels = label, srt = a, col=col, cex = cex.label)  
+   } 
+   }
 
-# simple function to plot circle on existing plot
-circle<-function(x,r, col="black", ...){
- tt <- 2*pi*(-1:20)/20
- lines( x=x[1] + r*cos(tt), y=x[2] + r*sin(tt), col=col,...  )
-}
 
 
