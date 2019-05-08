@@ -5,7 +5,7 @@
 \title{Predcict method for staged event tree}
 \usage{
 \method{predict}{sevt}(object, newdata = NULL, class = NULL,
-  prob = FALSE, ...)
+  prob = FALSE, log = FALSE, ...)
 }
 \arguments{
 \item{object}{A staged event tree}
@@ -15,7 +15,10 @@
 \item{class}{A string indicating the name of the variable to use as
 the class variable}
 
-\item{prob}{logical, if \code{TRUE} the probabilities of class are returned}
+\item{prob}{logical, if \code{TRUE} the probabilities of class are 
+returned}
+
+\item{log}{logical, if \code{TRUE} log-probabilities are returned}
 
 \item{...}{additional parameters, see details}
 }
