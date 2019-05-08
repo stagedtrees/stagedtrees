@@ -57,7 +57,7 @@ staged_ev_tree.default <- function(x, ...) {
 #' @param full logical, if the full model should be built instead
 #' @param fit logical
 #' @param ... additional parameters to be passed to other methods (mainly
-#' \link{fit.staged_ev_tree})
+#' \link{fit.sevt})
 #' @return A staged event tree object
 #' @details The staged event trees
 #' @examples
@@ -73,7 +73,7 @@ staged_ev_tree.table <- function(x, order = names(dimnames(x)),
   stopifnot(!is.null(tree))
   model <- staged_ev_tree.list(tree, full = full, ...)
   if (fit) {
-    model <- fit.staged_ev_tree(model, data = x, ...)
+    model <- fit.sevt(model, data = x, ...)
   }
   return(model)
 }
@@ -89,7 +89,7 @@ staged_ev_tree.table <- function(x, order = names(dimnames(x)),
 #' @param full logical, if the full model should be built instead
 #' @param fit logical
 #' @param ... additional parameters to be passed to other methods (mainly
-#' \link{fit.staged_ev_tree})
+#' \link{fit.sevt})
 #' @return A staged event tree object
 #' @details The staged event trees
 #' @examples
@@ -105,7 +105,7 @@ staged_ev_tree.data.frame <- function(x,
     return(levels(as.factor(v))))[order]
   sevt <- staged_ev_tree.list(tree, full = full, ...)
   if (fit) {
-    return(fit.staged_ev_tree(sevt, data = x, ...))
+    return(fit.sevt(sevt, data = x, ...))
   } else {
     return(sevt)
   }
@@ -152,24 +152,24 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
     })
   }
   names(evt$stages) <- names(x)[-1]
-  class(evt) <- "staged_ev_tree"
+  class(evt) <- "sevt"
   return(evt)
 }
 
 
-
-staged_ev_tree.tree <- function(object, ...){
-  ######
-  
-  return(sevt)
-}
-
-
-staged_ev_tree.bn <- function(object, ...){
-  ######
-  
-  return(sevt)
-}
+# 
+# staged_ev_tree.tree <- function(object, ...){
+#   ######
+#   
+#   return(NULL)
+# }
+# 
+# 
+# staged_ev_tree.bn <- function(object, ...){
+#   ######
+#   
+#   return(NULL)
+# }
 
 #' Fit a staged event tree
 #'
@@ -183,8 +183,8 @@ staged_ev_tree.bn <- function(object, ...){
 #' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
 #' D <- data.frame(X = c("good", "good", "bad"),
 #'                 Y = c("high", "low", "low"))
-#' model.fit <- fit.staged_ev_tree(model, data = D, lambda = 1)
-fit.staged_ev_tree <- function(sevt,
+#' model.fit <- fit.sevt(model, data = D, lambda = 1)
+fit.sevt <- function(sevt,
                                data = NULL,
                                lambda = 0,
                                ...) {
@@ -364,9 +364,9 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
     )
   if (any(ix)) {
     object$stages[[var]][ix] <- label
-    if (is_fitted.staged_ev_tree(object)) {
+    if (is_fitted.sevt(object)) {
       ### we should do better than this
-      object <- fit.staged_ev_tree(object, lambda = object$lambda)
+      object <- fit.sevt(object, lambda = object$lambda)
     }
   }
   return(object)
@@ -378,7 +378,7 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
 #' @return logical
 #'
 #' @export
-is_fitted.staged_ev_tree <- function(x) {
+is_fitted.sevt <- function(x) {
   return(!is.null(x$prob) && !is.null(x$ctables))
 }
 
@@ -392,11 +392,11 @@ is_fitted.staged_ev_tree <- function(x) {
 #' @examples
 #' DD <- generate_xor_dataset(15, 100)
 #' system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
-#' system.time(model2 <- effindep.staged_ev_tree(DD, lambda = 1, ctables = TRUE))
+#' system.time(model2 <- effindep.sevt(DD, lambda = 1, ctables = TRUE))
 #' model1
 #' model2
 #' @export
-effindep.staged_ev_tree <- function(x, lambda, ctables = TRUE) {
+effindep.sevt <- function(x, lambda, ctables = TRUE) {
   x <- as.data.frame(x)
   model <- staged_ev_tree(x, fit = FALSE, full = FALSE)
   model$prob <- list()
@@ -439,9 +439,9 @@ effindep.staged_ev_tree <- function(x, lambda, ctables = TRUE) {
 #' DD <- generate_xor_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
 #' print(model)
-print.staged_ev_tree <- function(x, ...) {
+print.sevt <- function(x, ...) {
   cat("Staged event tree",
-      ifelse(is_fitted.staged_ev_tree(x), "(fitted) \n", "\n"))
+      ifelse(is_fitted.sevt(x), "(fitted) \n", "\n"))
   ls <- vapply(x$tree, length, 1)
   cat(paste(paste0(names(x$tree), "[", ls, "] ") , collapse = "-> "), "\n")
   #nstages <- vapply(x$stages, function(s) length(unique(s)), FUN.VALUE = 1)

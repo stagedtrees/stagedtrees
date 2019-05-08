@@ -86,10 +86,10 @@ We are still implementing model selection algorithm, now available:
   ```
   
   Alternatively there is a more efficient function to build 
-  inependent models (useful when the number of variables is more than 7):
+  inependent models (useful when the number of variables is large):
   
   ```
-  sevt <- effindep.staged_ev_tree(DD, lambda = 1, ctables = TRUE)
+  sevt <- effindep.sevt(DD, lambda = 1, ctables = TRUE)
   ```
   
 - ##### Full model 
@@ -109,7 +109,7 @@ We are still implementing model selection algorithm, now available:
   ## we initialize the full model
   sevt_full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
   ## then we merge stages
-  sevt <- backward_hill_climb(sevt_full, trace = 1)
+  sevt <- bhc.sevt(sevt_full, trace = 1)
   sevt$score$value
   plot(sevt)
   ```
@@ -118,11 +118,11 @@ We are still implementing model selection algorithm, now available:
 
   ```
   ## using logLik will merge only equal probabilities stages 
-  sevt1 <- backward_hill_climb(sevt_full, score = logLik)
+  sevt1 <- bhc.sevt(sevt_full, score = logLik)
 
   ## instead penalizing a lot complexity
   score <- function(object) return(-AIC(object, k=100))
-  sevt2 <- backward_hill_climb(sevt_full, score = score)
+  sevt2 <- bhc.sevt(sevt_full, score = score)
   sevt$score$value
   sevt$stages
   plot(sevt)
@@ -135,7 +135,7 @@ We are still implementing model selection algorithm, now available:
   ```
   ## we use trace = 2  to obtain all messages 
   ## We can use score as in the back_HC method
-  sevt3 <- fast_backward_hill_climb(sevt_full, trace = 2)
+  sevt3 <- fbhc.sevt(sevt_full, trace = 2)
   ```
 
 - ##### Backward joining based on KL
@@ -153,14 +153,14 @@ We are still implementing model selection algorithm, now available:
   ```
   ### we initialize as the independence model
   model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
-  naive_model <- naive_staged_ev_tree(model_0)
+  naive_model <- naive.sevt(model_0)
   naive_model
   ```
 
 - ##### Using staged trees as classifiers
 
   ```
-  pr <- predict(sevt, class = "C", newdata = DD[1:10,])
+  pr <- predict(naive_model, class = "C", newdata = DD[1:10,])
 
   table(pr, DD$C[1:10])
   ```

@@ -5,7 +5,7 @@ test_that("test that strt_ev_tree to staged_ev_tree works",{
   DD <- data.frame(A = as.factor(c(1,2,2,1)), B = as.factor(c("a","b","a","b")))
   ev <- strt_ev_tree(x = DD,order = c("B","A"), fit = TRUE, lambda = 1)
   sev <- staged_ev_tree(ev)
-  expect_is(sev,"staged_ev_tree")
+  expect_is(sev,"sevt")
 })
 
 

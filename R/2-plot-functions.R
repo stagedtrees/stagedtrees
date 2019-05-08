@@ -57,16 +57,29 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
 #' @export
 #' @importFrom graphics lines plot.new plot.window
 
-plot.staged_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,...){
+plot.sevt <- function(x, rmax = 1, xlim = c(0, 1), ylim = c(0, 1), 
+                      asp = 1, ...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
-  ttt <- prod(sapply(x$tree[1:d], length))
-  plot.window(xlim = c(0,step * d),
-              ylim = c( - step * (d+2) / 2 - 0.5, step * (d+2) / 2 + 0.5),
-              asp = 1, ...)
+  M <- prod(sapply(x$tree[1:d], length))
+  
+  plot.window(xlim = xlim,
+              ylim = ylim,
+              asp = asp, ...)
   n <- x$tree
+  p <- length(x$tree)
   nms <- names(x$tree)
-  node(c(0,0),rmax,label = nms[1]) #plot first node
+  Ls <- rep(0, p)
+  Ls[p] <- ylim[1] - ylim[0]
+  tempM <- M
+  dys <- rep(0, p)
+  dys[p] <- Ls[p] / tempM
+  if (p > 2){
+    for (i in p:2){
+      Ls[i - 1] <- Ls[i] - dys[p] * length(x$tree[[i]])
+    }    
+  }
+  node(c(xlim[1], ylim[1]), rmax, label = nms[1]) #plot first node
   ns <- 1
   xx<-0
   y<-0

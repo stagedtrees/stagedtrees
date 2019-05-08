@@ -93,7 +93,7 @@ strt_ev_tree.list <- function(x, ...){
 #'          the more complex structure.
 #' @export
 #'
-strt_ev_tree.staged_ev_tree <- function(x, ...){
+strt_ev_tree.sevt <- function(x, ...){
  vars <- names(x$tree)
  dims <- vapply(x$tree, length, FUN.VALUE = 1)
  if (!is.null(x$prob)){ #if the model was fitted we have to recompilate the ctables

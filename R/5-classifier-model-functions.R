@@ -14,20 +14,21 @@
 #' order <- c("C", "X1", "X2", "X3", "X4", "X5")
 #' model <- staged_ev_tree(train, order = order, full = TRUE, 
 #' fit = TRUE, lambda = 1)
-#' model <- backward_hill_climb(model)
+#' model <- bhc.sevt(model)
 #' pr <- predict(model, class = "C", newdata = test)
 #' table(pr, test$C)
 #' predict(model, class = "C", newdata = test, prob = TRUE)
 #' @return A vector of predicitons
 #' @export
 #' @importFrom stats predict
-predict.staged_ev_tree <-
+predict.sevt <-
   function(object,
            newdata = NULL,
            class = NULL,
            prob = FALSE,
            ...) {
-    if (!is_fitted.staged_ev_tree(object)) {
+    stopifnot(is(object, "sevt"))
+    if (!is_fitted.sevt(object)) {
       stop("Provide a fitted object")
     }
     if (is.null(newdata)) {
@@ -62,7 +63,7 @@ predict.staged_ev_tree <-
       for (cv in object$tree[[class]]) {
         x[class_idx] <- cv
         res[cv] <-
-          path_probability.staged_ev_tree(object, x, log = TRUE)
+          path_probability.sevt(object, x, log = TRUE)
       }
       return(res)
     }))
