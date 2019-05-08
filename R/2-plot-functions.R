@@ -48,17 +48,18 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
 
 #' plot a staged event tree
 #'
-#' @param x event tree object
+#' @param x staged event tree object
+#' @param limit maximum number of variables plotted
 #' @param rmax graphical parameter
-#' @param rmin graphical parameter
-#' @param step graphical parameter
-#' @param limit maximum number of levels plotted
+#' @param xlim graphical parameter
+#' @param ylim graphical parameter
+#' @param asp graphical parameter
 #' @param ... additional graphical parameters
 #' @export
 #' @importFrom graphics lines plot.new plot.window
-
-plot.sevt <- function(x, rmax = 1, xlim = c(0, 1), ylim = c(0, 1), 
+plot.sevt <- function(x, limit = 10, rmax = 1, xlim = c(0, 1), ylim = c(0, 1), 
                       asp = 1, ...){
+  return(NULL)
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
   M <- prod(sapply(x$tree[1:d], length))
@@ -84,6 +85,7 @@ plot.sevt <- function(x, rmax = 1, xlim = c(0, 1), ylim = c(0, 1),
   xx<-0
   y<-0
   yy <- 0
+  step <- 1
   for (k in 1:d){ #plot nodes for every strata
     v <- x$tree[[k]]
     yyy <- yy

@@ -10,12 +10,13 @@ sample.sevt(n = 1, object)
 \item{n}{number of observations}
 
 \item{object}{the staged event tree object}
-
-\item{...}{}
 }
 \value{
 A data frame containing a sample of size \code{n}
 }
 \description{
 Sample from a staged event tree
+}
+\details{
+TO WRITE
 }
