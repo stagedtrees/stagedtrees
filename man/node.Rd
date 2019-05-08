@@ -16,6 +16,8 @@ node(x, label = "", col = "black", cex.label = 1, cex.node = 1,
 
 \item{cex.label}{cex parameter to be passed to text}
 
+\item{cex.node}{cex parameter for nodes}
+
 \item{...}{additional parameters passed to \code{par()}}
 }
 \description{

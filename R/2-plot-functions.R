@@ -147,8 +147,9 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
 #' @param label the label
 #' @param col color
 #' @param cex.label cex parameter to be passed to text
+#' @param cex.node cex parameter for nodes
 #' @param ... additional parameters passed to \code{par()}
-#' @importFrom graphics text lines
+#' @importFrom graphics text lines points
 node <- function(x, label = "", col = "black", cex.label = 1, 
                   cex.node = 1,
                  ...){

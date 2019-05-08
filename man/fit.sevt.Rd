@@ -2,7 +2,16 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{fit.sevt}
 \alias{fit.sevt}
-\title{Fit a staged event tree}
+\title{#' conversion
+#' @param x Adj matrix
+#' @param tree variables tree
+#' @param ...
+staged_ev_tree.matrix <- function(x, tree, ...){
+  order <- gRbase::topoSort(adj_mat)
+  object <- staged_ev_tree(tree[order])
+  
+}
+Fit a staged event tree}
 \usage{
 fit.sevt(sevt, data = NULL, lambda = 0, ...)
 }
@@ -19,6 +28,15 @@ fit.sevt(sevt, data = NULL, lambda = 0, ...)
 A staged event tree object with the conditional probabilities fitted
 }
 \description{
+#' conversion
+#' @param x Adj matrix
+#' @param tree variables tree
+#' @param ...
+staged_ev_tree.matrix <- function(x, tree, ...){
+  order <- gRbase::topoSort(adj_mat)
+  object <- staged_ev_tree(tree[order])
+  
+}
 Fit a staged event tree
 }
 \examples{
