@@ -4,15 +4,13 @@
 \alias{plot.sevt}
 \title{plot a staged event tree}
 \usage{
-\method{plot}{sevt}(x, limit = 10, radius = 0.05, xlim = c(0, 1),
-  ylim = c(0, 1), asp = 1, cex.label = 1, col = NULL, ...)
+\method{plot}{sevt}(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
+  asp = 1, cex.label = 1, col = NULL, cex.nodes = 1, ...)
 }
 \arguments{
 \item{x}{staged event tree object}
 
 \item{limit}{maximum number of variables plotted}
-
-\item{radius}{graphical parameter}
 
 \item{xlim}{graphical parameter}
 
@@ -25,6 +23,8 @@
 \item{col}{color mapping for the stages, a named list with 
 names equal to the variables names in the model and 
 vectors named with stages names as components}
+
+\item{cex.nodes}{}
 
 \item{...}{additional graphical parameters}
 }
