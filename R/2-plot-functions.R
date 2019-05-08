@@ -55,15 +55,17 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,
 #' @param ylim graphical parameter
 #' @param asp graphical parameter
 #' @param cex.label graphical parameter
+#' @param cex.nodes graphical parameter
 #' @param col color mapping for the stages, a named list with 
 #'        names equal to the variables names in the model and 
 #'        vectors named with stages names as components 
-#' @param cex.nodes 
-#' @param ... additional graphical parameters
+#' @param ... additional graphical parameters to be passed to 
+#'         \code{points}, \code{lines}, \code{title},
+#'         \code{text} and \code{plot.window}.
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
 plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1), 
-                      asp = 1, cex.label = 1, col = NULL, cex.nodes = 1,
+                      asp = 1, cex.label = 1, cex.nodes = 2, col = NULL, 
                       ...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
@@ -132,7 +134,7 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
         }
         edge(c(xx-step, 
                yyy[i]), c(xx,y[j]),
-              v[j], cex.label = cex.label) #plot edge with previous nodes
+              v[j], cex.label = cex.label, ...) #plot edge with previous nodes
       }
     }
     ns <- ns * nv
@@ -145,11 +147,10 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
 #' @param label the label
 #' @param col color
 #' @param cex.label cex parameter to be passed to text
-#' @param fill logical
 #' @param ... additional parameters passed to \code{par()}
 #' @importFrom graphics text lines
 node <- function(x, label = "", col = "black", cex.label = 1, 
-                 fill = FALSE, cex.node = 1,
+                  cex.node = 1,
                  ...){
   points(x[1], x[2], col = col, cex = cex.node, ...)
   if (cex.label > 0){
@@ -167,13 +168,13 @@ node <- function(x, label = "", col = "black", cex.label = 1,
 #' @param cex.label numerical 
 #' @param ... additional parameters passed to \code{par()}
 #' @importFrom graphics text lines
-edge <- function(from, to, label = "" ,col="black", cex.label = 1, ...){
+edge <- function(from, to, label = "" , col="black", cex.label = 1, ...){
    lines(c(from[1], to[1]), c(from[2], to[2]), col = col, ...)
    a <- 180 * atan2((to[2] - from[2]),(to[1] - from[1]))/pi   ## compute the angle of the line
    if (cex.label > 0){
      ## put the label rotated of the proper angle
      text(x = (from[1] + to[1]) / 2 , y = (from[2] + to[2]) / 2 ,
-          labels = label, srt = a, col=col, cex = cex.label)  
+          labels = label, srt = a, col=col, cex = cex.label, ...)  
    } 
    }
 
