@@ -510,3 +510,44 @@ print.sevt <- function(x, ...) {
   }
   invisible(x)
 }
+
+
+
+#' Print stages info
+#' 
+#' @param object a staged event tree object
+#' @param var name of one variable
+#' @export
+stages.sevt <- function(object, var = NULL){
+  stopifnot(is(object, "sevt"))
+  if (is.null(var)){
+    object$stages
+  }else{
+    object$stages[[var]]
+  }
+}
+
+
+#' Print stage info
+#' 
+#' @param object a staged event tree object
+#' @param var name of one variable
+#' @param stage name of a stage for variable \code{var}
+#' @export
+stageinfo.sevt <- function(object, var, stage = NULL){
+  stopifnot(is(object, "sevt"))
+  if (is.null(stage)){
+    stages.sevt(object, var)
+  }else{
+    stage <- as.character(stage)
+    cat("Stage ", stage, " for variable ", var, "\n")
+    cat("  ", sum(object$stages[[var]] == stage), " nodes in the stage \n")
+    if (is_fitted.sevt(object)){
+      cat("  ", "probabilities: ")
+      cat(paste0(names(object$prob[[var]][[stage]]), collapse = "   "),"\n")
+      cat(character(18), signif(object$prob[[var]][[stage]], 3),"\n")
+      cat(character(3), "sample size:", attr(object$prob[[var]][[stage]], "n"), "\n")
+    }
+  }
+  cat("  ", "paths: TO DO \n")
+}
