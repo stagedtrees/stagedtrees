@@ -5,7 +5,7 @@
 \title{plot a staged event tree}
 \usage{
 \method{plot}{sevt}(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
-  asp = 1, cex.label = 1, col = NULL, cex.nodes = 1, ...)
+  asp = 1, cex.label = 1, cex.nodes = 2, col = NULL, ...)
 }
 \arguments{
 \item{x}{staged event tree object}
@@ -20,13 +20,15 @@
 
 \item{cex.label}{graphical parameter}
 
+\item{cex.nodes}{graphical parameter}
+
 \item{col}{color mapping for the stages, a named list with 
 names equal to the variables names in the model and 
 vectors named with stages names as components}
 
-\item{cex.nodes}{}
-
-\item{...}{additional graphical parameters}
+\item{...}{additional graphical parameters to be passed to 
+\code{points}, \code{lines}, \code{title},
+\code{text} and \code{plot.window}.}
 }
 \description{
 plot a staged event tree

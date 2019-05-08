@@ -4,8 +4,8 @@
 \alias{node}
 \title{Plot a node}
 \usage{
-node(x, label = "", col = "black", cex.label = 1, fill = FALSE,
-  cex.node = 1, ...)
+node(x, label = "", col = "black", cex.label = 1, cex.node = 1,
+  ...)
 }
 \arguments{
 \item{x}{the center}
@@ -15,8 +15,6 @@ node(x, label = "", col = "black", cex.label = 1, fill = FALSE,
 \item{col}{color}
 
 \item{cex.label}{cex parameter to be passed to text}
-
-\item{fill}{logical}
 
 \item{...}{additional parameters passed to \code{par()}}
 }
