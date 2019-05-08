@@ -537,17 +537,48 @@ stages.sevt <- function(object, var = NULL){
 stageinfo.sevt <- function(object, var, stage = NULL){
   stopifnot(is(object, "sevt"))
   if (is.null(stage)){
-    print(stages.sevt(object, var))
-  }else{
+    stageinfo.sevt(object, var, unique(stages.sevt(object, var)))
+  }else if (length(stage) > 1){
+    invisible(sapply(stage, function(s){
+      stageinfo.sevt(object, var, s)
+    })) }else{
     stage <- as.character(stage)
     cat("Stage ", stage, " for variable ", var, "\n")
     cat("  ", sum(object$stages[[var]] == stage), " nodes in the stage \n")
     if (is_fitted.sevt(object)){
       cat("  ", "probabilities: ")
       cat(paste0(names(object$prob[[var]][[stage]]), collapse = "   "),"\n")
-      cat(character(18), signif(object$prob[[var]][[stage]], 3),"\n")
+      cat(character(18), round(object$prob[[var]][[stage]], 3),"\n")
       cat(character(3), "sample size:", attr(object$prob[[var]][[stage]], "n"), "\n")
     }
     cat("  ", "paths: TO DO \n")
   }
+}
+
+
+#' Extract subtree
+#' 
+#' @param object a staged event tree object
+#' @param path, the path after which extract the subtree
+#' 
+#' @return the staged event tree object corresponding to the subtree
+#' @export
+subtree.sevt <- function(object, path){
+  m <- 1
+  idx <- tree_idx(path, object$tree)
+  stage <- find_stage(object, path)
+  object$tree[1:length(path)] <- NULL ##remove previous variables
+  object$stages[1:length(path)] <- NULL ##remove stages info
+  for (i in 2:length(object$tree)){
+   m <- m * length(object$tree[[i - 1]])
+   object$stages[[ i - 1 ]] <- object$stages[[ i - 1 ]][ ((idx - 1)  * m)  : (idx  * m - 1) + 1] 
+  }
+  if (is_fitted.sevt(object)){
+    object$prob[1:length(path)] <- NULL
+    object$prob[[ 1 ]] <- object$prob[[ 1 ]][ stage ]   
+    for (i in 2:length(object$tree)){
+      
+    }
+  }
+  return(object)
 }
