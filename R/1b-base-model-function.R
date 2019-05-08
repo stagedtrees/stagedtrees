@@ -537,7 +537,7 @@ stages.sevt <- function(object, var = NULL){
 stageinfo.sevt <- function(object, var, stage = NULL){
   stopifnot(is(object, "sevt"))
   if (is.null(stage)){
-    stages.sevt(object, var)
+    print(stages.sevt(object, var))
   }else{
     stage <- as.character(stage)
     cat("Stage ", stage, " for variable ", var, "\n")
@@ -548,6 +548,6 @@ stageinfo.sevt <- function(object, var, stage = NULL){
       cat(character(18), signif(object$prob[[var]][[stage]], 3),"\n")
       cat(character(3), "sample size:", attr(object$prob[[var]][[stage]], "n"), "\n")
     }
+    cat("  ", "paths: TO DO \n")
   }
-  cat("  ", "paths: TO DO \n")
 }
