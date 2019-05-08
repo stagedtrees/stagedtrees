@@ -577,8 +577,10 @@ subtree.sevt <- function(object, path){
     object$prob[1:length(path)] <- NULL
     object$prob[[ 1 ]] <- object$prob[[ 1 ]][ stage ]   
     for (i in 2:length(object$tree)){
-      
+      ###to do: clean unused probabilities
     }
+    object$ll <- NULL
+    object$ll <- logLik(object)
   }
   return(object)
 }
