@@ -4,7 +4,7 @@
 \alias{edge}
 \title{Plot an edge}
 \usage{
-edge(from, to, label, col = "black", ...)
+edge(from, to, label = "", col = "black", ...)
 }
 \arguments{
 \item{from}{From}
