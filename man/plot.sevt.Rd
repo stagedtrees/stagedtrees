@@ -4,19 +4,21 @@
 \alias{plot.sevt}
 \title{plot a staged event tree}
 \usage{
-\method{plot}{sevt}(x, rmax = 1, rmin = 0.1, step = 2, limit = 10,
-  ...)
+\method{plot}{sevt}(x, limit = 10, rmax = 1, xlim = c(0, 1),
+  ylim = c(0, 1), asp = 1, ...)
 }
 \arguments{
-\item{x}{event tree object}
+\item{x}{staged event tree object}
+
+\item{limit}{maximum number of variables plotted}
 
 \item{rmax}{graphical parameter}
 
-\item{rmin}{graphical parameter}
+\item{xlim}{graphical parameter}
 
-\item{step}{graphical parameter}
+\item{ylim}{graphical parameter}
 
-\item{limit}{maximum number of levels plotted}
+\item{asp}{graphical parameter}
 
 \item{...}{additional graphical parameters}
 }
