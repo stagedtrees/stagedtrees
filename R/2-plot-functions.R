@@ -55,13 +55,24 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10, ...){
 #' @param ylim graphical parameter
 #' @param asp graphical parameter
 #' @param cex.label graphical parameter
+#' @param col color mapping for the stages, a named list with 
+#'        names equal to the variables names in the model and 
+#'        vectors named with stages names as components 
 #' @param ... additional graphical parameters
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
 plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 1), 
-                      asp = 1, cex.label = 1, ...){
+                      asp = 1, cex.label = 1, col = NULL,...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
+  if (is.null(col)){
+    col <- lapply(x$stages[1:(d-1)], function(stages){
+      stages <- unique(stages)
+      vc <- 1:length(stages)
+      names(vc) <- stages
+      return(vc)
+    })
+  }
   M <- prod(sapply(x$tree[1:d], length))
   radius <- rep(radius, d)[1:d]
   plot.window(xlim = xlim,
@@ -114,7 +125,7 @@ plot.sevt <- function(x, limit = 10, radius = 0.05, xlim = c(0, 1), ylim = c(0, 
         if (k < length(x$tree)) {
           node(c(xx, y[j]), radius[k],
                label = nms[k+1], cex.label = cex.label,
-               col = x$stages[[k]][lj])
+               col = col[[k]][ x$stages[[k]][lj] ] )
         }
         edge(c(xx-step, 
                yyy[i]), c(xx,y[j]),

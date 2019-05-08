@@ -4,7 +4,9 @@
 #' @param newdata The newdata to perform predictions
 #' @param class A string indicating the name of the variable to use as
 #' the class variable
-#' @param prob logical, if \code{TRUE} the probabilities of class are returned
+#' @param prob logical, if \code{TRUE} the probabilities of class are 
+#'                      returned
+#' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @param ... additional parameters, see details
 #' @return A vector of predictions or the corresponding probabilities
 #' @examples 
@@ -26,6 +28,7 @@ predict.sevt <-
            newdata = NULL,
            class = NULL,
            prob = FALSE,
+           log = FALSE,
            ...) {
     stopifnot(is(object, "sevt"))
     if (!is_fitted.sevt(object)) {
@@ -67,9 +70,13 @@ predict.sevt <-
       }
       return(res)
     }))
-    if (prob)
-      return(pred)
-    else{
+    if (prob){
+        if (log){
+           return(pred)
+        }else{
+           return(pred) 
+         }
+      }else{
       class_values <- colnames(pred)
       return(apply(pred, MARGIN = 1, function(x) {
         factor(class_values[which.max(x)], levels = class_values)

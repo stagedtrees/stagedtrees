@@ -26,11 +26,7 @@ A staged event tree object is a list with components:
                  such variable are listed. The order of the variable is the
                  order of the event tree.
          \item stages: A named list where each component stores the stages
-                   for the given variable, stages are represented by numbers
-                   that do not need to be consecutive.
-         \item paths: A named list where for each variable we list in a
-         data.frame object all the possible paths up to that point and the
-         assigned stages.
+                   for the given variable.
          \item prob: The conditional probability tables for every variable
          and every stage (present only if the staged event tree has been
          fitted)
