@@ -182,7 +182,6 @@ edge <- function(from, to, label = "" , col="black", cex.label = 1, ...){
 #' @param limit maximum number of variables plotted
 #' @param xlim graphical parameter
 #' @param ylim graphical parameter
-#' @param asp graphical parameter
 #' @param ... additional parameters
 #' @importFrom graphics text
 #' @export

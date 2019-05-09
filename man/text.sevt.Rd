@@ -19,8 +19,6 @@
 \item{ylim}{graphical parameter}
 
 \item{...}{additional parameters}
-
-\item{asp}{graphical parameter}
 }
 \description{
 Add text to a staged even tree plot
