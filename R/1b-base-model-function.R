@@ -528,11 +528,11 @@ stages.sevt <- function(object, var = NULL){
 }
 
 
-#' Print stage info
+#' Print stage(s) info
 #' 
 #' @param object a staged event tree object
 #' @param var name of one variable
-#' @param stage name of a stage for variable \code{var}
+#' @param stage name(s) of stage for variable \code{var}
 #' @export
 stageinfo.sevt <- function(object, var, stage = NULL){
   stopifnot(is(object, "sevt"))
