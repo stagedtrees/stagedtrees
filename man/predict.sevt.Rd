@@ -15,7 +15,7 @@
 \item{class}{A string indicating the name of the variable to use as
 the class variable}
 
-\item{prob}{logical, if \code{TRUE} the probabilities of class are 
+\item{prob}{logical, if \code{TRUE} the probabilities of class are
 returned}
 
 \item{log}{logical, if \code{TRUE} log-probabilities are returned}

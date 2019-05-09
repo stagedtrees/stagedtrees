@@ -317,34 +317,37 @@ fbhc.sevt <-
 #' Backword joining of stages
 #'
 #' Join stages from more complex to simpler models
-#' using entropy do decide if join or not a stage
+#' using a distance and a threshold value
 #'
 #' @param object the staged event tree from where to start
+#' @param distance the distance between probabilities to use 
 #' @param thr the threshold for joining stages
 #' @param trace if >0 increasingly amount of info 
+#' @param ... additional parameters to be passed to the distance function
 #' is printed (via \code{message})
 #' @return the learned staged event tree
 #' 
 #' @examples 
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- backward_joining_KL(model_full, trace = 2)
-#' BIC(model_full, model)
+#' model <- bj.sevt(model_full, trace = 2)
 #' @importFrom  methods is
 #' @export
-backward_joining_KL <-
+bj.sevt <-
   function(object = NULL,
+           distance = kl, 
            thr = 0.01,
-           trace = 0) {
+           trace = 0, ...) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
+    stopifnot(is(distance, "function"))
     for (v in names(object$tree)[-1]) {
       finish <- FALSE
       while (!finish) {
         finish <- TRUE
         stages <- unique(object$stages[[v]])
         if (length(stages) > 1) {
-          M <- KL_mat_stages(object$prob[[v]]) #compute KL matrix
+          M <- distance_mat_stages(object$prob[[v]], distance, ...)
           diag(M) <- Inf
           idx <- which.min(M)
           i <- ceiling(idx / dim(M)[1])
@@ -363,11 +366,11 @@ backward_joining_KL <-
         } ## end if there are more than 1 stage
       } ## end while
       if (trace > 0 ) {
-        message("KL join over ", v ," done")
+        message("backward join over ", v ," done")
       }
     } ## end for over variables
     if (trace > 0) {
-      message("KL join done")
+      message("backward join done")
     }
     object$call <- sys.call()
     return(object)

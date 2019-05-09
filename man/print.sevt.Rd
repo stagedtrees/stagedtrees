@@ -19,9 +19,9 @@ Print a staged event tree
 }
 \details{
 The order of the variables in the stratified tree
- is printed (from root). In addition the number of levels of each
- variable is shown in square brackets.
- If available the log-likelihood of the model is printed.
+is printed (from root). In addition the number of levels of each
+variable is shown in square brackets.
+If available the log-likelihood of the model is printed.
 }
 \examples{
 DD <- generate_xor_dataset(5, 100)

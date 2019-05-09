@@ -23,7 +23,7 @@ the order can be specified.
 }
 \details{
 The staged (stratified) event tree returned is the minimal one,
-         that is the one with just one stage per variable (equivalent to a complete independent model).
+that is the one with just one stage per variable (equivalent to a complete independent model).
 }
 \examples{
 #' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))

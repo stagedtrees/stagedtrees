@@ -14,19 +14,19 @@ bhc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf,
 
 \item{max_iter}{the maximum number of iterations per variable}
 
-\item{trace}{if >0 increasingly amount of info 
+\item{trace}{if >0 increasingly amount of info
 is printed (via \code{message})}
 }
 \value{
 The final staged event tree object
 }
 \description{
-Hill-climbing search of staged event trees with 
+Hill-climbing search of staged event trees with
 iterative joining of stages
 }
 \details{
-For each variable the algorithm try to join stages 
-and move to the best model that increase the score. When no 
+For each variable the algorithm try to join stages
+and move to the best model that increase the score. When no
 increase is possible it moves to the next variable.
 }
 \examples{
