@@ -218,15 +218,7 @@ staged_ev_tree.bn.fit <- function(x, ...){
   return(object)
 }
 
-#' #' conversion
-#' #' @param x Adj matrix
-#' #' @param tree variables tree
-#' #' @param ...
-#' staged_ev_tree.matrix <- function(x, tree, ...){
-#'   order <- gRbase::topoSort(adj_mat)
-#'   object <- staged_ev_tree(tree[order])
-#'   
-#' }
+
 
 
 #' Fit a staged event tree
