@@ -24,7 +24,9 @@
 
 \item{col}{color mapping for the stages, a named list with
 names equal to the variables names in the model and
-vectors named with stages names as components}
+vectors named with stages names as components; otherwise
+if \code{col == "stages"} the stage names will be used as
+colors.}
 
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},
