@@ -138,11 +138,12 @@ We are still implementing model selection algorithm, now available:
   sevt3 <- fbhc.sevt(sevt_full, trace = 2)
   ```
 
-- ##### Backward joining based on KL
+- ##### Backward joining based on distances
   For every variable the algorithm iterates and at every step try to join the
-  two stages with the smallest KL (symmetrized) if it's lower than a threshold. 
+  two stages with the smallest distance if it's lower than a threshold. 
   ```
-  sevt <- backward_joining_KL(sevt_full, thr = 0.01, trace = 2)
+  ##using symmetrized KL distance
+  sevt <- bj,sevt(sevt_full, distance = kl, thr = 0.01, trace = 2)
   plot(sevt) 
   ``` 
   
@@ -170,8 +171,6 @@ We are still implementing model selection algorithm, now available:
 - `testthat` is used to test the package..
 - `roxygen2` is used to generate automatically the documentation.
 - `Travis CI` is used to check automatically at every push. 
-
-
 
 ####  Commit messages
 
@@ -214,10 +213,10 @@ changes can happen.
     * [ ] exhaustive search 
     * [ ] heuristics:
         - [x] backward hill climbing (3 variants)
-        - [x] backward joining of stage based on KL distance
+        - [x] backward joining of stage based on distance
         - [x] hill climbing 
         - [ ] forward hill-climb
-	  * [ ] other distances (CD, total variation ..) (general function)
+	  * [x] other distances (CD, total variation ..) (general function)
     * [x] Penalized logLik (AIC, BIC)
     * [ ] Stage strenght (inspired by arc strenght in bnlearn) - bootstrap
 - [ ] classifiers with staged trees 
