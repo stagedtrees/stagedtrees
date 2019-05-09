@@ -243,9 +243,9 @@ staged_ev_tree.bn.fit <- function(x, ...){
 #'                 Y = c("high", "low", "low"))
 #' model.fit <- fit.sevt(model, data = D, lambda = 1)
 fit.sevt <- function(sevt,
-                               data = NULL,
-                               lambda = 0,
-                               ...) {
+                     data = NULL,
+                     lambda = 0,
+                     ...) {
   if (is.null(data)) {
     if (is.null(sevt$ctables)) {
       warning("Data must be provided or included in the model object")
@@ -383,7 +383,7 @@ join_stages <- function(sevt, v,  s1, s2) {
       ## update log likelihood
       sevt$ll <-
         sevt$ll - dll +  sum( (ct1 + ct2) *
-                                          log(sevt$prob[[v]][[s1]]))
+                                log(sevt$prob[[v]][[s1]]))
       attr(sevt$ll, "df") <-
         attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
     }
@@ -536,23 +536,30 @@ stages.sevt <- function(object, var = NULL){
 #' @export
 stageinfo.sevt <- function(object, var, stage = NULL){
   stopifnot(is(object, "sevt"))
-  if (is.null(stage)){
-    stageinfo.sevt(object, var, unique(stages.sevt(object, var)))
-  }else if (length(stage) > 1){
-    invisible(sapply(stage, function(s){
-      stageinfo.sevt(object, var, s)
-    })) }else{
-    stage <- as.character(stage)
-    cat("Stage ", stage, " for variable ", var, "\n")
-    cat("  ", sum(object$stages[[var]] == stage), " nodes in the stage \n")
+  if (var == names(object$tree)[1]){
+    cat("First variable ", var, "\n")
     if (is_fitted.sevt(object)){
       cat("  ", "probabilities: ")
-      cat(paste0(names(object$prob[[var]][[stage]]), collapse = "   "),"\n")
-      cat(character(18), round(object$prob[[var]][[stage]], 3),"\n")
-      cat(character(3), "sample size:", attr(object$prob[[var]][[stage]], "n"), "\n")
+      cat(paste0(names(object$prob[[var]][[1]]), collapse = "   "),"\n")
+      cat(character(18), round(object$prob[[var]][[1]], 3),"\n")
+      cat(character(3), "sample size:", attr(object$prob[[var]][[1]], "n"), "\n")
     }
-    cat("  ", "paths: TO DO \n")
   }
+  if (is.null(stage)){
+    stage <- unique(object$stages[[var]])
+  }
+  invisible(sapply(stage, function(s){
+    s <- as.character(s)
+    cat("Stage ", s, " for variable ", var, "\n")
+    cat("  ", sum(object$stages[[var]] == s), " nodes in the stage \n")
+    if (is_fitted.sevt(object)){
+      cat("  ", "probabilities: ")
+      cat(paste0(names(object$prob[[var]][[s]]), collapse = "   "),"\n")
+      cat(character(18), round(object$prob[[var]][[s]], 3),"\n")
+      cat(character(3), "sample size:", attr(object$prob[[var]][[s]], "n"), "\n")
+    }
+    #cat("  ", "paths: TO DO \n")
+  }))
 }
 
 
@@ -570,8 +577,8 @@ subtree.sevt <- function(object, path){
   object$tree[1:length(path)] <- NULL ##remove previous variables
   object$stages[1:length(path)] <- NULL ##remove stages info
   for (i in 2:length(object$tree)){
-   m <- m * length(object$tree[[i - 1]])
-   object$stages[[ i - 1 ]] <- object$stages[[ i - 1 ]][ ((idx - 1)  * m)  : (idx  * m - 1) + 1] 
+    m <- m * length(object$tree[[i - 1]])
+    object$stages[[ i - 1 ]] <- object$stages[[ i - 1 ]][ ((idx - 1)  * m)  : (idx  * m - 1) + 1] 
   }
   if (is_fitted.sevt(object)){
     object$prob[1:length(path)] <- NULL
