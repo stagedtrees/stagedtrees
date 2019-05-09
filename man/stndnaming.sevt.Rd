@@ -6,8 +6,16 @@
 \usage{
 stndnaming.sevt(object, rep = FALSE)
 }
+\arguments{
+\item{object}{a staged event tree object}
+
+\item{rep}{logical, if stages name can be repeated for different
+variables}
+}
+\value{
+a staged event tree object with stages named with
+consecutive integers.
+}
 \description{
-@param object a staged event tree object
-@param rep logical, if stages name can be repeated for different
-variables
+Standard renaming of stages
 }
