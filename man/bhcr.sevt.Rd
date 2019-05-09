@@ -14,7 +14,7 @@ bhcr.sevt(object, score = function(x) return(-BIC(x)), max_iter = 100,
 
 \item{max_iter}{the maximum number of iteration}
 
-\item{trace}{if >0 increasingly amount of info 
+\item{trace}{if >0 increasingly amount of info
 is printed (via \code{message})}
 }
 \value{
@@ -24,9 +24,9 @@ The final staged event tree object
 Randomly try to join stages
 }
 \details{
-At each iteration a variable and 
-two of its stages are randomly selected. 
-If joining the stages increase the score, the model is 
-updated. The procedure is repeated until the 
+At each iteration a variable and
+two of its stages are randomly selected.
+If joining the stages increase the score, the model is
+updated. The procedure is repeated until the
 number of iterations reach \code{max_iter}.
 }

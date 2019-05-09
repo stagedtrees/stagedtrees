@@ -192,9 +192,9 @@ changes can happen.
 - [x] staged event tree
 - [x] fitting staged event tree (mle)
 - [x] print method for staged  event tree
-- [ ] conversion BN to staged event tree
-- [ ] extracting sub tree
-- [ ] sampling from a staged tree and strt event tree
+- [x] conversion BN to staged event tree
+- [x] extracting sub tree
+- [x] sampling from a staged tree
 - [ ] discretize strategy 
 - [x] plotting: 
     * [x] stratified event tree
@@ -213,9 +213,10 @@ changes can happen.
     * [ ] implement ``join_, split_, set_stage`` functions
     * [ ] exhaustive search 
     * [ ] heuristics:
-        - [x] backward hill-climbing (3 variants)
+        - [x] backward hill climbing (3 variants)
         - [x] backward joining of stage based on KL distance
-        - [ ] forward hill-climbing
+        - [x] hill climbing 
+        - [ ] forward hill-climb
 	  * [ ] other distances (CD, total variation ..) (general function)
     * [x] Penalized logLik (AIC, BIC)
     * [ ] Stage strenght (inspired by arc strenght in bnlearn) - bootstrap

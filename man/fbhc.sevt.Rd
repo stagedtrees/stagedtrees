@@ -14,19 +14,19 @@ fbhc.sevt(object = NULL, score = function(x) return(-BIC(x)),
 
 \item{max_iter}{the maximum number of iteration}
 
-\item{trace}{if >0 increasingly amount of info 
+\item{trace}{if >0 increasingly amount of info
 is printed (via \code{message})}
 }
 \value{
 The final staged event tree obtained
 }
 \description{
-Fast hill-climbing search of staged event trees with 
+Fast hill-climbing search of staged event trees with
 iterative joining of stages.
 }
 \details{
-For each variable the algorithm try to join stages 
-and move to the first model that increase the score. When no 
+For each variable the algorithm try to join stages
+and move to the first model that increase the score. When no
 increase is possible it moves to the next variable.
 }
 \examples{

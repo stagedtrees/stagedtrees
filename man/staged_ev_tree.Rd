@@ -22,15 +22,15 @@ the order can be specified.
 \details{
 A staged event tree object is a list with components:
 \itemize{
-         \item tree: A named list where for each variable, the levels of
-                 such variable are listed. The order of the variable is the
-                 order of the event tree.
-         \item stages: A named list where each component stores the stages
-                   for the given variable.
-         \item prob: The conditional probability tables for every variable
-         and every stage (present only if the staged event tree has been
-         fitted)
-         }
+\item tree: A named list where for each variable, the levels of
+such variable are listed. The order of the variable is the
+order of the event tree.
+\item stages: A named list where each component stores the stages
+for the given variable.
+\item prob: The conditional probability tables for every variable
+and every stage (present only if the staged event tree has been
+fitted)
+}
 }
 \examples{
 DD <- generate_random_dataset(n = 5, 1000)

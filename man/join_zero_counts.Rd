@@ -14,20 +14,20 @@ join_zero_counts(object, fit = TRUE, trace = 0)
 \item{trace}{if \code{>0} print information to console}
 }
 \value{
-a staged event tree with situations with 0 
+a staged event tree with situations with 0
 observations merged
 }
 \description{
 Join situations with no observations
 }
 \details{
-This function takes as input a (fitted) staged event tree object 
-and looking at the \code{ctables} join all the situations with zero 
+This function takes as input a (fitted) staged event tree object
+and looking at the \code{ctables} join all the situations with zero
 recorded observations in the same stage. Since such joining does not change
-the log-likelihood of the model, it is a useful (time-wise) 
+the log-likelihood of the model, it is a useful (time-wise)
 pre-processing before
 others model selection algorithms.
-If \code{fit=TRUE} the model will be then re-fitted, if user sets 
+If \code{fit=TRUE} the model will be then re-fitted, if user sets
 \code{fit = FALSE} the returned model will have no probabilities.
 }
 \examples{

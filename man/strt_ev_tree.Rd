@@ -11,7 +11,7 @@ strt_ev_tree(x, order = NULL, fit = FALSE, ...)
 
 \item{order}{Vector of variables names, the order to build the event tree}
 
-\item{fit}{If `TRUE` the contingency tables will be computed from `data`}
+\item{fit}{If \code{TRUE} the contingency tables will be computed from \code{data}}
 
 \item{...}{additional parameters}
 }
