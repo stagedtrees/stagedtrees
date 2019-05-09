@@ -57,20 +57,21 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 #' Naive staged event tree
 #' 
 #' Build a stage event tree with two stages for each variable
-#' @param object a staged event tree object with ctables 
+#' @param object a full staged event tree
+#' @param distance a ditance between probabilities
 #' @param k the maximum number of variable to consider
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples 
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
-#' model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
+#' model_0 <- staged_ev_tree(DD[1:500,], full = TRUE, lambda = 1)
 #' naive_model <- naive.sevt(model_0)
 #' pr <- predict(naive_model, newdata = DD[501:1000,])
 #' table(pr,DD$C[501:1000])
 naive.sevt <- function(object, distance = kl, k = length(object$tree)){
   stopifnot(is_fitted.sevt(object))
   for (v in names(object$tree)[2:k]){
-    M <- distance_mat_stages(object$ctables[[v]] + object$lambda)
+    M <- distance_mat_stages(object$prob[[v]])
     groups <- simple_clustering(M)
     ### compute probabilitites and assign stages
     object$prob[[ v ]] <- list()
