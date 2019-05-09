@@ -3,13 +3,13 @@
 #' @param object a staged event tree 
 #' @return a ceg object
 #' @export
-toCeg.sevt <- function(object)
+ceg.sevt <- function(object)
 {
   levels <- sapply(object$tree, length)[-1]
   stages <- object$stages
   position <- stages
   temp_position <- position
-  
+ 
   for(i in (length(stages)-1):1)  # quanti livelli dell'albero bisogna ispezionare, tranne l'ultimo che è = a stages
   {
     unique_stages <- unique(stages[[i]])
@@ -45,7 +45,7 @@ toCeg.sevt <- function(object)
     ##### rinominare 1,2,3,... le posizioni.
     unique_pos <- unique(position[[i]])
     ord_pos <- paste(c(1:length(unique_pos)), sep = "")
-    
+
     for(p in 1:length(unique_pos))
     {
       for(q in 1:length(position[[i]]))
@@ -62,7 +62,7 @@ toCeg.sevt <- function(object)
     {
       position[[i]] <- paste(c(1:length(position[[i]])), sep = "")
       temp_position[[i]] <- paste(c(1:length(temp_position[[i]])), sep = "")
-      
+
       for(u in i:1)
       {
         position[[u]] <- paste(c(1:length(position[[u]])), sep = "")
@@ -74,3 +74,34 @@ toCeg.sevt <- function(object)
   class(object) <- c("ceg", class(object))
   return(object)
 }
+
+
+# plot.ceg <- function(x){
+#   
+#   
+# }
+
+
+ceg2adjmat <- function(x){
+  tree <- x$tree
+  var <- names(tree)
+  x$positions[[var[1]]] <- "1"
+  pos <- uni_idx(x$positions)
+  allpos <- unique(unlist(pos))
+  k <- length(allpos)
+  mat <- matrix(nrow = k, ncol = k, 0, dimnames = list(allpos, allpos))
+  m <- 1
+  for (i in 2:length(var)){
+    v <- var[i - 1]
+    m <- m * length(x$tree[[v]])
+    for (p1 in unique(pos[[v]])){
+      ix <- min(which(p1 %in% pos[[v]] ))
+      for (p2 in pos[[var[i]]][ ((ix - 1) * m + 1):(ix*m)   ]){
+        mat[p1, p2] <- mat[p1, p2] + 1 
+      }
+    }
+  }
+  
+  return(mat)
+}
+
