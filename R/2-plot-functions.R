@@ -83,11 +83,6 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
               ylim = ylim,
               asp = asp, ...)
   title(...)
-  ### for debugging:
-  #abline(v = xlim[1])
-  #abline(v = xlim[2])
-  #abline(h = ylim[1])
-  #abline(h = ylim[2])
   n <- x$tree
   p <- length(x$tree)
   nms <- names(x$tree)
@@ -109,9 +104,9 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
   }
   node(c(xlim[1], mean(ylim) ), label = nms[1],
        cex.label = cex.label, cex.node = cex.nodes[1], ...) #plot first node
-  ns <- 1
   xx <- xlim[1]
   y <- yy <- mean(ylim)
+  ns <- 1
   step <- (xlim[2] - xlim[1]) / d
   for (k in 1:d){ #plot nodes for every strata
     v <- x$tree[[k]]
@@ -126,7 +121,7 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
       yy <- c(yy,y)
       for (j in 1:nv){ #plot nodes
         lj <- lj +1
-        if (k < length(x$tree)) {
+        if (k < d) {
           node(c(xx, y[j]),
                label = nms[k+1], cex.label = cex.label,
                col = col[[k]][ x$stages[[k]][lj] ],
@@ -180,4 +175,25 @@ edge <- function(from, to, label = "" , col="black", cex.label = 1, ...){
    }
 
 
-
+#' Add text to a staged even tree plot
+#' 
+#' @param x a staged event tree
+#' @param y the position of the labels
+#' @param limit maximum number of variables plotted
+#' @param xlim graphical parameter
+#' @param ylim graphical parameter
+#' @param asp graphical parameter
+#' @param ... additional parameters
+#' @importFrom graphics text
+#' @export
+text.sevt <- function(x, y = ylim[1], limit = 10, xlim = c(0,1), ylim = c(0,1), ...){
+  d <- min(length(x$tree), limit) ##avoid too much plotting
+  step <- (xlim[2] - xlim[1]) / d
+  xx <- xlim[1]
+  yy <- y
+  var <- names(x$tree)
+  for (i in 1:d){
+    text(x = xx, y = yy, labels = var[i], ...)
+    xx <- xx + step
+  }
+}
