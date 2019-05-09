@@ -310,7 +310,14 @@ generate_linear_dataset <-
     return(DD)
   }
 
-
+uni_idx <- function(x){
+  nn <- names(x)
+  x <- lapply(1:length(x), function(i){
+    paste0(nn[i], ":", x[[i]])
+  })
+  names(x) <- nn
+  return(x)
+}
 
 #' generate a random binary dataset
 #'

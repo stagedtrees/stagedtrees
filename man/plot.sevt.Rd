@@ -26,7 +26,8 @@
 names equal to the variables names in the model and
 vectors named with stages names as components; otherwise
 if \code{col == "stages"} the stage names will be used as
-colors.}
+colors; otherwise if \code{col} is a function it will take
+as input a vector of stages and output the corresponding colors.}
 
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},

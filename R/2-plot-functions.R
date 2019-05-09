@@ -60,7 +60,8 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,
 #'        names equal to the variables names in the model and 
 #'        vectors named with stages names as components; otherwise
 #'        if \code{col == "stages"} the stage names will be used as
-#'        colors.
+#'        colors; otherwise if \code{col} is a function it will take
+#'        as input a vector of stages and output the corresponding colors.
 #' @param ... additional graphical parameters to be passed to 
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.
@@ -77,6 +78,12 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
       vc <- 1:length(stages) 
       names(vc) <- stages
       return(vc)
+    })
+  }else if(is(col, "function")){
+    col <- lapply(x$stages[1:(d-1)], function(stages){
+      stages <- col(unique(stages))
+      names(stages) <- stages
+      return(stages)
     })
   }else if (col == "stages"){
     col <- lapply(x$stages[1:(d-1)], function(stages){
@@ -204,3 +211,5 @@ text.sevt <- function(x, y = ylim[1], limit = 10, xlim = c(0,1), ylim = c(0,1), 
     xx <- xx + step
   }
 }
+
+

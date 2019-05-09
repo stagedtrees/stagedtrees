@@ -613,3 +613,37 @@ stndnaming.sevt <- function(object, rep = FALSE){
   }
   return(object)
 }
+
+#' Compare two staged event tree
+#' 
+#' @param object1 a staged event tree
+#' @param object2 a staged event tree
+#' @param tree logical, if \code{TRUE} the difference tree is returned
+#' @param plot logical
+#' @param ... additional paraters to be passed to \code{\link{plot.sevt}}
+#' 
+#'  @return Logical or a difference tree (if \code{tree = TRUE}) 
+#' @export
+compare.sevt <- function(object1, object2, tree = FALSE, plot = FALSE, ...){
+  stopifnot(is(object1, "sevt"))
+  stopifnot(is(object2, "sevt"))
+  stopifnot(all(names(object1$tree) == names(object2$tree)))
+  object1 <- stndnaming.sevt(object1)
+  object2 <- stndnaming.sevt(object2)
+  difftree <- lapply(names(object1$tree)[-1], function(v) 
+   {sign(abs(as.numeric(object1$stages[[v]]) - 
+      as.numeric(object2$stages[[v]]))) } )
+  if (plot){
+    object1$stages <- difftree
+    plot(object1,  
+         col = function(x) rep("red", length(x)),
+         pch = 16, 
+         main = "Diff stages", ...)
+    
+  }
+  if (tree){
+    return(difftree)
+  }else{
+    return(all(sapply(difftree, function(x) all(x ==0))))
+  }
+}
