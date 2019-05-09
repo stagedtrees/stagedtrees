@@ -67,10 +67,10 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 #' naive_model <- naive.sevt(model_0)
 #' pr <- predict(naive_model, newdata = DD[501:1000,])
 #' table(pr,DD$C[501:1000])
-naive.sevt <- function(object, k = length(object$tree)){
+naive.sevt <- function(object, distance = kl, k = length(object$tree)){
   stopifnot(is_fitted.sevt(object))
   for (v in names(object$tree)[2:k]){
-    M <- KL_mat_prob(object$ctables[[v]] + object$lambda)
+    M <- distance_mat_stages(object$ctables[[v]] + object$lambda)
     groups <- simple_clustering(M)
     ### compute probabilitites and assign stages
     object$prob[[ v ]] <- list()

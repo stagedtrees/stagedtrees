@@ -74,7 +74,7 @@ predict.sevt <-
         if (log){
            return(pred)
         }else{
-           return(pred) 
+           return(exp(pred)) 
          }
       }else{
       class_values <- colnames(pred)

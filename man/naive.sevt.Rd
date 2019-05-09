@@ -4,7 +4,7 @@
 \alias{naive.sevt}
 \title{Naive staged event tree}
 \usage{
-naive.sevt(object, k = length(object$tree))
+naive.sevt(object, distance = kl, k = length(object$tree))
 }
 \arguments{
 \item{object}{a staged event tree object with ctables}

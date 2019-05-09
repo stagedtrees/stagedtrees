@@ -70,7 +70,7 @@ toCeg.sevt <- function(object)
       break
     }
   }
-  object$position <- position
+  object$positions <- position
   class(object) <- c("ceg", class(object))
   return(object)
 }
