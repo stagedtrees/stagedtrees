@@ -31,6 +31,39 @@ path_probability.sevt <-
       return(exp(l))
   }
 
+
+#' Compute probabilities for a staged event tree
+#' 
+#' @param object a (fitted) staged event tree object
+#' @param x the vector or data.frame of observations
+#' @param log logical, if \code{TRUE} log-probabilities are returned
+#' @return the probabilities for each observation
+#' @export
+prob.sevt <- function(object, x, log = FALSE){
+  stopifnot(is(object, "sevt"))
+  stopifnot(is_fitted.sevt(object))
+  if (is.null(dim(x))){
+    x <- as.data.frame(t(x))
+  }
+  n <- nrow(x)
+  i <- ncol(x)
+  var <- names(object$tree)
+  var1 <- var[var %in% colnames(x)]
+  k <- which(var %in% var1[length(var1)])
+  res <- vapply(1:n, FUN.VALUE = 1, FUN =  function(i){
+    ll <- object$tree[1:k]
+    ll[var1] <- x[i, var1] 
+    sum(apply(expand.grid(ll), MARGIN = 1, FUN = function(xx){
+      path_probability.sevt(object, as.character(xx), log = FALSE)
+    }))
+  })
+  if (log){
+    return(log(res))
+  }else{
+    return(res) 
+  }
+}
+
 #' Compute log lik of a stratified tree
 #'
 #' @param object the startified event tree object
