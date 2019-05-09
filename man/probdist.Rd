@@ -3,15 +3,27 @@
 \name{probdist}
 \alias{probdist}
 \alias{lp}
+\alias{ry}
 \alias{kl}
 \alias{tv}
+\alias{hl}
+\alias{bh}
+\alias{cd}
 \title{Distances between probabilities}
 \usage{
 lp(x, y, p = 2, ...)
 
+ry(x, y, alpha = 2, ...)
+
 kl(x, y, ...)
 
 tv(x, y, ...)
+
+hl(x, y, ...)
+
+bh(x, y, ...)
+
+cd(x, y, ...)
 }
 \arguments{
 \item{x}{vector of probabilities}
@@ -21,6 +33,8 @@ tv(x, y, ...)
 \item{p}{exponent in the \eqn{L^p} norm}
 
 \item{...}{additional parameters for compatibility}
+
+\item{alpha}{the order of the Renyi divergence}
 }
 \value{
 The distance between \code{p} and \code{q}
@@ -31,8 +45,12 @@ Distances between probabilities
 \details{
 Functions to compute distnces between probabilities:
 \itemize{
-\item \code{lp}: the \eqn{L^p} norm
+\item \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
+\item \code{ry}: the symmetrized Renyi divergence of order \eqn{\alpha}
 \item \code{kl}: the symmetrized Kullback-Leibler divergence
 \item \code{tv}: the total variation or \eqn{L^1} norm
+\item \code{hl}: the (squared) Hellinger distance
+\item \code{bh}: the Bhattacharyya distance
+\item \code{cd}: the Chan-Darwiche distance
 }
 }

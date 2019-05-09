@@ -2,7 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{stageinfo.sevt}
 \alias{stageinfo.sevt}
-\title{Print stage info}
+\title{Print stage(s) info}
 \usage{
 stageinfo.sevt(object, var, stage = NULL)
 }
@@ -11,8 +11,8 @@ stageinfo.sevt(object, var, stage = NULL)
 
 \item{var}{name of one variable}
 
-\item{stage}{name of a stage for variable \code{var}}
+\item{stage}{name(s) of stage for variable \code{var}}
 }
 \description{
-Print stage info
+Print stage(s) info
 }
