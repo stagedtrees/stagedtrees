@@ -550,8 +550,8 @@ stageinfo.sevt <- function(object, var, stage = NULL){
   }
   invisible(sapply(stage, function(s){
     s <- as.character(s)
-    cat("Stage ", s, " for variable ", var, "\n")
-    cat("  ", sum(object$stages[[var]] == s), " nodes in the stage \n")
+    cat("Stage ", s, "for variable", var, "\n")
+    cat("  ", sum(object$stages[[var]] == s), "nodes in the stage \n")
     if (is_fitted.sevt(object)){
       cat("  ", "probabilities: ")
       cat(paste0(names(object$prob[[var]][[s]]), collapse = "   "),"\n")
@@ -559,6 +559,7 @@ stageinfo.sevt <- function(object, var, stage = NULL){
       cat(character(3), "sample size:", attr(object$prob[[var]][[s]], "n"), "\n")
     }
     #cat("  ", "paths: TO DO \n")
+    cat(rep("-", 32), "\n", sep = "")
   }))
 }
 
@@ -590,4 +591,14 @@ subtree.sevt <- function(object, path){
     object$ll <- logLik(object)
   }
   return(object)
+}
+
+
+#' Standard renaming of stages
+#' 
+#'  @param object a staged event tree object
+#'  @param rep logical, if stages name can be repeated for different 
+#'                variables 
+stndnaming.sevt <- function(object, rep = FALSE){
+  
 }

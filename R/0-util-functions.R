@@ -149,11 +149,16 @@ entr <- function(p) {
 #' @param x vector of probabilities
 #' @param y vector of probabilitites
 #' @param p exponent in the \eqn{L^p} norm
+#' @param alpha the order of the Renyi divergence
 #' @param ... additional parameters for compatibility
 #' @details Functions to compute distnces between probabilities:
-#' * \code{lp}: the \eqn{L^p} norm 
+#' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
+#' * \code{ry}: the symmetrized Renyi divergence of order \eqn{\alpha}
 #' * \code{kl}: the symmetrized Kullback-Leibler divergence
 #' * \code{tv}: the total variation or \eqn{L^1} norm
+#' * \code{hl}: the (squared) Hellinger distance 
+#' * \code{bh}: the Bhattacharyya distance
+#' * \code{cd}: the Chan-Darwiche distance
 #' @return The distance between \code{p} and \code{q}
 #' @name probdist
 NULL
@@ -168,11 +173,20 @@ lp <- function(x, y, p = 2, ...){
 
 #' @rdname probdist
 #' @export
+ry <- function(x, y, alpha = 2, ...){
+  if (alpha == Inf){
+    return( log(max( x / y)) + log(max(y / x)) )
+  }
+  log(sum(x^(alpha) / y^(alpha - 1) )) + 
+    log(sum(y^(alpha) / x^(alpha - 1) ))  
+}
+
+#' @rdname probdist
+#' @export
 kl <- function(x, y, ...) {
   return(sum(x * (log(x) - log(y))) + 
            sum(y * (log(y) - log(x))))
 }
-
 
 #' @rdname probdist
 #' @export
@@ -180,7 +194,23 @@ tv <- function(x, y, ...){
   sum(abs(x - y))
 }
 
+#' @rdname probdist
+#' @export
+hl <- function(x,y,...){
+  sum( (sqrt(x) - sqrt(y))^2)
+}
 
+#' @rdname probdist
+#' @export
+bh <- function(x, y, ...){
+  -log(sum(sqrt(x * y)))
+}
+
+#' @rdname probdist
+#' @export
+cd <- function(x, y, ...){
+  log(max(x / y)) - log(min(x / y))
+}
 
 
 #' noisy xor function
