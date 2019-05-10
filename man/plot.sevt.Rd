@@ -5,7 +5,8 @@
 \title{plot a staged event tree}
 \usage{
 \method{plot}{sevt}(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
-  asp = 1, cex.label = 1, cex.nodes = 2, col = NULL, ...)
+  asp = 1, cex.label.nodes = 1, cex.label.edges = 1, cex.nodes = 2,
+  col = NULL, ...)
 }
 \arguments{
 \item{x}{staged event tree object}
@@ -18,7 +19,9 @@
 
 \item{asp}{graphical parameter}
 
-\item{cex.label}{graphical parameter}
+\item{cex.label.nodes}{graphical parameter}
+
+\item{cex.label.edges}{graphical parameter}
 
 \item{cex.nodes}{graphical parameter}
 
