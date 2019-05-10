@@ -9,7 +9,8 @@
 #' @export
 #' @importFrom graphics lines plot.new plot.window
 
-plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,
+plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, 
+                              limit = 10,
                               ...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
