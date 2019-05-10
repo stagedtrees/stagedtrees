@@ -2,6 +2,7 @@
 #' 
 #' @param object a fitted staged event tree
 #' @param fit if the probability should be re-computed
+#' @param name string with a name for the new stage
 #' @param trace if \code{>0} print information to console
 #' 
 #' @return a staged event tree with situations with 0 
@@ -26,12 +27,13 @@
 #' logLik(model_full)
 #' logLik(model)
 #' BIC(model_full, model)
-join_zero_counts <- function(object, fit = TRUE, trace = 0){
+join_zero_counts <- function(object, fit = TRUE, trace = 0, name = NULL){
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted.sevt(object))
   tot <- 0
   for (v in names(object$tree)[-1]){
-    new <- new_label(unique(object$stages[[v]]))
+    if (is.null(name)) new <- new_label(unique(object$stages[[v]]))
+    else new <- name
     ix <- rowSums(object$ctables[[ v ]]) == 0
     object$stages[[v]][ ix ] <- new 
     tot <- tot + sum(ix)
