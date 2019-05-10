@@ -121,7 +121,7 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
     ns <- ns / nv
     As[i - 1] <- Ls[i - 1] / (ns  + (ns - 1)/ (nv - 1))
   }
-  node(c(xlim[1], mean(ylim) ), label = nms[1],
+  node(c(xlim[1], mean(ylim) ), label = "",
        cex.label = cex.label.nodes[1], cex.node = cex.nodes[1], ...) #plot first node
   xx <- xlim[1]
   y <- yy <- mean(ylim)
@@ -142,7 +142,9 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
         lj <- lj +1
         if (k < d) {
           node(c(xx, y[j]),
-               label = nms[k+1], cex.label = cex.label.nodes[k],
+               label = x$stages[[k]][lj],
+               #label = nms[k+1], 
+               cex.label = cex.label.nodes[k],
                col = col[[k]][ x$stages[[k]][lj] ],
                cex.node = cex.nodes[k], ...)
         }
