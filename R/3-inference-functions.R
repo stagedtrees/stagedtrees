@@ -52,7 +52,7 @@ prob.sevt <- function(object, x, log = FALSE){
   k <- which(var %in% var1[length(var1)])
   res <- vapply(1:n, FUN.VALUE = 1, FUN =  function(i){
     ll <- object$tree[1:k]
-    ll[var1] <- x[i, var1] 
+    ll[var1] <- vapply(x[i, var1], as.character, FUN.VALUE = "aaa")
     sum(apply(expand.grid(ll), MARGIN = 1, FUN = function(xx){
       path_probability.sevt(object, as.character(xx), log = FALSE)
     }))
