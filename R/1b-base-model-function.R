@@ -563,7 +563,7 @@ stndnaming.sevt <- function(object, rep = FALSE){
     }, FUN.VALUE = "a", USE.NAMES = FALSE)
     if (is_fitted.sevt(object)){
       object$prob[[v]][new] <- object$prob[[v]][old]
-      object$prob[[v]][!(old %in% new)] <- NULL ##remove old names for prob
+      object$prob[[v]][old[!(old %in% new)]] <- NULL ##remove old names for prob
     }
   }
   if (is_fitted.sevt(object)){
