@@ -168,17 +168,20 @@ NULL
 #' @rdname probdist
 #' @export
 lp <- function(x, y, p = 2, ...){
-  sum( abs(x - y) ^ p )
+  (sum( abs(x - y) ^ p )) ^ (1 / p)
 }
 
 #' @rdname probdist
 #' @export
 ry <- function(x, y, alpha = 2, ...){
+  if (alpha == 1){
+    return(kl(x,y))
+  }
   if (alpha == Inf){
     return( log(max( x / y)) + log(max(y / x)) )
   }
-  log(sum(x^(alpha) / y^(alpha - 1) )) + 
-    log(sum(y^(alpha) / x^(alpha - 1) ))  
+  (log(sum(x^(alpha) / y^(alpha - 1) )) + 
+    log(sum(y^(alpha) / x^(alpha - 1) ))) / (alpha - 1)
 }
 
 #' @rdname probdist
