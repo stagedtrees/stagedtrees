@@ -54,7 +54,8 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,
 #' @param xlim graphical parameter
 #' @param ylim graphical parameter
 #' @param asp graphical parameter
-#' @param cex.label graphical parameter
+#' @param cex.label.nodes graphical parameter
+#' @param cex.label.edges graphical parameter
 #' @param cex.nodes graphical parameter
 #' @param col color mapping for the stages, a named list with 
 #'        names equal to the variables names in the model and 
@@ -68,7 +69,9 @@ plot.strt_ev_tree <- function(x, rmax=1, rmin= 0.1, step = 2, limit = 10,
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
 plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1), 
-                      asp = 1, cex.label = 1, cex.nodes = 2, col = NULL,
+                      asp = 1, cex.label.nodes = 1, 
+                      cex.label.edges = 1,
+                      cex.nodes = 2, col = NULL,
                       ...){
   plot.new()
   d <- min(length(x$tree), limit) ##avoid too much plotting
@@ -94,6 +97,7 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
   }
   M <- prod(sapply(x$tree[1:d], length))
   cex.nodes <- rep(cex.nodes, d)[1:d]
+  cex.label.nodes = rep(cex.label.nodes, d)[1:d]
   plot.window(xlim = xlim,
               ylim = ylim,
               asp = asp, ...)
@@ -118,7 +122,7 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
     As[i - 1] <- Ls[i - 1] / (ns  + (ns - 1)/ (nv - 1))
   }
   node(c(xlim[1], mean(ylim) ), label = nms[1],
-       cex.label = cex.label, cex.node = cex.nodes[1], ...) #plot first node
+       cex.label = cex.label.nodes[1], cex.node = cex.nodes[1], ...) #plot first node
   xx <- xlim[1]
   y <- yy <- mean(ylim)
   ns <- 1
@@ -138,13 +142,13 @@ plot.sevt <- function(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
         lj <- lj +1
         if (k < d) {
           node(c(xx, y[j]),
-               label = nms[k+1], cex.label = cex.label,
+               label = nms[k+1], cex.label = cex.label.nodes[k],
                col = col[[k]][ x$stages[[k]][lj] ],
                cex.node = cex.nodes[k], ...)
         }
         edge(c(xx-step, 
                yyy[i]), c(xx,y[j]),
-             v[j], cex.label = cex.label, ...) #plot edge with previous nodes
+             v[j], cex.label = cex.label.edges, ...) #plot edge with previous nodes
       }
     }
     ns <- ns * nv
