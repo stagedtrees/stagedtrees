@@ -490,8 +490,11 @@ stageinfo.sevt <- function(object, var, stage = NULL){
     cat("First variable ", var, "\n")
     if (is_fitted.sevt(object)){
       cat("  ", "probabilities: ")
-      cat(paste0(names(object$prob[[var]][[1]]), collapse = "   "),"\n")
-      cat(character(18), round(object$prob[[var]][[1]], 3),"\n")
+      cat(paste0(names(object$prob[[var]][[1]]), collapse = "      "),"\n")
+      temp <- sapply(object$tree[[var]], nchar)
+      temp <- sapply(sapply(temp, function(i) rep(" ",i)), paste0, collapse = "")
+      temp <- paste0(round(object$prob[[var]][[1]], 3), temp)
+      cat(character(18), temp,"\n")
       cat(character(3), "sample size:", attr(object$prob[[var]][[1]], "n"), "\n")
     }
   }
@@ -504,8 +507,11 @@ stageinfo.sevt <- function(object, var, stage = NULL){
     cat("  ", sum(object$stages[[var]] == s), "nodes in the stage \n")
     if (is_fitted.sevt(object)){
       cat("  ", "probabilities: ")
-      cat(paste0(names(object$prob[[var]][[s]]), collapse = "   "),"\n")
-      cat(character(18), round(object$prob[[var]][[s]], 3),"\n")
+      cat(paste0(names(object$prob[[var]][[s]]), collapse = "      "),"\n")
+      temp <- sapply(object$tree[[var]], nchar)
+      temp <- sapply(sapply(temp, function(i) rep(" ",i)), paste0, collapse = "")
+      temp <- paste0(round(object$prob[[var]][[s]], 3), temp)
+      cat(character(18), temp,"\n")
       cat(character(3), "sample size:", attr(object$prob[[var]][[s]], "n"), "\n")
     }
     #cat("  ", "paths: TO DO \n")
