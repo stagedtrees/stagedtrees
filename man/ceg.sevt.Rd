@@ -15,3 +15,8 @@ a ceg object
 \description{
 Creates the CEG starting from a staged tree
 }
+\details{
+A ceg object is a staged event tree object with
+additional information on the
+positions.
+}

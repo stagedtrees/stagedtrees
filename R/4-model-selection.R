@@ -386,7 +386,6 @@ bj.sevt <-
 #' @param max_iter the maximum number of iterations per variable
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
-#' @details TO WRITE
 #' @return A staged event tree object, the output of the optimization
 #' @export
 hc.sevt <- function(object,

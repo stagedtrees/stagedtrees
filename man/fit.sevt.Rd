@@ -7,21 +7,23 @@
 fit.sevt(sevt, data = NULL, lambda = 0, ...)
 }
 \arguments{
-\item{sevt}{The staged event tree object to be fitted}
+\item{sevt}{a staged event tree}
 
-\item{data}{the data.frame used to fit the staged event tree}
+\item{data}{data.frame or stratified event tree}
 
-\item{lambda}{the laplace smoothing}
+\item{lambda}{smoothing parameter}
 
 \item{...}{additional parameters}
 }
 \value{
-A staged event tree object with the conditional probabilities fitted
+a fitted staged event tree
 }
 \description{
 Fit a staged event tree
 }
 \examples{
+
+################################
 model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
 D <- data.frame(X = c("good", "good", "bad"),
                 Y = c("high", "low", "low"))

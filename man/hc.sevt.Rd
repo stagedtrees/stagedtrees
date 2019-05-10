@@ -23,6 +23,3 @@ A staged event tree object, the output of the optimization
 \description{
 Hill-Climb Score optimization
 }
-\details{
-TO WRITE
-}
