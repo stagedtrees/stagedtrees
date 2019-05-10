@@ -537,8 +537,9 @@ subtree.sevt <- function(object, path){
     for (i in 2:length(object$tree)){
       ###to do: clean unused probabilities
     }
+    #object$ctables <- NULL
     object$ll <- NULL
-    object$ll <- logLik(object)
+    #object$ll <- logLik(object)
   }
   return(object)
 }
