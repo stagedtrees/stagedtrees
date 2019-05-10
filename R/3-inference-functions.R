@@ -85,8 +85,12 @@ logLik.strt_ev_tree <- function(object, ...) {
   ll <- sum(vapply(
       1:length(object$tree),
       FUN = function(i) {
-        ix <- object$prob[[ i ]] > 0
-        sum( (log(object$prob[[ i ]][ix])  ) * 
+        if (any(is.nan(object$prob[[ i ]]) & object$ctables[[ i ]] > 0)){
+          return(-Inf)
+        }
+        ix <- object$prob[[ i ]] > 0 & !is.na(object$prob[[ i ]]) &
+              !is.nan(object$prob[[ i ]]) 
+        sum( log(object$prob[[ i ]][ix])  * 
           object$ctables[[ i ]][ix] )
       },
       FUN.VALUE = 1
