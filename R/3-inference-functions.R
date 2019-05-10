@@ -82,22 +82,24 @@ prob.sevt <- function(object, x, log = FALSE){
 logLik.strt_ev_tree <- function(object, ...) {
   stopifnot(!is.null(object$ctables)) 
   stopifnot(!is.null(object$prob))
+  var <- names(object$tree)
   ll <- sum(vapply(
       1:length(object$tree),
       FUN = function(i) {
-        if (any(is.nan(object$prob[[ i ]]) & object$ctables[[ i ]] > 0)){
+        if (any(is.nan(object$prob[[ var[i] ]]) & 
+                object$ctables[[ var[i] ]] > 0)){
           return(-Inf)
         }
-        ix <- object$prob[[ i ]] > 0 & !is.na(object$prob[[ i ]]) &
-              !is.nan(object$prob[[ i ]]) 
-        sum( log(object$prob[[ i ]][ix])  * 
-          object$ctables[[ i ]][ix] )
+        ix <- object$prob[[ var[i] ]] > 0 & !is.na(object$prob[[ var[i] ]]) &
+              !is.nan(object$prob[[ var[i] ]]) 
+        sum( log(object$prob[[ var[i] ]][ix])  * 
+          object$ctables[[ var[i] ]][ix] )
       },
       FUN.VALUE = 1
     ))
   attr(ll, "df") <-
     prod(vapply(object$tree, FUN = length, FUN.VALUE = 1)) - 1
-  attr(ll, "nobs") <- sum(object$ctables[[1]])
+  attr(ll, "nobs") <- sum(object$ctables[[var[1]]])
   class(ll) <- "logLik"
   return(ll)
 }
