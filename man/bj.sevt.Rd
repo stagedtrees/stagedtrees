@@ -4,7 +4,7 @@
 \alias{bj.sevt}
 \title{Backword joining of stages}
 \usage{
-bj.sevt(object = NULL, distance = kl, thr = 0.01, trace = 0, ...)
+bj.sevt(object = NULL, distance = kl, thr = 0.1, trace = 0, ...)
 }
 \arguments{
 \item{object}{the staged event tree from where to start}

@@ -7,7 +7,7 @@ test_that("predict class values", {
   sev <- full(DD, lambda = 1)
   pr <- predict(sev, DD)  
   expect_true(all(levels(pr) == levels(DD$C)))
-  pr <- predict(sev,class = "X3", DD)  
+  pr <- predict(sev, class = "X3", DD)  
   expect_true(all(levels(pr) == levels(DD$X3)))
 })
 
@@ -26,19 +26,19 @@ test_that("predict probabilities", {
 
 context("prob.sevt")
 
-test_that("probabilities are positive", {
+test_that("probabilities are ok", {
   DD <- generate_linear_dataset(5, 100)
   levels(DD$C) <- c("a", "b")
   levels(DD$X3) <- c("qqqq", "pppp")
   sev <- full(DD, lambda = 1)
-  pr <- prob.sevt(sev, c(X1 = "-1", X3 = "pppp"))  
+  pr <- prob.sevt(sev, c(X1 = "-1", X3 = "pppp"))
   expect_true(all( pr >= 0))
   pr <- prob.sevt(sev, c(C = "a"))  
   expect_true(all( pr >= 0))
   pr <- prob.sevt(sev, c(X1 = "1"))  
   expect_true(all( pr >= 0))
   pr <- prob.sevt(sev, c(X1 = "1"))  
-  expect_true(all( pr == sev$prob$X1$`1`["1"]))
+  expect_true(all( abs(pr - sev$prob$X1$`1`["1"]) < 1e-10 ) )
 })
 
 test_that("probabilities are positive", {

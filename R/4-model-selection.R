@@ -337,7 +337,7 @@ fbhc.sevt <-
 bj.sevt <-
   function(object = NULL,
            distance = kl, 
-           thr = 0.01,
+           thr = 0.1,
            trace = 0, ...) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
