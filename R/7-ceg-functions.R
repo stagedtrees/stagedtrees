@@ -1,6 +1,9 @@
 #' Creates the CEG starting from a staged tree
 #'
 #' @param object a staged event tree 
+#' @details A ceg object is a staged event tree object with 
+#'          additional information on the 
+#'          positions. 
 #' @return a ceg object
 #' @export
 ceg.sevt <- function(object){

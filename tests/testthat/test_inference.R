@@ -1,0 +1,48 @@
+context("predict.sevt")
+
+test_that("predict class values", {
+  DD <- generate_linear_dataset(5, 100)[,6:1]
+  levels(DD$C) <- c("a", "b")
+  levels(DD$X3) <- c("qqqq", "pppp")
+  sev <- full(DD, lambda = 1)
+  pr <- predict(sev, DD)  
+  expect_true(all(levels(pr) == levels(DD$C)))
+  pr <- predict(sev,class = "X3", DD)  
+  expect_true(all(levels(pr) == levels(DD$X3)))
+})
+
+
+test_that("predict probabilities", {
+  DD <- generate_linear_dataset(5, 100)[,6:1]
+  levels(DD$C) <- c("a", "b")
+  levels(DD$X3) <- c("qqqq", "pppp")
+  sev <- full(DD, lambda = 1)
+  pr <- predict(sev, DD, prob = TRUE, log = FALSE)  
+  expect_true(all(pr >= 0))
+  pr <- predict(sev, DD,class = "X4", prob = TRUE, log = FALSE)  
+  expect_true(all(pr >= 0))
+})
+
+
+context("prob.sevt")
+
+test_that("probabilities are positive", {
+  DD <- generate_linear_dataset(5, 100)
+  levels(DD$C) <- c("a", "b")
+  levels(DD$X3) <- c("qqqq", "pppp")
+  sev <- full(DD, lambda = 1)
+  pr <- prob.sevt(sev, DD)  
+  expect_true(all( pr >= 0))
+})
+
+
+test_that("probabilities sum to 1", {
+  DD <- generate_linear_dataset(5, 100)
+  levels(DD$C) <- c("a", "b")
+  levels(DD$X3) <- c("qqqq", "pppp")
+  sev <- full(DD, lambda = 1)
+  pr <- prob.sevt(sev, expand.grid(sev$tree))  
+  expect_true(all( abs(sum(pr) - 1) < 1e-10 ))
+  pr <- prob.sevt(sev, expand.grid(sev$tree[1:3]))  
+  expect_true(all( abs(sum(pr) - 1) < 1e-10 ))
+})

@@ -3,9 +3,13 @@
 #' Builds the staged event tree for a set of categorical variables,
 #' the order can be specified.
 #'
-#' @param x data.frame, list or stratified event tree object
+#' @param x data.frame, list, table, \code{bn.fit} object
+#' @param order order of the variables 
+#' @param full logical, if \code{TRUE} the full model is created
+#' @param fit logical, if  \code{TRUE} the model is fitted
+#' @param lambda smoothing parameter
 #' @param ... additional parameters to be passed
-#'            to the appropiate method, see \link{staged_ev_tree.data.frame}
+#'            to the appropiate method, see \link{fit.sevt}
 #' @return A staged event tree object (see Details)
 #' @details A staged event tree object is a list with components:
 #'\itemize{
@@ -17,9 +21,11 @@
 #'          \item prob: The conditional probability tables for every variable
 #'          and every stage (present only if the staged event tree has been
 #'          fitted)
+#'          \item ctables: The contingency tables of the data
 #'          }
 #' @export
 #' @examples
+#' 
 #' DD <- generate_random_dataset(n = 5, 1000)
 #' sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
 #' sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
@@ -27,15 +33,7 @@ staged_ev_tree <- function(x, ...) {
   UseMethod("staged_ev_tree", object = x)
 }
 
-#' Staged (stratified) event tree
-#'
-#' Builds the staged event tree for a set of categorical variables,
-#' the order can be specified.
-#'
-#' @param x object that will be coerced to a data.frame
-#' @param ... additional parameters that will be passed
-#'            to the appropiate method, see \link{staged_ev_tree.data.frame}
-#' @return A staged event tree object
+#' @rdname staged_ev_tree
 #' @export
 staged_ev_tree.default <- function(x, ...) {
   return(staged_ev_tree.data.frame(as.data.frame(x, ...)))
@@ -44,18 +42,7 @@ staged_ev_tree.default <- function(x, ...) {
 
 
 
-#' Staged (stratified) event tree
-#'
-#' Builds the staged event tree from data provided as a \code{table}
-#'
-#' @param x table with the observation
-#' @param order vector of order of the variables
-#' @param full logical, if the full model should be built instead
-#' @param fit logical
-#' @param ... additional parameters to be passed to other methods (mainly
-#' \link{fit.sevt})
-#' @return A staged event tree object
-#' @details The staged event trees
+#' @rdname staged_ev_tree
 #' @examples
 #' data("Titanic")
 #' model <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
@@ -75,19 +62,7 @@ staged_ev_tree.table <- function(x, order = names(dimnames(x)),
 }
 
 
-#' Staged (stratified) event tree
-#'
-#' Builds the staged event tree from a data set of categorical variables,
-#' the order can be specified.
-#'
-#' @param x data.frame with the observation
-#' @param order vector of order, default to the order of the columns of \code{x}
-#' @param full logical, if the full model should be built instead
-#' @param fit logical
-#' @param ... additional parameters to be passed to other methods (mainly
-#' \link{fit.sevt})
-#' @return A staged event tree object
-#' @details The staged event trees
+#' @rdname staged_ev_tree
 #' @examples
 #' DD <- generate_random_dataset(n = 5, 1000)
 #' sevt <- staged_ev_tree(DD, fit = TRUE, full = FALSE)
@@ -108,20 +83,11 @@ staged_ev_tree.data.frame <- function(x,
 }
 
 
-#' Staged (stratified) event tree
-#'
-#' Build the staged event tree for a set of categorical variables,
-#' the order can be specified.
-#'
-#' @param x list named as the variable and containing the vector of the levels
-#'          for each variable
-#' @param full if the full models should be created instead
-#' @param ... additional parameters
-#' @return The staged event tree object
-#' @details The staged (stratified) event tree returned is the minimal one,
-#'          that is the one with just one stage per variable (equivalent to a complete independent model).
-#'
-#' @examples #' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+#' @rdname staged_ev_tree
+#' @examples
+#' 
+#' ###################
+#' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
 #' @export
 staged_ev_tree.list <- function(x, full = FALSE, ...) {
   if (is.null(names(x))) {
@@ -152,10 +118,7 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
   return(evt)
 }
 
-#' Conversion from BN to staged event tree
-#' 
-#' @param x \code{bn.fit} object
-#' @param ... additional parameters
+#' @rdname staged_ev_tree
 #' @export
 staged_ev_tree.bn.fit <- function(x, ...){
   bn <- bnlearn::bn.net(x)
@@ -222,14 +185,16 @@ staged_ev_tree.bn.fit <- function(x, ...){
 
 
 #' Fit a staged event tree
-#'
-#' @param sevt The staged event tree object to be fitted
-#' @param data the data.frame used to fit the staged event tree
-#' @param lambda the laplace smoothing
+#' 
+#' @param sevt a staged event tree
+#' @param data data.frame or stratified event tree
+#' @param lambda smoothing parameter
 #' @param ... additional parameters
-#' @return A staged event tree object with the conditional probabilities fitted
+#' @return a fitted staged event tree
 #' @export
 #' @examples
+#' 
+#' ################################
 #' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
 #' D <- data.frame(X = c("good", "good", "bad"),
 #'                 Y = c("high", "low", "low"))
@@ -287,14 +252,7 @@ fit.sevt <- function(sevt,
   return(sevt)
 }
 
-#' Staged event tree
-#'
-#' @param x A stratified event tree object
-#' @param lambda smoothing of probabilities
-#' @param ... additional parameters
-#' @return The equivalent staged event tree object
-#' @details The function creates a staged event tree equivalent to
-#' the stratified event tree
+#' @rdname staged_ev_tree
 #' @export
 staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
   obj <- staged_ev_tree.list(x$tree, full = TRUE)
@@ -432,21 +390,23 @@ is_fitted.sevt <- function(x) {
   return(!is.null(x$prob) && !is.null(x$ctables))
 }
 
+#' @rdname staged_ev_tree
+#' @export
+full <- function(x, ...){
+  staged_ev_tree(x, full = TRUE, ...)
+}
 
-#' Built (efficently) an independent event tree
-#'
-#' @param x data
-#' @param lambda the smoothing parameter
-#' @param ctables logical, if \code{TRUE} ctables will be computed and attached
-#' @return A fitted staged event tree with one stage per variable
+#' @rdname staged_ev_tree
 #' @examples
+#' 
+#' ###################################
 #' DD <- generate_xor_dataset(15, 100)
 #' system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
 #' system.time(model2 <- effindep.sevt(DD, lambda = 1, ctables = TRUE))
 #' model1
 #' model2
 #' @export
-effindep.sevt <- function(x, lambda, ctables = TRUE) {
+effindep.sevt <- function(x, lambda = 0, ...) {
   x <- as.data.frame(x)
   model <- staged_ev_tree(x, fit = FALSE, full = FALSE)
   model$prob <- list()
@@ -468,9 +428,7 @@ effindep.sevt <- function(x, lambda, ctables = TRUE) {
     sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
   attr(model$ll, "nobs") <- nrow(x)
   class(model$ll) <- "logLik"
-  if (ctables) {
-    model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
-  }
+  model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
   return(model)
 }
 
