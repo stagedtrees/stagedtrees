@@ -6,8 +6,14 @@
 #' @details TO WRITE
 #' 
 #' @return A data frame containing a sample of size \code{n} 
+#' @examples 
+#' 
+#' #########
+#' data("Titanic")
+#' mod <- naive.sevt(full(Titanic, lambda = 1))
+#' sample.sevt(mod, 10)
 #' @export
-sample.sevt <- function(n = 1, object){
+sample.sevt <- function(object, n = 1){
   stopifnot(n > 0)
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted.sevt(object))
