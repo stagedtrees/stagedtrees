@@ -4,7 +4,9 @@
 #' @param newdata The newdata to perform predictions
 #' @param class A string indicating the name of the variable to use as
 #' the class variable
-#' @param prob logical, if \code{TRUE} the probabilities of class are returned
+#' @param prob logical, if \code{TRUE} the probabilities of class are 
+#'                      returned
+#' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @param ... additional parameters, see details
 #' @return A vector of predictions or the corresponding probabilities
 #' @examples 
@@ -14,20 +16,22 @@
 #' order <- c("C", "X1", "X2", "X3", "X4", "X5")
 #' model <- staged_ev_tree(train, order = order, full = TRUE, 
 #' fit = TRUE, lambda = 1)
-#' model <- backward_hill_climb(model)
+#' model <- bhc.sevt(model)
 #' pr <- predict(model, class = "C", newdata = test)
 #' table(pr, test$C)
 #' predict(model, class = "C", newdata = test, prob = TRUE)
 #' @return A vector of predicitons
 #' @export
 #' @importFrom stats predict
-predict.staged_ev_tree <-
+predict.sevt <-
   function(object,
            newdata = NULL,
            class = NULL,
            prob = FALSE,
+           log = FALSE,
            ...) {
-    if (!is_fitted.staged_ev_tree(object)) {
+    stopifnot(is(object, "sevt"))
+    if (!is_fitted.sevt(object)) {
       stop("Provide a fitted object")
     }
     if (is.null(newdata)) {
@@ -62,13 +66,17 @@ predict.staged_ev_tree <-
       for (cv in object$tree[[class]]) {
         x[class_idx] <- cv
         res[cv] <-
-          path_probability.staged_ev_tree(object, x, log = TRUE)
+          path_probability.sevt(object, x, log = TRUE)
       }
       return(res)
     }))
-    if (prob)
-      return(pred)
-    else{
+    if (prob){
+        if (log){
+           return(pred)
+        }else{
+           return(exp(pred)) 
+         }
+      }else{
       class_values <- colnames(pred)
       return(apply(pred, MARGIN = 1, function(x) {
         factor(class_values[which.max(x)], levels = class_values)
