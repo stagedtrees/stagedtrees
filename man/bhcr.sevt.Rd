@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{bhcr.sevt}
 \alias{bhcr.sevt}
-\title{Backword random hill-climbing}
+\title{Backward Random Hill-Climbing}
 \usage{
 bhcr.sevt(object, score = function(x) return(-BIC(x)), max_iter = 100,
   trace = 0)

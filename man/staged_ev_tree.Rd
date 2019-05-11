@@ -56,30 +56,32 @@ the order can be specified.
 \details{
 A staged event tree object is a list with components:
 \itemize{
-\item tree: A named list where for each variable, the levels of
-such variable are listed. The order of the variable is the
+\item tree: A named list where for each variable,
+the levels of such variable are listed.
+The order of the variable is the
 order of the event tree.
-\item stages: A named list where each component stores the stages
-for the given variable.
-\item prob: The conditional probability tables for every variable
-and every stage (present only if the staged event tree has been
-fitted)
-\item ctables: The contingency tables of the data
+\item stages: A named list where each component
+stores the stages for the given variable.
+\item prob: The conditional probability tables for every
+variable and every stage.
+\item ctables: The contingency tables of the data.
 }
 }
 \examples{
 
+######### from data.frame
 DD <- generate_random_dataset(n = 5, 1000)
-sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
-sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
-data("Titanic")
-model <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
-plot(model)
-DD <- generate_random_dataset(n = 5, 1000)
-sevt <- staged_ev_tree(DD, fit = TRUE, full = FALSE)
+indep <- staged_ev_tree(DD, fit = TRUE)
+full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
 
-###################
-model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+######### from table
+data("Titanic")
+modT <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
+plot(modT)
+
+######### from list
+model <- staged_ev_tree(list(X = c("good", "bad"),
+                             Y = c("high", "low")))
 
 ###################################
 DD <- generate_xor_dataset(15, 100)
