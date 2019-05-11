@@ -19,3 +19,11 @@ the probabilities for each observation
 \description{
 Compute probabilities for a staged event tree
 }
+\examples{
+
+#########
+DD <- generate_random_dataset(5, 100)
+model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
+pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
+sum(pr)
+}

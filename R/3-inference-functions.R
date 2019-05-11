@@ -5,6 +5,8 @@
 #' @param log logical
 #' @return The probability of the given path or its logarithm if \code{log=TRUE}
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
 #' path_probability.sevt(model, c("1", "-1"))
@@ -38,6 +40,14 @@ path_probability.sevt <-
 #' @param x the vector or data.frame of observations
 #' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @return the probabilities for each observation
+#' 
+#' @examples 
+#' 
+#' #########
+#' DD <- generate_random_dataset(5, 100)
+#' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
+#' pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
+#' sum(pr)
 #' @export
 prob.sevt <- function(object, x, log = FALSE){
   stopifnot(is(object, "sevt"))
@@ -73,8 +83,11 @@ prob.sevt <- function(object, x, log = FALSE){
 #' @export
 #'
 #' @examples
-#' DD <- DD <- as.data.frame(sapply(1:5, function(i){
-#'                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
+#' 
+#' #########
+#' DD <- as.data.frame(sapply(1:5, function(i){
+#'                           return(as.factor(sample(c(1:3), 
+#'                           size=100, replace = TRUE)))
 #'                      }))
 #' sevt <- staged_ev_tree(DD, fit = TRUE)
 #' evt <- strt_ev_tree(sevt)
@@ -114,11 +127,11 @@ logLik.strt_ev_tree <- function(object, ...) {
 #' @export
 #'
 #' @examples
-#' DD <- DD <- as.data.frame(sapply(1:5, function(i){
-#'                           return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
-#'                      }))
-#' sevt <- staged_ev_tree(DD, fit =TRUE)
-#' logLik(sevt)
+#' 
+#' #########
+#' data("Trump")
+#' mod <- staged_ev_tree(Trump)
+#' logLik(mod)
 logLik.sevt <- function(object, ...) {
   if (!is.null(object$ll)) {
     return(object$ll)
