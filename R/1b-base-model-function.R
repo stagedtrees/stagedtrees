@@ -10,7 +10,7 @@
 #' @param lambda smoothing parameter
 #' @param ... additional parameters to be passed
 #'            to the appropiate method, see \link{fit.sevt}
-#' @return A staged event tree object (see Details)
+#' @return A staged event tree object
 #' @details A staged event tree object is a list with components:
 #'\itemize{
 #'          \item tree: A named list where for each variable,
@@ -400,6 +400,12 @@ is_fitted.sevt <- function(x) {
 }
 
 #' @rdname staged_ev_tree
+#' @examples 
+#' 
+#' ######### full model 
+#' 
+#' DD <- generate_xor_dataset(7, 100)
+#' modfull <- full(DD, lambda = 1)
 #' @export
 full <- function(x, ...) {
   staged_ev_tree(x, full = TRUE, ...)
@@ -408,14 +414,14 @@ full <- function(x, ...) {
 #' @rdname staged_ev_tree
 #' @examples
 #'
-#' ###################################
+#' ######### independence model
 #' DD <- generate_xor_dataset(15, 100)
 #' system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
-#' system.time(model2 <- effindep.sevt(DD, lambda = 1, ctables = TRUE))
+#' system.time(model2 <- indep(DD, lambda = 1))
 #' model1
 #' model2
 #' @export
-effindep.sevt <- function(x, lambda = 0, ...) {
+indep <- function(x, lambda = 0, ...) {
   x <- as.data.frame(x)
   model <- staged_ev_tree(x, fit = FALSE, full = FALSE)
   model$prob <- list()

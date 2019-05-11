@@ -35,7 +35,7 @@ DD <- generate_xor_dataset(n = 5, 1000)
 train <- DD[1:500,]
 test <- DD[501:1000,]
 order <- c("C", "X1", "X2", "X3", "X4", "X5")
-model <- staged_ev_tree(train, order = order, full = TRUE, 
+model <- staged_ev_tree(train, order = order, full = TRUE,
 fit = TRUE, lambda = 1)
 model <- bhc.sevt(model)
 pr <- predict(model, class = "C", newdata = test)
