@@ -159,7 +159,7 @@ Check if the models are equal.
 compare.sevt(mod1, mod2)
 ```
 
-Penalized like-lihood.
+Penalized log-likelihood.
 ```{r}
 BIC(mod1, mod2, mod3, mod4, mod5)
 ```

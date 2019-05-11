@@ -214,7 +214,7 @@ compare.sevt(mod1, mod2)
 ## [1] FALSE
 ```
 
-Penalized like-lihood.
+Penalized log-likelihood.
 
 ``` r
 BIC(mod1, mod2, mod3, mod4, mod5)
