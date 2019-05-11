@@ -56,7 +56,7 @@
 #' uses iOS devices. 
 #' 
 #'
-#' @format A data frame with 2746 rows and 8 variables:
+#' @format A data frame with 2746 rows and 6 variables:
 #' \describe{
 #'   \item{Source}{\code{iOS} if the tweet was sent by an iOS device, \code{Android} otherwise}
 #'   \item{Words}{\code{>20} if the tweet has more than 20 words, \code{<=20} otherwise}
