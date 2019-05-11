@@ -1,0 +1,165 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE
+)
+```
+
+# stagedtrees 
+
+[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
+
+### Installation 
+  
+```{r, eval = FALSE}
+#development version from github
+# install.packages("devtools")
+devtools::install_github("gherardovarando/stagedtrees")
+
+#unstable development version from the dev branch
+devtools::install_github("gherardovarando/stagedtrees", ref = "dev")
+```
+
+### Usage
+
+```{r}
+library("stagedtrees")
+```
+
+With the `stagedtrees` package it is possible to fit (stratified) staged 
+event trees to data, use them to compute probabilities, make predictions, 
+visualize and compare different models. 
+
+#### Creating the model
+
+A staged event tree object (`sevt` class) can be created with the function
+`staged_ev_tree`. In general we create a staged event tree from data 
+in a `data.frame` or `table` object. 
+
+```{r example}
+# Load the Trump tweets data
+data("Trump")
+
+# Create the independence model 
+indep <- staged_ev_tree(Trump, lambda = 1)
+indep
+
+#Create the full (saturated) model
+full <- staged_ev_tree(Trump, full = TRUE, lambda = 1) 
+full
+```
+
+#### Model selection
+
+Starting from the independence model of the full model it is  
+possible to perform automatic model selection. 
+
+##### Score methods
+
+This methods perform optimization of the model for a given score 
+using different types of heuristic methods. 
+
+* **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
+```{r}
+mod1 <- hc.sevt(indep)
+mod1
+```
+* **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
+```{r}
+mod2 <- bhc.sevt(full)
+mod2
+```
+* **Backward Fast Hill-Climbing** 
+`fbhc.sevt(object, score, max_iter, trace)`
+```{r}
+mod3 <- fbhc.sevt(full, score = function(x) -BIC(x))
+mod3
+```
+
+
+##### Distance methods
+
+* **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
+```{r}
+mod4 <- bj.sevt(full)
+mod4
+```
+
+* **Naive model** `naive.sevt(full, distance, k)`
+```{r}
+mod5 <- naive.sevt(full)
+mod5
+```
+#### Probabilities and predictions
+
+##### Marginal probabilities
+
+Obtain marginal probabilities with the  `prob.sevt` function.
+```{r}
+# estimated probability of (Source = "iOS", Sentiment = "Negative")
+# using different models
+prob.sevt(indep, c(Source = "iOS", Sentiment = "Negative")) 
+prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
+```
+
+Or for a  `data.frame` of observations:
+```{r}
+obs <- expand.grid(full$tree[c(2,3,5)])
+p <- prob.sevt(mod2, obs)
+cbind(obs, P = p)
+```
+
+##### Predictions
+
+A staged event tree object can be used to make predictions with the
+`predict` method. The class variable can be specified, otherwise the 
+first variable (root) in the tree will be used. 
+
+```{r}
+predicted <- predict(mod3, newdata = Trump)
+table(predicted, Trump$Source)
+```
+
+#### Explore the model
+
+##### Plot 
+
+```{r}
+plot(mod4, main = "Staged tree learned with bj.sevt", 
+     cex.label.edges = 0.6, cex.nodes = 1.5)
+text(mod4, y = -0.03, cex = 0.7)
+```
+
+##### Stages
+
+```{r}
+stageinfo.sevt(mod4, var = "Time")
+```
+
+##### Subtrees
+
+Subtrees can be extracted, the result is another staged event tree object
+in the remaining variables.
+
+```{r}
+sub <- subtree.sevt(mod4, c("iOS", ">20"))
+plot(sub)
+text(sub, y = -0.03, cex = 0.7)
+```
+
+#### Comparing models
+
+Check if the models are equal.
+```{r}
+compare.sevt(mod1, mod2)
+```
+
+Penalized like-lihood.
+```{r}
+BIC(mod1, mod2, mod3, mod4, mod5)
+```
