@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
 # stagedtrees 
 
 [![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
-
+ [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
+ 
 ### Installation 
   
 ```{r, eval = FALSE}
@@ -143,12 +144,16 @@ text(mod4, y = -0.03, cex = 0.7)
 ##### Stages
 
 ```{r}
+stages.sevt(mod4, "Time")
+```
+
+```{r}
 stageinfo.sevt(mod4, var = "Time")
 ```
 
 ##### Subtrees
 
-Subtrees can be extracted, the result is another staged event tree object
+A subtree can be extracted, the result is another staged event tree object
 in the remaining variables.
 
 ```{r}
@@ -159,7 +164,7 @@ text(sub, y = -0.03, cex = 0.7)
 
 #### Comparing models
 
-Check if the models are equal.
+Check if models are equal.
 ```{r}
 compare.sevt(mod1, mod2)
 ```

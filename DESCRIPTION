@@ -23,5 +23,7 @@ BugReports: https://github.com/gherardovarando/stagedtrees/issues
 Imports: stats,
          graphics,
          methods
-Suggests: testthat,
-          bnlearn         
+Suggests: 
+    testthat,
+    bnlearn,
+    covr
