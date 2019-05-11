@@ -4,12 +4,12 @@
 \alias{sample.sevt}
 \title{Sample from a staged event tree}
 \usage{
-sample.sevt(n = 1, object)
+sample.sevt(object, n = 1)
 }
 \arguments{
-\item{n}{number of observations}
-
 \item{object}{the staged event tree object}
+
+\item{n}{number of observations}
 }
 \value{
 A data frame containing a sample of size \code{n}
@@ -19,4 +19,11 @@ Sample from a staged event tree
 }
 \details{
 TO WRITE
+}
+\examples{
+
+#########
+data("Titanic")
+mod <- naive.sevt(full(Titanic, lambda = 1))
+sample.sevt(mod, 10)
 }

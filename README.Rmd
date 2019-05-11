@@ -95,7 +95,7 @@ mod4
 mod5 <- naive.sevt(full)
 mod5
 ```
-#### Probabilities and predictions
+#### Probabilities, predictions and sampling
 
 ##### Marginal probabilities
 
@@ -125,6 +125,11 @@ predicted <- predict(mod3, newdata = Trump)
 table(predicted, Trump$Source)
 ```
 
+##### Sampling
+
+```{r}
+sample.sevt(mod4, 5)
+```
 #### Explore the model
 
 ##### Plot 
