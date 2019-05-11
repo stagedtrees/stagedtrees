@@ -23,3 +23,10 @@ A staged event tree object, the output of the optimization
 \description{
 Hill-Climb Score optimization
 }
+\examples{
+
+#########
+data(Titanic)
+mod <- hc.sevt(full(Titanic, lambda = 1))
+BIC(mod)
+}

@@ -13,22 +13,23 @@
 #' @return A staged event tree object (see Details)
 #' @details A staged event tree object is a list with components:
 #'\itemize{
-#'          \item tree: A named list where for each variable, the levels of
-#'                  such variable are listed. The order of the variable is the
-#'                  order of the event tree.
-#'          \item stages: A named list where each component stores the stages
-#'                    for the given variable.
-#'          \item prob: The conditional probability tables for every variable
-#'          and every stage (present only if the staged event tree has been
-#'          fitted)
-#'          \item ctables: The contingency tables of the data
+#'          \item tree: A named list where for each variable, 
+#'                      the levels of such variable are listed. 
+#'                      The order of the variable is the
+#'                      order of the event tree.
+#'          \item stages: A named list where each component 
+#'                        stores the stages for the given variable.
+#'          \item prob: The conditional probability tables for every 
+#'                      variable and every stage.
+#'          \item ctables: The contingency tables of the data.
 #'          }
 #' @export
 #' @examples
 #' 
+#' ######### from data.frame
 #' DD <- generate_random_dataset(n = 5, 1000)
-#' sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
-#' sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
+#' indep <- staged_ev_tree(DD, fit = TRUE)
+#' full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
 staged_ev_tree <- function(x, ...) {
   UseMethod("staged_ev_tree", object = x)
 }
@@ -44,9 +45,11 @@ staged_ev_tree.default <- function(x, ...) {
 
 #' @rdname staged_ev_tree
 #' @examples
+#' 
+#' ######### from table
 #' data("Titanic")
-#' model <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
-#' plot(model)
+#' modT <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
+#' plot(modT)
 #' @export
 staged_ev_tree.table <- function(x, order = names(dimnames(x)),
                                  full = FALSE, fit = TRUE, ...) {
@@ -63,9 +66,6 @@ staged_ev_tree.table <- function(x, order = names(dimnames(x)),
 
 
 #' @rdname staged_ev_tree
-#' @examples
-#' DD <- generate_random_dataset(n = 5, 1000)
-#' sevt <- staged_ev_tree(DD, fit = TRUE, full = FALSE)
 #' @export
 staged_ev_tree.data.frame <- function(x,
                                       order = colnames(x),
@@ -86,8 +86,9 @@ staged_ev_tree.data.frame <- function(x,
 #' @rdname staged_ev_tree
 #' @examples
 #' 
-#' ###################
-#' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+#' ######### from list
+#' model <- staged_ev_tree(list(X = c("good", "bad"),
+#'                              Y = c("high", "low")))
 #' @export
 staged_ev_tree.list <- function(x, full = FALSE, ...) {
   if (is.null(names(x))) {
@@ -194,8 +195,9 @@ staged_ev_tree.bn.fit <- function(x, ...){
 #' @export
 #' @examples
 #' 
-#' ################################
-#' model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+#' #########
+#' model <- staged_ev_tree(list(X = c("good", "bad"), 
+#'                         Y = c("high", "low")))
 #' D <- data.frame(X = c("good", "good", "bad"),
 #'                 Y = c("high", "low", "low"))
 #' model.fit <- fit.sevt(model, data = D, lambda = 1)
@@ -509,10 +511,14 @@ stageinfo.sevt <- function(object, var, stage = NULL){
       cat("  ", "probabilities: ")
       cat(paste0(names(object$prob[[var]][[s]]), collapse = "      "),"\n")
       temp <- sapply(object$tree[[var]], nchar)
-      temp <- sapply(sapply(temp, function(i) rep(" ",i)), paste0, collapse = "")
+      temp <- sapply(sapply(temp, function(i) rep(" ",i)), 
+                     paste0, collapse = "")
       temp <- paste0(round(object$prob[[var]][[s]], 3), temp)
       cat(character(18), temp,"\n")
-      cat(character(3), "sample size:", attr(object$prob[[var]][[s]], "n"), "\n")
+      cat(character(3), 
+          "sample size:", 
+          attr(object$prob[[var]][[s]], "n"),
+          "\n")
     }
     #cat("  ", "paths: TO DO \n")
     cat(rep("-", 32), "\n", sep = "")
@@ -535,7 +541,8 @@ subtree.sevt <- function(object, path){
   object$stages[1:length(path)] <- NULL ##remove stages info
   for (i in 2:length(object$tree)){
     m <- m * length(object$tree[[i - 1]])
-    object$stages[[ i - 1 ]] <- object$stages[[ i - 1 ]][ ((idx - 1)  * m)  : (idx  * m - 1) + 1] 
+    object$stages[[ i - 1 ]] <- 
+      object$stages[[ i - 1 ]][ ((idx - 1)  * m)  : (idx  * m - 1) + 1] 
   }
   if (is_fitted.sevt(object)){
     object$prob[1:length(path)] <- NULL
@@ -570,7 +577,7 @@ stndnaming.sevt <- function(object, rep = FALSE){
     }, FUN.VALUE = "a", USE.NAMES = FALSE)
     if (is_fitted.sevt(object)){
       object$prob[[v]][new] <- object$prob[[v]][old]
-      object$prob[[v]][old[!(old %in% new)]] <- NULL ##remove old names for prob
+      object$prob[[v]][old[!(old %in% new)]] <- NULL ##remove old prob
     }
   }
   if (is_fitted.sevt(object)){
@@ -587,8 +594,16 @@ stndnaming.sevt <- function(object, rep = FALSE){
 #' @param plot logical
 #' @param ... additional paraters to be passed to \code{\link{plot.sevt}}
 #' 
-#'  @return Logical or a difference tree (if \code{tree = TRUE}) 
+#' @return Logical or a difference tree (if \code{tree = TRUE}) 
 #' @export
+#' 
+#' @examples 
+#' 
+#' #########
+#' data("Trump")
+#' mod1 <- bhc.sevt(full(Trump, lambda = 1))
+#' mod2 <- fbhc.sevt(full(Trump, lambda = 1))
+#' compare.sevt(mod1, mod2)
 compare.sevt <- function(object1, object2, tree = FALSE, plot = FALSE, ...){
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))

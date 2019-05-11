@@ -21,6 +21,8 @@
 #' @export
 #' 
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- join_zero_counts(model_full, fit = TRUE)
@@ -65,6 +67,8 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0, name = NULL){
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
 #' model_0 <- staged_ev_tree(DD[1:500,], full = TRUE, lambda = 1)
 #' naive_model <- naive.sevt(model_0)
@@ -85,7 +89,7 @@ naive.sevt <- function(object, distance = kl, k = length(object$tree)){
   return(fit.sevt(object, lambda = object$lambda))
 }
 
-#' Backword random hill-climbing
+#' Backward Random Hill-Climbing
 #'
 #' Randomly try to join stages
 #'
@@ -100,6 +104,7 @@ naive.sevt <- function(object, distance = kl, k = length(object$tree)){
 #' If joining the stages increase the score, the model is 
 #' updated. The procedure is repeated until the 
 #' number of iterations reach \code{max_iter}.
+#' 
 #' @return The final staged event tree object
 #' @export
 #' @importFrom stats  BIC
@@ -161,6 +166,8 @@ bhcr.sevt <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree object
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 4, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- bhc.sevt(model_full, trace = 2)
@@ -242,6 +249,8 @@ bhc.sevt <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree obtained
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- fbhc.sevt(model_full, trace = 2)
@@ -331,6 +340,8 @@ fbhc.sevt <-
 #' @return the learned staged event tree
 #' 
 #' @examples 
+#' 
+#' ########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- bj.sevt(model_full, trace = 2)
@@ -389,6 +400,13 @@ bj.sevt <-
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
 #' @return A staged event tree object, the output of the optimization
+#' 
+#' @examples 
+#' 
+#' #########
+#' data(Titanic)
+#' mod <- hc.sevt(full(Titanic, lambda = 1))
+#' BIC(mod)
 #' @export
 hc.sevt <- function(object,
                                score = function(x)

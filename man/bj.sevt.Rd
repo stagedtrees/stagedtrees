@@ -26,6 +26,8 @@ Join stages from more complex to simpler models
 using a distance and a threshold value
 }
 \examples{
+
+########
 DD <- generate_xor_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 model <- bj.sevt(model_full, trace = 2)

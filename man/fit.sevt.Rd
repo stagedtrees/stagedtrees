@@ -23,8 +23,9 @@ Fit a staged event tree
 }
 \examples{
 
-################################
-model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+#########
+model <- staged_ev_tree(list(X = c("good", "bad"), 
+                        Y = c("high", "low")))
 D <- data.frame(X = c("good", "good", "bad"),
                 Y = c("high", "low", "low"))
 model.fit <- fit.sevt(model, data = D, lambda = 1)

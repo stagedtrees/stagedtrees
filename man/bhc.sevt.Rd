@@ -30,6 +30,8 @@ and move to the best model that increase the score. When no
 increase is possible it moves to the next variable.
 }
 \examples{
+
+#########
 DD <- generate_xor_dataset(n = 4, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 model <- bhc.sevt(model_full, trace = 2)

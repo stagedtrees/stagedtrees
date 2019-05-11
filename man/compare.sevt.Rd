@@ -15,10 +15,19 @@ compare.sevt(object1, object2, tree = FALSE, plot = FALSE, ...)
 
 \item{plot}{logical}
 
-\item{...}{additional paraters to be passed to \code{\link{plot.sevt}}
-
-@return Logical or a difference tree (if \code{tree = TRUE})}
+\item{...}{additional paraters to be passed to \code{\link{plot.sevt}}}
+}
+\value{
+Logical or a difference tree (if \code{tree = TRUE})
 }
 \description{
 Compare two staged event tree
+}
+\examples{
+
+#########
+data("Trump")
+mod1 <- bhc.sevt(full(Trump, lambda = 1))
+mod2 <- fbhc.sevt(full(Trump, lambda = 1))
+compare.sevt(mod1, mod2)
 }
