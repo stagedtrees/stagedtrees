@@ -3,7 +3,6 @@
 #' 
 #' @param n number of observations
 #' @param object the staged event tree object
-#' @details TO WRITE
 #' 
 #' @return A data frame containing a sample of size \code{n} 
 #' @examples 
