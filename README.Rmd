@@ -39,7 +39,7 @@ visualize and compare different models.
 #### Creating the model
 
 A staged event tree object (`sevt` class) can be created with the function
-`staged_ev_tree`. In general we create a staged event tree from data 
+`staged_ev_tree`, or with the functions `indep` and `full`. In general we create a staged event tree from data 
 in a `data.frame` or `table` object. 
 
 ```{r example}
@@ -47,12 +47,12 @@ in a `data.frame` or `table` object.
 data("Trump")
 
 # Create the independence model 
-indep <- staged_ev_tree(Trump, lambda = 1)
-indep
+mod_indep <- indep(Trump, lambda = 1)
+mod_indep
 
 #Create the full (saturated) model
-full <- staged_ev_tree(Trump, full = TRUE, lambda = 1) 
-full
+mod_full <- full(Trump, lambda = 1) 
+mod_full
 ```
 
 #### Model selection
@@ -67,18 +67,18 @@ using different types of heuristic methods.
 
 * **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
 ```{r}
-mod1 <- hc.sevt(indep)
+mod1 <- hc.sevt(mod_indep)
 mod1
 ```
 * **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
 ```{r}
-mod2 <- bhc.sevt(full)
+mod2 <- bhc.sevt(mod_full)
 mod2
 ```
 * **Backward Fast Hill-Climbing** 
 `fbhc.sevt(object, score, max_iter, trace)`
 ```{r}
-mod3 <- fbhc.sevt(full, score = function(x) -BIC(x))
+mod3 <- fbhc.sevt(mod_full, score = function(x) -BIC(x))
 mod3
 ```
 
@@ -87,13 +87,13 @@ mod3
 
 * **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
 ```{r}
-mod4 <- bj.sevt(full)
+mod4 <- bj.sevt(mod_full)
 mod4
 ```
 
 * **Naive model** `naive.sevt(full, distance, k)`
 ```{r}
-mod5 <- naive.sevt(full)
+mod5 <- naive.sevt(mod_full)
 mod5
 ```
 #### Probabilities, predictions and sampling
@@ -104,7 +104,7 @@ Obtain marginal probabilities with the  `prob.sevt` function.
 ```{r}
 # estimated probability of (Source = "iOS", Sentiment = "Negative")
 # using different models
-prob.sevt(indep, c(Source = "iOS", Sentiment = "Negative")) 
+prob.sevt(mod_indep, c(Source = "iOS", Sentiment = "Negative")) 
 prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
 ```
 
@@ -171,5 +171,5 @@ compare.sevt(mod1, mod2)
 
 Penalized log-likelihood.
 ```{r}
-BIC(mod1, mod2, mod3, mod4, mod5)
+BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 ```
