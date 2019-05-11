@@ -13,12 +13,12 @@ of factor}
 \item{...}{additional parameters}
 }
 \value{
-A stratified event tree object, that is a list with a `tree` component
+A stratified event tree object, that is a list with a \code{tree} component
 }
 \description{
 Stratified event tree from list
 }
 \details{
 Build the stratified event tree object from a named list containing the
-         levels of the variables. The output is an object with the `tree` component.
+levels of the variables. The output is an object with the \code{tree} component.
 }

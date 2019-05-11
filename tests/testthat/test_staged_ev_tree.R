@@ -7,14 +7,14 @@ test_that("test that the creator works for list", {
       B = c("x", "y"),
       C = c("3", "4")
     ))
-  expect_is(ev, "staged_ev_tree")
+  expect_is(ev, "sevt")
 })
 
 test_that("test that the creator works for data.frame", {
   DD <-
     data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
   ev <- staged_ev_tree(x = DD, order = c("B", "A"))
-  expect_is(ev, "staged_ev_tree")
+  expect_is(ev, "sevt")
 })
 
 test_that("test that the staged event tree is created with the right order I", {

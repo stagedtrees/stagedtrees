@@ -9,9 +9,9 @@ tree_idx(path, tree)
 \arguments{
 \item{path}{a path from root in the tree}
 
-\item{tree}{a symmetric tree given as a list of levels 
+\item{tree}{a symmetric tree given as a list of levels
 
-This function return the integer index of the node associated with the 
+This function return the integer index of the node associated with the
 given path in a symmetric tree defined by \code{tree}.}
 }
 \value{

@@ -91,15 +91,18 @@ KL_mat_prob <- function(x) {
 
 
 
-#' Compute the KL matrix
+#' Compute the distance matrix
+#' 
 #' @param x list of conditional probabilities for each stage
-#' @return The matrix witht the symmetric KL (KL(i,j) + KL(j,i))
-KL_mat_stages <- function(x) {
+#' @param distance the distance function e.g. \code{\link{kl}}
+#' @param ... additional parameters to be passed to the distance function
+#' @return The matrix witht the distances between stages
+distance_mat_stages <- function(x, distance = kl, ...) {
   d <- length(x)
-  M <- matrix(nrow = d, ncol = d)
+  M <- matrix(nrow = d, ncol = d, 0)
   for (i in 1:d) {
-    for (j in 1:d) {
-      M[i, j] <- sum(x[[i]] * (log(x[[i]]) - log(x[[j]])))
+    for (j in 1:i) {
+      M[i, j] <- distance(x[[i]], x[[j]], ...)
     }
   }
   return(M + t(M))
@@ -140,9 +143,78 @@ entr <- function(p) {
   return(-sum(p * log(p)))
 }
 
-kl <- function(p, q) {
-  return(sum(p * (log(p) - log(q))))
+
+#' Distances between probabilities
+#' 
+#' @param x vector of probabilities
+#' @param y vector of probabilitites
+#' @param p exponent in the \eqn{L^p} norm
+#' @param alpha the order of the Renyi divergence
+#' @param ... additional parameters for compatibility
+#' @details Functions to compute distnces between probabilities:
+#' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
+#' * \code{ry}: the symmetrized Renyi divergence of order \eqn{\alpha}
+#' * \code{kl}: the symmetrized Kullback-Leibler divergence
+#' * \code{tv}: the total variation or \eqn{L^1} norm
+#' * \code{hl}: the (squared) Hellinger distance 
+#' * \code{bh}: the Bhattacharyya distance
+#' * \code{cd}: the Chan-Darwiche distance
+#' @return The distance between \code{p} and \code{q}
+#' @name probdist
+NULL
+
+
+
+#' @rdname probdist
+#' @export
+lp <- function(x, y, p = 2, ...){
+  (sum( abs(x - y) ^ p )) ^ (1 / p)
 }
+
+#' @rdname probdist
+#' @export
+ry <- function(x, y, alpha = 2, ...){
+  if (alpha == 1){
+    return(kl(x,y))
+  }
+  if (alpha == Inf){
+    return( log(max( x / y)) + log(max(y / x)) )
+  }
+  (log(sum(x^(alpha) / y^(alpha - 1) )) + 
+    log(sum(y^(alpha) / x^(alpha - 1) ))) / (alpha - 1)
+}
+
+#' @rdname probdist
+#' @export
+kl <- function(x, y, ...) {
+  return(sum(x * (log(x) - log(y))) + 
+           sum(y * (log(y) - log(x))))
+}
+
+#' @rdname probdist
+#' @export
+tv <- function(x, y, ...){
+  sum(abs(x - y))
+}
+
+#' @rdname probdist
+#' @export
+hl <- function(x,y,...){
+  sum( (sqrt(x) - sqrt(y))^2)
+}
+
+#' @rdname probdist
+#' @export
+bh <- function(x, y, ...){
+  -log(sum(sqrt(x * y)))
+}
+
+#' @rdname probdist
+#' @export
+cd <- function(x, y, ...){
+  log(max(x / y)) - log(min(x / y))
+}
+
 
 #' noisy xor function
 #'
@@ -241,7 +313,14 @@ generate_linear_dataset <-
     return(DD)
   }
 
-
+uni_idx <- function(x){
+  nn <- names(x)
+  x <- lapply(1:length(x), function(i){
+    paste0(nn[i], ":", x[[i]])
+  })
+  names(x) <- nn
+  return(x)
+}
 
 #' generate a random binary dataset
 #'

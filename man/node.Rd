@@ -4,18 +4,19 @@
 \alias{node}
 \title{Plot a node}
 \usage{
-node(x, r, label = "", col = "black", cex.label = 2 * sqrt(r), ...)
+node(x, label = "", col = "black", cex.label = 1, cex.node = 1,
+  ...)
 }
 \arguments{
 \item{x}{the center}
-
-\item{r}{the radius}
 
 \item{label}{the label}
 
 \item{col}{color}
 
 \item{cex.label}{cex parameter to be passed to text}
+
+\item{cex.node}{cex parameter for nodes}
 
 \item{...}{additional parameters passed to \code{par()}}
 }

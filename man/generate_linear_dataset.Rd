@@ -21,8 +21,8 @@ generate_linear_dataset(n = 2, N = 10000, eps = 1.2,
 }
 \value{
 A data.frame with \code{n} independent random variables and
- one class variable \code{C} computed as
- \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+one class variable \code{C} computed as
+\code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 }
 \description{
 generate a random binary dataset for classification

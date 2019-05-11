@@ -2,6 +2,7 @@
 #' 
 #' @param object a fitted staged event tree
 #' @param fit if the probability should be re-computed
+#' @param name string with a name for the new stage
 #' @param trace if \code{>0} print information to console
 #' 
 #' @return a staged event tree with situations with 0 
@@ -20,18 +21,21 @@
 #' @export
 #' 
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- join_zero_counts(model_full, fit = TRUE)
 #' logLik(model_full)
 #' logLik(model)
 #' BIC(model_full, model)
-join_zero_counts <- function(object, fit = TRUE, trace = 0){
-  stopifnot(is(object, "staged_ev_tree"))
-  stopifnot(is_fitted.staged_ev_tree(object))
+join_zero_counts <- function(object, fit = TRUE, trace = 0, name = NULL){
+  stopifnot(is(object, "sevt"))
+  stopifnot(is_fitted.sevt(object))
   tot <- 0
   for (v in names(object$tree)[-1]){
-    new <- new_label(unique(object$stages[[v]]))
+    if (is.null(name)) new <- new_label(unique(object$stages[[v]]))
+    else new <- name
     ix <- rowSums(object$ctables[[ v ]]) == 0
     object$stages[[v]][ ix ] <- new 
     tot <- tot + sum(ix)
@@ -45,7 +49,7 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
   object$prob <- NULL
   object$ll <- NULL
   if (fit){
-    object <- fit.staged_ev_tree(object, lambda = object$lambda)
+    object <- fit.sevt(object, lambda = object$lambda)
     if (trace > 0){
       message("object fitted using lambda = ", object$lambda)
     }
@@ -57,20 +61,23 @@ join_zero_counts <- function(object, fit = TRUE, trace = 0){
 #' Naive staged event tree
 #' 
 #' Build a stage event tree with two stages for each variable
-#' @param object a staged event tree object with ctables 
+#' @param object a full staged event tree
+#' @param distance a ditance between probabilities
 #' @param k the maximum number of variable to consider
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
-#' model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
-#' naive_model <- naive_staged_ev_tree(model_0)
+#' model_0 <- staged_ev_tree(DD[1:500,], full = TRUE, lambda = 1)
+#' naive_model <- naive.sevt(model_0)
 #' pr <- predict(naive_model, newdata = DD[501:1000,])
 #' table(pr,DD$C[501:1000])
-naive_staged_ev_tree <- function(object, k = length(object$tree)){
-  stopifnot(is_fitted.staged_ev_tree(object))
+naive.sevt <- function(object, distance = kl, k = length(object$tree)){
+  stopifnot(is_fitted.sevt(object))
   for (v in names(object$tree)[2:k]){
-    M <- KL_mat_prob(object$ctables[[v]] + object$lambda)
+    M <- distance_mat_stages(object$prob[[v]])
     groups <- simple_clustering(M)
     ### compute probabilitites and assign stages
     object$prob[[ v ]] <- list()
@@ -79,10 +86,10 @@ naive_staged_ev_tree <- function(object, k = length(object$tree)){
     }
   }
   object$call <- sys.call()
-  return(fit.staged_ev_tree(object, lambda = object$lambda))
+  return(fit.sevt(object, lambda = object$lambda))
 }
 
-#' Backword random hill-climbing
+#' Backward Random Hill-Climbing
 #'
 #' Randomly try to join stages
 #'
@@ -97,18 +104,19 @@ naive_staged_ev_tree <- function(object, k = length(object$tree)){
 #' If joining the stages increase the score, the model is 
 #' updated. The procedure is repeated until the 
 #' number of iterations reach \code{max_iter}.
+#' 
 #' @return The final staged event tree object
 #' @export
 #' @importFrom stats  BIC
 #' @importFrom  methods is
-backward_hill_climb_random <-
+bhcr.sevt <-
   function(object,
            score = function(x)
              return(-BIC(x))
            , max_iter = 100
            , trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
     r <- 1
     iter <- 0
@@ -158,22 +166,24 @@ backward_hill_climb_random <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree object
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 4, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- backward_hill_climb(model_full, trace = 2)
+#' model <- bhc.sevt(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-backward_hill_climb <-
+bhc.sevt <-
   function(object,
            score = function(x)
              return(-BIC(x))
            ,
            max_iter = Inf,
            trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
  
     for (v in names(object$tree)[-1]) {
@@ -212,11 +222,11 @@ backward_hill_climb <-
         }
       } ## end while
       if (trace > 0){
-        message("HC over ", v, " done after ", iter, " iterations")
+        message("BHC over ", v, " done after ", iter, " iterations")
       }
     } ## end for over variables
     if (trace > 0) {
-      message("Backword HC done")
+      message("BHC done")
     }
     object$call <- sys.call()
     object$score <- list(value = now_score, f = score)
@@ -239,21 +249,23 @@ backward_hill_climb <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree obtained
 #' @examples 
+#' 
+#' #########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- fast_backward_hill_climb(model_full, trace = 2)
+#' model <- fbhc.sevt(model_full, trace = 2)
 #' BIC(model_full, model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-fast_backward_hill_climb <-
+fbhc.sevt <-
   function(object = NULL,
            score = function(x)
              return(-BIC(x)),
            max_iter = Inf,
            trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
     for (v in names(object$tree)[-1]) {
       iter <- 0
@@ -317,34 +329,39 @@ fast_backward_hill_climb <-
 #' Backword joining of stages
 #'
 #' Join stages from more complex to simpler models
-#' using entropy do decide if join or not a stage
+#' using a distance and a threshold value
 #'
 #' @param object the staged event tree from where to start
+#' @param distance the distance between probabilities to use 
 #' @param thr the threshold for joining stages
 #' @param trace if >0 increasingly amount of info 
+#' @param ... additional parameters to be passed to the distance function
 #' is printed (via \code{message})
 #' @return the learned staged event tree
 #' 
 #' @examples 
+#' 
+#' ########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- backward_joining_KL(model_full, trace = 2)
-#' BIC(model_full, model)
+#' model <- bj.sevt(model_full, trace = 2)
 #' @importFrom  methods is
 #' @export
-backward_joining_KL <-
+bj.sevt <-
   function(object = NULL,
-           thr = 0.01,
-           trace = 0) {
-    stopifnot(is(object, "staged_ev_tree"))
-    stopifnot(is_fitted.staged_ev_tree(object))
+           distance = kl, 
+           thr = 0.1,
+           trace = 0, ...) {
+    stopifnot(is(object, "sevt"))
+    stopifnot(is_fitted.sevt(object))
+    stopifnot(is(distance, "function"))
     for (v in names(object$tree)[-1]) {
       finish <- FALSE
       while (!finish) {
         finish <- TRUE
         stages <- unique(object$stages[[v]])
         if (length(stages) > 1) {
-          M <- KL_mat_stages(object$prob[[v]]) #compute KL matrix
+          M <- distance_mat_stages(object$prob[[v]], distance, ...)
           diag(M) <- Inf
           idx <- which.min(M)
           i <- ceiling(idx / dim(M)[1])
@@ -363,12 +380,94 @@ backward_joining_KL <-
         } ## end if there are more than 1 stage
       } ## end while
       if (trace > 0 ) {
-        message("KL join over ", v ," done")
+        message("backward join over ", v ," done")
       }
     } ## end for over variables
     if (trace > 0) {
-      message("KL join done")
+      message("backward join done")
     }
     object$call <- sys.call()
     return(object)
   }
+
+
+
+#' Hill-Climb Score optimization
+#' 
+#' @param object a staged event tree object
+#' @param score a function that score staged event tree objects
+#' @param max_iter the maximum number of iterations per variable
+#' @param trace integer, if positive information on the progress is
+#'              printed to console
+#' @return A staged event tree object, the output of the optimization
+#' 
+#' @examples 
+#' 
+#' #########
+#' data(Titanic)
+#' mod <- hc.sevt(full(Titanic, lambda = 1))
+#' BIC(mod)
+#' @export
+hc.sevt <- function(object,
+                               score = function(x)
+                                 return(-BIC(x)),
+                               max_iter = Inf,
+                               trace = 0 ){
+  stopifnot(is(object, "sevt"))
+  stopifnot(is_fitted.sevt(object))
+  stopifnot(!is.null(object$ctables))
+  now_score <- score(object)
+  for (v in names(object$tree)[-1]){
+    done <- FALSE
+    iter <- 0
+    while (!done & iter < max_iter){
+      iter <- iter + 1
+      temp <- object #clone the object
+      temp_score <- now_score #clone the score
+      stages <- object$stages[[v]]
+      ustages <- unique(stages)
+      newname <- new_label(ustages)
+      done <- TRUE
+      for (j in 1:length(ustages)){
+        s1 <- ustages[j]
+        idx <- (1:length(stages))[stages == s1]
+          for (i in idx){
+            try <- object
+            for (s2 in c(ustages[-j], newname)){
+              try$stages[[v]][i] <- s2
+              try <- fit.sevt(try, lambda = object$lambda)
+              try_score <- score(try)
+              if (try_score > temp_score) {
+                temp <- try
+                temp_score <- try_score
+                ia <- i #just to message it if verbose
+                s1a <- s1
+                s2a <- s2
+                done <- FALSE
+              }
+              }
+          }
+      }##end for over stages
+      object <- temp
+      now_score <- temp_score
+      if ( (trace > 1) && !done) {
+        message(v, " moved ", ia, " from stage ", s1a, " to stage ",
+                s2a)
+      }
+    }##end while
+    if (trace >0){
+      message(v, " HC done")
+    }
+  }##end for over variables
+  if (trace > 0 ) {
+    message(
+      "HC over ",
+      v ,
+      " done after ",
+      iter,
+      " iterations."
+    )
+  }
+  object$call <- sys.call()
+  return(object)
+}
