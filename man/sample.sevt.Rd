@@ -17,9 +17,6 @@ A data frame containing a sample of size \code{n}
 \description{
 Sample from a staged event tree
 }
-\details{
-TO WRITE
-}
 \examples{
 
 #########
