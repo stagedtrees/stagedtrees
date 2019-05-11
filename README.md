@@ -1,228 +1,227 @@
-## stagedtrees 
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+stagedtrees
+===========
 
 [![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
 
-### Use
+### Installation
 
-- install with
-  `devtools::install_github("gherardovarando/stagedtrees")`
+``` r
+#development version from github
+# install.packages("devtools")
+devtools::install_github("gherardovarando/stagedtrees")
 
-#### examples
-
-For the example we use a simulated dataset with 6 binary variables:
-
-```
-DD <- generate_xor_dataset(n = 5, 1000)
+#unstable development version from the dev branch
+devtools::install_github("gherardovarando/stagedtrees", ref = "dev")
 ```
 
-##### Full stratified trees 
+### Usage
 
-This object just represent the full chain rule with a fixed order.
-
-We can create a stratified event tree object from a list containing the
-levels of the variables:
-``` 
-lvls <- lapply(DD, levels)
-
-evt <- strt_ev_tree(lvls)
-
-plot(evt) ## plotting is still a bit rough 
+``` r
+library("stagedtrees")
 ```
 
-Alternatively we can create the stratified event tree directly from the
-dataset of observation. If we set `fit = TRUE` the contingency tables will
-be created.
+With the `stagedtrees` package it is possible to fit (stratified) staged event trees to data, use them to compute probabilities, make predictions, visualize and compare different models.
 
-```
-evt <- strt_ev_tree(DD, fit = TRUE)
+#### Creating the model
 
-plot(evt)
+A staged event tree object (`sevt` class) can be created with the function `staged_ev_tree`. In general we create a staged event tree from data in a `data.frame` or `table` object.
 
-evt$ctables$X2 ### here contingency tables are stored
-```
+``` r
+# Load the Trump tweets data
+data("Trump")
 
+# Create the independence model 
+indep <- staged_ev_tree(Trump, lambda = 1)
+indep
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -11868.2 (df=7)
 
-#### Staged event tree
-
-As stratified event trees, staged event trees can be created from a list or
-a data.frame, and fitted. By default the staged event tree created will be
-the full independent model (that is only one stage per variable). 
-
-```
-sevt <- staged_ev_tree(DD, fit = TRUE , lambda = 1)
-
-
-plot(sevt)
-```
-
-Staged event tree can also be built from contingency tables
-
-```
-data("Titanic")
-
-model_T <- staged_ev_tree(Titanic, 
-           order = c("Survived", "Class", "Sex", "Age"),
-           fit = TRUE, full = TRUE)
-plot(model_T)
+#Create the full (saturated) model
+full <- staged_ev_tree(Trump, full = TRUE, lambda = 1) 
+full
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -10027.01 (df=95)
 ```
 
-
-#### Conversions
-
-We can move from the staged event tree and the full stratified event tree:
-```
-evt <- strt_ev_tree(DD, fit = TRUE)
-## this will be a full staged event tree,
-sevt <- staged_ev_tree(evt, lambda = 1) 
-evt_back <- strt_ev_tree(sevt) ####here we have also probability 
-```
 #### Model selection
 
-We are still implementing model selection algorithm, now available:
+Starting from the independence model of the full model it is
+possible to perform automatic model selection.
 
-- ##### Independent model (default) 
-  ```
-  sevt <- staged_ev_tree(DD, fit = TRUE)
-  ```
-  
-  Alternatively there is a more efficient function to build 
-  inependent models (useful when the number of variables is large):
-  
-  ```
-  sevt <- effindep.sevt(DD, lambda = 1, ctables = TRUE)
-  ```
-  
-- ##### Full model 
-  
-  ```
-  ## if fit=FALSE (default) model will be returned without fitted
-  ##  probabilities
-  sevt <- staged_ev_tree(strt_ev_tree(DD, fit = TRUE), lambda = 1)
-  ##or
-  sevt <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
-  ```
-- ##### Backward Hill-Climbing
+##### Score methods
 
-  The algorithm moves to the **best** model that increase the score. 
-  We need to avoid 0 probabilitites (`lambda = 1`).
-  ```
-  ## we initialize the full model
-  sevt_full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
-  ## then we merge stages
-  sevt <- bhc.sevt(sevt_full, trace = 1)
-  sevt$score$value
-  plot(sevt)
-  ```
-  The default score function is `function(object) return(-BIC(object))`. 
-  But it can be changed with the `score` parameter as follow:
+This methods perform optimization of the model for a given score using different types of heuristic methods.
 
-  ```
-  ## using logLik will merge only equal probabilities stages 
-  sevt1 <- bhc.sevt(sevt_full, score = logLik)
+-   **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
 
-  ## instead penalizing a lot complexity
-  score <- function(object) return(-AIC(object, k=100))
-  sevt2 <- bhc.sevt(sevt_full, score = score)
-  sevt$score$value
-  sevt$stages
-  plot(sevt)
-  ```
+``` r
+mod1 <- hc.sevt(indep)
+mod1
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -10060.23 (df=16)
+```
 
+-   **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
 
-- ##### Fast Backward Hill-Climbing
-  
-  The algorithm moves to the **first** model that increase the score.
-  ```
-  ## we use trace = 2  to obtain all messages 
-  ## We can use score as in the back_HC method
-  sevt3 <- fbhc.sevt(sevt_full, trace = 2)
-  ```
+``` r
+mod2 <- bhc.sevt(full)
+mod2
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -10032.62 (df=20)
+```
 
-- ##### Backward joining based on distances
-  For every variable the algorithm iterates and at every step try to join the
-  two stages with the smallest distance if it's lower than a threshold. 
-  ```
-  ##using symmetrized KL distance
-  sevt <- bj,sevt(sevt_full, distance = kl, thr = 0.01, trace = 2)
-  plot(sevt) 
-  ``` 
-  
-- ##### Naive staged event tree 
-  Build a staged event tree wiht two stages per variable (same number of 
-  parameters of a classical NB classifier)
-  
-  ```
-  ### we initialize as the independence model
-  model_0 <- staged_ev_tree(DD[1:500,], fit = TRUE, lambda = 1)
-  naive_model <- naive.sevt(model_0)
-  naive_model
-  ```
+-   **Backward Fast Hill-Climbing** `fbhc.sevt(object, score, max_iter, trace)`
 
-- ##### Using staged trees as classifiers
+``` r
+mod3 <- fbhc.sevt(full, score = function(x) -BIC(x))
+mod3
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -10075.96 (df=16)
+```
 
-  ```
-  pr <- predict(naive_model, class = "C", newdata = DD[1:10,])
+##### Distance methods
 
-  table(pr, DD$C[1:10])
-  ```
+-   **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
 
-### Dev
+``` r
+mod4 <- bj.sevt(full)
+mod4
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -10062.74 (df=18)
+```
 
-- `testthat` is used to test the package..
-- `roxygen2` is used to generate automatically the documentation.
-- `Travis CI` is used to check automatically at every push. 
+-   **Naive model** `naive.sevt(full, distance, k)`
 
-####  Commit messages
+``` r
+mod5 <- naive.sevt(full)
+mod5
+## Staged event tree (fitted) 
+## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
+## 'log Lik.' -10214.4 (df=13)
+```
 
-We try to keep commit messages cleaned, but sometimes big commit with lot of
-changes can happen. 
+#### Probabilities and predictions
 
-- [+] file add 
-- [-] file remov
-- [upd] update (most used)
-- [f] fix of a bug or error
-- [doc] documentation
+##### Marginal probabilities
 
+Obtain marginal probabilities with the `prob.sevt` function.
 
-#### Roadmap 
+``` r
+# estimated probability of (Source = "iOS", Sentiment = "Negative")
+# using different models
+prob.sevt(indep, c(Source = "iOS", Sentiment = "Negative")) 
+## [1] 0.1994159
+prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
+## [1] 0.1646671
+```
 
-- [x] stratified event tree model 
-- [x] fitting stratified event tree (mle)
-- [x] staged event tree
-- [x] fitting staged event tree (mle)
-- [x] print method for staged  event tree
-- [x] conversion BN to staged event tree
-- [x] extracting sub tree
-- [x] sampling from a staged tree
-- [ ] discretize strategy 
-- [x] plotting: 
-    * [x] stratified event tree
-    * [x] staged event tree (colors)
-    * [ ] probabilities on plot
-    * [ ] ggplot2 (maybe) 
-    * [ ] Rgraphviz (....) 
-- [ ] inference:
-    * [x] joint prob of a path from root 
-    * [x] logLik for full tree (thus AIC and BIC work automatically)
-    * [x] logLik staged tree 
-    * [x] lazy logLik
-    * [ ] Bayes factor
-    * [ ] conditional probabilities 
-- [ ] structure search:
-    * [ ] implement ``join_, split_, set_stage`` functions
-    * [ ] exhaustive search 
-    * [ ] heuristics:
-        - [x] backward hill climbing (3 variants)
-        - [x] backward joining of stage based on distance
-        - [x] hill climbing 
-        - [ ] forward hill-climb
-	  * [x] other distances (CD, total variation ..) (general function)
-    * [x] Penalized logLik (AIC, BIC)
-    * [ ] Stage strenght (inspired by arc strenght in bnlearn) - bootstrap
-- [ ] classifiers with staged trees 
-    * [x] define class 
-    * [x] define predict method
-    * [ ] model selection (struct search ...)
-    * [ ] define a staged event trees classifier
-    * [ ] cross validation scores (as in bnlearn)
+Or for a `data.frame` of observations:
 
+``` r
+obs <- expand.grid(full$tree[c(2,3,5)])
+p <- prob.sevt(mod2, obs)
+cbind(obs, P = p)
+##    Words Sentiment   Time          P
+## 1   <=20  Negative <=10am 0.02306711
+## 2    >20  Negative <=10am 0.12653622
+## 3   <=20  Positive <=10am 0.04933506
+## 4    >20  Positive <=10am 0.07176951
+## 5   <=20     Other <=10am 0.02637204
+## 6    >20     Other <=10am 0.03101888
+## 7   <=20  Negative  >10am 0.10120134
+## 8    >20  Negative  >10am 0.14709251
+## 9   <=20  Positive  >10am 0.15850574
+## 10   >20  Positive  >10am 0.11137642
+## 11  <=20     Other  >10am 0.11570095
+## 12   >20     Other  >10am 0.03802423
+```
+
+##### Predictions
+
+A staged event tree object can be used to make predictions with the `predict` method. The class variable can be specified, otherwise the first variable (root) in the tree will be used.
+
+``` r
+predicted <- predict(mod3, newdata = Trump)
+table(predicted, Trump$Source)
+##          
+## predicted Android  iOS
+##   Android    1262  315
+##   iOS         108 1061
+```
+
+#### Explore the model
+
+##### Plot
+
+``` r
+plot(mod4, main = "Staged tree learned with bj.sevt", 
+     cex.label.edges = 0.6, cex.nodes = 1.5)
+text(mod4, y = -0.03, cex = 0.7)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
+
+##### Stages
+
+``` r
+stageinfo.sevt(mod4, var = "Time")
+## Stage  1 for variable Time 
+##    12 nodes in the stage 
+##    probabilities: <=10am      >10am 
+##                   0.517       0.483      
+##    sample size: 1370 
+## --------------------------------
+## Stage  13 for variable Time 
+##    10 nodes in the stage 
+##    probabilities: <=10am      >10am 
+##                   0.144       0.856      
+##    sample size: 1327 
+## --------------------------------
+## Stage  22 for variable Time 
+##    2 nodes in the stage 
+##    probabilities: <=10am      >10am 
+##                   0.02       0.98      
+##    sample size: 49 
+## --------------------------------
+```
+
+##### Subtrees
+
+Subtrees can be extracted, the result is another staged event tree object in the remaining variables.
+
+``` r
+sub <- subtree.sevt(mod4, c("iOS", ">20"))
+plot(sub)
+text(sub, y = -0.03, cex = 0.7)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
+
+#### Comparing models
+
+Check if the models are equal.
+
+``` r
+compare.sevt(mod1, mod2)
+## [1] FALSE
+```
+
+Penalized like-lihood.
+
+``` r
+BIC(mod1, mod2, mod3, mod4, mod5)
+##      df      BIC
+## mod1 16 20247.15
+## mod2 20 20223.59
+## mod3 16 20278.60
+## mod4 18 20268.00
+## mod5 13 20531.74
+```
