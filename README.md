@@ -3,7 +3,7 @@
 stagedtrees
 ===========
 
-[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
+[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees) [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
 
 ### Installation
 
@@ -108,7 +108,7 @@ mod5
 ## 'log Lik.' -10214.4 (df=13)
 ```
 
-#### Probabilities and predictions
+#### Probabilities, predictions and sampling
 
 ##### Marginal probabilities
 
@@ -157,6 +157,18 @@ table(predicted, Trump$Source)
 ##   iOS         108 1061
 ```
 
+##### Sampling
+
+``` r
+sample.sevt(mod4, 5)
+##   Source Words Sentiment      Day   Time URL
+## 1    iOS  <=20  Negative Weekdays <=10am   0
+## 2    iOS  <=20  Negative  Weekend  >10am   1
+## 3    iOS  <=20  Negative Weekdays  >10am   1
+## 4    iOS  <=20     Other  Weekend <=10am   0
+## 5    iOS  <=20  Positive Weekdays  >10am   1
+```
+
 #### Explore the model
 
 ##### Plot
@@ -167,9 +179,15 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 text(mod4, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 ##### Stages
+
+``` r
+stages.sevt(mod4, "Time")
+##  [1] "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "13" "13"
+## [15] "13" "13" "13" "13" "13" "13" "13" "22" "13" "22"
+```
 
 ``` r
 stageinfo.sevt(mod4, var = "Time")
@@ -195,7 +213,7 @@ stageinfo.sevt(mod4, var = "Time")
 
 ##### Subtrees
 
-Subtrees can be extracted, the result is another staged event tree object in the remaining variables.
+A subtree can be extracted, the result is another staged event tree object in the remaining variables.
 
 ``` r
 sub <- subtree.sevt(mod4, c("iOS", ">20"))
@@ -203,11 +221,11 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 #### Comparing models
 
-Check if the models are equal.
+Check if models are equal.
 
 ``` r
 compare.sevt(mod1, mod2)
