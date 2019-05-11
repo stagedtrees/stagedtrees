@@ -4,17 +4,17 @@
 #' @param newdata The newdata to perform predictions
 #' @param class A string indicating the name of the variable to use as
 #' the class variable
-#' @param prob logical, if \code{TRUE} the probabilities of class are 
+#' @param prob logical, if \code{TRUE} the probabilities of class are
 #'                      returned
 #' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @param ... additional parameters, see details
 #' @return A vector of predictions or the corresponding probabilities
-#' @examples 
+#' @examples
 #' DD <- generate_xor_dataset(n = 5, 1000)
 #' train <- DD[1:500,]
 #' test <- DD[501:1000,]
 #' order <- c("C", "X1", "X2", "X3", "X4", "X5")
-#' model <- staged_ev_tree(train, order = order, full = TRUE, 
+#' model <- staged_ev_tree(train, order = order, full = TRUE,
 #' fit = TRUE, lambda = 1)
 #' model <- bhc.sevt(model)
 #' pr <- predict(model, class = "C", newdata = test)
@@ -41,8 +41,8 @@ predict.sevt <-
              attached to object")
       }
       newdata <- as.data.frame(newdata)
-      } ## we are now sure we have newdata as a data.frame
-
+    } ## we are now sure we have newdata as a data.frame
+    
     vars <- names(object$tree)
     #we search now for wich variable we need to make predicitons
     if (is.null(class)) {
@@ -70,18 +70,16 @@ predict.sevt <-
       }
       return(res)
     }))
-    if (prob){
-        if (log){
-           return(pred)
-        }else{
-           return(exp(pred)) 
-         }
-      }else{
+    if (prob) {
+      if (log) {
+        return(pred)
+      } else{
+        return(exp(pred))
+      }
+    } else{
       class_values <- colnames(pred)
       return(apply(pred, MARGIN = 1, function(x) {
         factor(class_values[which.max(x)], levels = class_values)
       }))
     }
   }
-
-
