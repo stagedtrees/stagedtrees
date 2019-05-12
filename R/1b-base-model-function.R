@@ -721,3 +721,30 @@ varnames.sevt <- function(x){
 nvar.sevt <- function(x){
   length(names(x))
 }
+
+
+#' Get number of parameters of the model
+#' 
+#' @param x a staged event tree object
+#' @return integer, degrees of freedom of the staged event tree
+#' @examples 
+#' 
+#' #########
+#' data("Titanic")
+#' mod_f <- full(Titanic)
+#' df.sevt(mod_f)
+#' 
+#' mod_i <- indep(Titanic)
+#' df.sevt(mod_i)
+#' @export
+df.sevt <- function(x){
+  sum(c(1, vapply(
+    x$stages,
+    FUN = function(x)
+      length(unique(x)),
+    FUN.VALUE = 1
+  )) *
+    (vapply(
+      x$tree, FUN = length, FUN.VALUE = 1
+    ) - 1))
+}
