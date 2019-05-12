@@ -36,7 +36,7 @@ indep(x, lambda = 0, ...)
 \item{x}{data.frame, list, table, \code{bn.fit} object}
 
 \item{...}{additional parameters to be passed
-to the appropiate method, see \link{fit.sevt}}
+to the appropiate method, see \link{sevt.fit}}
 
 \item{order}{order of the variables}
 

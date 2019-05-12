@@ -13,7 +13,8 @@
 \item{newdata}{The newdata to perform predictions}
 
 \item{class}{A string indicating the name of the variable to use as
-the class variable}
+the class variable, otherwise the first name in \code{object$tree}
+will be used.}
 
 \item{prob}{logical, if \code{TRUE} the probabilities of class are
 returned}
