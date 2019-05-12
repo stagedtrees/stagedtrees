@@ -9,7 +9,7 @@
 #' @param fit logical, if  \code{TRUE} the model is fitted
 #' @param lambda smoothing parameter
 #' @param ... additional parameters to be passed
-#'            to the appropiate method, see \link{fit.sevt}
+#'            to the appropiate method, see \link{sevt.fit}
 #' @return A staged event tree object
 #' @details A staged event tree object is a list with components:
 #'\itemize{
@@ -62,7 +62,7 @@ staged_ev_tree.table <- function(x,
   stopifnot(!is.null(tree))
   model <- staged_ev_tree.list(tree, full = full, ...)
   if (fit) {
-    model <- fit.sevt(model, data = x, ...)
+    model <- sevt.fit(model, data = x, ...)
   }
   return(model)
 }
@@ -79,7 +79,7 @@ staged_ev_tree.data.frame <- function(x,
     return(levels(as.factor(v))))[order]
   sevt <- staged_ev_tree.list(tree, full = full, ...)
   if (fit) {
-    return(fit.sevt(sevt, data = x, ...))
+    return(sevt.fit(sevt, data = x, ...))
   } else {
     return(sevt)
   }
@@ -205,8 +205,8 @@ staged_ev_tree.bn.fit <- function(x, ...) {
 #'                         Y = c("high", "low")))
 #' D <- data.frame(X = c("good", "good", "bad"),
 #'                 Y = c("high", "low", "low"))
-#' model.fit <- fit.sevt(model, data = D, lambda = 1)
-fit.sevt <- function(sevt,
+#' model.fit <- sevt.fit(model, data = D, lambda = 1)
+sevt.fit <- function(sevt,
                      data = NULL,
                      lambda = 0,
                      ...) {
@@ -293,6 +293,17 @@ staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
   return(obj)
 }
 
+
+#'@rdname sevt.fit
+#'@details \code{fit.sevt} is just a wrapper of \code{sevt.fit},
+#'          it is provided for compatibilities. (DEPRECATED)
+#'@export
+fit.sevt <- function(sevt,
+                     data = NULL,
+                     lambda = 0,
+                     ...){
+  sevt.fit(sevt, data, lambda, ...)
+}
 
 #' Set stage to path
 #'
@@ -383,7 +394,7 @@ split_stage_random <- function(object, var,  stage, p = 0.5) {
     object$stages[[var]][ix] <- label
     if (is_fitted.sevt(object)) {
       ### we should do better than this
-      object <- fit.sevt(object, lambda = object$lambda)
+      object <- sevt.fit(object, lambda = object$lambda)
     }
   }
   return(object)
@@ -613,10 +624,16 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' @param tree logical, if \code{TRUE} the difference tree is returned
 #' @param plot logical
 #' @param ... additional paraters to be passed to \code{\link{plot.sevt}}
-#'
+#' @details \code{compare.sevt} test if the stage structure of two \code{sevt} 
+#' objects
+#' is the same by first applying \code{\link{stndnaming.sevt}} to both 
+#' objects and then simply comparing the resulting \code{$stages} lists. 
+#' Setting \code{tree = TRUE} will return the stages structure difference 
+#' but at the moment is not completely correct, as the plot produced by
+#' \code{plot = TRUE}.
+#' 
 #' @return Logical or a difference tree (if \code{tree = TRUE})
 #' @export
-#'
 #' @examples
 #'
 #' #########
@@ -660,3 +677,31 @@ compare.sevt <-
         all(x == 0))))
     }
   }
+
+#' Get variable names
+#' 
+#' @param x a staged event tree obejct
+#' @return Vector with variable names
+#' @examples 
+#' 
+#' data("Titanic")
+#' mod <-full(Titanic)
+#' varnames.sevt(mod)
+#' @export
+varnames.sevt <- function(x){
+  names(object$tree)
+}
+
+#' Get the number of variables 
+#' 
+#' @param x a staged event tree object
+#' @return integer, the number of variables
+#' @examples 
+#' 
+#' data("Titanic")
+#' mod <- indep(Titanic)
+#' nvar.sevt(mod)
+#' @export
+nvar.sevt <- function(x, ...){
+  length(names(x))
+}

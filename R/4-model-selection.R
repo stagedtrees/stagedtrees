@@ -55,7 +55,7 @@ join_zero_counts <-
     object$prob <- NULL
     object$ll <- NULL
     if (fit) {
-      object <- fit.sevt(object, lambda = object$lambda)
+      object <- sevt.fit(object, lambda = object$lambda)
       if (trace > 0) {
         message("object fitted using lambda = ", object$lambda)
       }
@@ -95,7 +95,7 @@ naive.sevt <-
       }
     }
     object$call <- sys.call()
-    return(fit.sevt(object, lambda = object$lambda))
+    return(sevt.fit(object, lambda = object$lambda))
   }
 
 #' Backward Random Hill-Climbing
@@ -447,7 +447,7 @@ hc.sevt <- function(object,
           try <- object
           for (s2 in c(ustages[-j], newname)) {
             try$stages[[v]][i] <- s2
-            try <- fit.sevt(try, lambda = object$lambda)
+            try <- sevt.fit(try, lambda = object$lambda)
             try_score <- score(try)
             if (try_score > temp_score) {
               temp <- try
