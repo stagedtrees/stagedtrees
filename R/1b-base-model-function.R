@@ -423,40 +423,56 @@ full <- function(x, ...) {
 }
 
 #' @rdname staged_ev_tree
+#' @export
+indep <- function(x, ...){
+  UseMethod("indep", x)
+}
+
+#' @rdname staged_ev_tree
+#' @export
+indep.default <- function(x, ...){
+  staged_ev_tree(x, full = FALSE, ...)
+}
+
+#' @rdname staged_ev_tree
 #' @examples
 #'
-#' ######### independence model
+#' ######### independence model (data.frame)
 #' DD <- generate_xor_dataset(15, 100)
 #' system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
 #' system.time(model2 <- indep(DD, lambda = 1))
 #' model1
 #' model2
 #' @export
-indep <- function(x, lambda = 0, ...) {
-  x <- as.data.frame(x)
-  model <- staged_ev_tree(x, fit = FALSE, full = FALSE)
+indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
+  model <- staged_ev_tree(x, fit = FALSE, full = FALSE, ...)
   model$prob <- list()
+  model$ctables <- strt_ev_tree(x, fit = TRUE, ...)$ctables
   var <- names(model$tree)
-  model$lambda <- lambda
-  model$ll <- 0
-  for (v in var) {
-    ctab <- table(x[[v]])
-    n <- sum(ctab)
-    model$prob[[v]] <- list("1" =  ctab + lambda)
-    model$prob[[v]][[1]] <-
-      model$prob[[v]][[1]] / sum(model$prob[[v]][[1]])
-    attr(model$prob[[v]][[1]], "n") <- n
-    ix <- ctab > 0
-    model$ll <-
-      model$ll + sum(ctab[ix] * log(model$prob[[v]][[1]][ix]))
+  if (fit){
+    model$lambda <- lambda
+    model$ll <- 0
+    for (v in var) {
+      ctab <- table(x[[v]])
+      n <- sum(ctab)
+      model$prob[[v]] <- list("1" =  ctab + lambda)
+      model$prob[[v]][[1]] <-
+        model$prob[[v]][[1]] / sum(model$prob[[v]][[1]])
+      attr(model$prob[[v]][[1]], "n") <- n
+      ix <- ctab > 0
+      model$ll <-
+        model$ll + sum(ctab[ix] * log(model$prob[[v]][[1]][ix]))
+    }
+    attr(model$ll, "df") <-
+      sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
+    attr(model$ll, "nobs") <- nrow(x)
+    class(model$ll) <- "logLik"
+    model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
   }
-  attr(model$ll, "df") <-
-    sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
-  attr(model$ll, "nobs") <- nrow(x)
-  class(model$ll) <- "logLik"
-  model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
   return(model)
 }
+
+
 
 #' Print a staged event tree
 #'

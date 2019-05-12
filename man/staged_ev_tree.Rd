@@ -10,6 +10,8 @@
 \alias{staged_ev_tree.strt_ev_tree}
 \alias{full}
 \alias{indep}
+\alias{indep.default}
+\alias{indep.data.frame}
 \title{Staged (stratified) event tree}
 \usage{
 staged_ev_tree(x, ...)
@@ -30,7 +32,11 @@ staged_ev_tree(x, ...)
 
 full(x, ...)
 
-indep(x, lambda = 0, ...)
+indep(x, ...)
+
+\method{indep}{default}(x, ...)
+
+\method{indep}{data.frame}(x, fit = TRUE, lambda = 0, ...)
 }
 \arguments{
 \item{x}{data.frame, list, table, \code{bn.fit} object}
@@ -88,7 +94,7 @@ model <- staged_ev_tree(list(X = c("good", "bad"),
 DD <- generate_xor_dataset(7, 100)
 modfull <- full(DD, lambda = 1)
 
-######### independence model
+######### independence model (data.frame)
 DD <- generate_xor_dataset(15, 100)
 system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
 system.time(model2 <- indep(DD, lambda = 1))
