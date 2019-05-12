@@ -4,7 +4,7 @@
 \alias{nvar.sevt}
 \title{Get the number of variables}
 \usage{
-nvar.sevt(x, ...)
+nvar.sevt(x)
 }
 \arguments{
 \item{x}{a staged event tree object}

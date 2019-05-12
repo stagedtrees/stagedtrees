@@ -705,7 +705,7 @@ compare.sevt <-
 #' varnames.sevt(mod)
 #' @export
 varnames.sevt <- function(x){
-  names(object$tree)
+  names(x$tree)
 }
 
 #' Get the number of variables 
@@ -718,6 +718,6 @@ varnames.sevt <- function(x){
 #' mod <- indep(Titanic)
 #' nvar.sevt(mod)
 #' @export
-nvar.sevt <- function(x, ...){
+nvar.sevt <- function(x){
   length(names(x))
 }
