@@ -3,7 +3,8 @@
 #' @param object A staged event tree
 #' @param newdata The newdata to perform predictions
 #' @param class A string indicating the name of the variable to use as
-#' the class variable
+#' the class variable, otherwise the first name in \code{object$tree}
+#' will be used.
 #' @param prob logical, if \code{TRUE} the probabilities of class are
 #'                      returned
 #' @param log logical, if \code{TRUE} log-probabilities are returned
