@@ -110,7 +110,7 @@ prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
 
 Or for a  `data.frame` of observations:
 ```{r}
-obs <- expand.grid(full$tree[c(2,3,5)])
+obs <- expand.grid(mod_full$tree[c(2,3,5)])
 p <- prob.sevt(mod2, obs)
 cbind(obs, P = p)
 ```
@@ -132,6 +132,20 @@ table(predicted, Trump$Source)
 sample.sevt(mod4, 5)
 ```
 #### Explore the model
+
+##### Model info
+
+```{r}
+# Degrees of freedom
+df.sevt(mod_full)
+df.sevt(mod_indep)
+
+# variables 
+varnames.sevt(mod1)
+
+# number of variables
+nvar.sevt(mod1)
+```
 
 ##### Plot 
 
