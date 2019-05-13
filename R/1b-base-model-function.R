@@ -447,7 +447,6 @@ indep.default <- function(x, ...){
 indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
   model <- staged_ev_tree(x, fit = FALSE, full = FALSE, ...)
   model$prob <- list()
-  model$ctables <- strt_ev_tree(x, fit = TRUE, ...)$ctables
   var <- names(model$tree)
   if (fit){
     model$lambda <- lambda
@@ -456,18 +455,18 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
       ctab <- table(x[[v]])
       n <- sum(ctab)
       model$prob[[v]] <- list("1" =  ctab + lambda)
-      model$prob[[v]][[1]] <-
-        model$prob[[v]][[1]] / sum(model$prob[[v]][[1]])
-      attr(model$prob[[v]][[1]], "n") <- n
+      model$prob[[v]][["1"]] <-
+        model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
+      attr(model$prob[[v]][["1"]], "n") <- n
       ix <- ctab > 0
       model$ll <-
-        model$ll + sum(ctab[ix] * log(model$prob[[v]][[1]][ix]))
+        model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
     }
     attr(model$ll, "df") <-
       sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
     attr(model$ll, "nobs") <- nrow(x)
     class(model$ll) <- "logLik"
-    model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
+    model$ctables <- strt_ev_tree(x, fit = TRUE, ...)$ctables
   }
   return(model)
 }
