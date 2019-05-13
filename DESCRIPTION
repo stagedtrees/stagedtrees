@@ -12,7 +12,7 @@ Authors@R: c(
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
 Maintainer: Gherardo Varando <gherardo.varando@gmail.com>
-Description: Package to define and fit staged event tree probability models.
+Description: Package to create and fit staged event tree probability models.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
