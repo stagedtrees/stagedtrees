@@ -9,7 +9,9 @@
 \alias{staged_ev_tree.bn.fit}
 \alias{staged_ev_tree.strt_ev_tree}
 \alias{full}
-\alias{effindep.sevt}
+\alias{indep}
+\alias{indep.default}
+\alias{indep.data.frame}
 \title{Staged (stratified) event tree}
 \usage{
 staged_ev_tree(x, ...)
@@ -30,13 +32,17 @@ staged_ev_tree(x, ...)
 
 full(x, ...)
 
-effindep.sevt(x, lambda = 0, ...)
+indep(x, ...)
+
+\method{indep}{default}(x, ...)
+
+\method{indep}{data.frame}(x, fit = TRUE, lambda = 0, ...)
 }
 \arguments{
 \item{x}{data.frame, list, table, \code{bn.fit} object}
 
 \item{...}{additional parameters to be passed
-to the appropiate method, see \link{fit.sevt}}
+to the appropiate method, see \link{sevt.fit}}
 
 \item{order}{order of the variables}
 
@@ -47,7 +53,7 @@ to the appropiate method, see \link{fit.sevt}}
 \item{lambda}{smoothing parameter}
 }
 \value{
-A staged event tree object (see Details)
+A staged event tree object
 }
 \description{
 Builds the staged event tree for a set of categorical variables,
@@ -83,10 +89,15 @@ plot(modT)
 model <- staged_ev_tree(list(X = c("good", "bad"),
                              Y = c("high", "low")))
 
-###################################
+######### full model 
+
+DD <- generate_xor_dataset(7, 100)
+modfull <- full(DD, lambda = 1)
+
+######### independence model (data.frame)
 DD <- generate_xor_dataset(15, 100)
 system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
-system.time(model2 <- effindep.sevt(DD, lambda = 1, ctables = TRUE))
+system.time(model2 <- indep(DD, lambda = 1))
 model1
 model2
 }
