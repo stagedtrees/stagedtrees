@@ -26,22 +26,22 @@ With the `stagedtrees` package it is possible to fit (stratified) staged event t
 
 #### Creating the model
 
-A staged event tree object (`sevt` class) can be created with the function `staged_ev_tree`. In general we create a staged event tree from data in a `data.frame` or `table` object.
+A staged event tree object (`sevt` class) can be created with the function `staged_ev_tree`, or with the functions `indep` and `full`. In general we create a staged event tree from data in a `data.frame` or `table` object.
 
 ``` r
 # Load the Trump tweets data
 data("Trump")
 
 # Create the independence model 
-indep <- staged_ev_tree(Trump, lambda = 1)
-indep
+mod_indep <- indep(Trump, lambda = 1)
+mod_indep
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
 ## 'log Lik.' -11868.2 (df=7)
 
 #Create the full (saturated) model
-full <- staged_ev_tree(Trump, full = TRUE, lambda = 1) 
-full
+mod_full <- full(Trump, lambda = 1) 
+mod_full
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
 ## 'log Lik.' -10027.01 (df=95)
@@ -59,7 +59,7 @@ This methods perform optimization of the model for a given score using different
 -   **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
 
 ``` r
-mod1 <- hc.sevt(indep)
+mod1 <- hc.sevt(mod_indep)
 mod1
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
@@ -69,7 +69,7 @@ mod1
 -   **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
 
 ``` r
-mod2 <- bhc.sevt(full)
+mod2 <- bhc.sevt(mod_full)
 mod2
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
@@ -79,7 +79,7 @@ mod2
 -   **Backward Fast Hill-Climbing** `fbhc.sevt(object, score, max_iter, trace)`
 
 ``` r
-mod3 <- fbhc.sevt(full, score = function(x) -BIC(x))
+mod3 <- fbhc.sevt(mod_full, score = function(x) -BIC(x))
 mod3
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
@@ -91,7 +91,7 @@ mod3
 -   **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
 
 ``` r
-mod4 <- bj.sevt(full)
+mod4 <- bj.sevt(mod_full)
 mod4
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
@@ -101,7 +101,7 @@ mod4
 -   **Naive model** `naive.sevt(full, distance, k)`
 
 ``` r
-mod5 <- naive.sevt(full)
+mod5 <- naive.sevt(mod_full)
 mod5
 ## Staged event tree (fitted) 
 ## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
@@ -117,7 +117,7 @@ Obtain marginal probabilities with the `prob.sevt` function.
 ``` r
 # estimated probability of (Source = "iOS", Sentiment = "Negative")
 # using different models
-prob.sevt(indep, c(Source = "iOS", Sentiment = "Negative")) 
+prob.sevt(mod_indep, c(Source = "iOS", Sentiment = "Negative")) 
 ## [1] 0.1994159
 prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
 ## [1] 0.1646671
@@ -126,7 +126,7 @@ prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
 Or for a `data.frame` of observations:
 
 ``` r
-obs <- expand.grid(full$tree[c(2,3,5)])
+obs <- expand.grid(mod_full$tree[c(2,3,5)])
 p <- prob.sevt(mod2, obs)
 cbind(obs, P = p)
 ##    Words Sentiment   Time          P
@@ -161,15 +161,33 @@ table(predicted, Trump$Source)
 
 ``` r
 sample.sevt(mod4, 5)
-##   Source Words Sentiment      Day   Time URL
-## 1    iOS  <=20  Negative Weekdays <=10am   0
-## 2    iOS  <=20  Negative  Weekend  >10am   1
-## 3    iOS  <=20  Negative Weekdays  >10am   1
-## 4    iOS  <=20     Other  Weekend <=10am   0
-## 5    iOS  <=20  Positive Weekdays  >10am   1
+##    Source Words Sentiment      Day   Time URL
+## 1     iOS  <=20  Negative Weekdays  >10am   0
+## 2     iOS  <=20     Other Weekdays  >10am   0
+## 3 Android  <=20  Negative  Weekend <=10am   0
+## 4     iOS  <=20  Negative Weekdays  >10am   1
+## 5 Android   >20     Other  Weekend <=10am   0
 ```
 
 #### Explore the model
+
+##### Model info
+
+``` r
+# Degrees of freedom
+df.sevt(mod_full)
+## [1] 95
+df.sevt(mod_indep)
+## [1] 7
+
+# variables 
+varnames.sevt(mod1)
+## [1] "Source"    "Words"     "Sentiment" "Day"       "Time"      "URL"
+
+# number of variables
+nvar.sevt(mod1)
+## [1] 7
+```
 
 ##### Plot
 
@@ -179,7 +197,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 text(mod4, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 ##### Stages
 
@@ -221,7 +239,7 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
 #### Comparing models
 
@@ -235,11 +253,13 @@ compare.sevt(mod1, mod2)
 Penalized log-likelihood.
 
 ``` r
-BIC(mod1, mod2, mod3, mod4, mod5)
-##      df      BIC
-## mod1 16 20247.15
-## mod2 20 20223.59
-## mod3 16 20278.60
-## mod4 18 20268.00
-## mod5 13 20531.74
+BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
+##           df      BIC
+## mod_indep  7 23791.82
+## mod_full  95 20806.23
+## mod1      16 20247.15
+## mod2      20 20223.59
+## mod3      16 20278.60
+## mod4      18 20268.00
+## mod5      13 20531.74
 ```

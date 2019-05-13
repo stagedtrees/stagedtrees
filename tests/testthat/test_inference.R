@@ -1,28 +1,38 @@
 context("predict.sevt")
 
+
+DD <- generate_linear_dataset(5, 100)[,6:1]
+levels(DD$C) <- c("a", "b")
+levels(DD$X3) <- c("qqqq", "pppp")
+sev <- full(DD, lambda = 1)
+
 test_that("predict class values", {
-  DD <- generate_linear_dataset(5, 100)[,6:1]
-  levels(DD$C) <- c("a", "b")
-  levels(DD$X3) <- c("qqqq", "pppp")
-  sev <- full(DD, lambda = 1)
-  pr <- predict(sev, DD)  
+  expect_silent(pr <- predict(sev, DD) ) 
   expect_true(all(levels(pr) == levels(DD$C)))
-  pr <- predict(sev, class = "X3", DD)  
+  expect_silent(pr <- predict(sev, class = "X3", DD)) 
   expect_true(all(levels(pr) == levels(DD$X3)))
 })
 
 
 test_that("predict probabilities", {
-  DD <- generate_linear_dataset(5, 100)[,6:1]
-  levels(DD$C) <- c("a", "b")
-  levels(DD$X3) <- c("qqqq", "pppp")
-  sev <- full(DD, lambda = 1)
   pr <- predict(sev, DD, prob = TRUE, log = FALSE)  
   expect_true(all(pr >= 0))
   pr <- predict(sev, DD,class = "X4", prob = TRUE, log = FALSE)  
   expect_true(all(pr >= 0))
 })
 
+
+test_that("predict log-probabilities", {
+  expect_silent(pr <- predict(sev, DD, prob = TRUE, log = TRUE) )
+  expect_silent(pr <- predict(sev, DD,class = "X4", prob = TRUE, log = TRUE))
+})
+
+
+test_that("predict with no data", {
+  expect_error(pr <- predict(sev) )
+  sev$data <- DD
+  expect_silent(pr <- predict(sev, class = "X4"))
+})
 
 context("prob.sevt")
 
