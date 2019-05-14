@@ -582,16 +582,18 @@ subtree.sevt <- function(object, path) {
   m <- 1
   idx <- tree_idx(path, object$tree)
   stage <- find_stage(object, path)
-  object$tree[1:length(path)] <- NULL ##remove previous variables
-  object$stages[1:length(path)] <- NULL ##remove stages info
+  varout <- varnames.sevt(object)[ 1:length(path) ]
+  object$tree[varout] <- NULL ##remove previous variables
+  object$stages[varout] <- NULL ##remove stages info
+  var <- varnames.sevt(object)
   for (i in 2:length(object$tree)) {
-    m <- m * length(object$tree[[i - 1]])
-    object$stages[[i - 1]] <-
-      object$stages[[i - 1]][((idx - 1)  * m):(idx  * m - 1) + 1]
+    m <- m * length(object$tree[[ var[i] ]])
+    object$stages[[ var[i] ]] <-
+      object$stages[[ var[i] ]][((idx - 1)  * m):(idx  * m - 1) + 1]
   }
   if (is_fitted.sevt(object)) {
-    object$prob[1:length(path)] <- NULL
-    object$prob[[1]] <- object$prob[[1]][stage]
+    object$prob[ varout ] <- NULL
+    object$prob[[ var[1] ]] <- object$prob[[ var[1] ]][stage]
     for (i in 2:length(object$tree)) {
       ###to do: clean unused probabilities
     }
