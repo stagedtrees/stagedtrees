@@ -718,7 +718,8 @@ varnames.sevt <- function(x){
 #' nvar.sevt(mod)
 #' @export
 nvar.sevt <- function(x){
-  length(names(x))
+  stopifnot(is(x, "sevt"))
+  length(names(x$tree))
 }
 
 
