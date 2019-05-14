@@ -36,6 +36,7 @@ ceg.sevt <- function(object){
   }
   positions[[names(object$tree)[1]]] <- "1"
   object$positions <- positions
+  object$positions <- object$positions[c(ls + 1, 1:ls)]  
   class(object) <- c("ceg", class(object))
   return(object)
 }
