@@ -228,21 +228,21 @@ sevt.fit <- function(sevt,
   order <- names(sevt$tree)
   dims <- sapply(sevt$tree, length)
   sevt$prob <- list()
-  n <- sum(sevt$ctables[[order[1]]])
-  pp <- sevt$ctables[[order[1]]] + lambda
+  n <- sum(sevt$ctables[[ order[1] ]])
+  pp <- sevt$ctables[[ order[1] ]] + lambda
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
-  sevt$prob[[order[1]]] <- list("1" = pp)
+  sevt$prob[[ order[1] ]] <- list("1" = pp)
   #lambda <- lambda / dims[1]
   for (i in 2:length(order)) {
-    stages <- unique(sevt$stages[[order[i]]])
+    stages <- unique(sevt$stages[[ order[i] ]])
     sevt$prob[[order[i]]] <-
       lapply(stages, function(s) {
         ix <- sevt$stages[[order[i]]] == s
         if (sum(ix) > 1) {
-          tt <- apply(sevt$ctables[[order[i]]][ix,], MARGIN = 2, sum)
+          tt <- apply(sevt$ctables[[ order[i] ]][ix,], MARGIN = 2, sum)
         } else{
-          tt <- sevt$ctables[[order[i]]][ix,]
+          tt <- sevt$ctables[[ order[i] ]][ix,]
         }
         names(tt) <- sevt$tree[[order[i]]]
         n <- sum(tt) ##compute sample size
@@ -586,8 +586,9 @@ subtree.sevt <- function(object, path) {
   object$tree[varout] <- NULL ##remove previous variables
   object$stages[varout] <- NULL ##remove stages info
   var <- varnames.sevt(object)
+  object$stages[[ var[1]  ]] <- c(stage) ##keep stage name for first variable
   for (i in 2:length(object$tree)) {
-    m <- m * length(object$tree[[ var[i] ]])
+    m <- m * length(object$tree[[ var[i - 1] ]])
     object$stages[[ var[i] ]] <-
       object$stages[[ var[i] ]][((idx - 1)  * m):(idx  * m - 1) + 1]
   }
@@ -597,10 +598,11 @@ subtree.sevt <- function(object, path) {
     for (i in 2:length(object$tree)) {
       ###to do: clean unused probabilities
     }
-    #object$ctables <- NULL
-    object$ll <- NULL
+
     #object$ll <- logLik(object)
   }
+  object$ctables <- NULL
+  object$ll <- NULL
   return(object)
 }
 

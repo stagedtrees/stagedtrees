@@ -94,21 +94,31 @@ plot.sevt <-
            ...) {
     plot.new()
     d <- min(length(x$tree), limit) ##avoid too much plotting
+    nms <- names(x$tree) ##name of variable
     if (is.null(col)) {
-      col <- lapply(x$stages[1:(d - 1)], function(stages) {
+      col <- lapply(x$stages[nms[1:d]], function(stages) {
+        if (is.null(stages)){
+          return(list("1" = "black"))
+        }
         stages <- unique(stages)
         vc <- 1:length(stages)
         names(vc) <- stages
         return(vc)
       })
     } else if (is(col, "function")) {
-      col <- lapply(x$stages[1:(d - 1)], function(stages) {
+      col <- lapply(x$stages[nms[1:d]], function(stages) {
+        if (is.null(stages)){
+          return(list("1" = "black"))
+        }
         stages <- col(unique(stages))
         names(stages) <- stages
         return(stages)
       })
     } else if (col == "stages") {
-      col <- lapply(x$stages[1:(d - 1)], function(stages) {
+      col <- lapply(x$stages[nms[1:d]], function(stages) {
+        if (is.null(stages)){
+          return(list("1" = 1))
+        }
         stages <- unique(stages)
         names(stages) <- stages
         return(stages)
@@ -124,7 +134,6 @@ plot.sevt <-
     title(...)
     n <- x$tree
     p <- length(x$tree)
-    nms <- names(x$tree)
     Ls <- rep(0, d)
     Ls[d] <- ylim[2] - ylim[1]
     ns <- M
@@ -141,11 +150,14 @@ plot.sevt <-
       ns <- ns / nv
       As[i - 1] <- Ls[i - 1] / (ns  + (ns - 1) / (nv - 1))
     }
+    s1 <- ifelse(is.null(x$stages[[ nms[1] ]]), "1", 
+                 x$stages[[ nms[1] ]][1] )
     node(
       c(xlim[1], mean(ylim)),
-      label = "",
+      label = s1,
       cex.label = cex.label.nodes[1],
       cex.node = cex.nodes[1],
+      col = col[[ nms[1] ]][ s1 ], 
       ...
     ) #plot first node
     xx <- xlim[1]
@@ -174,11 +186,11 @@ plot.sevt <-
           if (k < d) {
             node(
               c(xx, y[j]),
-              label = x$stages[[k]][lj],
+              label = x$stages[[ nms[k + 1] ]][lj],
               #label = nms[k+1],
-              cex.label = cex.label.nodes[k],
-              col = col[[k]][x$stages[[k]][lj]],
-              cex.node = cex.nodes[k],
+              cex.label = cex.label.nodes[k + 1],
+              col = col[[ nms[k + 1 ] ]][x$stages[[ nms[k + 1] ]][lj]],
+              cex.node = cex.nodes[k + 1],
               ...
             )
           }
