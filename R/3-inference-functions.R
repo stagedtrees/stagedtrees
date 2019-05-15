@@ -148,10 +148,11 @@ logLik.sevt <- function(object, ...) {
   stopifnot(is(object, "sevt"))
   stopifnot(!is.null(object$prob))
   stopifnot(!is.null(object$ctables))
+  v <- names(object$tree)
   ll <- logLik(strt_ev_tree.sevt(object))
   attr(ll, "df") <-
     sum(c(1, vapply(
-      object$stages,
+      object$stages[ v[-1] ],
       FUN = function(x)
         length(unique(x)),
       FUN.VALUE = 1
