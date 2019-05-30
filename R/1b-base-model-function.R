@@ -312,30 +312,115 @@ set_stage <- function(sevt, path, stage) {
 join_stages <- function(sevt, v,  s1, s2) {
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  d <- dim(sevt$paths[[v]])[2]
   k <- length(sevt$tree[[v]])
   st <- sevt$stages[[v]]
   sevt$stages[[v]][st == s2] <- s1
-  if (!is.null(sevt$prob)) {
-    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+  
+  if(!any(c(sevt$prob[[v]][[s1]], sevt$prob[[v]][[s2]]) == 0))
+  {
     n1 <- attr(sevt$prob[[v]][[s1]], "n")
-    ct1 <- sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k ) - sevt$lambda
+    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+    p1 <- sevt$prob[[v]][[s1]]
+    # p1[p1 == 0] <- 1
+    p2 <- sevt$prob[[v]][[s2]]
+    # p2[p2 == 0] <- 1 # log(1) will be 0.
+    ct1 <- sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k) - sevt$lambda
     ct2 <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
-    dll <-
-      sum(ct2 * log(sevt$prob[[v]][[s2]])) +
-      sum(ct1 * log(sevt$prob[[v]][[s1]]))
+    
+    dll <-  sum(ct2 * log(p2)) + sum(ct1 * log(p1)) 
+    
     sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
-    sevt$prob[[v]][[s1]] <-
-      sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
-    sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
+    sevt$prob[[v]][[s2]] <- NULL ## delete one of the two
+    
     if (!is.null(sevt$ll)) {
       ## update log likelihood
-      sevt$ll <-
-        sevt$ll - dll +  sum( (ct1 + ct2) *
-                                log(sevt$prob[[v]][[s1]]))
-      attr(sevt$ll, "df") <-
-        attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
+      pr <- sevt$prob[[v]][[s1]]
+      pr[pr == 0] <- 1  # log(1) will be 0, do not affect the results.
+      sevt$ll <- sevt$ll - dll +  sum((ct1 + ct2) * log(pr))
+      attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
+    }
+  }
+
+  else if(any(sevt$prob[[v]][[s1]] == 0) & !any(sevt$prob[[v]][[s2]] == 0))
+  {
+    n1 <- attr(sevt$prob[[v]][[s1]], "n")
+    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+    p1 <- sevt$prob[[v]][[s1]]
+    p1[p1 == 0] <- 1
+    p2 <- sevt$prob[[v]][[s2]]
+    p2[p2 == 0] <- 1  # log(1) will be 0
+    ct1 <- sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k) - sevt$lambda
+    ct2 <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
+    
+    dll <-  sum(ct2 * log(p2)) + sum(ct1 * log(p1)) 
+    
+    sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
+    attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
+    sevt$prob[[v]][[s2]] <- NULL ## delete one of the two
+    
+    if (!is.null(sevt$ll)) {
+      ## update log likelihood
+      pr <- sevt$prob[[v]][[s1]]
+      pr[pr == 0] <- 1  # log(1) will be 0, do not affect the results.
+      sevt$ll <- sevt$ll - dll +  sum((ct1 + ct2) * log(pr))
+      attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
+    }
+  }
+  
+  else if(!any(sevt$prob[[v]][[s1]] == 0) & any(sevt$prob[[v]][[s2]] == 0))
+  {
+    n1 <- attr(sevt$prob[[v]][[s1]], "n")
+    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+    p1 <- sevt$prob[[v]][[s1]]
+    p1[p1 == 0] <- 1
+    p2 <- sevt$prob[[v]][[s2]]
+    p2[p2 == 0] <- 1 # log(1) will be 0
+    ct1 <- sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k) - sevt$lambda
+    ct2 <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
+    
+    dll <-  sum(ct2 * log(p2)) + sum(ct1 * log(p1)) 
+    
+    sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
+    attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
+    sevt$prob[[v]][[s2]] <- NULL ## delete one of the two
+    
+    if (!is.null(sevt$ll)) {
+      ## update log likelihood
+      pr <- sevt$prob[[v]][[s1]]
+      pr[pr == 0] <- 1  # log(1) will be 0, do not affect the results.
+      sevt$ll <- sevt$ll - dll +  sum((ct1 + ct2) * log(pr))
+      attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
+    }
+  }
+
+  else if((sum((sevt$prob[[v]][[s1]] == 0) * 1) > 0) & (sum((sevt$prob[[v]][[s2]] == 0) * 1) > 0))
+  {
+    n1 <- attr(sevt$prob[[v]][[s1]], "n")
+    n2 <- attr(sevt$prob[[v]][[s2]], "n")
+    p1 <- sevt$prob[[v]][[s1]]
+    p1[p1 == 0] <- 1
+    p2 <- sevt$prob[[v]][[s2]]
+    p2[p2 == 0] <- 1 # log(1) will be 0
+    ct1 <- sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k) - sevt$lambda
+    ct2 <- sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
+    
+    dll <-  sum(ct2 * log(p2)) + sum(ct1 * log(p1))   
+    
+    sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
+    attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
+    sevt$prob[[v]][[s1]] <- sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
+    sevt$prob[[v]][[s2]] <- NULL ## delete one of the two
+    
+    if (!is.null(sevt$ll)) {
+      ## update log likelihood
+      pr <- sevt$prob[[v]][[s1]]
+      pr[pr == 0] <- 1  # log(1) will be 0, do not affect the results.
+      sevt$ll <- sevt$ll - dll +  sum((ct1 + ct2) * log(pr))
+      attr(sevt$ll, "df") <- attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
     }
   }
   return(sevt)
