@@ -87,6 +87,25 @@ test_that("test that probabilities are probabilities (full model)", {
       expect_equal(sum(sev$prob[[i]][[s]]), 1) ## test prob sum up to one
     }
   }
+
+})
+
+
+
+test_that("test that NaN probabilities (lambda = 0) corresponds to 0 contingency table", {
+  DD <- generate_linear_dataset(6, 100)
+  m0 <- full(DD, fit = TRUE, lambda = 0)
+  m0 <- join_zero_counts(m0)
+  m1 <- bhc.sevt(m0)
   
+  for (i in 1:6) {
+    for(s in 1:length(m1$stages[[i]])) {
+      if(all(m1$ctables[[i+1]][s, ] == c(0, 0)))
+      {
+        st <- m1$stages[[i]][s]
+        expect_true(all(is.na(unlist(m1$prob[[i+1]][st]))))
+      }
+    }
+  }
   
 })
