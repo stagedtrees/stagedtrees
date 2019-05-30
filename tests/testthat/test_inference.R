@@ -61,3 +61,11 @@ test_that("probabilities sum to 1", {
   pr <- prob.sevt(sev, expand.grid(sev$tree[1:3]))  
   expect_true(all( abs(sum(pr) - 1) < 1e-10 ))
 })
+
+
+test_that("lambda equals to 0 does work", {
+  DD <- generate_linear_dataset(7, 100)
+  m0 <- full(DD, fit = TRUE, lambda = 0)
+  m0 <- join_zero_counts(m0)
+  m1 <- bhc.sevt(m0)
+})
