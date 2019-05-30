@@ -193,19 +193,22 @@ bhc.sevt <-
             s1 <- stages[i]
             for (j in 1:(i - 1)) {
               s2 <- stages[j]
-              try <-
-                join_stages(object, v, s1, s2) ## join the 2 stages
+              
+              if(sum(!is.na(object$prob[[v]][[s1]])[1] * 1) + sum(!is.na(object$prob[[v]][[s2]])[1]*1) == 2) {
+              try <- join_stages(object, v, s1, s2) ## join the 2 stages
               try_score <- score(try)
-              if (try_score >= temp_score) {
+             
+              if(try_score >= temp_score) {
                 temp <- try
                 temp_score <- try_score
                 s1a <- s1
                 s2a <- s2
                 done <- FALSE
               }
+              }
             }
           }
-        } ##end if there are more than 1 stage
+        } ## end if there are more than 1 stage
         object <- temp
         now_score <- temp_score
         if ( (trace > 1) && !done) {
