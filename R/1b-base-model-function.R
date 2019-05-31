@@ -228,21 +228,21 @@ sevt.fit <- function(sevt,
   order <- names(sevt$tree)
   dims <- sapply(sevt$tree, length)
   sevt$prob <- list()
-  n <- sum(sevt$ctables[[order[1]]])
-  pp <- sevt$ctables[[order[1]]] + lambda
+  n <- sum(sevt$ctables[[ order[1] ]])
+  pp <- sevt$ctables[[ order[1] ]] + lambda
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
-  sevt$prob[[order[1]]] <- list("1" = pp)
+  sevt$prob[[ order[1] ]] <- list("1" = pp)
   #lambda <- lambda / dims[1]
   for (i in 2:length(order)) {
-    stages <- unique(sevt$stages[[order[i]]])
+    stages <- unique(sevt$stages[[ order[i] ]])
     sevt$prob[[order[i]]] <-
       lapply(stages, function(s) {
         ix <- sevt$stages[[order[i]]] == s
         if (sum(ix) > 1) {
-          tt <- apply(sevt$ctables[[order[i]]][ix,], MARGIN = 2, sum)
+          tt <- apply(sevt$ctables[[ order[i] ]][ix,], MARGIN = 2, sum)
         } else{
-          tt <- sevt$ctables[[order[i]]][ix,]
+          tt <- sevt$ctables[[ order[i] ]][ix,]
         }
         names(tt) <- sevt$tree[[order[i]]]
         n <- sum(tt) ##compute sample size
@@ -317,9 +317,11 @@ set_stage <- function(sevt, path, stage) {
   return(sevt)
 }
 
-#' Join two stages
+#' Join stages
 #'
-#' Probabilities are recomputed
+#' Join two stages in a staged event tree object, updating
+#' probabilities and log-likelihood accordingly.
+#'   
 #'
 #' @param sevt staged event tree
 #' @param v variable
@@ -330,20 +332,19 @@ set_stage <- function(sevt, path, stage) {
 join_stages <- function(sevt, v,  s1, s2) {
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  d <- dim(sevt$paths[[v]])[2]
   k <- length(sevt$tree[[v]])
   st <- sevt$stages[[v]]
   sevt$stages[[v]][st == s2] <- s1
   if (!is.null(sevt$prob)) {
-    n2 <- attr(sevt$prob[[v]][[s2]], "n")
-    n1 <- attr(sevt$prob[[v]][[s1]], "n")
-    ct1 <-
-      sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k) - sevt$lambda
-    ct2 <-
-      sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
+    p1 <- sevt$prob[[v]][[s1]]
+    p2 <- sevt$prob[[v]][[s2]]
+    n2 <- attr(p2, "n")
+    n1 <- attr(p1, "n")
+    ct1 <- ifelse(is.nan(p1), 0, p1) * (n1 + sevt$lambda * k) - sevt$lambda
+    ct2 <- ifelse(is.nan(p2), 0, p2) * (n2 + sevt$lambda * k) - sevt$lambda
     dll <-
-      sum(ct2 * log(sevt$prob[[v]][[s2]])) +
-      sum(ct1 * log(sevt$prob[[v]][[s1]]))
+      sum(ct2[ct2 > 0] * log(p2[ct2 > 0])) +
+      sum(ct1[ct1 > 0] * log(p1[ct1 > 0]))
     sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
     sevt$prob[[v]][[s1]] <-
@@ -351,9 +352,10 @@ join_stages <- function(sevt, v,  s1, s2) {
     sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
     if (!is.null(sevt$ll)) {
       ## update log likelihood
+      ct1 <- ct1 + ct2
       sevt$ll <-
-        sevt$ll - dll +  sum((ct1 + ct2) *
-                               log(sevt$prob[[v]][[s1]]))
+        sevt$ll - dll +  sum(ct1[ct1 > 0] *
+                               log(sevt$prob[[v]][[s1]][ct1 > 0]))
       attr(sevt$ll, "df") <-
         attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
     }
@@ -447,7 +449,6 @@ indep.default <- function(x, ...){
 indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
   model <- staged_ev_tree(x, fit = FALSE, full = FALSE, ...)
   model$prob <- list()
-  model$ctables <- strt_ev_tree(x, fit = TRUE, ...)$ctables
   var <- names(model$tree)
   if (fit){
     model$lambda <- lambda
@@ -456,18 +457,18 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
       ctab <- table(x[[v]])
       n <- sum(ctab)
       model$prob[[v]] <- list("1" =  ctab + lambda)
-      model$prob[[v]][[1]] <-
-        model$prob[[v]][[1]] / sum(model$prob[[v]][[1]])
-      attr(model$prob[[v]][[1]], "n") <- n
+      model$prob[[v]][["1"]] <-
+        model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
+      attr(model$prob[[v]][["1"]], "n") <- n
       ix <- ctab > 0
       model$ll <-
-        model$ll + sum(ctab[ix] * log(model$prob[[v]][[1]][ix]))
+        model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
     }
     attr(model$ll, "df") <-
       sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
     attr(model$ll, "nobs") <- nrow(x)
     class(model$ll) <- "logLik"
-    model$ctables <- strt_ev_tree(x, fit = TRUE)$ctables
+    model$ctables <- strt_ev_tree(x, fit = TRUE, ...)$ctables
   }
   return(model)
 }
@@ -583,23 +584,27 @@ subtree.sevt <- function(object, path) {
   m <- 1
   idx <- tree_idx(path, object$tree)
   stage <- find_stage(object, path)
-  object$tree[1:length(path)] <- NULL ##remove previous variables
-  object$stages[1:length(path)] <- NULL ##remove stages info
+  varout <- varnames.sevt(object)[ 1:length(path) ]
+  object$tree[varout] <- NULL ##remove previous variables
+  object$stages[varout] <- NULL ##remove stages info
+  var <- varnames.sevt(object)
+  object$stages[[ var[1]  ]] <- c(stage) ##keep stage name for first variable
   for (i in 2:length(object$tree)) {
-    m <- m * length(object$tree[[i - 1]])
-    object$stages[[i - 1]] <-
-      object$stages[[i - 1]][((idx - 1)  * m):(idx  * m - 1) + 1]
+    m <- m * length(object$tree[[ var[i - 1] ]])
+    object$stages[[ var[i] ]] <-
+      object$stages[[ var[i] ]][((idx - 1)  * m):(idx  * m - 1) + 1]
   }
   if (is_fitted.sevt(object)) {
-    object$prob[1:length(path)] <- NULL
-    object$prob[[1]] <- object$prob[[1]][stage]
+    object$prob[ varout ] <- NULL
+    object$prob[[ var[1] ]] <- object$prob[[ var[1] ]][stage]
     for (i in 2:length(object$tree)) {
       ###to do: clean unused probabilities
     }
-    #object$ctables <- NULL
-    object$ll <- NULL
+
     #object$ll <- logLik(object)
   }
+  object$ctables <- NULL
+  object$ll <- NULL
   return(object)
 }
 
@@ -653,9 +658,9 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' @examples
 #'
 #' #########
-#' data("Trump")
-#' mod1 <- bhc.sevt(full(Trump, lambda = 1))
-#' mod2 <- fbhc.sevt(full(Trump, lambda = 1))
+#' data("PhDArticles")
+#' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
+#' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 #' compare.sevt(mod1, mod2)
 compare.sevt <-
   function(object1,
@@ -719,7 +724,8 @@ varnames.sevt <- function(x){
 #' nvar.sevt(mod)
 #' @export
 nvar.sevt <- function(x){
-  length(names(x))
+  stopifnot(is(x, "sevt"))
+  length(names(x$tree))
 }
 
 

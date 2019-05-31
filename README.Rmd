@@ -43,15 +43,15 @@ A staged event tree object (`sevt` class) can be created with the function
 in a `data.frame` or `table` object. 
 
 ```{r example}
-# Load the Trump tweets data
-data("Trump")
+# Load the PhDArticles data
+data("PhDArticles")
 
 # Create the independence model 
-mod_indep <- indep(Trump, lambda = 1)
+mod_indep <- indep(PhDArticles, lambda = 1)
 mod_indep
 
 #Create the full (saturated) model
-mod_full <- full(Trump, lambda = 1) 
+mod_full <- full(PhDArticles, lambda = 1) 
 mod_full
 ```
 
@@ -102,10 +102,10 @@ mod5
 
 Obtain marginal probabilities with the  `prob.sevt` function.
 ```{r}
-# estimated probability of (Source = "iOS", Sentiment = "Negative")
+# estimated probability of c(Gender = "male", Married = "yes")
 # using different models
-prob.sevt(mod_indep, c(Source = "iOS", Sentiment = "Negative")) 
-prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
+prob.sevt(mod_indep, c(Gender = "male", Married = "yes")) 
+prob.sevt(mod3, c(Gender = "male", Married = "yes"))
 ```
 
 Or for a  `data.frame` of observations:
@@ -122,8 +122,8 @@ A staged event tree object can be used to make predictions with the
 first variable (root) in the tree will be used. 
 
 ```{r}
-predicted <- predict(mod3, newdata = Trump)
-table(predicted, Trump$Source)
+predicted <- predict(mod3, newdata = PhDArticles)
+table(predicted, PhDArticles$Articles)
 ```
 
 ##### Sampling
@@ -158,11 +158,11 @@ text(mod4, y = -0.03, cex = 0.7)
 ##### Stages
 
 ```{r}
-stages.sevt(mod4, "Time")
+stages.sevt(mod4, "Kids")
 ```
 
 ```{r}
-stageinfo.sevt(mod4, var = "Time")
+stageinfo.sevt(mod4, var = "Kids")
 ```
 
 ##### Subtrees
@@ -171,7 +171,7 @@ A subtree can be extracted, the result is another staged event tree object
 in the remaining variables.
 
 ```{r}
-sub <- subtree.sevt(mod4, c("iOS", ">20"))
+sub <- subtree.sevt(mod4, c(">2", "female"))
 plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```

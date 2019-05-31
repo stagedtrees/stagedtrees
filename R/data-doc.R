@@ -48,23 +48,3 @@
 #' @references Long, J. S. (1990). The origins of sex differences in science.
 #'  *Social Forces*, 68(4), 1297-1316.
 "PhDArticles"
-
-#' IsReallyTrump
-#'
-#' Information about tweets posted between January 2016 and February 2017 by the Twitter account \code{realDonaldTrump}, which are either written by himself or his team. tweets posted by @realDonaldTrump are either written by himself or his team.
-#' Donald Trump is known to have used an Android smartphone to write his tweets, whereas his team
-#' uses iOS devices. 
-#' 
-#'
-#' @format A data frame with 2746 rows and 6 variables:
-#' \describe{
-#'   \item{Source}{\code{iOS} if the tweet was sent by an iOS device, \code{Android} otherwise}
-#'   \item{Words}{\code{>20} if the tweet has more than 20 words, \code{<=20} otherwise}
-#'   \item{Sentiment}{\code{Negative} if the overall sentiment of the tweet was negative, \code{Positive} if the overall sentiment of the tweet was positive, or \code{Other} otherwise}
-#'   \item{Day}{\code{Weekdays} or \code{Weekend}}
-#'   \item{Time}{\code{>10am} if the tweet was sent after 10am , \code{<=10am} otherwise}
-#'   \item{URL}{\code{TRUE} if the tweet included an URL, \code{FALSE} otherwise}
-#' }
-#' 
-#' @source \url{https://github.com/kahultman/trump-tweets}
-"Trump"

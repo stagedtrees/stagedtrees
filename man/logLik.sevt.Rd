@@ -17,7 +17,7 @@ Compute log lik of a staged tree
 \examples{
 
 #########
-data("Trump")
-mod <- staged_ev_tree(Trump)
+data("PhDArticles")
+mod <- staged_ev_tree(PhDArticles)
 logLik(mod)
 }
