@@ -754,3 +754,44 @@ df.sevt <- function(x){
       x$tree, FUN = length, FUN.VALUE = 1
     ) - 1))
 }
+                        
+ 
+#' Compare where two staged event tree are exactly equal
+#' 
+#' @param object1 a staged event tree
+#' @param object2 a staged event tree
+#' 
+#' @return list of the same dimension of object1$stages and object1$stages, with 1 if the corresponding stages are exactly equal or 0 otherwise.
+#' @examples 
+#' m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
+#' m1 <- bhc.sevt(m0)
+#' m1 <- stndnaming.sevt(m1) # it works also without the stndnaming of the stages.
+#' m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
+#' m2 <- stndnaming.sevt(m2)
+#' exact.equality(m1, m2)
+exact.equality <- function(object1, object2) {
+  out <- rep(list(c()), length(object1$stages))
+  attr(out, "names") <- attr(object1$stages, "names")
+  
+  for(k in 1:length(object1$stages)) {
+    
+    a <- object1$stages[[k]]
+    b <- object2$stages[[k]]
+    unique_a <- unique(a)
+    unique_b <- unique(b)
+    out_a <- out_b <- rep(0, length(a))
+    
+    for(i in 1:length(unique_a)) {
+      ifelse((length(unique(b[which(a == unique_a[i])])) == 1),  out_a[which(a == unique_a[i])] <- 1, out_a[which(a == unique_a[i])] <- 0)
+    }
+    
+    for(i in 1:length(unique_b)) {
+      ifelse((length(unique(a[which(b == unique_b[i])])) == 1), out_b[which(b == unique_b[i])] <- 1, out_b[which(b == unique_b[i])] <- 0)
+    }
+    
+    # stages exactly equal have sign(out_a) + sign(out_b) == 2.
+    out[[k]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 1, 0)
+  }
+  return(out)
+}                        
+                        
