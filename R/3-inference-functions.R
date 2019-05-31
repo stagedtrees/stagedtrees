@@ -138,8 +138,8 @@ logLik.strt_ev_tree <- function(object, ...) {
 #' @examples
 #'
 #' #########
-#' data("Trump")
-#' mod <- staged_ev_tree(Trump)
+#' data("PhDArticles")
+#' mod <- staged_ev_tree(PhDArticles)
 #' logLik(mod)
 logLik.sevt <- function(object, ...) {
   if (!is.null(object$ll)) {

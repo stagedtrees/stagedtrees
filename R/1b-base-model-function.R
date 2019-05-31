@@ -658,9 +658,9 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' @examples
 #'
 #' #########
-#' data("Trump")
-#' mod1 <- bhc.sevt(full(Trump, lambda = 1))
-#' mod2 <- fbhc.sevt(full(Trump, lambda = 1))
+#' data("PhDArticles")
+#' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
+#' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 #' compare.sevt(mod1, mod2)
 compare.sevt <-
   function(object1,
