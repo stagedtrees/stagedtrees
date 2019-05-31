@@ -29,22 +29,22 @@ With the `stagedtrees` package it is possible to fit (stratified) staged event t
 A staged event tree object (`sevt` class) can be created with the function `staged_ev_tree`, or with the functions `indep` and `full`. In general we create a staged event tree from data in a `data.frame` or `table` object.
 
 ``` r
-# Load the Trump tweets data
-data("Trump")
+# Load the PhDArticles data
+data("PhDArticles")
 
 # Create the independence model 
-mod_indep <- indep(Trump, lambda = 1)
+mod_indep <- indep(PhDArticles, lambda = 1)
 mod_indep
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -11868.2 (df=7)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4407.498 (df=8)
 
 #Create the full (saturated) model
-mod_full <- full(Trump, lambda = 1) 
+mod_full <- full(PhDArticles, lambda = 1) 
 mod_full
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -10027.01 (df=95)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4066.97 (df=143)
 ```
 
 #### Model selection
@@ -62,8 +62,8 @@ This methods perform optimization of the model for a given score using different
 mod1 <- hc.sevt(mod_indep)
 mod1
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -10060.23 (df=16)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4118.434 (df=14)
 ```
 
 -   **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
@@ -72,8 +72,8 @@ mod1
 mod2 <- bhc.sevt(mod_full)
 mod2
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -10032.62 (df=20)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4086.254 (df=19)
 ```
 
 -   **Backward Fast Hill-Climbing** `fbhc.sevt(object, score, max_iter, trace)`
@@ -82,8 +82,8 @@ mod2
 mod3 <- fbhc.sevt(mod_full, score = function(x) -BIC(x))
 mod3
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -10075.96 (df=16)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4146.642 (df=14)
 ```
 
 ##### Distance methods
@@ -94,8 +94,8 @@ mod3
 mod4 <- bj.sevt(mod_full)
 mod4
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -10062.74 (df=18)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4090.79 (df=22)
 ```
 
 -   **Naive model** `naive.sevt(full, distance, k)`
@@ -104,8 +104,8 @@ mod4
 mod5 <- naive.sevt(mod_full)
 mod5
 ## Staged event tree (fitted) 
-## Source[2] -> Words[2] -> Sentiment[3] -> Day[2] -> Time[2] -> URL[2]  
-## 'log Lik.' -10214.4 (df=13)
+## Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+## 'log Lik.' -4118.437 (df=14)
 ```
 
 #### Probabilities, predictions and sampling
@@ -115,12 +115,12 @@ mod5
 Obtain marginal probabilities with the `prob.sevt` function.
 
 ``` r
-# estimated probability of (Source = "iOS", Sentiment = "Negative")
+# estimated probability of c(Gender = "male", Married = "yes")
 # using different models
-prob.sevt(mod_indep, c(Source = "iOS", Sentiment = "Negative")) 
-## [1] 0.1994159
-prob.sevt(mod3, c(Source = "iOS", Sentiment = "Negative"))
-## [1] 0.1646671
+prob.sevt(mod_indep, c(Gender = "male", Married = "yes")) 
+## [1] 0.3573183
+prob.sevt(mod3, c(Gender = "male", Married = "yes"))
+## [1] 0.3934668
 ```
 
 Or for a `data.frame` of observations:
@@ -129,19 +129,19 @@ Or for a `data.frame` of observations:
 obs <- expand.grid(mod_full$tree[c(2,3,5)])
 p <- prob.sevt(mod2, obs)
 cbind(obs, P = p)
-##    Words Sentiment   Time          P
-## 1   <=20  Negative <=10am 0.02306711
-## 2    >20  Negative <=10am 0.12653622
-## 3   <=20  Positive <=10am 0.04933506
-## 4    >20  Positive <=10am 0.07176951
-## 5   <=20     Other <=10am 0.02637204
-## 6    >20     Other <=10am 0.03101888
-## 7   <=20  Negative  >10am 0.10120134
-## 8    >20  Negative  >10am 0.14709251
-## 9   <=20  Positive  >10am 0.15850574
-## 10   >20  Positive  >10am 0.11137642
-## 11  <=20     Other  >10am 0.11570095
-## 12   >20     Other  >10am 0.03802423
+##    Gender Kids Mentor          P
+## 1    male  yes    low 0.07208877
+## 2  female  yes    low 0.03176117
+## 3    male   no    low 0.09832136
+## 4  female   no    low 0.11463987
+## 5    male  yes medium 0.09915181
+## 6  female  yes medium 0.03452265
+## 7    male   no medium 0.10643086
+## 8  female   no medium 0.14830958
+## 9    male  yes   high 0.08660225
+## 10 female  yes   high 0.02187397
+## 11   male   no   high 0.07702539
+## 12 female   no   high 0.10927233
 ```
 
 ##### Predictions
@@ -149,24 +149,25 @@ cbind(obs, P = p)
 A staged event tree object can be used to make predictions with the `predict` method. The class variable can be specified, otherwise the first variable (root) in the tree will be used.
 
 ``` r
-predicted <- predict(mod3, newdata = Trump)
-table(predicted, Trump$Source)
+predicted <- predict(mod3, newdata = PhDArticles)
+table(predicted, PhDArticles$Articles)
 ##          
-## predicted Android  iOS
-##   Android    1262  315
-##   iOS         108 1061
+## predicted   0 1-2  >2
+##       0    32  34  19
+##       1-2 225 351 149
+##       >2   18  39  48
 ```
 
 ##### Sampling
 
 ``` r
 sample.sevt(mod4, 5)
-##    Source Words Sentiment      Day   Time URL
-## 1     iOS  <=20  Negative Weekdays  >10am   0
-## 2     iOS  <=20     Other Weekdays  >10am   0
-## 3 Android  <=20  Negative  Weekend <=10am   0
-## 4     iOS  <=20  Negative Weekdays  >10am   1
-## 5 Android   >20     Other  Weekend <=10am   0
+##   Articles Gender Kids Married Mentor Prestige
+## 1      1-2   male   no     yes medium      low
+## 2      1-2 female   no      no medium      low
+## 3      1-2 female   no     yes    low     high
+## 4      1-2 female   no     yes medium     high
+## 5       >2   male   no     yes    low      low
 ```
 
 #### Explore the model
@@ -176,17 +177,17 @@ sample.sevt(mod4, 5)
 ``` r
 # Degrees of freedom
 df.sevt(mod_full)
-## [1] 95
+## [1] 143
 df.sevt(mod_indep)
-## [1] 7
+## [1] 8
 
 # variables 
 varnames.sevt(mod1)
-## [1] "Source"    "Words"     "Sentiment" "Day"       "Time"      "URL"
+## [1] "Articles" "Gender"   "Kids"     "Married"  "Mentor"   "Prestige"
 
 # number of variables
 nvar.sevt(mod1)
-## [1] 7
+## [1] 6
 ```
 
 ##### Plot
@@ -202,30 +203,23 @@ text(mod4, y = -0.03, cex = 0.7)
 ##### Stages
 
 ``` r
-stages.sevt(mod4, "Time")
-##  [1] "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "1"  "13" "13"
-## [15] "13" "13" "13" "13" "13" "13" "13" "22" "13" "22"
+stages.sevt(mod4, "Kids")
+## [1] "1" "2" "1" "2" "1" "2"
 ```
 
 ``` r
-stageinfo.sevt(mod4, var = "Time")
-## Stage  1 for variable Time 
-##    12 nodes in the stage 
-##    probabilities: <=10am      >10am 
-##                   0.517       0.483      
-##    sample size: 1370 
+stageinfo.sevt(mod4, var = "Kids")
+## Stage  1 for variable Kids 
+##    3 nodes in the stage 
+##    probabilities: yes      no 
+##                   0.478    0.522   
+##    sample size: 494 
 ## --------------------------------
-## Stage  13 for variable Time 
-##    10 nodes in the stage 
-##    probabilities: <=10am      >10am 
-##                   0.144       0.856      
-##    sample size: 1327 
-## --------------------------------
-## Stage  22 for variable Time 
-##    2 nodes in the stage 
-##    probabilities: <=10am      >10am 
-##                   0.02       0.98      
-##    sample size: 49 
+## Stage  2 for variable Kids 
+##    3 nodes in the stage 
+##    probabilities: yes      no 
+##                   0.191    0.809   
+##    sample size: 421 
 ## --------------------------------
 ```
 
@@ -234,7 +228,7 @@ stageinfo.sevt(mod4, var = "Time")
 A subtree can be extracted, the result is another staged event tree object in the remaining variables.
 
 ``` r
-sub <- subtree.sevt(mod4, c("iOS", ">20"))
+sub <- subtree.sevt(mod4, c(">2", "female"))
 plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
@@ -254,12 +248,12 @@ Penalized log-likelihood.
 
 ``` r
 BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
-##           df      BIC
-## mod_indep  7 23791.82
-## mod_full  95 20806.23
-## mod1      16 20247.15
-## mod2      20 20223.59
-## mod3      16 20278.60
-## mod4      18 20268.00
-## mod5      13 20531.74
+##            df      BIC
+## mod_indep   8 8869.548
+## mod_full  143 9109.046
+## mod1       14 8332.333
+## mod2       19 8302.067
+## mod3       14 8388.749
+## mod4       22 8331.596
+## mod5       14 8332.338
 ```
