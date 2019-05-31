@@ -317,9 +317,11 @@ set_stage <- function(sevt, path, stage) {
   return(sevt)
 }
 
-#' Join two stages
+#' Join stages
 #'
-#' Probabilities are recomputed
+#' Join two stages in a staged event tree object, updating
+#' probabilities and log-likelihood accordingly.
+#'   
 #'
 #' @param sevt staged event tree
 #' @param v variable
@@ -330,20 +332,19 @@ set_stage <- function(sevt, path, stage) {
 join_stages <- function(sevt, v,  s1, s2) {
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  d <- dim(sevt$paths[[v]])[2]
   k <- length(sevt$tree[[v]])
   st <- sevt$stages[[v]]
   sevt$stages[[v]][st == s2] <- s1
   if (!is.null(sevt$prob)) {
-    n2 <- attr(sevt$prob[[v]][[s2]], "n")
-    n1 <- attr(sevt$prob[[v]][[s1]], "n")
-    ct1 <-
-      sevt$prob[[v]][[s1]] * (n1 + sevt$lambda * k) - sevt$lambda
-    ct2 <-
-      sevt$prob[[v]][[s2]] * (n2 + sevt$lambda * k) - sevt$lambda
+    p1 <- sevt$prob[[v]][[s1]]
+    p2 <- sevt$prob[[v]][[s2]]
+    n2 <- attr(p2, "n")
+    n1 <- attr(p1, "n")
+    ct1 <- ifelse(is.nan(p1), 0, p1) * (n1 + sevt$lambda * k) - sevt$lambda
+    ct2 <- ifelse(is.nan(p2), 0, p2) * (n2 + sevt$lambda * k) - sevt$lambda
     dll <-
-      sum(ct2 * log(sevt$prob[[v]][[s2]])) +
-      sum(ct1 * log(sevt$prob[[v]][[s1]]))
+      sum(ct2[ct2 > 0] * log(p2[ct2 > 0])) +
+      sum(ct1[ct1 > 0] * log(p1[ct1 > 0]))
     sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
     attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
     sevt$prob[[v]][[s1]] <-
@@ -351,9 +352,10 @@ join_stages <- function(sevt, v,  s1, s2) {
     sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
     if (!is.null(sevt$ll)) {
       ## update log likelihood
+      ct1 <- ct1 + ct2
       sevt$ll <-
-        sevt$ll - dll +  sum((ct1 + ct2) *
-                               log(sevt$prob[[v]][[s1]]))
+        sevt$ll - dll +  sum(ct1[ct1 > 0] *
+                               log(sevt$prob[[v]][[s1]][ct1 > 0]))
       attr(sevt$ll, "df") <-
         attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
     }

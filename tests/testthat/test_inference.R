@@ -71,3 +71,25 @@ test_that("probabilities sum to 1", {
   pr <- prob.sevt(sev, expand.grid(sev$tree[1:3]))  
   expect_true(all( abs(sum(pr) - 1) < 1e-10 ))
 })
+
+
+context("logLik.sevt")
+
+test_that("logLik after joining", {
+  DD <- generate_linear_dataset(5, 10)
+  levels(DD$C) <- c("a", "b")
+  levels(DD$X3) <- c("qqqq", "pppp")
+  
+  invisible(replicate(20, {
+    v <- sample(colnames(DD)[-1], size = 1)
+    lambda <- sample(c(0,1,2), size = 1)
+    sev <- full(DD, lambda = lambda)
+    stages <- sample(sev$stages[[v]], size = 2, replace = FALSE)
+    sev <- join_stages(sev, v, stages[1], stages[2])
+    ll1 <- logLik(sev)
+    sev$ll <- NULL
+    ll2 <- logLik(sev)
+    expect_equal(ll1,ll2)  
+  }))
+})
+
