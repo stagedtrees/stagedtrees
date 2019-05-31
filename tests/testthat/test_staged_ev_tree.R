@@ -17,6 +17,14 @@ test_that("test that the creator works for data.frame", {
   expect_is(ev, "sevt")
 })
 
+test_that("test that the creator works for tables", {
+  DD <-
+    data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
+  DD <- table(DD)
+  ev <- staged_ev_tree(x = DD, order = c("B", "A"))
+  expect_is(ev, "sevt")
+})
+
 test_that("test that the staged event tree is created with the right order I", {
   ev <-
     staged_ev_tree(x = list(
@@ -66,6 +74,14 @@ test_that("test that probabilities are probabilities (indep model)", {
     expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
   }
   
+  sev <- indep(DD, lambda = 1)
+  for (i in 1:4) {
+    for (j in 1:3) {
+      expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
+    }
+    expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
+  }
+  
 })
 
 test_that("test that probabilities are probabilities (full model)", {
@@ -76,9 +92,9 @@ test_that("test that probabilities are probabilities (full model)", {
     )))
   }))
   sev <- staged_ev_tree(DD,
+                        full = TRUE,
                         fit = T,
-                        lambda = 1,
-                        method =  "full")
+                        lambda = 1)
   for (i in 1:4) {
     for (s in 1:length(sev$prob[[i]])) {
       for (j in 1:3) {
@@ -88,5 +104,26 @@ test_that("test that probabilities are probabilities (full model)", {
     }
   }
   
+  sev <- full(DD, lambda = 1)
+  for (i in 1:4) {
+    for (j in 1:3) {
+      expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
+    }
+    expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
+  }
+})
+
+
+test_that("test indep model", {
+  DD <- as.data.frame(sapply(1:4, function(i) {
+    return(as.factor(sample(
+      c(0, 1, 2), size = 100,
+      replace = TRUE
+    )))
+  }))
+  sev1 <- staged_ev_tree(DD, lambda = 1)
   
+  sev2 <- indep(DD, lambda = 1)
+  
+  expect_true(compare.sevt(sev1, sev2))
 })

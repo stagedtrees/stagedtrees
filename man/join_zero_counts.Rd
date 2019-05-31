@@ -4,7 +4,7 @@
 \alias{join_zero_counts}
 \title{Join situations with no observations}
 \usage{
-join_zero_counts(object, fit = TRUE, trace = 0)
+join_zero_counts(object, fit = TRUE, trace = 0, name = NULL)
 }
 \arguments{
 \item{object}{a fitted staged event tree}
@@ -12,6 +12,8 @@ join_zero_counts(object, fit = TRUE, trace = 0)
 \item{fit}{if the probability should be re-computed}
 
 \item{trace}{if \code{>0} print information to console}
+
+\item{name}{string with a name for the new stage}
 }
 \value{
 a staged event tree with situations with 0
@@ -31,6 +33,8 @@ If \code{fit=TRUE} the model will be then re-fitted, if user sets
 \code{fit = FALSE} the returned model will have no probabilities.
 }
 \examples{
+
+#########
 DD <- generate_xor_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 model <- join_zero_counts(model_full, fit = TRUE)

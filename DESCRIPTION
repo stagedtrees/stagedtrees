@@ -1,19 +1,29 @@
 Package: stagedtrees
 Type: Package
 Title: Staged Event Trees 
-Version: 0.0.4
-Author: gherardo varando
-Maintainer: gherardo varando <gherardo.varando@gmail.com>
-Description: Package to define and fit staged event tree probability models.
+Version: 0.9.2.9000
+Author: Gherardo Varando, Federico Carli, Manuele Leonelli, Eva Riccomagno
+Authors@R: c(
+  person(given = "Gherardo", family = "Varando", role = c("aut", "cre"),
+  email = "gherardo.varando@gmail.com", 
+	comment = c(ORCID = "0000-0002-6708-1103")),
+	person(given = "Federico", family = "Carli", role = "aut"),
+	person(given = "Manuele", family = "Leonelli", role = "aut"),
+	person(given = "Eva", family = "Riccomagno", role = "aut")
+	)
+Maintainer: Gherardo Varando <gherardo.varando@gmail.com>
+Description: Package to create and fit staged event tree probability models.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
-Suggests: testthat,
-          bnlearn
 Url: https://github.com/gherardovarando/stagedtrees
 BugReports: https://github.com/gherardovarando/stagedtrees/issues
 Imports: stats,
          graphics,
          methods
+Suggests: 
+    testthat,
+    bnlearn,
+    covr
