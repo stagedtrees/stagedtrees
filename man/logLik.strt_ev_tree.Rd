@@ -15,8 +15,11 @@
 Compute log lik of a stratified tree
 }
 \examples{
-DD <- DD <- as.data.frame(sapply(1:5, function(i){
-                          return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
+
+#########
+DD <- as.data.frame(sapply(1:5, function(i){
+                          return(as.factor(sample(c(1:3),
+                          size=100, replace = TRUE)))
                      }))
 sevt <- staged_ev_tree(DD, fit = TRUE)
 evt <- strt_ev_tree(sevt)

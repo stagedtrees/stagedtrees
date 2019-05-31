@@ -9,7 +9,9 @@
 \alias{staged_ev_tree.bn.fit}
 \alias{staged_ev_tree.strt_ev_tree}
 \alias{full}
-\alias{effindep.sevt}
+\alias{indep}
+\alias{indep.default}
+\alias{indep.data.frame}
 \title{Staged (stratified) event tree}
 \usage{
 staged_ev_tree(x, ...)
@@ -30,13 +32,17 @@ staged_ev_tree(x, ...)
 
 full(x, ...)
 
-effindep.sevt(x, lambda = 0, ...)
+indep(x, ...)
+
+\method{indep}{default}(x, ...)
+
+\method{indep}{data.frame}(x, fit = TRUE, lambda = 0, ...)
 }
 \arguments{
 \item{x}{data.frame, list, table, \code{bn.fit} object}
 
 \item{...}{additional parameters to be passed
-to the appropiate method, see \link{fit.sevt}}
+to the appropiate method, see \link{sevt.fit}}
 
 \item{order}{order of the variables}
 
@@ -47,7 +53,7 @@ to the appropiate method, see \link{fit.sevt}}
 \item{lambda}{smoothing parameter}
 }
 \value{
-A staged event tree object (see Details)
+A staged event tree object
 }
 \description{
 Builds the staged event tree for a set of categorical variables,
@@ -56,35 +62,42 @@ the order can be specified.
 \details{
 A staged event tree object is a list with components:
 \itemize{
-\item tree: A named list where for each variable, the levels of
-such variable are listed. The order of the variable is the
+\item tree: A named list where for each variable,
+the levels of such variable are listed.
+The order of the variable is the
 order of the event tree.
-\item stages: A named list where each component stores the stages
-for the given variable.
-\item prob: The conditional probability tables for every variable
-and every stage (present only if the staged event tree has been
-fitted)
-\item ctables: The contingency tables of the data
+\item stages: A named list where each component
+stores the stages for the given variable.
+\item prob: The conditional probability tables for every
+variable and every stage.
+\item ctables: The contingency tables of the data.
 }
 }
 \examples{
 
+######### from data.frame
 DD <- generate_random_dataset(n = 5, 1000)
-sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
-sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
+indep <- staged_ev_tree(DD, fit = TRUE)
+full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
+
+######### from table
 data("Titanic")
-model <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
-plot(model)
-DD <- generate_random_dataset(n = 5, 1000)
-sevt <- staged_ev_tree(DD, fit = TRUE, full = FALSE)
+modT <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
+plot(modT)
 
-###################
-model <- staged_ev_tree(list(X = c("good", "bad"), Y = c("high", "low")))
+######### from list
+model <- staged_ev_tree(list(X = c("good", "bad"),
+                             Y = c("high", "low")))
 
-###################################
+######### full model 
+
+DD <- generate_xor_dataset(7, 100)
+modfull <- full(DD, lambda = 1)
+
+######### independence model (data.frame)
 DD <- generate_xor_dataset(15, 100)
 system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
-system.time(model2 <- effindep.sevt(DD, lambda = 1, ctables = TRUE))
+system.time(model2 <- indep(DD, lambda = 1))
 model1
 model2
 }

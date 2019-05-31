@@ -15,9 +15,9 @@
 Compute log lik of a staged tree
 }
 \examples{
-DD <- DD <- as.data.frame(sapply(1:5, function(i){
-                          return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
-                     }))
-sevt <- staged_ev_tree(DD, fit =TRUE)
-logLik(sevt)
+
+#########
+data("PhDArticles")
+mod <- staged_ev_tree(PhDArticles)
+logLik(mod)
 }

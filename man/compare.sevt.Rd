@@ -15,10 +15,28 @@ compare.sevt(object1, object2, tree = FALSE, plot = FALSE, ...)
 
 \item{plot}{logical}
 
-\item{...}{additional paraters to be passed to \code{\link{plot.sevt}}
-
-@return Logical or a difference tree (if \code{tree = TRUE})}
+\item{...}{additional paraters to be passed to \code{\link{plot.sevt}}}
+}
+\value{
+Logical or a difference tree (if \code{tree = TRUE})
 }
 \description{
 Compare two staged event tree
+}
+\details{
+\code{compare.sevt} test if the stage structure of two \code{sevt}
+objects
+is the same by first applying \code{\link{stndnaming.sevt}} to both
+objects and then simply comparing the resulting \code{$stages} lists.
+Setting \code{tree = TRUE} will return the stages structure difference
+but at the moment is not completely correct, as the plot produced by
+\code{plot = TRUE}.
+}
+\examples{
+
+#########
+data("PhDArticles")
+mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
+mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
+compare.sevt(mod1, mod2)
 }
