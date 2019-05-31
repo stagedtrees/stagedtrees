@@ -2,7 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{join_stages}
 \alias{join_stages}
-\title{Join two stages}
+\title{Join stages}
 \usage{
 join_stages(sevt, v, s1, s2)
 }
@@ -19,5 +19,6 @@ join_stages(sevt, v, s1, s2)
 the staged event tree where \code{s1} and \code{s2} are joined
 }
 \description{
-Probabilities are recomputed
+Join two stages in a staged event tree object, updating
+probabilities and log-likelihood accordingly.
 }
