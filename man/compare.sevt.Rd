@@ -77,8 +77,6 @@ compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
 ##########
 m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
 m1 <- bhc.sevt(m0)
-m1 <- stndnaming.sevt(m1) # it works also without the stndnaming of the stages.
 m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
-m2 <- stndnaming.sevt(m2)
 stagesdiff.sevt(m1, m2)
 }
