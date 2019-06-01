@@ -531,6 +531,7 @@ stages.sevt <- function(object, var = NULL) {
 #' @export
 stageinfo.sevt <- function(object, var, stage = NULL) {
   stopifnot(is(object, "sevt"))
+  stopifnot(var %in% varnames.sevt(object))
   if (var == names(object$tree)[1]) {
     cat("First variable ", var, "\n")
     if (is_fitted.sevt(object)) {
@@ -552,6 +553,7 @@ stageinfo.sevt <- function(object, var, stage = NULL) {
     stage <- unique(object$stages[[var]])
   }
   invisible(sapply(stage, function(s) {
+    if (!(s %in% unique(object$stages[[var]]))) return() 
     s <- as.character(s)
     cat("Stage ", s, "for variable", var, "\n")
     cat("  ", sum(object$stages[[var]] == s), "nodes in the stage \n")
