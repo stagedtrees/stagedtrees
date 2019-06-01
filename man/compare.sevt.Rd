@@ -30,10 +30,12 @@ stagesdiff.sevt(object1, object2)
 Logical or a difference tree (if \code{tree = TRUE})
 }
 \description{
-Compare two staged event tree
+Compare two stages event tree, return the differences of the stages
+structure and plot the difference tree. Three different method to
+compute the difference tree are available.
 }
 \details{
-\code{compare.sevt} test if the stage structure of two \code{sevt}
+\code{compare.sevt} tests if the stage structure of two \code{sevt}
 objects
 is the same.
 Three methods are available:
@@ -50,6 +52,15 @@ stages to check if the same stage strucure is present in both models.
 Setting \code{return.tree = TRUE} will return the stages
 structure difference obtained with the selected method.
 
+With \code{plot = TRUE} the plot of the difference tree is obtained.
+
+If \code{return.tree = FALSE} the logical output is the same for the
+three methods and thus the \code{naive} method should be used
+since it is computationally faster.
+
+To use the \code{hamming} method, the package \code{clue}
+must be installed.
+
 Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
 used directly.
 }
@@ -61,6 +72,7 @@ mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 compare.sevt(mod1, mod2)
 compare.sevt(mod1, mod2, method = "hamming", plot = TRUE)
+compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
 
 ##########
 m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
