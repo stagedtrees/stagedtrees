@@ -166,7 +166,7 @@ bhcr.sevt <-
 
 #' Backword hill-climbing
 #'
-#' Hill-climbing search of staged event trees with
+#' Backword Hill-climbing search of staged event trees with
 #' iterative joining of stages
 #'
 #' @param object a staged event tree model
@@ -177,7 +177,7 @@ bhcr.sevt <-
 #' @details For each variable the algorithm try to join stages
 #' and move to the best model that increase the score. When no
 #' increase is possible it moves to the next variable.
-#' @return The final staged event tree object
+#' @return The final staged event tree object.
 #' @examples
 #'
 #' #########
@@ -249,7 +249,7 @@ bhc.sevt <-
 
 #' Fast backword hill-climbing
 #'
-#' Fast hill-climbing search of staged event trees with
+#' Fast backword hill-climbing search of staged event trees with
 #' iterative joining of stages.
 #'
 #' @param object a staged event tree model
@@ -260,7 +260,7 @@ bhc.sevt <-
 #' @details For each variable the algorithm try to join stages
 #' and move to the first model that increase the score. When no
 #' increase is possible it moves to the next variable.
-#' @return The final staged event tree obtained
+#' @return The final staged event tree obtained.
 #' @examples
 #'
 #' #########
@@ -348,7 +348,12 @@ fbhc.sevt <-
 #' @param trace if >0 increasingly amount of info
 #' @param ... additional parameters to be passed to the distance function
 #' is printed (via \code{message})
-#' @return the learned staged event tree
+#' 
+#' @details For each variable in the model stages are joined iteratively. 
+#' At each iteration the two stages with minimum distance are selected and
+#' joined if their distance is less than \code{thr}. 
+#' 
+#' @return the learned staged event tree.
 #'
 #' @examples
 #'
@@ -406,12 +411,20 @@ bj.sevt <-
 
 #' Hill-Climb Score optimization
 #'
+#' Hill-climbing search of staged event trees with
+#' iterative moving of nodes between stages.
+#' 
 #' @param object a staged event tree object
 #' @param score a function that score staged event tree objects
 #' @param max_iter the maximum number of iterations per variable
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
-#' @return A staged event tree object, the output of the optimization
+#'              
+#' @details For each variable the node-moving that best increase the 
+#' score is performed. A node-moving is either chainging the stage 
+#' associate to a node or move the node to a new stage. 
+#' 
+#' @return A staged event tree object, the output of the optimization.
 #'
 #' @examples
 #'
