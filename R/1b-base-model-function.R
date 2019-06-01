@@ -643,13 +643,17 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 
 #' Compare two staged event tree
 #'
+#' Compare two stages event tree, return the differences of the stages 
+#' structure and plot the difference tree. Three different method to 
+#' compute the difference tree are available. 
+#' 
 #' @param object1 a staged event tree
 #' @param object2 a staged event tree
 #' @param method method to compare staged event trees
 #' @param return.tree logical, if \code{TRUE} the difference tree is returned
 #' @param plot logical
 #' @param ... additional paraters to be passed to \code{\link{plot.sevt}}
-#' @details \code{compare.sevt} test if the stage structure of two \code{sevt}
+#' @details \code{compare.sevt} tests if the stage structure of two \code{sevt}
 #' objects
 #' is the same. 
 #' Three methods are available: 
@@ -664,6 +668,15 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' Setting \code{return.tree = TRUE} will return the stages 
 #' structure difference obtained with the selected method.
 #' 
+#' With \code{plot = TRUE} the plot of the difference tree is obtained. 
+#' 
+#' If \code{return.tree = FALSE} the logical output is the same for the
+#' three methods and thus the \code{naive} method should be used 
+#' since it is computationally faster.
+#' 
+#' To use the \code{hamming} method, the package \code{clue} 
+#' must be installed. 
+#' 
 #' Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
 #' used directly. 
 #'
@@ -677,6 +690,7 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 #' compare.sevt(mod1, mod2)
 #' compare.sevt(mod1, mod2, method = "hamming", plot = TRUE)
+#' compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
 compare.sevt <-
   function(object1,
            object2,
@@ -782,9 +796,7 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
 #' ##########
 #' m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
 #' m1 <- bhc.sevt(m0)
-#' m1 <- stndnaming.sevt(m1) # it works also without the stndnaming of the stages.
 #' m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
-#' m2 <- stndnaming.sevt(m2)
 #' stagesdiff.sevt(m1, m2)
 stagesdiff.sevt <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
