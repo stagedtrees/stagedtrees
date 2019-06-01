@@ -26,4 +26,5 @@ Imports: stats,
 Suggests: 
     testthat,
     bnlearn,
-    covr
+    covr,
+    clue
