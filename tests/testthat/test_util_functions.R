@@ -55,3 +55,6 @@ test_that("d(x,y) == d(y,x)", {
   b <- sapply(ds, function(d) d(y, x, alpha = alpha, p = p))
   expect_true(all( abs(a - b) < 1e-12))
 })
+
+
+

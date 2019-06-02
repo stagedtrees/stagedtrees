@@ -4,15 +4,14 @@
 \alias{tree_idx}
 \title{return path index}
 \usage{
-tree_idx(path, tree)
+tree_idx(path, tree, complete = FALSE)
 }
 \arguments{
 \item{path}{a path from root in the tree}
 
-\item{tree}{a symmetric tree given as a list of levels
+\item{tree}{a symmetric tree given as a list of levels}
 
-This function return the integer index of the node associated with the
-given path in a symmetric tree defined by \code{tree}.}
+\item{complete}{logical, if \code{TRUE} the complete indexing is returned}
 }
 \value{
 an integer, the index of the node corresponding to \code{path}
@@ -20,3 +19,15 @@ an integer, the index of the node corresponding to \code{path}
 \description{
 return path index
 }
+\details{
+Compute the integer index of the node associated with the
+given path in a symmetric tree defined by \code{tree}.
+}
+\examples{
+\dontrun{
+data("PhDArticles")
+mod <- full(PhDArticles)
+tree_idx(c("0", "male", "yes"), mod$tree)
+}
+}
+\keyword{internal}
