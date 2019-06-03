@@ -4,10 +4,10 @@
 \alias{join_stages}
 \title{Join stages}
 \usage{
-join_stages(sevt, v, s1, s2)
+join_stages(object, v, s1, s2)
 }
 \arguments{
-\item{sevt}{staged event tree}
+\item{object}{staged event tree}
 
 \item{v}{variable}
 
