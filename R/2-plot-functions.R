@@ -81,6 +81,34 @@ plot.strt_ev_tree <- function(x,
 #'         \code{text} and \code{plot.window}.
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
+#'
+#' @examples
+#' 
+#' data("PhDArticles")
+#' mod <- bj.sevt(full(PhDArticles))
+#'
+#' ### simple plotting
+#' plot(mod)
+#' 
+#' ### removing lables from nodes and edges and fill nodes
+#' plot(mod, cex.label.nodes = 0, cex.label.edges = 0, pch = 16)
+#' 
+#' ### reduce nodes size
+#' plot(mod, cex.nodes = 1)
+#' 
+#' ### change line width and nodes style
+#' plot(mod, lwd = 3, pch = 5)
+#' 
+#' ### changing palette
+#' plot(mod, col = function(s) heat.colors(length(s)))
+#'
+#' ### manually give stages colors
+#' simple <- naive.sevt(full(PhDArticles, lambda = 1))
+#' #### simple has 2 stages per variable "1" and "2"
+#' col <- lapply(simple$stages, function(s){
+#'  c("1" = "purple", "2" = "cyan")
+#' })
+#' plot(simple, col = col)
 plot.sevt <-
   function(x,
            limit = 10,
@@ -97,7 +125,7 @@ plot.sevt <-
     nms <- names(x$tree) ##name of variable
     if (is.null(col)) {
       col <- lapply(x$stages[nms[1:d]], function(stages) {
-        if (is.null(stages)){
+        if (is.null(stages)) {
           return(list("1" = "black"))
         }
         stages <- unique(stages)
@@ -107,22 +135,24 @@ plot.sevt <-
       })
     } else if (is(col, "function")) {
       col <- lapply(x$stages[nms[1:d]], function(stages) {
-        if (is.null(stages)){
+        if (is.null(stages)) {
           return(list("1" = "black"))
         }
         cs <- col(unique(stages))
         names(cs) <- unique(stages)
         return(cs)
       })
-    } else if (col == "stages") {
-      col <- lapply(x$stages[nms[1:d]], function(stages) {
-        if (is.null(stages)){
-          return(list("1" = 1))
-        }
-        stages <- unique(stages)
-        names(stages) <- stages
-        return(stages)
-      })
+    } else if (length(col) == 1 && col == "stages") {
+      if (col == "stages") {
+        col <- lapply(x$stages[nms[1:d]], function(stages) {
+          if (is.null(stages)) {
+            return(list("1" = 1))
+          }
+          stages <- unique(stages)
+          names(stages) <- stages
+          return(stages)
+        })
+      }
     }
     M <- prod(sapply(x$tree[1:d], length))
     cex.nodes <- rep(cex.nodes, d)[1:d]
@@ -150,14 +180,14 @@ plot.sevt <-
       ns <- ns / nv
       As[i - 1] <- Ls[i - 1] / (ns  + (ns - 1) / (nv - 1))
     }
-    s1 <- ifelse(is.null(x$stages[[ nms[1] ]]), "1", 
-                 x$stages[[ nms[1] ]][1] )
+    s1 <- ifelse(is.null(x$stages[[nms[1]]]), "1",
+                 x$stages[[nms[1]]][1])
     node(
       c(xlim[1], mean(ylim)),
       label = s1,
       cex.label = cex.label.nodes[1],
       cex.node = cex.nodes[1],
-      col = col[[ nms[1] ]][ s1 ], 
+      col = col[[nms[1]]][s1],
       ...
     ) #plot first node
     xx <- xlim[1]
@@ -186,10 +216,10 @@ plot.sevt <-
           if (k < d) {
             node(
               c(xx, y[j]),
-              label = x$stages[[ nms[k + 1] ]][lj],
+              label = x$stages[[nms[k + 1]]][lj],
               #label = nms[k+1],
               cex.label = cex.label.nodes[k + 1],
-              col = col[[ nms[k + 1 ] ]][x$stages[[ nms[k + 1] ]][lj]],
+              col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][lj]],
               cex.node = cex.nodes[k + 1],
               ...
             )
@@ -268,7 +298,7 @@ edge <-
 
 #' Add text to a staged even tree plot
 #'
-#' @param x a staged event tree
+#' @param x staged event tree object
 #' @param y the position of the labels
 #' @param limit maximum number of variables plotted
 #' @param xlim graphical parameter
