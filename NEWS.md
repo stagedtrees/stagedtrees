@@ -1,6 +1,8 @@
 # 0.9.4
 
 * Fix #40; `compare.sevt` works with three different methods.
+* Fix #37; `join_stages` throws error with bad stages.
+* Fix #51; tests for model selection functions.
 
 # 0.9.3 
 
