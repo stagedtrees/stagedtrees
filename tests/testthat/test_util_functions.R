@@ -1,5 +1,16 @@
 context("testing util functions")
 
+
+test_that("new_lable produce a new label",{
+  labels <- c(1:5, "6", "A", "B", "C")
+  expect_false(stagedtrees:::new_label(labels) %in% labels)
+})
+
+test_that("uni_idx works as expected", {
+  expect_silent(ui <- stagedtrees:::uni_idx(list(A = c(1,2,3), B = c(1,2,3))))
+  expect_true(all(ui$A == c("A:1", "A:2", "A:3")))
+})
+
 test_that("find_stage find the correct stage", {
   DD <- data.frame(A = as.factor(c(1,2,2,1)), B = as.factor(c("a","b","a","b")))
   ev <- strt_ev_tree(x = DD,order = c("B","A"))
@@ -9,15 +20,6 @@ test_that("find_stage find the correct stage", {
   expect_equal(c(stg1,stg2), c("1","2"))
 })
   
-
-#test_that("find_paths find the correct paths" ,{
-#  DD <- data.frame(A = as.factor(c(1,2,2,1)), B = as.factor(c("a","b","a","b")))
-#  #ev <- strt_ev_tree(x = DD,order = c("B","A"))
-#  #sevt <- staged_ev_tree(ev)
-#  #pth <- stagedtrees:::find_paths(paths = sevt$paths$A, stage = 1)
-#  #expect_equal(as.character(pth[1,1]), "a")
-#})
-
 
 context("testing distance functions")
 
@@ -55,3 +57,6 @@ test_that("d(x,y) == d(y,x)", {
   b <- sapply(ds, function(d) d(y, x, alpha = alpha, p = p))
   expect_true(all( abs(a - b) < 1e-12))
 })
+
+
+

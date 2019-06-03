@@ -2,16 +2,25 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{compare.sevt}
 \alias{compare.sevt}
+\alias{hamming.sevt}
+\alias{stagesdiff.sevt}
 \title{Compare two staged event tree}
 \usage{
-compare.sevt(object1, object2, tree = FALSE, plot = FALSE, ...)
+compare.sevt(object1, object2, method = "naive", return.tree = FALSE,
+  plot = FALSE, ...)
+
+hamming.sevt(object1, object2, return.tree = FALSE)
+
+stagesdiff.sevt(object1, object2)
 }
 \arguments{
 \item{object1}{a staged event tree}
 
 \item{object2}{a staged event tree}
 
-\item{tree}{logical, if \code{TRUE} the difference tree is returned}
+\item{method}{method to compare staged event trees}
+
+\item{return.tree}{logical, if \code{TRUE} the difference tree is returned}
 
 \item{plot}{logical}
 
@@ -21,16 +30,39 @@ compare.sevt(object1, object2, tree = FALSE, plot = FALSE, ...)
 Logical or a difference tree (if \code{tree = TRUE})
 }
 \description{
-Compare two staged event tree
+Compare two stages event tree, return the differences of the stages
+structure and plot the difference tree. Three different method to
+compute the difference tree are available.
 }
 \details{
-\code{compare.sevt} test if the stage structure of two \code{sevt}
+\code{compare.sevt} tests if the stage structure of two \code{sevt}
 objects
-is the same by first applying \code{\link{stndnaming.sevt}} to both
-objects and then simply comparing the resulting \code{$stages} lists.
-Setting \code{tree = TRUE} will return the stages structure difference
-but at the moment is not completely correct, as the plot produced by
-\code{plot = TRUE}.
+is the same.
+Three methods are available:
+\itemize{
+\item \code{naive} first applies \code{\link{stndnaming.sevt}} to both
+objects and then simply compares the resulting \code{$stages} lists.
+\item \code{hamming} uses the \code{hamming.sevt} function that try to map
+stages in the different objects finding the few number of nodes that
+must be changed to obtain the same structure.
+\item \code{stages} uses the \code{stagesdiff.sevt} function that compare
+stages to check if the same stage strucure is present in both models.
+}
+
+Setting \code{return.tree = TRUE} will return the stages
+structure difference obtained with the selected method.
+
+With \code{plot = TRUE} the plot of the difference tree is obtained.
+
+If \code{return.tree = FALSE} the logical output is the same for the
+three methods and thus the \code{naive} method should be used
+since it is computationally faster.
+
+To use the \code{hamming} method, the package \code{clue}
+must be installed.
+
+Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
+used directly.
 }
 \examples{
 
@@ -39,4 +71,12 @@ data("PhDArticles")
 mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 compare.sevt(mod1, mod2)
+compare.sevt(mod1, mod2, method = "hamming", plot = TRUE)
+compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
+
+##########
+m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
+m1 <- bhc.sevt(m0)
+m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
+stagesdiff.sevt(m1, m2)
 }

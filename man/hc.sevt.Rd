@@ -18,10 +18,16 @@ hc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf,
 printed to console}
 }
 \value{
-A staged event tree object, the output of the optimization
+A staged event tree object, the output of the optimization.
 }
 \description{
-Hill-Climb Score optimization
+Hill-climbing search of staged event trees with
+iterative moving of nodes between stages.
+}
+\details{
+For each variable the node-moving that best increase the
+score is performed. A node-moving is either chainging the stage
+associate to a node or move the node to a new stage.
 }
 \examples{
 

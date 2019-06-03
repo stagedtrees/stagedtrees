@@ -39,6 +39,7 @@ path_probability.sevt <-
 #' @param object a (fitted) staged event tree object
 #' @param x the vector or data.frame of observations
 #' @param log logical, if \code{TRUE} log-probabilities are returned
+#' @param nan0 logical, if \code{NaN} should be converted to 0 
 #' @return the probabilities for each observation
 #'
 #' @examples
@@ -49,7 +50,7 @@ path_probability.sevt <-
 #' pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
 #' sum(pr)
 #' @export
-prob.sevt <- function(object, x, log = FALSE) {
+prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted.sevt(object))
   if (is.null(dim(x))) {
@@ -75,6 +76,7 @@ prob.sevt <- function(object, x, log = FALSE) {
       ))
     }
   )
+  if (nan0) res[is.nan(res)] <- 0
   if (log) {
     return(log(res))
   } else{

@@ -4,7 +4,7 @@
 \alias{prob.sevt}
 \title{Compute probabilities for a staged event tree}
 \usage{
-prob.sevt(object, x, log = FALSE)
+prob.sevt(object, x, log = FALSE, nan0 = TRUE)
 }
 \arguments{
 \item{object}{a (fitted) staged event tree object}
@@ -12,6 +12,8 @@ prob.sevt(object, x, log = FALSE)
 \item{x}{the vector or data.frame of observations}
 
 \item{log}{logical, if \code{TRUE} log-probabilities are returned}
+
+\item{nan0}{logical, if \code{NaN} should be converted to 0}
 }
 \value{
 the probabilities for each observation

@@ -110,9 +110,9 @@ plot.sevt <-
         if (is.null(stages)){
           return(list("1" = "black"))
         }
-        stages <- col(unique(stages))
-        names(stages) <- stages
-        return(stages)
+        cs <- col(unique(stages))
+        names(cs) <- unique(stages)
+        return(cs)
       })
     } else if (col == "stages") {
       col <- lapply(x$stages[nms[1:d]], function(stages) {
