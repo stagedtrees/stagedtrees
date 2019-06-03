@@ -18,10 +18,10 @@ bhc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf,
 is printed (via \code{message})}
 }
 \value{
-The final staged event tree object
+The final staged event tree object.
 }
 \description{
-Hill-climbing search of staged event trees with
+Backword Hill-climbing search of staged event trees with
 iterative joining of stages
 }
 \details{

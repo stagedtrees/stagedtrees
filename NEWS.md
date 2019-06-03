@@ -1,3 +1,9 @@
+# 0.9.4
+
+* Fix #40; `compare.sevt` works with three different methods.
+* Fix #37; `join_stages` throws error with bad stages.
+* Fix #51; tests for model selection functions.
+
 # 0.9.3 
 
 * Fix #39; `lambda = 0` does not induce errors in `logLik`, `join_stages` and thus in the model selection algorithms.  

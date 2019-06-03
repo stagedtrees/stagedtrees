@@ -181,6 +181,17 @@ text(sub, y = -0.03, cex = 0.7)
 Check if models are equal.
 ```{r}
 compare.sevt(mod1, mod2)
+
+compare.sevt(mod1, mod2, method = "hamming", plot = TRUE, 
+             cex.label.nodes = 0, cex.label.edges = 0)
+text(mod1)
+
+hamming.sevt(mod1, mod2)
+
+difftree <- compare.sevt(mod1, mod2, method = "stages", plot = FALSE, 
+             return.tree = TRUE)
+
+difftree$Married
 ```
 
 Penalized log-likelihood.

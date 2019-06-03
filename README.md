@@ -163,11 +163,11 @@ table(predicted, PhDArticles$Articles)
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1      1-2   male   no     yes medium      low
-## 2      1-2 female   no      no medium      low
-## 3      1-2 female   no     yes    low     high
-## 4      1-2 female   no     yes medium     high
-## 5       >2   male   no     yes    low      low
+## 1       >2   male   no      no   high     high
+## 2      1-2 female   no     yes   high      low
+## 3       >2 female   no      no medium     high
+## 4      1-2   male  yes     yes medium     high
+## 5       >2 female   no      no medium     high
 ```
 
 #### Explore the model
@@ -242,6 +242,25 @@ Check if models are equal.
 ``` r
 compare.sevt(mod1, mod2)
 ## [1] FALSE
+
+compare.sevt(mod1, mod2, method = "hamming", plot = TRUE, 
+             cex.label.nodes = 0, cex.label.edges = 0)
+## [1] FALSE
+text(mod1)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
+
+``` r
+
+hamming.sevt(mod1, mod2)
+## [1] 43
+
+difftree <- compare.sevt(mod1, mod2, method = "stages", plot = FALSE, 
+             return.tree = TRUE)
+
+difftree$Married
+##  [1] 0 1 0 1 0 1 0 1 0 1 0 1
 ```
 
 Penalized log-likelihood.

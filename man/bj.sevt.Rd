@@ -19,11 +19,16 @@ bj.sevt(object = NULL, distance = kl, thr = 0.1, trace = 0, ...)
 is printed (via \code{message})}
 }
 \value{
-the learned staged event tree
+the learned staged event tree.
 }
 \description{
 Join stages from more complex to simpler models
 using a distance and a threshold value
+}
+\details{
+For each variable in the model stages are joined iteratively.
+At each iteration the two stages with minimum distance are selected and
+joined if their distance is less than \code{thr}.
 }
 \examples{
 

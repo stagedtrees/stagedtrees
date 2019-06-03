@@ -7,12 +7,18 @@
 new_label(labels)
 }
 \arguments{
-\item{labels}{vector of labels (strings)}
+\item{labels}{vector of labels}
 }
 \value{
 a string label that is different from each \code{labels}
 }
 \description{
 give a safe-to-add label that is not in \code{labels}
-INTERNAL USE
 }
+\details{
+INTERNAL
+}
+\examples{
+\dontrun{new_label(c("1", "A", "b", "3" , 2))}
+}
+\keyword{internal}
