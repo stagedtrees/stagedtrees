@@ -18,10 +18,10 @@ fbhc.sevt(object = NULL, score = function(x) return(-BIC(x)),
 is printed (via \code{message})}
 }
 \value{
-The final staged event tree obtained
+The final staged event tree obtained.
 }
 \description{
-Fast hill-climbing search of staged event trees with
+Fast backword hill-climbing search of staged event trees with
 iterative joining of stages.
 }
 \details{
