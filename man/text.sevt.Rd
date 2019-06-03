@@ -8,7 +8,7 @@
   ylim = c(0, 1), ...)
 }
 \arguments{
-\item{x}{a staged event tree}
+\item{x}{staged event tree object}
 
 \item{y}{the position of the labels}
 
