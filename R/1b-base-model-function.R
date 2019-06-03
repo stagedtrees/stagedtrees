@@ -323,46 +323,50 @@ set_stage <- function(sevt, path, stage) {
 #' probabilities and log-likelihood accordingly.
 #'
 #'
-#' @param sevt staged event tree
+#' @param object staged event tree
 #' @param v variable
 #' @param s1 first stage
 #' @param s2 second stage
 #' @return the staged event tree where \code{s1} and \code{s2} are joined
 #' @export
-join_stages <- function(sevt, v,  s1, s2) {
+join_stages <- function(object, v,  s1, s2) {
+  stopifnot(is(object, "sevt"))
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  k <- length(sevt$tree[[v]])
-  st <- sevt$stages[[v]]
-  sevt$stages[[v]][st == s2] <- s1
-  if (!is.null(sevt$prob)) {
-    p1 <- sevt$prob[[v]][[s1]]
-    p2 <- sevt$prob[[v]][[s2]]
+  if (!all(c(s1, s2) %in% stages.sevt(object, var = v))) 
+    stop("Stages are not present")
+  if (s1 == s2) stop("Join the same stage")
+  k <- length(object$tree[[v]])
+  st <- object$stages[[v]]
+  object$stages[[v]][st == s2] <- s1
+  if (!is.null(object$prob)) {
+    p1 <- object$prob[[v]][[s1]]
+    p2 <- object$prob[[v]][[s2]]
     n2 <- attr(p2, "n")
     n1 <- attr(p1, "n")
     ct1 <-
-      ifelse(is.nan(p1), 0, p1) * (n1 + sevt$lambda * k) - sevt$lambda
+      ifelse(is.nan(p1), 0, p1) * (n1 + object$lambda * k) - object$lambda
     ct2 <-
-      ifelse(is.nan(p2), 0, p2) * (n2 + sevt$lambda * k) - sevt$lambda
+      ifelse(is.nan(p2), 0, p2) * (n2 + object$lambda * k) - object$lambda
     dll <-
       sum(ct2[ct2 > 0] * log(p2[ct2 > 0])) +
       sum(ct1[ct1 > 0] * log(p1[ct1 > 0]))
-    sevt$prob[[v]][[s1]] <-  ct2 + ct1 + sevt$lambda
-    attr(sevt$prob[[v]][[s1]], "n") <- n1 + n2
-    sevt$prob[[v]][[s1]] <-
-      sevt$prob[[v]][[s1]] / sum(sevt$prob[[v]][[s1]])
-    sevt$prob[[v]][[s2]] <- NULL ##delete one of the two
-    if (!is.null(sevt$ll)) {
+    object$prob[[v]][[s1]] <-  ct2 + ct1 + object$lambda
+    attr(object$prob[[v]][[s1]], "n") <- n1 + n2
+    object$prob[[v]][[s1]] <-
+      object$prob[[v]][[s1]] / sum(object$prob[[v]][[s1]])
+    object$prob[[v]][[s2]] <- NULL ##delete one of the two
+    if (!is.null(object$ll)) {
       ## update log likelihood
       ct1 <- ct1 + ct2
-      sevt$ll <-
-        sevt$ll - dll +  sum(ct1[ct1 > 0] *
-                               log(sevt$prob[[v]][[s1]][ct1 > 0]))
-      attr(sevt$ll, "df") <-
-        attr(sevt$ll, "df") - length(sevt$prob[[v]][[s1]]) + 1
+      object$ll <-
+        object$ll - dll +  sum(ct1[ct1 > 0] *
+                               log(object$prob[[v]][[s1]][ct1 > 0]))
+      attr(object$ll, "df") <-
+        attr(object$ll, "df") - length(object$prob[[v]][[s1]]) + 1
     }
   }
-  return(sevt)
+  return(object)
 }
 
 
@@ -381,6 +385,7 @@ join_stages <- function(sevt, v,  s1, s2) {
 #' model <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' @export
 split_stage_random <- function(object, var,  stage, p = 0.5) {
+  stopifnot(is(object, "sevt"))
   if (!(stage %in% object$stages[[var]])) {
     return(object)
   }
