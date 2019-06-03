@@ -89,7 +89,7 @@ plot(modT)
 model <- staged_ev_tree(list(X = c("good", "bad"),
                              Y = c("high", "low")))
 
-######### full model 
+######### full model
 
 DD <- generate_xor_dataset(7, 100)
 modfull <- full(DD, lambda = 1)

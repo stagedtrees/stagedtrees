@@ -1,11 +1,15 @@
 #' New label
 #' 
 #' give a safe-to-add label that is not in \code{labels}
-#' INTERNAL USE
 #' 
-#' @param labels vector of labels (strings)
+#' INTERNAL
+#' 
+#' @param labels vector of labels
 #' 
 #' @return a string label that is different from each \code{labels}
+#' @examples 
+#' \dontrun{new_label(c("1", "A", "b", "3" , 2))}
+#' @keywords internal
 new_label <- function(labels){
   k <- 1
   labels <- as.character(labels)
@@ -17,18 +21,40 @@ new_label <- function(labels){
   }
 }
 
+#' Unique id from named list 
+#' 
+#' @param x a named list
+#' @return A named list with uniques id
+#' @examples 
+#' \dontrun{uni_idx(list(A = c(1,2,3), B = c(1,2,3))}
+uni_idx <- function(x){
+  nn <- names(x)
+  x <- lapply(1:length(x), function(i){
+    paste0(nn[i], ":", x[[i]])
+  })
+  names(x) <- nn
+  return(x)
+}
+
 
 #' return path index
 #' 
 #' @param path a path from root in the tree
 #' @param tree a symmetric tree given as a list of levels 
+#' @param complete logical, if \code{TRUE} the complete indexing is returned
 #' 
-#' This function return the integer index of the node associated with the 
+#' @details Compute the integer index of the node associated with the 
 #' given path in a symmetric tree defined by \code{tree}.
 #' 
 #' @return an integer, the index of the node corresponding to \code{path}
-#' @export
-tree_idx <- function(path, tree){
+#' @keywords internal
+#' @examples 
+#' \dontrun{
+#' data("PhDArticles")
+#' mod <- full(PhDArticles)
+#' tree_idx(c("0", "male", "yes"), mod$tree)
+#' }
+tree_idx <- function(path, tree, complete = FALSE){
  k <- length(path)
  ls <- sapply(tree, length)
  is <- vapply(1:k, FUN = function(i){
@@ -37,31 +63,38 @@ tree_idx <- function(path, tree){
  if (k <= 1){
    return(is[1])
  }
- sum(vapply(1:(k-1), FUN = function(i){
-   prod(ls[(i+1):(k)])
- }, FUN.VALUE = 1) * (is[1:(k - 1)] - 1))  + is[k]  
- ##index in the strata now otherwise remove the -1, the following
- ## function is the complete indexing
- ## sum(vapply(1:(k-1), FUN = function(i){
- ## prod(ls[(i+1):(k)])
- ## }, FUN.VALUE = 1) * is[1:(k - 1)])  + is[k]
- ##
- ##
+ if (complete){
+   sum(vapply(1:(k-1), FUN = function(i){
+     prod(ls[(i+1):(k)])
+   }, FUN.VALUE = 1) * is[1:(k - 1)])  + is[k]
+ }else{
+   sum(vapply(1:(k-1), FUN = function(i){
+     prod(ls[(i+1):(k)])
+   }, FUN.VALUE = 1) * (is[1:(k - 1)] - 1))  + is[k]  
+ }
 }
 
 
 
-# find the stage in the path
-# no checking, be careful how to use it
-# to do implement TEST
-# paths is a data.frame as the ones obtained with expand.grid
-# plus one last column with the stage index.
-# path is a vector of length = dim(paths)[2] - 1 or longer 
+#' find the stage in the path
+#' 
+#' no checking is done 
+#' @param object a staged event tree object
+#' @param path vector of the path
+#' @return the stage name corresponding of the path
+#' @keywords internal 
+#' @examples 
+#' \dontrun{
+#' data("PhDArticles")
+#' mod <- full(PhDArticles)
+#' find_stage(mod, c("0", "male", "yes"))
+#' find_stage(mod, c("0", "male", "no"))}
 find_stage <- function(object, path) {
   k <- length(path)
   ix <- tree_idx(path = path, tree = object$tree)
   l <- length(object$stages[[k]])
-  return(object$stages[[k]][(ix - 1) %% l + 1]) ### stages can be defined in a reduced fashion
+  ### stages can be defined in a reduced vector
+  return(object$stages[[k]][(ix - 1) %% l + 1]) 
 }
 
 
@@ -73,21 +106,6 @@ find_paths <- function(obj, stage, var) {
   ###return(paths[paths[, dim(paths)[2]] == as.character(stage),])
 }
 
-#' Compute the KL matrix
-#'
-#' @param x conditional probability table
-#' @return The matrix witht the symmetric KL (KL(i,j) + KL(j,i))
-KL_mat_prob <- function(x) {
-  d <- dim(x)[1]
-  M <- matrix(nrow = d, ncol = d)
-  for (i in 1:d) {
-    for (j in 1:d) {
-      M[i, j] <- sum( (x[i, ] / sum(x[i, ]) ) * (log(x[i, ] / sum(x[i, ])) - log(x[j, ] /
-                                                                 sum(x[j, ]))))
-    }
-  }
-  return(M + t(M))
-}
 
 
 
@@ -136,12 +154,6 @@ simple_clustering <- function(M) {
   ))
 }
 
-#' compute the entropy
-#' @param p the vector of normalized probability
-#' @return the entropy as \code{-sum(p*log(p))}
-entr <- function(p) {
-  return(-sum(p * log(p)))
-}
 
 
 #' Distances between probabilities
@@ -238,7 +250,8 @@ xor <- function(x, eps = 0) {
 #' @return The xor dataset
 #' @export
 #' @importFrom stats runif
-#' @examples DD <- generate_xor_dataset(n = 5, N = 1000, eps = 1.2)
+#' @examples 
+#' DD <- generate_xor_dataset(n = 5, N = 1000, eps = 1.2)
 generate_xor_dataset <- function(n = 2,
                                  N = 100,
                                  eps = 1.2) {
@@ -273,12 +286,14 @@ generate_xor_dataset <- function(n = 2,
 #' @param eps noise
 #' @param gamma numeric
 #' @param alpha numeric vector of length \code{n}
+#' 
 #' @return A data.frame with \code{n} independent random variables and
 #'  one class variable \code{C} computed as
 #'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 #' @export
 #' @importFrom stats runif
-#' @examples DD <- generate_linear_dataset(n = 5, 1000)
+#' @examples 
+#' DD <- generate_linear_dataset(n = 5, 1000)
 generate_linear_dataset <-
   function(n = 2,
            N = 10000,
@@ -313,15 +328,6 @@ generate_linear_dataset <-
     return(DD)
   }
 
-uni_idx <- function(x){
-  nn <- names(x)
-  x <- lapply(1:length(x), function(i){
-    paste0(nn[i], ":", x[[i]])
-  })
-  names(x) <- nn
-  return(x)
-}
-
 #' generate a random binary dataset
 #'
 #' @param n number of variables
@@ -331,7 +337,8 @@ uni_idx <- function(x){
 #'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 #' @export
 #' @importFrom stats runif
-#' @examples DD <- generate_random_dataset(n = 5, 1000)
+#' @examples 
+#' DD <- generate_random_dataset(n = 5, 1000)
 generate_random_dataset <-
   function(n = 2,
            N = 10000) {

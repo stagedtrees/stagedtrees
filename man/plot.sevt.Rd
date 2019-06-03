@@ -39,3 +39,31 @@ as input a vector of stages and output the corresponding colors.}
 \description{
 plot a staged event tree
 }
+\examples{
+
+data("PhDArticles")
+mod <- bj.sevt(full(PhDArticles))
+
+### simple plotting
+plot(mod)
+
+### removing lables from nodes and edges and fill nodes
+plot(mod, cex.label.nodes = 0, cex.label.edges = 0, pch = 16)
+
+### reduce nodes size
+plot(mod, cex.nodes = 1)
+
+### change line width and nodes style
+plot(mod, lwd = 3, pch = 5)
+
+### changing palette
+plot(mod, col = function(s) heat.colors(length(s)))
+
+### manually give stages colors
+simple <- naive.sevt(full(PhDArticles, lambda = 1))
+#### simple has 2 stages per variable "1" and "2"
+col <- lapply(simple$stages, function(s){
+ c("1" = "purple", "2" = "cyan")
+})
+plot(simple, col = col)
+}
