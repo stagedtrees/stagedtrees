@@ -1,3 +1,7 @@
+# 0.9.5
+
+* Add `inclusion.stages` function
+
 # 0.9.4
 
 * Fix #40; `compare.sevt` works with three different methods.
