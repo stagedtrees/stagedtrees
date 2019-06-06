@@ -18,8 +18,7 @@ list with inclusion relations between stage structures of each variable of the d
 Inclusion relations between stage structures of two models estimated on the same dataset
 }
 \examples{
-mod1 <- stndnaming.sevt(bhc.sevt(full(PhDArticles, lambda = 1)))
-mod2 <- stndnaming.sevt(fbhc.sevt(full(PhDArticles, lambda = 1)))
-comparison <- inclusion.stages(mod1, mod2)
-print(comparison)
+mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
+mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
+inclusion.stages(mod1, mod2)
 }

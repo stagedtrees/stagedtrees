@@ -488,10 +488,9 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
 #'
 #' @return list with inclusion relations between stage structures of each variable of the dataset
 #' @examples 
-#' mod1 <- stndnaming.sevt(bhc.sevt(full(PhDArticles, lambda = 1)))
-#' mod2 <- stndnaming.sevt(fbhc.sevt(full(PhDArticles, lambda = 1)))
-#' comparison <- inclusion.stages(mod1, mod2)
-#' print(comparison)
+#' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
+#' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
+#' inclusion.stages(mod1, mod2)
 #' @export
 inclusion.stages <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
