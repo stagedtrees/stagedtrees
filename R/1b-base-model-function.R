@@ -481,6 +481,89 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
 }
 
 
+#' Inclusion relations between stage structures of two models estimated on the same dataset
+#'
+#' @param object1 first staged event tree to compare
+#' @param object2 second staged event tree to compare
+#'
+#' @return list with inclusion relations between stage structures of each variable of the dataset
+#' @examples 
+#' mod1 <- stndnaming.sevt(bhc.sevt(full(PhDArticles, lambda = 1)))
+#' mod2 <- stndnaming.sevt(fbhc.sevt(full(PhDArticles, lambda = 1)))
+#' comparison <- inclusion.stages(mod1, mod2)
+#' print(comparison)
+#' @export
+inclusion.stages <- function(object1, object2) {
+  stopifnot(is(object1, "sevt"))
+  stopifnot(is(object2, "sevt"))
+  stopifnot(all(names(object1$tree) == names(object2$tree)))
+  out <- rep(list(c()), length(object1$stages))
+  attr(out, "names") <- attr(object1$stages, "names")
+  out2 <- out
+  
+  for (k in 1:length(object1$stages)) {
+    a <- object1$stages[[k]]
+    b <- object2$stages[[k]]
+    unique_a <- unique(a)
+    unique_b <- unique(b)
+    out_a <- out_b <- rep(0, length(a))
+    for (i in 1:length(unique_a)) {
+      ifelse((length(unique(b[which(a == unique_a[i])])) == 1),  
+             out_a[which(a == unique_a[i])] <- 1,
+             out_a[which(a == unique_a[i])] <- 0)
+    }
+    for (i in 1:length(unique_b)) {
+      ifelse((length(unique(a[which(b == unique_b[i])])) == 1), 
+             out_b[which(b == unique_b[i])] <- 1,
+             out_b[which(b == unique_b[i])] <- 0)
+    }
+    
+    out[[k]] <- ifelse((out_a + out_b) == 2, 0, 1)
+    out2[[k]] <- character(length(out[[k]]))  
+    
+    ord1 <- ord2 <- c()
+    
+    for(i in 1:length(out[[k]])) {
+      if(out[[k]][i] == 0) {
+        out2[[k]][i] <- paste(object1$stages[[k]][i], "  =  ", object2$stages[[k]][i])
+        ord1 <- c(ord1, object1$stages[[k]][i])
+        ord2 <- c(ord2, object2$stages[[k]][i])
+      }
+      else if(out[[k]][i] == 1) {  
+        if(out_a[i] == 1 & out_b[i] == 0) {
+          out2[[k]][i] <- paste(object1$stages[[k]][i], "  <  ", object2$stages[[k]][i])
+          ord1 <- c(ord1, object1$stages[[k]][i])
+          ord2 <- c(ord2, object2$stages[[k]][i])
+        }
+        if(out_a[i] == 0 & out_b[i] == 1) {
+          out2[[k]][i] <- paste(object1$stages[[k]][i], "  >  ", object2$stages[[k]][i])
+          ord1 <- c(ord1, object1$stages[[k]][i])
+          ord2 <- c(ord2, object2$stages[[k]][i])
+        }
+        if(out_a[i] == 0 & out_b[i] == 0) {
+          out2[[k]][i] <- paste(object1$stages[[k]][i], "  !=  ", object2$stages[[k]][i])
+          ord1 <- c(ord1, object1$stages[[k]][i])
+          ord2 <- c(ord2, object2$stages[[k]][i])
+        }
+      }
+    }
+    ord1 <- as.numeric(ord1)
+    ord2 <- as.numeric(ord2)
+    ordering <- data.frame(ord1, ord2)
+    ordering <- unique(ordering[order(ordering$ord1, ordering$ord2), ])
+    
+    # nicer print
+    out2[[k]] <- data.frame(noquote(out2[[k]]))
+    colnames(out2[[k]]) <- paste(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
+    name.width <- max(sapply(colnames(out2[[k]]), nchar))
+    out2[[k]] <- format(out2[[k]], width = name.width, justify = "centre")
+    out2[[k]] <- out2[[k]][noquote(rownames(ordering)), ]
+    out2[[k]] <- data.frame(noquote(out2[[k]]))
+    colnames(out2[[k]]) <- paste(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
+  }
+  return(out2)
+}
+
 
 #' Print a staged event tree
 #'
@@ -889,3 +972,4 @@ df.sevt <- function(x) {
       x$tree, FUN = length, FUN.VALUE = 1
     ) - 1))
 }
+
