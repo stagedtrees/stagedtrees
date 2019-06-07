@@ -108,6 +108,20 @@ mod5
 ## 'log Lik.' -4118.437 (df=14)
 ```
 
+#### Combining model selections with `%>%`
+
+The pipe operator from the `magrittr` package can be used to combine easily various model selction algorithms and to specify models easily.
+
+``` r
+library(magrittr)
+model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>% 
+               hc.sevt
+
+## extract a sub_tree and join two stages
+sub_model <- model %>% subtree.sevt(path = c(">2")) %>% 
+  fit.sevt(data = PhDArticles) %>% join_stages("Mentor", "1", "2")
+```
+
 #### Probabilities, predictions and sampling
 
 ##### Marginal probabilities
@@ -163,11 +177,11 @@ table(predicted, PhDArticles$Articles)
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1       >2   male   no      no   high     high
-## 2      1-2 female   no     yes   high      low
-## 3       >2 female   no      no medium     high
-## 4      1-2   male  yes     yes medium     high
-## 5       >2 female   no      no medium     high
+## 1        0 female   no     yes    low      low
+## 2        0 female   no     yes    low      low
+## 3       >2   male  yes     yes    low      low
+## 4       >2 female   no      no    low     high
+## 5       >2   male  yes     yes   high      low
 ```
 
 #### Explore the model
@@ -198,7 +212,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 text(mod4, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 ##### Stages
 
@@ -233,7 +247,7 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 #### Comparing models
 
@@ -249,7 +263,7 @@ compare.sevt(mod1, mod2, method = "hamming", plot = TRUE,
 text(mod1)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 ``` r
 

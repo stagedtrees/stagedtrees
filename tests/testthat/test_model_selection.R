@@ -40,8 +40,35 @@ test_that("fbhc.sevt", {
 })
 
 
+test_that("bhcr.sevt", {
+  expect_message(mod <- bhcr.sevt(f, max_iter = 10, trace = 2))  
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+
 test_that("bj.sevt", {
   expect_message(mod <- bj.sevt(f, max_iter = 5, trace = 2))  
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+
+test_that("join_zero_counts", {
+  expect_message(mod <- join_zero_counts(f, trace = 2, name = "zeros"))  
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+
+test_that("naive.sevt", {
+  expect_silent(mod <- naive.sevt(full(PhDArticles, lambda  =1)))  
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
