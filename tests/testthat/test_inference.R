@@ -4,7 +4,7 @@ context("predict.sevt")
 DD <- generate_linear_dataset(5, 100)[,6:1]
 levels(DD$C) <- c("a", "b")
 levels(DD$X3) <- c("qqqq", "pppp")
-sev <- full(DD, lambda = 1)
+sev <- full(DD, lambda = 0.01)
 
 test_that("predict class values", {
   expect_silent(pr <- predict(sev, DD) ) 
@@ -33,6 +33,29 @@ test_that("predict with no data", {
   sev$data <- DD
   expect_silent(pr <- predict(sev, class = "X4"))
 })
+
+
+test_that("predicted conditional probabilities sum up to 1", {
+  expect_silent(pr <- conditional.predict(sev, newdata = DD, class = "C"))
+  expect_true(all(rowSums(pr) == 1))
+})
+
+
+test_that("predicted conditional probabilities sum up to 1, bis", {
+  expect_silent(pr <- conditional.predict(sev, newdata = DD, class = "X2"))
+  expect_true(all(rowSums(pr) == 1))
+})
+
+
+test_that("conditional.predict works well", {
+  expect_silent(pr <- conditional.predict(sev, newdata = DD, class = "C"))
+  pr1 <- ifelse(pr[, 1] >= 0.5, "a", "b")
+  t <- table(DD$C, pr1)
+  l <- length(levels(DD$C))
+  expect_true(all(NROW(t) == NCOL(t) & NCOL(t) == l))
+})
+
+
 
 context("prob.sevt")
 
