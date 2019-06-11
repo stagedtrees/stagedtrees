@@ -43,7 +43,6 @@ predict.sevt <-
       }
       newdata <- as.data.frame(newdata)
     } ## we are now sure we have newdata as a data.frame
-    
     vars <- names(object$tree)
     #we search now for wich variable we need to make predicitons
     if (is.null(class)) {
@@ -57,6 +56,9 @@ predict.sevt <-
     if (!(class %in% vars)) {
       stop("class is not one of the variable of the model")
     }
+    if (is.null(newdata[[class]])){## we create a dummy variable
+      newdata[[class]] <- NA
+    }
     class_idx <-
       (1:length(vars))[vars %in% class] #find class index in the order
     preds <- vars[!(vars %in% class)] #define the predictors
@@ -69,7 +71,7 @@ predict.sevt <-
         res[cv] <-
           path_probability.sevt(object, x, log = TRUE)
       }
-      return(res)
+      return(res - log(sum(exp(res)))) ##normalize, that is conditional prob
     }))
     if (prob) {
       if (log) {
