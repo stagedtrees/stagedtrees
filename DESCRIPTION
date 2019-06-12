@@ -8,7 +8,8 @@ Authors@R: c(
   email = "gherardo.varando@gmail.com", 
 	comment = c(ORCID = "0000-0002-6708-1103")),
 	person(given = "Federico", family = "Carli", role = "aut"),
-	person(given = "Manuele", family = "Leonelli", role = "aut"),
+	person(given = "Manuele", family = "Leonelli", role = "aut", 
+	comment = c(ORCID = "0000-0002-2562-5192")),
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
 Maintainer: Gherardo Varando <gherardo.varando@gmail.com>

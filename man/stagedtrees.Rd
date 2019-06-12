@@ -4,7 +4,36 @@
 \name{stagedtrees}
 \alias{stagedtrees}
 \alias{stagedtrees-package}
-\title{stagedtrees: staged trees probability models}
+\title{Staged event trees.}
 \description{
-stagedtrees: staged trees probability models
+Algorithms to crate, learn, fit and explore staged event tree models.
+Functions to compute probabilities and make predictions from the fitted
+models and to plot, analyze and manipulate staged event trees.
+}
+\details{
+Model selection algortihms:
+\itemize{
+\item full model \code{\link{full}}
+\item independence model \code{\link{indep}}
+\item Hill-Climbing \code{\link{hc.sevt}}
+\item Backward Hill-Climbing \code{\link{bhc.sevt}}
+\item Fast Backward Hill-Climbing \code{\link{fbhc.sevt}}
+\item Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
+\item Backward joining \code{\link{bj.sevt}}
+\item Naive Staged Event Tree \code{\link{naive.sevt}}
+}
+
+Probabilities, log-likelihood and predictions:
+\itemize{
+\item Marginal probabilities \code{\link{prob.sevt}}
+\item Log-Likelihood \code{\link{logLik.sevt}}
+\item Predict method \code{\link{predict.sevt}}
+}
+
+Plot, explore and compare:
+\itemize{
+\item Plot \code{\link{plot.sevt}}
+\item Compare \code{\link{compare.sevt}}
+\item Stages info \code{\link{stages.sevt}}, \code{\link{stageinfo.sevt}}
+}
 }
