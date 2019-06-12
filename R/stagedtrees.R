@@ -25,5 +25,10 @@
 #' * Stages info \code{\link{stages.sevt}}, \code{\link{stageinfo.sevt}} 
 #' @docType package
 #' @name stagedtrees
+#' @examples 
+#' data("PhDArticles")
+#' mf <- full(PhDArticles)
+#' mod <- fbhc.sevt(mf)
+#' plot(mod)
 #' 
 NULL
