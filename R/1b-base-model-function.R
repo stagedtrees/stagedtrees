@@ -19,14 +19,16 @@
 #'                      order of the event tree.
 #'          \item stages: A named list where each component
 #'                        stores the stages for the given variable.
+#'          \item ctables: The contingency tables of the data.
+#'          \item lambda: The smoothing parameter used to estimate the model.
 #'          \item prob: The conditional probability tables for every
 #'                      variable and every stage.
-#'          \item ctables: The contingency tables of the data.
-#'          }
+#'          \item ll: The estimated log-likelihood associated to the model.
+#'        }
 #' @export
 #' @examples
 #'
-#' ######### from data.frame
+#' ######### from dataset
 #' DD <- generate_random_dataset(n = 5, 1000)
 #' indep <- staged_ev_tree(DD, fit = TRUE)
 #' full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
@@ -47,8 +49,7 @@ staged_ev_tree.default <- function(x, ...) {
 #' @examples
 #'
 #' ######### from table
-#' data("Titanic")
-#' modT <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
+#' modT <- staged_ev_tree(PhDArticles, fit = TRUE, full = TRUE, lambda = 1)
 #' plot(modT)
 #' @export
 staged_ev_tree.table <- function(x,
@@ -328,6 +329,14 @@ set_stage <- function(sevt, path, stage) {
 #' @param s1 first stage
 #' @param s2 second stage
 #' @return the staged event tree where \code{s1} and \code{s2} are joined
+#' @details this function joins together two stages associated to the same variable.
+#' It can be used to manually force two situations to be in the same stage.
+#' @examples 
+#' model <- full(PhDArticles, fit = TRUE, lambda = 0)
+#' model <- fbhc.sevt(model)
+#' model$stages$Kids
+#' model <- join_stages(model, "Kids", "5", "6")
+#' model$stages$Kids
 #' @export
 join_stages <- function(object, v,  s1, s2) {
   stopifnot(is(object, "sevt"))
@@ -375,14 +384,32 @@ join_stages <- function(object, v,  s1, s2) {
 #' Randomly assign some of the path to a new stage
 #'
 #' @param object a staged event tree object
-#' @param var the variable where to split the stage
-#' @param stage the name of the stage
-#' @param p probability
+#' @param var the variable where to split the original stage into two stages
+#' @param stage the name of the original stage
+#' @param p probability to move a situation from the original stage into the new stage
 #'
 #' @return a staged event tree object
+#' @details It splits randomly a given stage into two stages. More precisely,
+#' it assigns each situation within the given stage into a new stage with
+#' probability \code{p}.
 #' @examples
-#' DD <- generate_random_dataset(2, 100)
+#' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+#' model <- bhc.sevt(model)
+#' model <- stndnaming.sevt(model)
+#' model$stages$X5
+#' 
+#' # no split
+#' model1 <- split_stage_random(model, "X5", "1", p = 0)
+#' model1$stages$X5
+#' 
+#' # all situations in the new stage
+#' model2 <- split_stage_random(model, "X5", "1", p = 1)
+#' model2$stages$X5
+#' 
+#' # randomly split with probability 0.5
+#' model3 <- split_stage_random(model, "X5", "1", p = 0.5)
+#' model3$stages$X5
 #' @export
 split_stage_random <- function(object, var,  stage, p = 0.5) {
   stopifnot(is(object, "sevt"))
@@ -486,10 +513,12 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
 #' @param object1 first staged event tree to compare
 #' @param object2 second staged event tree to compare
 #'
-#' @return list with inclusion relations between stage structures of each variable of the dataset
+#' @return a list with inclusion relations between stage structures of each variable of the dataset
+#' @details it computes the inclusion/exclusion/equality/diversity between the estimated stages
+#' between the two given models, in \code{object1} and \code{object2}.
 #' @examples 
-#' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
-#' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
+#' mod1 <- bhc.sevt(full(PhDArticles[, 1:5], lambda = 1))
+#' mod2 <- fbhc.sevt(full(PhDArticles[, 1:5], lambda = 1))
 #' inclusion.stages(mod1, mod2)
 #' @export
 inclusion.stages <- function(object1, object2) {
@@ -599,6 +628,13 @@ print.sevt <- function(x, ...) {
 #'
 #' @param object a staged event tree object
 #' @param var name of one variable
+#' @return If \code{var} is specified, it returns a character vector with the estimated stages associated to each situations related to that variable.
+#' Otherwise, If \code{var} is not specified, it returns a list of character vectors with the estimated stages associated to each situations related
+#' to all the variables of the dataset: this is exactly the output of what is stored in \code{object$stages}
+#' @examples 
+#' DD <- generate_xor_dataset(5, 100)
+#' model <- staged_ev_tree(DD, fit = TRUE, lambda = 0)
+#' stages.sevt(model, var = "X5")
 #' @export
 stages.sevt <- function(object, var = NULL) {
   stopifnot(is(object, "sevt"))
@@ -615,6 +651,14 @@ stages.sevt <- function(object, var = NULL) {
 #' @param object a staged event tree object
 #' @param var name of one variable
 #' @param stage name(s) of stage for variable \code{var}
+#' @return a print of most important informations associated to stages, for a given variable.
+#' If \code{stage} is specified, informations of only that stage are printed, otherwise
+#' the informations of all stages related to the specified variable are printed.
+#' @examples 
+#' model <- full(PhDArticles, fit = TRUE)
+#' model <- fbhc.sevt(model)
+#' stageinfo.sevt(model, var = "Mentor")
+#' stageinfo.sevt(model, var = "Mentor", stage = 24)
 #' @export
 stageinfo.sevt <- function(object, var, stage = NULL) {
   stopifnot(is(object, "sevt"))
@@ -668,8 +712,15 @@ stageinfo.sevt <- function(object, var, stage = NULL) {
 #'
 #' @param object a staged event tree object
 #' @param path, the path after which extract the subtree
-#'
+#' @details it returns the subtree of the staged event tree given in input as \code{object}.
+#' The new root of the subtree is the given \code{path}.
 #' @return the staged event tree object corresponding to the subtree
+#' @examples 
+#' DD <- generate_random_dataset(4, 100)
+#' model <- staged_ev_tree(DD, full = TRUE)
+#' plot(model)
+#' model1 <- subtree.sevt(model, path = c("-1", "1"))
+#' plot(model1)
 #' @export
 subtree.sevt <- function(object, path) {
   m <- 1
@@ -708,6 +759,13 @@ subtree.sevt <- function(object, path) {
 #'                variables
 #' @return a staged event tree object with stages named with
 #' consecutive integers.
+#' @examples 
+#' DD <- generate_xor_dataset(4, 100)
+#' model <- staged_ev_tree(DD, full = TRUE)
+#' model <- fbhc.sevt(model)
+#' model$stages
+#' model1 <- stndnaming.sevt(model)
+#' model1$stages
 #' @export
 stndnaming.sevt <- function(object, rep = FALSE) {
   var <- names(object$tree)
@@ -738,7 +796,7 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' 
 #' @param object1 a staged event tree
 #' @param object2 a staged event tree
-#' @param method method to compare staged event trees
+#' @param method method to compare staged event trees. It can be: \code{"naive"}, \code{"hamming"} or \code{"stages"}
 #' @param return.tree logical, if \code{TRUE} the difference tree is returned
 #' @param plot logical
 #' @param ... additional paraters to be passed to \code{\link{plot.sevt}}
@@ -769,11 +827,12 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
 #' used directly. 
 #'
-#' @return Logical or a difference tree (if \code{tree = TRUE})
+#' @return if \code{return.tree = FALSE}, logical: \code{TRUE} if the two 
+#' models are exactly equal, otherwise \code{FALSE}.
+#' Else If \code{return.tree = TRUE}  it returns the differences between 
+#' the two trees, according to the selected \code{method}.
 #' @export
 #' @examples
-#'
-#' #########
 #' data("PhDArticles")
 #' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 #' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
@@ -919,11 +978,10 @@ stagesdiff.sevt <- function(object1, object2) {
 #' Get variable names
 #'
 #' @param x a staged event tree obejct
-#' @return Vector with variable names
+#' @return vector with variable names
 #' @examples
 #'
-#' data("Titanic")
-#' mod <-full(Titanic)
+#' mod <-full(PhDArticles)
 #' varnames.sevt(mod)
 #' @export
 varnames.sevt <- function(x) {
@@ -936,8 +994,7 @@ varnames.sevt <- function(x) {
 #' @return integer, the number of variables
 #' @examples
 #'
-#' data("Titanic")
-#' mod <- indep(Titanic)
+#' mod <- indep(PhDArticles)
 #' nvar.sevt(mod)
 #' @export
 nvar.sevt <- function(x) {
@@ -953,11 +1010,10 @@ nvar.sevt <- function(x) {
 #' @examples
 #'
 #' #########
-#' data("Titanic")
-#' mod_f <- full(Titanic)
+#' mod_f <- full(PhDArticles)
 #' df.sevt(mod_f)
 #'
-#' mod_i <- indep(Titanic)
+#' mod_i <- indep(PhDArticles)
 #' df.sevt(mod_i)
 #' @export
 df.sevt <- function(x) {

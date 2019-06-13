@@ -2,9 +2,15 @@
 #'
 #' @param object a staged event tree 
 #' @details A ceg object is a staged event tree object with 
-#'          additional information on the 
-#'          positions. 
+#'          additional information on the positions. 
 #' @return a ceg object
+#' @examples 
+#' DD <- generate_xor_dataset(3, 100)
+#' model <- full(DD)
+#' model <- bhc.sevt(model)
+#' ceg <- ceg.sevt(model)
+#' model$stages
+#' ceg$positions
 #' @export
 ceg.sevt <- function(object){
   positions <- object$stages
@@ -46,9 +52,19 @@ ceg.sevt <- function(object){
 #' Ceg to adjmat of graph
 #' 
 #' @param x the ceg object
+#' @details it is used to prepar the plot of the ceg.
+#' It transforms the ceg object into an adjacent matrix.
 #' @return the adj matrix
+#' @examples 
+#' DD <- generate_xor_dataset(3, 100)
+#' model <- full(DD)
+#' model <- bhc.sevt(model)
+#' ceg <- ceg.sevt(model)
+#' model$stages
+#' ceg$positions
+#' ceg2adjmat(ceg)
 #' @export
-ceg2adjmat <- function(x){
+ceg2adjmat <- function(x) {
   tree <- x$tree
   var <- names(tree)
   pos <- uni_idx(x$positions)

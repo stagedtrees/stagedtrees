@@ -17,10 +17,19 @@
 #' test <- DD[501:1000, order]
 #' model <- full(train)
 #' model <- bhc.sevt(model)
-#' pr <- predict(model, class = "C", newdata = test)
+#' pr <- predict(model, newdata = test, class = "C")
 #' table(pr, test$C)
-#' predict(model, class = "C", newdata = test, prob = TRUE)
-#' @return A vector of predicitons
+#' predict(model, newdata = test, class = "C")  # class
+#' predict(model, newdata = test, class = "C", prob = TRUE)  # probabilities
+#' predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  # log-probabilities
+#' @details if \code{prob = TRUE}, a matrix with number of rows equals to the number of
+#' rows in the \code{newdata} and number of columns as the number of levels of the 
+#' \code{class} variable is returned. if \code{log = TRUE}, log-probabilities are returned.
+#' 
+#' if \code{prob = FALSE}, a vector of length as the number of rows in the \code{newdata} 
+#' with the level with higher estimated probability for each new observations is returned.
+#' 
+#' 
 #' @export
 #' @importFrom stats predict
 predict.sevt <-
