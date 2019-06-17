@@ -23,7 +23,7 @@
 #'          \item lambda: The smoothing parameter used to estimate the model.
 #'          \item prob: The conditional probability tables for every
 #'                      variable and every stage.
-#'          \item ll: The estimated log-likelihood associated to the model.
+#'          \item ll: The log-likelihood of the \code{estimated} model.
 #'        }
 #' @export
 #' @examples
@@ -49,7 +49,7 @@ staged_ev_tree.default <- function(x, ...) {
 #' @examples
 #'
 #' ######### from table
-#' modT <- staged_ev_tree(PhDArticles, fit = TRUE, full = TRUE, lambda = 1)
+#' modT <- staged_ev_tree(table(PhDArticles), fit = TRUE, full = TRUE, lambda = 1)
 #' plot(modT)
 #' @export
 staged_ev_tree.table <- function(x,
@@ -330,7 +330,6 @@ set_stage <- function(sevt, path, stage) {
 #' @param s2 second stage
 #' @return the staged event tree where \code{s1} and \code{s2} are joined
 #' @details this function joins together two stages associated to the same variable.
-#' It can be used to manually force two situations to be in the same stage.
 #' @examples 
 #' model <- full(PhDArticles, fit = TRUE, lambda = 0)
 #' model <- fbhc.sevt(model)
@@ -384,8 +383,8 @@ join_stages <- function(object, v,  s1, s2) {
 #' Randomly assign some of the path to a new stage
 #'
 #' @param object a staged event tree object
-#' @param var the variable where to split the original stage into two stages
-#' @param stage the name of the original stage
+#' @param var the variable where to split the stage
+#' @param stage the name of the stage to split
 #' @param p probability to move a situation from the original stage into the new stage
 #'
 #' @return a staged event tree object
@@ -513,7 +512,7 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
 #' @param object1 first staged event tree to compare
 #' @param object2 second staged event tree to compare
 #'
-#' @return a list with inclusion relations between stage structures of each variable of the dataset
+#' @return a list with inclusion relations between stage structures of each variable in the model
 #' @details it computes the inclusion/exclusion/equality/diversity between the estimated stages
 #' between the two given models, in \code{object1} and \code{object2}.
 #' @examples 
