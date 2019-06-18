@@ -1,14 +1,13 @@
 #' Sample from a staged event tree
 #'
-#' @param n number of observations
 #' @param object the staged event tree object
-#'
+#' @param n number of observations to sample
+#' @details it samples \code{n} observations according to
+#' the estimated transition probabilities (\code{object$prob}) from 
+#' the dataset on which the staged event tree \code{object} is fitted
 #' @return A data frame containing a sample of size \code{n}
 #' @examples
-#'
-#' #########
-#' data("Titanic")
-#' mod <- naive.sevt(full(Titanic, lambda = 1))
+#' mod <- naive.sevt(full(PhDArticles, lambda = 1))
 #' sample.sevt(mod, 10)
 #' @export
 sample.sevt <- function(object, n = 1) {

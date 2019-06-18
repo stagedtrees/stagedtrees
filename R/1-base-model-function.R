@@ -9,7 +9,10 @@
 #' @param ... additional parameters
 #' @export
 #' @examples
-#' a <- c(1,2)
+#' mod <- strt_ev_tree(PhDArticles)
+#' str(mod)
+#' mod1 <- strt_ev_tree(PhDArticles, fit = TRUE)
+#' str(mod1)
 strt_ev_tree <- function(x, order = NULL, fit = FALSE, ...) {
   UseMethod("strt_ev_tree", object = x)
 }
@@ -148,6 +151,7 @@ strt_ev_tree.sevt <- function(x, ...) {
 #' @return A stratified event tree object with the conditional probabilities fitted
 #' @export
 fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0) {
+  order <- names(evt$tree)
   if (is.null(data)) {
     data <- evt$data
     if (is.null(data)) {
@@ -156,10 +160,10 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0) {
     }
   }
   if (is.data.frame(data)) {
-    data <- table(data)
+    data <- table(data[,order])
   }
   
-  order <- names(evt$tree)
+
   
   evt$ctables <- lapply(1:length(order), function(i) {
     path <- order[i:1]

@@ -108,6 +108,20 @@ mod5
 ## 'log Lik.' -4118.437 (df=14)
 ```
 
+#### Combining model selections with `%>%`
+
+The pipe operator from the `magrittr` package can be used to combine easily various model selction algorithms and to specify models easily.
+
+``` r
+library(magrittr)
+model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>% 
+               hc.sevt
+
+## extract a sub_tree and join two stages
+sub_model <- model %>% subtree.sevt(path = c(">2")) %>% 
+  fit.sevt(data = PhDArticles) %>% join_stages("Mentor", "1", "2")
+```
+
 #### Probabilities, predictions and sampling
 
 ##### Marginal probabilities
@@ -149,6 +163,7 @@ cbind(obs, P = p)
 A staged event tree object can be used to make predictions with the `predict` method. The class variable can be specified, otherwise the first variable (root) in the tree will be used.
 
 ``` r
+## check accuracy over the PhDArticles data
 predicted <- predict(mod3, newdata = PhDArticles)
 table(predicted, PhDArticles$Articles)
 ##          
@@ -158,16 +173,30 @@ table(predicted, PhDArticles$Articles)
 ##       >2   18  39  48
 ```
 
+Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
+
+``` r
+## obtain estimated conditional probabilities in mod3 for first 5 obs
+## P(Articles|Gender, Kids, Married, Mentor, Prestige)
+predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
+##           0       1-2        >2
+## 1 0.2853346 0.4393739 0.2752915
+## 2 0.3186093 0.4906121 0.1907785
+## 3 0.3186093 0.4906121 0.1907785
+## 4 0.3450547 0.5313342 0.1236111
+## 5 0.2304826 0.6315078 0.1380096
+```
+
 ##### Sampling
 
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1       >2   male   no      no   high     high
-## 2      1-2 female   no     yes   high      low
-## 3       >2 female   no      no medium     high
-## 4      1-2   male  yes     yes medium     high
-## 5       >2 female   no      no medium     high
+## 1      1-2 female  yes     yes medium     high
+## 2      1-2   male  yes     yes medium     high
+## 3       >2 female  yes     yes medium     high
+## 4      1-2   male  yes     yes   high     high
+## 5       >2   male   no     yes    low     high
 ```
 
 #### Explore the model
@@ -198,7 +227,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 text(mod4, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 ##### Stages
 
@@ -233,7 +262,7 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 #### Comparing models
 
@@ -249,7 +278,7 @@ compare.sevt(mod1, mod2, method = "hamming", plot = TRUE,
 text(mod1)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 ``` r
 

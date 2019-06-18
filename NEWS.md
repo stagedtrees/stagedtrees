@@ -1,3 +1,9 @@
+# 0.9.5
+
+* Add `inclusion.stages` function
+* Fix #28; `predict.sevt` now returns conditional probabilities P(C|X)
+* Fix #62; `predict.sevt` works also if `newdata` does not inlcude the class
+
 # 0.9.4
 
 * Fix #40; `compare.sevt` works with three different methods.

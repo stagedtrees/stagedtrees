@@ -1,9 +1,9 @@
 #' Predcict method for staged event tree
 #'
 #' @param object A staged event tree
-#' @param newdata The newdata to perform predictions
+#' @param newdata The newdata to perform predictions 
 #' @param class A string indicating the name of the variable to use as
-#' the class variable, otherwise the first name in \code{object$tree}
+#' the class variable, otherwise the first name in \code{names(object$tree)}
 #' will be used.
 #' @param prob logical, if \code{TRUE} the probabilities of class are
 #'                      returned
@@ -12,16 +12,24 @@
 #' @return A vector of predictions or the corresponding probabilities
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, 1000)
-#' train <- DD[1:500,]
-#' test <- DD[501:1000,]
 #' order <- c("C", "X1", "X2", "X3", "X4", "X5")
-#' model <- staged_ev_tree(train, order = order, full = TRUE,
-#' fit = TRUE, lambda = 1)
+#' train <- DD[1:500, order]
+#' test <- DD[501:1000, order]
+#' model <- full(train)
 #' model <- bhc.sevt(model)
-#' pr <- predict(model, class = "C", newdata = test)
+#' pr <- predict(model, newdata = test, class = "C")
 #' table(pr, test$C)
-#' predict(model, class = "C", newdata = test, prob = TRUE)
-#' @return A vector of predicitons
+#' predict(model, newdata = test, class = "C")  # class
+#' predict(model, newdata = test, class = "C", prob = TRUE)  # probabilities
+#' predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  # log-probabilities
+#' @details if \code{prob = TRUE}, a matrix with number of rows equals to the number of
+#' rows in the \code{newdata} and number of columns as the number of levels of the 
+#' \code{class} variable is returned. if \code{log = TRUE}, log-probabilities are returned.
+#' 
+#' if \code{prob = FALSE}, a vector of length as the number of rows in the \code{newdata} 
+#' with the level with higher estimated probability for each new observations is returned.
+#' 
+#' 
 #' @export
 #' @importFrom stats predict
 predict.sevt <-
@@ -43,7 +51,6 @@ predict.sevt <-
       }
       newdata <- as.data.frame(newdata)
     } ## we are now sure we have newdata as a data.frame
-    
     vars <- names(object$tree)
     #we search now for wich variable we need to make predicitons
     if (is.null(class)) {
@@ -57,6 +64,9 @@ predict.sevt <-
     if (!(class %in% vars)) {
       stop("class is not one of the variable of the model")
     }
+    if (is.null(newdata[[class]])){## we create a dummy variable
+      newdata[[class]] <- NA
+    }
     class_idx <-
       (1:length(vars))[vars %in% class] #find class index in the order
     preds <- vars[!(vars %in% class)] #define the predictors
@@ -69,7 +79,7 @@ predict.sevt <-
         res[cv] <-
           path_probability.sevt(object, x, log = TRUE)
       }
-      return(res)
+      return(res - log(sum(exp(res)))) ##normalize, that is conditional prob
     }))
     if (prob) {
       if (log) {
