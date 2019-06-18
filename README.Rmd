@@ -36,6 +36,7 @@ With the `stagedtrees` package it is possible to fit (stratified) staged
 event trees to data, use them to compute probabilities, make predictions, 
 visualize and compare different models. 
 
+
 #### Creating the model
 
 A staged event tree object (`sevt` class) can be created with the function
@@ -96,6 +97,23 @@ mod4
 mod5 <- naive.sevt(mod_full)
 mod5
 ```
+
+#### Combining model selections with `%>%`
+
+The pipe operator from the `magrittr` package can be used to combine
+easily various model selction algorithms and to specify models easily. 
+
+```{r}
+library(magrittr)
+model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>% 
+               hc.sevt
+
+## extract a sub_tree and join two stages
+sub_model <- model %>% subtree.sevt(path = c(">2")) %>% 
+  fit.sevt(data = PhDArticles) %>% join_stages("Mentor", "1", "2")
+```
+
+
 #### Probabilities, predictions and sampling
 
 ##### Marginal probabilities
@@ -122,10 +140,18 @@ A staged event tree object can be used to make predictions with the
 first variable (root) in the tree will be used. 
 
 ```{r}
+## check accuracy over the PhDArticles data
 predicted <- predict(mod3, newdata = PhDArticles)
 table(predicted, PhDArticles$Articles)
 ```
 
+Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
+
+```{r}
+## obtain estimated conditional probabilities in mod3 for first 5 obs
+## P(Articles|Gender, Kids, Married, Mentor, Prestige)
+predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
+```
 ##### Sampling
 
 ```{r}
