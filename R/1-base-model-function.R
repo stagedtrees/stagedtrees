@@ -9,7 +9,10 @@
 #' @param ... additional parameters
 #' @export
 #' @examples
-#' a <- c(1,2)
+#' mod <- strt_ev_tree(PhDArticles)
+#' str(mod)
+#' mod1 <- strt_ev_tree(PhDArticles, fit = TRUE)
+#' str(mod1)
 strt_ev_tree <- function(x, order = NULL, fit = FALSE, ...) {
   UseMethod("strt_ev_tree", object = x)
 }

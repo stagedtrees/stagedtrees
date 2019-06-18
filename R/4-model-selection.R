@@ -3,7 +3,7 @@
 #' @param object a fitted staged event tree
 #' @param fit if the probability should be re-computed
 #' @param name string with a name for the new stage
-#' @param trace if \code{>0} print information to console
+#' @param trace if \code{> 0} print information to console
 #'
 #' @return a staged event tree with situations with 0
 #' observations merged
@@ -12,17 +12,14 @@
 #' and looking at the \code{ctables} join all the situations with zero
 #' recorded observations in the same stage. Since such joining does not change
 #' the log-likelihood of the model, it is a useful (time-wise)
-#' pre-processing before
-#' others model selection algorithms.
+#' pre-processing before others model selection algorithms.
 #' If \code{fit=TRUE} the model will be then re-fitted, if user sets
-#' \code{fit = FALSE} the returned model will have no probabilities.
+#' \code{fit=FALSE} the returned model will have no probabilities.
 #'
 #' @importFrom  methods is
 #' @export
 #'
 #' @examples
-#'
-#' #########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 #' model <- join_zero_counts(model_full, fit = TRUE)
@@ -74,7 +71,6 @@ join_zero_counts <-
 #' @export
 #' @examples
 #'
-#' #########
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
 #' model_0 <- staged_ev_tree(DD[1:500,], full = TRUE, lambda = 1)
 #' naive_model <- naive.sevt(model_0)
@@ -429,8 +425,7 @@ bj.sevt <-
 #' @examples
 #'
 #' #########
-#' data(Titanic)
-#' mod <- hc.sevt(full(Titanic, lambda = 1))
+#' mod <- hc.sevt(full(PhDArticles[,1:5], lambda = 1))
 #' BIC(mod)
 #' @export
 hc.sevt <- function(object,
