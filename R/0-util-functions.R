@@ -246,8 +246,9 @@ xor <- function(x, eps = 0) {
 #' @param n number of variables
 #' @param N number of observations
 #' @param eps error
-#'
-#' @return The xor dataset
+#' @return The xor dataset with \code{n} + 1 variables, where the last one is 
+#' the class variable \code{C} computed as xor logical operator.
+#' 
 #' @export
 #' @importFrom stats runif
 #' @examples 
@@ -332,9 +333,7 @@ generate_linear_dataset <-
 #'
 #' @param n number of variables
 #' @param N number of observations
-#' @return A data.frame with \code{n} independent random variables and
-#'  one class variable \code{C} computed as
-#'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+#' @return A data.frame with \code{n} independent random variables
 #' @export
 #' @importFrom stats runif
 #' @examples 
