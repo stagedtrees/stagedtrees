@@ -17,3 +17,14 @@ the staged event tree object corresponding to the subtree
 \description{
 Extract subtree
 }
+\details{
+it returns the subtree of the staged event tree given in input as \code{object}.
+The new root of the subtree is the given \code{path}.
+}
+\examples{
+DD <- generate_random_dataset(4, 100)
+model <- staged_ev_tree(DD, full = TRUE)
+plot(model)
+model1 <- subtree.sevt(model, path = c("-1", "1"))
+plot(model1)
+}

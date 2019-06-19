@@ -19,3 +19,11 @@ consecutive integers.
 \description{
 Standard renaming of stages
 }
+\examples{
+DD <- generate_xor_dataset(4, 100)
+model <- staged_ev_tree(DD, full = TRUE)
+model <- fbhc.sevt(model)
+model$stages
+model1 <- stndnaming.sevt(model)
+model1$stages
+}

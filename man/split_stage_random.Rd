@@ -11,9 +11,9 @@ split_stage_random(object, var, stage, p = 0.5)
 
 \item{var}{the variable where to split the stage}
 
-\item{stage}{the name of the stage}
+\item{stage}{the name of the stage to split}
 
-\item{p}{probability}
+\item{p}{probability to move a situation from the original stage into the new stage}
 }
 \value{
 a staged event tree object
@@ -21,7 +21,27 @@ a staged event tree object
 \description{
 Randomly assign some of the path to a new stage
 }
+\details{
+It splits randomly a given stage into two stages. More precisely,
+it assigns each situation within the given stage into a new stage with
+probability \code{p}.
+}
 \examples{
-DD <- generate_random_dataset(2, 100)
+DD <- generate_random_dataset(5, 100)
 model <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+model <- bhc.sevt(model)
+model <- stndnaming.sevt(model)
+model$stages$X5
+
+# no split
+model1 <- split_stage_random(model, "X5", "1", p = 0)
+model1$stages$X5
+
+# all situations in the new stage
+model2 <- split_stage_random(model, "X5", "1", p = 1)
+model2$stages$X5
+
+# randomly split with probability 0.5
+model3 <- split_stage_random(model, "X5", "1", p = 0.5)
+model3$stages$X5
 }
