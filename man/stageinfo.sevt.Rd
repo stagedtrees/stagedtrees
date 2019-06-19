@@ -13,6 +13,17 @@ stageinfo.sevt(object, var, stage = NULL)
 
 \item{stage}{name(s) of stage for variable \code{var}}
 }
+\value{
+a print of most important informations associated to stages, for a given variable.
+If \code{stage} is specified, informations of only that stage are printed, otherwise
+the informations of all stages related to the specified variable are printed.
+}
 \description{
 Print stage(s) info
+}
+\examples{
+model <- full(PhDArticles, fit = TRUE)
+model <- fbhc.sevt(model)
+stageinfo.sevt(model, var = "Mentor")
+stageinfo.sevt(model, var = "Mentor", stage = 24)
 }

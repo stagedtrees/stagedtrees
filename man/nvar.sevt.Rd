@@ -17,7 +17,6 @@ Get the number of variables
 }
 \examples{
 
-data("Titanic")
-mod <- indep(Titanic)
+mod <- indep(PhDArticles)
 nvar.sevt(mod)
 }

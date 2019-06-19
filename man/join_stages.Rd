@@ -22,3 +22,13 @@ the staged event tree where \code{s1} and \code{s2} are joined
 Join two stages in a staged event tree object, updating
 probabilities and log-likelihood accordingly.
 }
+\details{
+this function joins together two stages associated to the same variable.
+}
+\examples{
+model <- full(PhDArticles, fit = TRUE, lambda = 0)
+model <- fbhc.sevt(model)
+model$stages$Kids
+model <- join_stages(model, "Kids", "5", "6")
+model$stages$Kids
+}

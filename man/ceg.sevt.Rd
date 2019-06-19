@@ -17,6 +17,13 @@ Creates the CEG starting from a staged tree
 }
 \details{
 A ceg object is a staged event tree object with
-additional information on the
-positions.
+additional information on the positions.
+}
+\examples{
+DD <- generate_xor_dataset(3, 100)
+model <- full(DD)
+model <- bhc.sevt(model)
+ceg <- ceg.sevt(model)
+model$stages
+ceg$positions
 }
