@@ -3,6 +3,6 @@
 * Ubuntu 14.04.5 R 3.5.0 (on travis-ci) 
 
 ## R CMD check results
-Duration: 46.9s
+Duration: 1m 37.3s
 
 0 errors | 0 warnings | 0 note
