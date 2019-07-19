@@ -18,7 +18,7 @@ stagesdiff.sevt(object1, object2)
 
 \item{object2}{a staged event tree}
 
-\item{method}{method to compare staged event trees}
+\item{method}{method to compare staged event trees. It can be: \code{"naive"}, \code{"hamming"} or \code{"stages"}}
 
 \item{return.tree}{logical, if \code{TRUE} the difference tree is returned}
 
@@ -27,7 +27,10 @@ stagesdiff.sevt(object1, object2)
 \item{...}{additional paraters to be passed to \code{\link{plot.sevt}}}
 }
 \value{
-Logical or a difference tree (if \code{tree = TRUE})
+if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
+models are exactly equal, otherwise \code{FALSE}.
+Else If \code{return.tree = TRUE}  it returns the differences between
+the two trees, according to the selected \code{method}.
 }
 \description{
 Compare two stages event tree, return the differences of the stages
@@ -65,8 +68,6 @@ Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
 used directly.
 }
 \examples{
-
-#########
 data("PhDArticles")
 mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))

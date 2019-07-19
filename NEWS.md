@@ -1,3 +1,7 @@
+# 1.0.0
+
+* Minor doc fix and references added
+
 # 0.9.5
 
 * Add `inclusion.stages` function

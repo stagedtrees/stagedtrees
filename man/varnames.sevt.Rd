@@ -10,14 +10,13 @@ varnames.sevt(x)
 \item{x}{a staged event tree obejct}
 }
 \value{
-Vector with variable names
+vector with variable names
 }
 \description{
 Get variable names
 }
 \examples{
 
-data("Titanic")
-mod <-full(Titanic)
+mod <-full(PhDArticles)
 varnames.sevt(mod)
 }

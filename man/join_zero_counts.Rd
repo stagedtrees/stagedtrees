@@ -11,7 +11,7 @@ join_zero_counts(object, fit = TRUE, trace = 0, name = NULL)
 
 \item{fit}{if the probability should be re-computed}
 
-\item{trace}{if \code{>0} print information to console}
+\item{trace}{if \code{> 0} print information to console}
 
 \item{name}{string with a name for the new stage}
 }
@@ -27,14 +27,11 @@ This function takes as input a (fitted) staged event tree object
 and looking at the \code{ctables} join all the situations with zero
 recorded observations in the same stage. Since such joining does not change
 the log-likelihood of the model, it is a useful (time-wise)
-pre-processing before
-others model selection algorithms.
+pre-processing before others model selection algorithms.
 If \code{fit=TRUE} the model will be then re-fitted, if user sets
-\code{fit = FALSE} the returned model will have no probabilities.
+\code{fit=FALSE} the returned model will have no probabilities.
 }
 \examples{
-
-#########
 DD <- generate_xor_dataset(n = 5, N = 1000)
 model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
 model <- join_zero_counts(model_full, fit = TRUE)

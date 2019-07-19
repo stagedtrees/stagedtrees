@@ -15,3 +15,16 @@ the adj matrix
 \description{
 Ceg to adjmat of graph
 }
+\details{
+it is used to prepar the plot of the ceg.
+It transforms the ceg object into an adjacent matrix.
+}
+\examples{
+DD <- generate_xor_dataset(3, 100)
+model <- full(DD)
+model <- bhc.sevt(model)
+ceg <- ceg.sevt(model)
+model$stages
+ceg$positions
+ceg2adjmat(ceg)
+}

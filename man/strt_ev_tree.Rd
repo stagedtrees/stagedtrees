@@ -20,5 +20,8 @@ Builds the complete stratified event tree for a set of categorical variables,
 the order can be specified.
 }
 \examples{
-a <- c(1,2)
+mod <- strt_ev_tree(PhDArticles)
+str(mod)
+mod1 <- strt_ev_tree(PhDArticles, fit = TRUE)
+str(mod1)
 }
