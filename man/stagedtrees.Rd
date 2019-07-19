@@ -6,7 +6,7 @@
 \alias{stagedtrees-package}
 \title{Staged event trees.}
 \description{
-Algorithms to crate, learn, fit and explore staged event tree models.
+Algorithms to create, learn, fit and explore staged event tree models.
 Functions to compute probabilities and make predictions from the fitted
 models and to plot, analyze and manipulate staged event trees.
 }
@@ -43,4 +43,20 @@ mf <- full(PhDArticles)
 mod <- fbhc.sevt(mf)
 plot(mod)
 
+}
+\references{
+Collazo R. A., Görgen C. and Smith J. Q.
+Chain event graphs. CRC Press, 2018.
+
+Görgen C., Bigatti A., Riccomagno E. and Smith J. Q.
+Discovery of statistical equivalence classes using computer algebra.
+\emph{International Journal of Approximate Reasoning}, vol. 95, pp. 167-184, 2018.
+
+Barclay L. M., Hutton J. L. and Smith J. Q.
+Refining a Bayesian network using a chain event graph.
+\emph{International Journal of Approximate Reasoning}, vol. 54, pp. 1300-1309, 2013.
+
+Smith J. Q. and Anderson P. E.
+Conditional independence and chain event graphs.
+\emph{Artificial Intelligence}, vol. 172, pp. 42-68, 2008.
 }
