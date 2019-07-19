@@ -9,7 +9,7 @@ sample.sevt(object, n = 1)
 \arguments{
 \item{object}{the staged event tree object}
 
-\item{n}{number of observations}
+\item{n}{number of observations to sample}
 }
 \value{
 A data frame containing a sample of size \code{n}
@@ -17,10 +17,12 @@ A data frame containing a sample of size \code{n}
 \description{
 Sample from a staged event tree
 }
+\details{
+it samples \code{n} observations according to
+the estimated transition probabilities (\code{object$prob}) from
+the dataset on which the staged event tree \code{object} is fitted
+}
 \examples{
-
-#########
-data("Titanic")
-mod <- naive.sevt(full(Titanic, lambda = 1))
+mod <- naive.sevt(full(PhDArticles, lambda = 1))
 sample.sevt(mod, 10)
 }

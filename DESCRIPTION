@@ -1,7 +1,7 @@
 Package: stagedtrees
 Type: Package
 Title: Staged Event Trees 
-Version: 0.9.5
+Version: 1.0.0
 Author: Gherardo Varando, Federico Carli, Manuele Leonelli, Eva Riccomagno
 Authors@R: c(
   person(given = "Gherardo", family = "Varando", role = c("aut", "cre"),

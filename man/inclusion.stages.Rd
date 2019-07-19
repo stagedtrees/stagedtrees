@@ -12,13 +12,17 @@ inclusion.stages(object1, object2)
 \item{object2}{second staged event tree to compare}
 }
 \value{
-list with inclusion relations between stage structures of each variable of the dataset
+a list with inclusion relations between stage structures of each variable in the model
 }
 \description{
 Inclusion relations between stage structures of two models estimated on the same dataset
 }
+\details{
+it computes the inclusion/exclusion/equality/diversity between the estimated stages
+between the two given models, in \code{object1} and \code{object2}.
+}
 \examples{
-mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
-mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
+mod1 <- bhc.sevt(full(PhDArticles[, 1:5], lambda = 1))
+mod2 <- fbhc.sevt(full(PhDArticles[, 1:5], lambda = 1))
 inclusion.stages(mod1, mod2)
 }
