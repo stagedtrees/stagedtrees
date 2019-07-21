@@ -59,4 +59,8 @@ Refining a Bayesian network using a chain event graph.
 Smith J. Q. and Anderson P. E.
 Conditional independence and chain event graphs.
 \emph{Artificial Intelligence}, vol. 172, pp. 42-68, 2008.
+
+Thwaites P. A., Smith, J. Q.
+A new method for tackling asymmetric decision problems.
+\emph{International Journal of Approximate Reasoning}, vol. 88, pp. 624–639, 2017.
 }
