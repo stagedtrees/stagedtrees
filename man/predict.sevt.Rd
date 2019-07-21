@@ -30,6 +30,11 @@ A vector of predictions or the corresponding probabilities
 Predcict method for staged event tree
 }
 \details{
+Predict the most probable a posteriori value for the class variable
+given all the other variables in the model. Ties are broken at random and
+if, for a given vector of predictor variables, all conditional probabilities
+are 0, NA is returned.
+
 if \code{prob = TRUE}, a matrix with number of rows equals to the number of
 rows in the \code{newdata} and number of columns as the number of levels of the
 \code{class} variable is returned. if \code{log = TRUE}, log-probabilities are returned.
@@ -40,7 +45,7 @@ with the level with higher estimated probability for each new observations is re
 \examples{
 DD <- generate_xor_dataset(n = 5, 1000)
 order <- c("C", "X1", "X2", "X3", "X4", "X5")
-train <- DD[1:500, order]
+train <- DD[1:5, order]
 test <- DD[501:1000, order]
 model <- full(train)
 model <- bhc.sevt(model)

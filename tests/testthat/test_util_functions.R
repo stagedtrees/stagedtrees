@@ -1,5 +1,11 @@
 context("testing util functions")
 
+test_that("noisy_xor works as expected", {
+   expect_true(stagedtrees:::noisy_xor(c(-1, -1), 0) == 1)
+   expect_true(stagedtrees:::noisy_xor(c(-1, -1, -1), 0) == -1)
+   expect_true(stagedtrees:::noisy_xor(c(-1, 1), 0) == -1)
+   expect_true(stagedtrees:::noisy_xor(c(1,-1), 0) == -1)
+})
 
 test_that("new_lable produce a new label",{
   labels <- c(1:5, "6", "A", "B", "C")

@@ -23,7 +23,8 @@ Url: https://github.com/gherardovarando/stagedtrees
 BugReports: https://github.com/gherardovarando/stagedtrees/issues
 Imports: stats,
          graphics,
-         methods
+         methods,
+         nnet
 Suggests: 
     testthat,
     bnlearn,
