@@ -1,11 +1,7 @@
 #' New label
 #' 
 #' give a safe-to-add label that is not in \code{labels}
-#' 
-#' INTERNAL
-#' 
 #' @param labels vector of labels
-#' 
 #' @return a string label that is different from each \code{labels}
 #' @examples 
 #' \dontrun{new_label(c("1", "A", "b", "3" , 2))}
@@ -25,6 +21,7 @@ new_label <- function(labels){
 #' 
 #' @param x a named list
 #' @return A named list with uniques id
+#' @keywords internal
 #' @examples 
 #' \dontrun{uni_idx(list(A = c(1,2,3), B = c(1,2,3))}
 uni_idx <- function(x){
@@ -103,7 +100,6 @@ find_stage <- function(object, path) {
 # stage is an integer, the stage index
 find_paths <- function(obj, stage, var) {
   ##to do
-  ###return(paths[paths[, dim(paths)[2]] == as.character(stage),])
 }
 
 
@@ -159,7 +155,7 @@ simple_clustering <- function(M) {
 #' Distances between probabilities
 #' 
 #' @param x vector of probabilities
-#' @param y vector of probabilitites
+#' @param y vector of probabilities
 #' @param p exponent in the \eqn{L^p} norm
 #' @param alpha the order of the Renyi divergence
 #' @param ... additional parameters for compatibility
@@ -233,9 +229,9 @@ cd <- function(x, y, ...){
 #' @param x a vector of +1 nad -1
 #' @param eps the uniform noise amount
 #' @return the computed noisy xor
+#' @keywords internal
 #' @importFrom stats runif
-xor <- function(x, eps = 0) {
-  #set.seed(seed = 0)
+noisy_xor <- function(x, eps = 0) {
   return(sign(prod(x) + runif(
     n = 1, min = -eps, max = eps
   )))
@@ -270,7 +266,7 @@ generate_xor_dataset <- function(n = 2,
     DD,
     MARGIN = 1,
     FUN = function(x) {
-      return(xor(x = x[-1], eps = eps))
+      return(noisy_xor(x = x[-1], eps = eps))
     })
   DD <- DD[,-1]
   for (i in 1:(n+1)){
@@ -354,3 +350,18 @@ generate_random_dataset <-
     }
     return(DD)
   }
+
+#' find maximum value
+#' 
+#' @param x numerical, the log-probabilities 
+#' @param character the levels to be returned same lenght as x
+#' 
+#' @return factor 
+#' @keywords internal
+which_class <- function(x, levels){
+  y <- seq_along(x)[x == max(x)]
+  if (length(y) > 1L){
+    ix <- sample(y, 1L) 
+  }else ix <- y
+  factor(levels[ix], levels = levels)
+}

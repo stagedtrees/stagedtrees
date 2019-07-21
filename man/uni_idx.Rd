@@ -18,3 +18,4 @@ Unique id from named list
 \examples{
 \dontrun{uni_idx(list(A = c(1,2,3), B = c(1,2,3))}
 }
+\keyword{internal}

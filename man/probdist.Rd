@@ -28,7 +28,7 @@ cd(x, y, ...)
 \arguments{
 \item{x}{vector of probabilities}
 
-\item{y}{vector of probabilitites}
+\item{y}{vector of probabilities}
 
 \item{p}{exponent in the \eqn{L^p} norm}
 

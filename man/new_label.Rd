@@ -15,9 +15,6 @@ a string label that is different from each \code{labels}
 \description{
 give a safe-to-add label that is not in \code{labels}
 }
-\details{
-INTERNAL
-}
 \examples{
 \dontrun{new_label(c("1", "A", "b", "3" , 2))}
 }

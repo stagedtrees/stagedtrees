@@ -1,6 +1,10 @@
 # 1.0.0
 
 * Minor doc fix and references added
+* `xor` is renamed as `noisy_xor`
+* test added for `noisy_xor`
+* more util functions marked as internal
+* fixed return preoblem with `NaN` log-probabilities in `predict.sevt`
 
 # 0.9.5
 
