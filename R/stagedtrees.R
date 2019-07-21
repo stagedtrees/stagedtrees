@@ -41,6 +41,9 @@
 #' Conditional independence and chain event graphs.
 #' _Artificial Intelligence_, vol. 172, pp. 42-68, 2008.
 #' 
+#' Thwaites P. A., Smith, J. Q.
+#' A new method for tackling asymmetric decision problems. 
+#' _International Journal of Approximate Reasoning_, vol. 88, pp. 624–639, 2017.
 #' @examples 
 #' data("PhDArticles")
 #' mf <- full(PhDArticles)
