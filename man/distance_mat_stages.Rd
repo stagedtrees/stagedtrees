@@ -14,7 +14,7 @@ distance_mat_stages(x, distance = kl, ...)
 \item{...}{additional parameters to be passed to the distance function}
 }
 \value{
-The matrix witht the distances between stages
+The matrix with the distances between stages
 }
 \description{
 Compute the distance matrix

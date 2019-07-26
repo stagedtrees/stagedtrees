@@ -24,7 +24,7 @@ stagesdiff.sevt(object1, object2)
 
 \item{plot}{logical}
 
-\item{...}{additional paraters to be passed to \code{\link{plot.sevt}}}
+\item{...}{additional parameters to be passed to \code{\link{plot.sevt}}}
 }
 \value{
 if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
@@ -49,7 +49,7 @@ objects and then simply compares the resulting \code{$stages} lists.
 stages in the different objects finding the few number of nodes that
 must be changed to obtain the same structure.
 \item \code{stages} uses the \code{stagesdiff.sevt} function that compare
-stages to check if the same stage strucure is present in both models.
+stages to check if the same stage structure is present in both models.
 }
 
 Setting \code{return.tree = TRUE} will return the stages

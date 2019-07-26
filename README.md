@@ -1,9 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-stagedtrees
-===========
 
-[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees) [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
+# stagedtrees
+
+[![Build
+Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
+[![Coverage
+status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
 
 ### Installation
 
@@ -22,11 +25,16 @@ devtools::install_github("gherardovarando/stagedtrees", ref = "dev")
 library("stagedtrees")
 ```
 
-With the `stagedtrees` package it is possible to fit (stratified) staged event trees to data, use them to compute probabilities, make predictions, visualize and compare different models.
+With the `stagedtrees` package it is possible to fit (stratified) staged
+event trees to data, use them to compute probabilities, make
+predictions, visualize and compare different models.
 
 #### Creating the model
 
-A staged event tree object (`sevt` class) can be created with the function `staged_ev_tree`, or with the functions `indep` and `full`. In general we create a staged event tree from data in a `data.frame` or `table` object.
+A staged event tree object (`sevt` class) can be created with the
+function `staged_ev_tree`, or with the functions `indep` and `full`. In
+general we create a staged event tree from data in a `data.frame` or
+`table` object.
 
 ``` r
 # Load the PhDArticles data
@@ -49,14 +57,17 @@ mod_full
 
 #### Model selection
 
-Starting from the independence model of the full model it is
+Starting from the independence model of the full model it is  
 possible to perform automatic model selection.
 
 ##### Score methods
 
-This methods perform optimization of the model for a given score using different types of heuristic methods.
+This methods perform optimization of the model for a given score using
+different types of heuristic methods.
 
--   **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
+  - **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
+
+<!-- end list -->
 
 ``` r
 mod1 <- hc.sevt(mod_indep)
@@ -66,7 +77,10 @@ mod1
 ## 'log Lik.' -4118.434 (df=14)
 ```
 
--   **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
+  - **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter,
+    trace)`
+
+<!-- end list -->
 
 ``` r
 mod2 <- bhc.sevt(mod_full)
@@ -76,7 +90,10 @@ mod2
 ## 'log Lik.' -4086.254 (df=19)
 ```
 
--   **Backward Fast Hill-Climbing** `fbhc.sevt(object, score, max_iter, trace)`
+  - **Backward Fast Hill-Climbing** `fbhc.sevt(object, score, max_iter,
+    trace)`
+
+<!-- end list -->
 
 ``` r
 mod3 <- fbhc.sevt(mod_full, score = function(x) -BIC(x))
@@ -88,7 +105,9 @@ mod3
 
 ##### Distance methods
 
--   **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
+  - **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
+
+<!-- end list -->
 
 ``` r
 mod4 <- bj.sevt(mod_full)
@@ -98,7 +117,9 @@ mod4
 ## 'log Lik.' -4090.79 (df=22)
 ```
 
--   **Naive model** `naive.sevt(full, distance, k)`
+  - **Naive model** `naive.sevt(full, distance, k)`
+
+<!-- end list -->
 
 ``` r
 mod5 <- naive.sevt(mod_full)
@@ -110,7 +131,8 @@ mod5
 
 #### Combining model selections with `%>%`
 
-The pipe operator from the `magrittr` package can be used to combine easily various model selction algorithms and to specify models easily.
+The pipe operator from the `magrittr` package can be used to combine
+easily various model selection algorithms and to specify models easily.
 
 ``` r
 library(magrittr)
@@ -160,7 +182,9 @@ cbind(obs, P = p)
 
 ##### Predictions
 
-A staged event tree object can be used to make predictions with the `predict` method. The class variable can be specified, otherwise the first variable (root) in the tree will be used.
+A staged event tree object can be used to make predictions with the
+`predict` method. The class variable can be specified, otherwise the
+first variable (root) in the tree will be used.
 
 ``` r
 ## check accuracy over the PhDArticles data
@@ -173,7 +197,8 @@ table(predicted, PhDArticles$Articles)
 ##       >2   18  39  48
 ```
 
-Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
+Conditional probabilities (or log-) can be obtained setting `prob =
+TRUE`:
 
 ``` r
 ## obtain estimated conditional probabilities in mod3 for first 5 obs
@@ -192,11 +217,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1      1-2 female  yes     yes medium     high
-## 2      1-2   male  yes     yes medium     high
-## 3       >2 female  yes     yes medium     high
-## 4      1-2   male  yes     yes   high     high
-## 5       >2   male   no     yes    low     high
+## 1        0 female  yes     yes   high     high
+## 2        0 female   no     yes    low      low
+## 3        0   male   no     yes medium      low
+## 4      1-2 female   no      no medium      low
+## 5      1-2   male   no     yes    low      low
 ```
 
 #### Explore the model
@@ -227,7 +252,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 text(mod4, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ##### Stages
 
@@ -254,7 +279,8 @@ stageinfo.sevt(mod4, var = "Kids")
 
 ##### Subtrees
 
-A subtree can be extracted, the result is another staged event tree object in the remaining variables.
+A subtree can be extracted, the result is another staged event tree
+object in the remaining variables.
 
 ``` r
 sub <- subtree.sevt(mod4, c(">2", "female"))
@@ -262,7 +288,7 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 #### Comparing models
 
@@ -278,7 +304,7 @@ compare.sevt(mod1, mod2, method = "hamming", plot = TRUE,
 text(mod1)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 

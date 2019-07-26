@@ -101,7 +101,7 @@ mod5
 #### Combining model selections with `%>%`
 
 The pipe operator from the `magrittr` package can be used to combine
-easily various model selction algorithms and to specify models easily. 
+easily various model selection algorithms and to specify models easily. 
 
 ```{r}
 library(magrittr)

@@ -4,7 +4,7 @@
 #' Functions to compute probabilities and make predictions from the fitted 
 #' models and to plot, analyze and manipulate staged event trees. 
 #' 
-#' Model selection algortihms:
+#' Model selection algorithms:
 #' * full model \code{\link{full}}
 #' * independence model \code{\link{indep}}
 #' * Hill-Climbing \code{\link{hc.sevt}}

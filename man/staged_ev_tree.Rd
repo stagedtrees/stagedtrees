@@ -42,7 +42,7 @@ indep(x, ...)
 \item{x}{data.frame, list, table, \code{bn.fit} object}
 
 \item{...}{additional parameters to be passed
-to the appropiate method, see \link{sevt.fit}}
+to the appropriate method, see \link{sevt.fit}}
 
 \item{order}{order of the variables}
 

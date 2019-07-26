@@ -10,7 +10,7 @@ uni_idx(x)
 \item{x}{a named list}
 }
 \value{
-A named list with uniques id
+A named list with unique ids
 }
 \description{
 Unique id from named list
