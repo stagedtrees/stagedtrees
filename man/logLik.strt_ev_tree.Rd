@@ -7,7 +7,7 @@
 \method{logLik}{strt_ev_tree}(object, ...)
 }
 \arguments{
-\item{object}{the startified event tree object}
+\item{object}{the stratified event tree object}
 
 \item{...}{additional parameters}
 }

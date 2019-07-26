@@ -65,7 +65,7 @@ join_zero_counts <-
 #'
 #' Build a stage event tree with two stages for each variable
 #' @param object a full staged event tree
-#' @param distance a ditance between probabilities
+#' @param distance a distance between probabilities
 #' @param k the maximum number of variable to consider
 #' @return A staged event tree with two stages per variable
 #' @export

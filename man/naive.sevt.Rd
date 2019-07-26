@@ -9,7 +9,7 @@ naive.sevt(object, distance = kl, k = length(object$tree))
 \arguments{
 \item{object}{a full staged event tree}
 
-\item{distance}{a ditance between probabilities}
+\item{distance}{a distance between probabilities}
 
 \item{k}{the maximum number of variable to consider}
 }

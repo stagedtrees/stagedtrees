@@ -1,4 +1,4 @@
-#' Predcict method for staged event tree
+#' Predict method for staged event tree
 #'
 #' @param object A staged event tree
 #' @param newdata The newdata to perform predictions 
@@ -9,7 +9,7 @@
 #'                      returned
 #' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @param ... additional parameters, see details
-#' @details Predict the most probable a posteriori value for the class variable
+#' @details Predict the most probable a posterior value for the class variable
 #' given all the other variables in the model. Ties are broken at random and 
 #'  if, for a given vector of predictor variables, all conditional probabilities
 #'  are 0, NA is returned.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/5-classifier-model-functions.R
 \name{predict.sevt}
 \alias{predict.sevt}
-\title{Predcict method for staged event tree}
+\title{Predict method for staged event tree}
 \usage{
 \method{predict}{sevt}(object, newdata = NULL, class = NULL,
   prob = FALSE, log = FALSE, ...)
@@ -27,10 +27,10 @@ returned}
 A vector of predictions or the corresponding probabilities
 }
 \description{
-Predcict method for staged event tree
+Predict method for staged event tree
 }
 \details{
-Predict the most probable a posteriori value for the class variable
+Predict the most probable a posterior value for the class variable
 given all the other variables in the model. Ties are broken at random and
 if, for a given vector of predictor variables, all conditional probabilities
 are 0, NA is returned.

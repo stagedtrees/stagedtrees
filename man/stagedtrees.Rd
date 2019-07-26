@@ -11,7 +11,7 @@ Functions to compute probabilities and make predictions from the fitted
 models and to plot, analyze and manipulate staged event trees.
 }
 \details{
-Model selection algortihms:
+Model selection algorithms:
 \itemize{
 \item full model \code{\link{full}}
 \item independence model \code{\link{indep}}

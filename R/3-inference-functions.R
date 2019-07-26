@@ -95,7 +95,7 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
 
 #' Compute log lik of a stratified tree
 #'
-#' @param object the startified event tree object
+#' @param object the stratified event tree object
 #' @param ... additional parameters
 #'
 #' @importFrom stats logLik ftable

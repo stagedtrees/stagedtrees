@@ -7,7 +7,7 @@
 \method{print}{sevt}(x, ...)
 }
 \arguments{
-\item{x}{the staged event tree obejct}
+\item{x}{the staged event tree object}
 
 \item{...}{additional parameters (compatibility)}
 }

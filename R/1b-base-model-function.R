@@ -9,7 +9,7 @@
 #' @param fit logical, if  \code{TRUE} the model is fitted
 #' @param lambda smoothing parameter
 #' @param ... additional parameters to be passed
-#'            to the appropiate method, see \link{sevt.fit}
+#'            to the appropriate method, see \link{sevt.fit}
 #' @return A staged event tree object
 #' @details A staged event tree object is a list with components:
 #'\itemize{
@@ -594,7 +594,7 @@ inclusion.stages <- function(object1, object2) {
 
 #' Print a staged event tree
 #'
-#' @param x the staged event tree obejct
+#' @param x the staged event tree object
 #' @param ... additional parameters (compatibility)
 #'
 #' @return An invisible copy of \code{x}
@@ -798,7 +798,7 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' @param method method to compare staged event trees. It can be: \code{"naive"}, \code{"hamming"} or \code{"stages"}
 #' @param return.tree logical, if \code{TRUE} the difference tree is returned
 #' @param plot logical
-#' @param ... additional paraters to be passed to \code{\link{plot.sevt}}
+#' @param ... additional parameters to be passed to \code{\link{plot.sevt}}
 #' @details \code{compare.sevt} tests if the stage structure of two \code{sevt}
 #' objects
 #' is the same. 
@@ -809,7 +809,7 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' stages in the different objects finding the few number of nodes that 
 #' must be changed to obtain the same structure. 
 #' * \code{stages} uses the \code{stagesdiff.sevt} function that compare
-#' stages to check if the same stage strucure is present in both models.
+#' stages to check if the same stage structure is present in both models.
 #' 
 #' Setting \code{return.tree = TRUE} will return the stages 
 #' structure difference obtained with the selected method.

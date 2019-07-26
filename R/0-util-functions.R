@@ -20,7 +20,7 @@ new_label <- function(labels){
 #' Unique id from named list 
 #' 
 #' @param x a named list
-#' @return A named list with uniques id
+#' @return A named list with unique ids
 #' @keywords internal
 #' @examples 
 #' \dontrun{uni_idx(list(A = c(1,2,3), B = c(1,2,3))}
@@ -110,7 +110,7 @@ find_paths <- function(obj, stage, var) {
 #' @param x list of conditional probabilities for each stage
 #' @param distance the distance function e.g. \code{\link{kl}}
 #' @param ... additional parameters to be passed to the distance function
-#' @return The matrix witht the distances between stages
+#' @return The matrix with the distances between stages
 distance_mat_stages <- function(x, distance = kl, ...) {
   d <- length(x)
   M <- matrix(nrow = d, ncol = d, 0)
@@ -159,9 +159,9 @@ simple_clustering <- function(M) {
 #' @param p exponent in the \eqn{L^p} norm
 #' @param alpha the order of the Renyi divergence
 #' @param ... additional parameters for compatibility
-#' @details Functions to compute distnces between probabilities:
+#' @details Functions to compute distances between probabilities:
 #' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
-#' * \code{ry}: the symmetrized Renyi divergence of order \eqn{\alpha}
+#' * \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha}
 #' * \code{kl}: the symmetrized Kullback-Leibler divergence
 #' * \code{tv}: the total variation or \eqn{L^1} norm
 #' * \code{hl}: the (squared) Hellinger distance 
@@ -354,7 +354,7 @@ generate_random_dataset <-
 #' find maximum value
 #' 
 #' @param x numerical, the log-probabilities 
-#' @param character the levels to be returned same lenght as x
+#' @param character the levels to be returned same length as x
 #' 
 #' @return factor 
 #' @keywords internal
