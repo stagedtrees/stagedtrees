@@ -425,8 +425,10 @@ bj.sevt <-
 #' @examples
 #'
 #' #########
+#' \dontrun{
 #' mod <- hc.sevt(full(PhDArticles[,1:5], lambda = 1))
 #' BIC(mod)
+#' }
 #' @export
 hc.sevt <- function(object,
                     score = function(x)
