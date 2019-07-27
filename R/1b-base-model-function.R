@@ -832,12 +832,13 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' the two trees, according to the selected \code{method}.
 #' @export
 #' @examples
+#' \dontrun{
 #' data("PhDArticles")
 #' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 #' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 #' compare.sevt(mod1, mod2)
-#' compare.sevt(mod1, mod2, method = "hamming", plot = TRUE)
 #' compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
+#' }
 compare.sevt <-
   function(object1,
            object2,
@@ -887,6 +888,10 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
+  if (!requireNamespace("clue", quietly = TRUE)) {
+    stop("Package \"clue\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   object1 <- stndnaming.sevt(object1)
   object2 <- stndnaming.sevt(object2)
   for (v in names(object1$tree)[-1]) {
@@ -941,10 +946,12 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
 #' @examples
 #' 
 #' ##########
+#' \dontrun{
 #' m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
 #' m1 <- bhc.sevt(m0)
 #' m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
 #' stagesdiff.sevt(m1, m2)
+#' }
 stagesdiff.sevt <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))

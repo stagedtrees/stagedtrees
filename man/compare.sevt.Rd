@@ -68,16 +68,19 @@ Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
 used directly.
 }
 \examples{
+\dontrun{
 data("PhDArticles")
 mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 compare.sevt(mod1, mod2)
-compare.sevt(mod1, mod2, method = "hamming", plot = TRUE)
 compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
+}
 
 ##########
+\dontrun{
 m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
 m1 <- bhc.sevt(m0)
 m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
 stagesdiff.sevt(m1, m2)
+}
 }
