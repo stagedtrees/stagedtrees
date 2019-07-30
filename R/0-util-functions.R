@@ -64,15 +64,6 @@ find_stage <- function(object, path) {
   return(object$stages[[k]][(ix - 1) %% l + 1]) ### stages can be defined in a reduced fashion
 }
 
-
-# find the paths for a given stage index
-# paths is a data.frame as the ones obtained with expand.grid
-# stage is an integer, the stage index
-find_paths <- function(obj, stage, var) {
-  ##to do
-  ###return(paths[paths[, dim(paths)[2]] == as.character(stage),])
-}
-
 #' Compute the KL matrix
 #'
 #' @param x conditional probability table
@@ -269,3 +260,83 @@ generate_random_dataset <-
     }
     return(DD)
   }
+
+
+#' create all paths from the root to the specified variable.
+#'
+#' @param object a staged event tree
+#' @param var a level of the tree
+#' @return a dataframe with the paths corresponding to stages of a given variable
+#' @export
+#' @examples
+#' model <- full(PhDArticles)
+#' model <- bhc.sevt(model)
+#' path(model, "Mentor")
+path <- function(object, var) {
+  
+  if(!var %in% names(object$tree)) stop("Insert the name of a variable of the tree!")
+  
+  l <- which(names(object$tree) == var)
+  
+  if(l > 1) {
+    grid <- as.data.frame(expand.grid(object$tree[1:(l-1)]))
+  }
+  
+  if(l == 1) {
+    grid <- matrix("Root of tree")
+  }
+  
+  if(l > 2) {
+    grid <- t(apply(grid, 1, as.character))
+  }
+  
+  if(l == 2) {
+    grid <- apply(grid, 2, as.character)
+  }
+  
+  k <- NROW(grid)
+  
+  path <- matrix(NA, nrow = k, ncol = NCOL(grid))
+  
+  for(i in 1:k) {
+    path[i, ] <- grid[i, ]
+  }
+  
+  rownames(path) <- 1:NROW(path)
+  
+  colnames(path) <- names(object$tree)[1:(l-1)]
+  
+  return(path)
+  
+}
+
+
+# find all the paths related to a given variable and stage. 
+#'
+#' @param object a staged event tree
+#' @param var a level of the tree
+#' @param stage a stage for the given variable. If not specified the stage, it returns 
+#' all the paths related to that variable with the corresponding stage.
+#' @return a dataframe with the paths corresponding to the stage of a given variable
+#' @export
+#' @examples 
+#' model <- full(PhDArticles)
+#' model <- bhc.sevt(model)
+#' find_path(model, "Mentor")
+#' find_path(model, "Mentor", "18")
+find_path <- function(object, var, stage = "") {
+  if(!(stage %in% as.numeric(object$stages[[var]])) & stage != "") stop("Insert a stage related to the entered variable!")
+  
+  w <- cbind(path(object, var), "stage" = object$stages[[var]])
+  
+  if(stage == "") {
+    path <- w
+  }
+  
+  if(!stage == "") {
+    
+    path <- w[w[, NCOL(w)] == stage, ]
+  }
+  
+  return(path)
+}
