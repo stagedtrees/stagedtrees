@@ -32,7 +32,8 @@ associate to a node or move the node to a new stage.
 \examples{
 
 #########
-data(Titanic)
-mod <- hc.sevt(full(Titanic, lambda = 1))
+\dontrun{
+mod <- hc.sevt(full(PhDArticles[,1:5], lambda = 1))
 BIC(mod)
+}
 }

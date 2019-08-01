@@ -42,7 +42,7 @@ indep(x, ...)
 \item{x}{data.frame, list, table, \code{bn.fit} object}
 
 \item{...}{additional parameters to be passed
-to the appropiate method, see \link{sevt.fit}}
+to the appropriate method, see \link{sevt.fit}}
 
 \item{order}{order of the variables}
 
@@ -68,21 +68,22 @@ The order of the variable is the
 order of the event tree.
 \item stages: A named list where each component
 stores the stages for the given variable.
+\item ctables: The contingency tables of the data.
+\item lambda: The smoothing parameter used to estimate the model.
 \item prob: The conditional probability tables for every
 variable and every stage.
-\item ctables: The contingency tables of the data.
+\item ll: The log-likelihood of the \code{estimated} model.
 }
 }
 \examples{
 
-######### from data.frame
+######### from dataset
 DD <- generate_random_dataset(n = 5, 1000)
 indep <- staged_ev_tree(DD, fit = TRUE)
 full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
 
 ######### from table
-data("Titanic")
-modT <- staged_ev_tree(Titanic, fit = TRUE, full = TRUE, lambda = 1)
+modT <- staged_ev_tree(table(PhDArticles), fit = TRUE, full = TRUE, lambda = 1)
 plot(modT)
 
 ######### from list

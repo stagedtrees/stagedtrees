@@ -18,16 +18,19 @@ stagesdiff.sevt(object1, object2)
 
 \item{object2}{a staged event tree}
 
-\item{method}{method to compare staged event trees}
+\item{method}{method to compare staged event trees. It can be: \code{"naive"}, \code{"hamming"} or \code{"stages"}}
 
 \item{return.tree}{logical, if \code{TRUE} the difference tree is returned}
 
 \item{plot}{logical}
 
-\item{...}{additional paraters to be passed to \code{\link{plot.sevt}}}
+\item{...}{additional parameters to be passed to \code{\link{plot.sevt}}}
 }
 \value{
-Logical or a difference tree (if \code{tree = TRUE})
+if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
+models are exactly equal, otherwise \code{FALSE}.
+Else If \code{return.tree = TRUE}  it returns the differences between
+the two trees, according to the selected \code{method}.
 }
 \description{
 Compare two stages event tree, return the differences of the stages
@@ -46,7 +49,7 @@ objects and then simply compares the resulting \code{$stages} lists.
 stages in the different objects finding the few number of nodes that
 must be changed to obtain the same structure.
 \item \code{stages} uses the \code{stagesdiff.sevt} function that compare
-stages to check if the same stage strucure is present in both models.
+stages to check if the same stage structure is present in both models.
 }
 
 Setting \code{return.tree = TRUE} will return the stages
@@ -65,18 +68,19 @@ Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
 used directly.
 }
 \examples{
-
-#########
+\dontrun{
 data("PhDArticles")
 mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
 mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
 compare.sevt(mod1, mod2)
-compare.sevt(mod1, mod2, method = "hamming", plot = TRUE)
 compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
+}
 
 ##########
+\dontrun{
 m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
 m1 <- bhc.sevt(m0)
 m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
 stagesdiff.sevt(m1, m2)
+}
 }

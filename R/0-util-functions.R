@@ -1,11 +1,7 @@
 #' New label
 #' 
 #' give a safe-to-add label that is not in \code{labels}
-#' 
-#' INTERNAL
-#' 
 #' @param labels vector of labels
-#' 
 #' @return a string label that is different from each \code{labels}
 #' @examples 
 #' \dontrun{new_label(c("1", "A", "b", "3" , 2))}
@@ -24,7 +20,8 @@ new_label <- function(labels){
 #' Unique id from named list 
 #' 
 #' @param x a named list
-#' @return A named list with uniques id
+#' @return A named list with unique ids
+#' @keywords internal
 #' @examples 
 #' \dontrun{uni_idx(list(A = c(1,2,3), B = c(1,2,3))}
 uni_idx <- function(x){
@@ -103,7 +100,6 @@ find_stage <- function(object, path) {
 # stage is an integer, the stage index
 find_paths <- function(obj, stage, var) {
   ##to do
-  ###return(paths[paths[, dim(paths)[2]] == as.character(stage),])
 }
 
 
@@ -114,7 +110,7 @@ find_paths <- function(obj, stage, var) {
 #' @param x list of conditional probabilities for each stage
 #' @param distance the distance function e.g. \code{\link{kl}}
 #' @param ... additional parameters to be passed to the distance function
-#' @return The matrix witht the distances between stages
+#' @return The matrix with the distances between stages
 distance_mat_stages <- function(x, distance = kl, ...) {
   d <- length(x)
   M <- matrix(nrow = d, ncol = d, 0)
@@ -159,13 +155,13 @@ simple_clustering <- function(M) {
 #' Distances between probabilities
 #' 
 #' @param x vector of probabilities
-#' @param y vector of probabilitites
+#' @param y vector of probabilities
 #' @param p exponent in the \eqn{L^p} norm
 #' @param alpha the order of the Renyi divergence
 #' @param ... additional parameters for compatibility
-#' @details Functions to compute distnces between probabilities:
+#' @details Functions to compute distances between probabilities:
 #' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
-#' * \code{ry}: the symmetrized Renyi divergence of order \eqn{\alpha}
+#' * \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha}
 #' * \code{kl}: the symmetrized Kullback-Leibler divergence
 #' * \code{tv}: the total variation or \eqn{L^1} norm
 #' * \code{hl}: the (squared) Hellinger distance 
@@ -233,9 +229,9 @@ cd <- function(x, y, ...){
 #' @param x a vector of +1 nad -1
 #' @param eps the uniform noise amount
 #' @return the computed noisy xor
+#' @keywords internal
 #' @importFrom stats runif
-xor <- function(x, eps = 0) {
-  #set.seed(seed = 0)
+noisy_xor <- function(x, eps = 0) {
   return(sign(prod(x) + runif(
     n = 1, min = -eps, max = eps
   )))
@@ -246,8 +242,9 @@ xor <- function(x, eps = 0) {
 #' @param n number of variables
 #' @param N number of observations
 #' @param eps error
-#'
-#' @return The xor dataset
+#' @return The xor dataset with \code{n} + 1 variables, where the last one is 
+#' the class variable \code{C} computed as xor logical operator.
+#' 
 #' @export
 #' @importFrom stats runif
 #' @examples 
@@ -269,7 +266,7 @@ generate_xor_dataset <- function(n = 2,
     DD,
     MARGIN = 1,
     FUN = function(x) {
-      return(xor(x = x[-1], eps = eps))
+      return(noisy_xor(x = x[-1], eps = eps))
     })
   DD <- DD[,-1]
   for (i in 1:(n+1)){
@@ -332,9 +329,7 @@ generate_linear_dataset <-
 #'
 #' @param n number of variables
 #' @param N number of observations
-#' @return A data.frame with \code{n} independent random variables and
-#'  one class variable \code{C} computed as
-#'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+#' @return A data.frame with \code{n} independent random variables
 #' @export
 #' @importFrom stats runif
 #' @examples 
@@ -355,3 +350,18 @@ generate_random_dataset <-
     }
     return(DD)
   }
+
+#' find maximum value
+#' 
+#' @param x numerical, the log-probabilities 
+#' @param character the levels to be returned same length as x
+#' 
+#' @return factor 
+#' @keywords internal
+which_class <- function(x, levels){
+  y <- seq_along(x)[x == max(x)]
+  if (length(y) > 1L){
+    ix <- sample(y, 1L) 
+  }else ix <- y
+  factor(levels[ix], levels = levels)
+}

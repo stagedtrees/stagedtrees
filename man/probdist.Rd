@@ -28,7 +28,7 @@ cd(x, y, ...)
 \arguments{
 \item{x}{vector of probabilities}
 
-\item{y}{vector of probabilitites}
+\item{y}{vector of probabilities}
 
 \item{p}{exponent in the \eqn{L^p} norm}
 
@@ -43,10 +43,10 @@ The distance between \code{p} and \code{q}
 Distances between probabilities
 }
 \details{
-Functions to compute distnces between probabilities:
+Functions to compute distances between probabilities:
 \itemize{
 \item \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
-\item \code{ry}: the symmetrized Renyi divergence of order \eqn{\alpha}
+\item \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha}
 \item \code{kl}: the symmetrized Kullback-Leibler divergence
 \item \code{tv}: the total variation or \eqn{L^1} norm
 \item \code{hl}: the (squared) Hellinger distance

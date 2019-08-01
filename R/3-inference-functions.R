@@ -1,17 +1,23 @@
 #' Compute probability of a path from root
 #'
 #' @param object a staged event tree object
-#' @param x the path
-#' @param log logical
+#' @param x the path, expressed as a character vector containing the sequence of the assumed levels
+#' @param log logical, if \code{TRUE} log-probability is returned
 #' @return The probability of the given path or its logarithm if \code{log=TRUE}
+#' @details it computes the probability of following a given path (\code{x}) starting from the root. 
+#' Can be a full path from the root to a leaf or a shorter path. 
 #' @examples
 #'
-#' #########
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
-#' path_probability.sevt(model, c("1", "-1"))
-#' path_probability.sevt(model, c("1", "-1", "1", "-1", "1"),
-#'  log = TRUE)
+#' path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE)  # root to leaf path
+#' path_probability.sevt(model, c("1", "-1"))  # short path
+#' 
+#' grid <- expand.grid(model$tree)  # all paths from root to leaves
+#' 
+#' # joint distribution. it sums up to 1.
+#' grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability.sevt, object = model) 
+#' cbind(grid, grid.prob)
 #' @export
 path_probability.sevt <-
   function(object, x, log = FALSE) {
@@ -40,15 +46,18 @@ path_probability.sevt <-
 #' @param x the vector or data.frame of observations
 #' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @param nan0 logical, if \code{NaN} should be converted to 0 
-#' @return the probabilities for each observation
+#' @return the probabilities to observe each observation given in \code{x}
 #'
+#' @details it computes probabilities related to a vector or a data.frame of observations.
+#' They can be as an \code{expand.grid} data.frame or a simple subset of the dataset on which
+#' the model is estimated. 
 #' @examples
 #'
-#' #########
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
 #' pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
 #' sum(pr)
+#' prob.sevt(model, DD[1:10, ])  
 #' @export
 prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   stopifnot(is(object, "sevt"))
@@ -86,7 +95,7 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
 
 #' Compute log lik of a stratified tree
 #'
-#' @param object the startified event tree object
+#' @param object the stratified event tree object
 #' @param ... additional parameters
 #'
 #' @importFrom stats logLik ftable
@@ -94,8 +103,7 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
 #'
 #' @examples
 #'
-#' #########
-#' DD <- as.data.frame(sapply(1:5, function(i){
+#' DD <- as.data.frame(sapply(1:5, function(i) {
 #'                           return(as.factor(sample(c(1:3),
 #'                           size=100, replace = TRUE)))
 #'                      }))

@@ -1,6 +1,16 @@
+# 1.0.0
+
+* Minor doc fix and references added
+* `xor` is renamed as `noisy_xor`
+* test added for `noisy_xor`
+* more util functions marked as internal
+* fixed return problem with `NaN` log-probabilities in `predict.sevt`
+
 # 0.9.5
 
 * Add `inclusion.stages` function
+* Fix #28; `predict.sevt` now returns conditional probabilities P(C|X)
+* Fix #62; `predict.sevt` works also if `newdata` does not inlcude the class
 
 # 0.9.4
 

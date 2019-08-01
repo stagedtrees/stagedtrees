@@ -18,10 +18,9 @@ Get number of parameters of the model
 \examples{
 
 #########
-data("Titanic")
-mod_f <- full(Titanic)
+mod_f <- full(PhDArticles)
 df.sevt(mod_f)
 
-mod_i <- indep(Titanic)
+mod_i <- indep(PhDArticles)
 df.sevt(mod_i)
 }

@@ -101,7 +101,7 @@ mod5
 #### Combining model selections with `%>%`
 
 The pipe operator from the `magrittr` package can be used to combine
-easily various model selction algorithms and to specify models easily. 
+easily various model selection algorithms and to specify models easily. 
 
 ```{r}
 library(magrittr)
@@ -140,10 +140,18 @@ A staged event tree object can be used to make predictions with the
 first variable (root) in the tree will be used. 
 
 ```{r}
+## check accuracy over the PhDArticles data
 predicted <- predict(mod3, newdata = PhDArticles)
 table(predicted, PhDArticles$Articles)
 ```
 
+Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
+
+```{r}
+## obtain estimated conditional probabilities in mod3 for first 5 obs
+## P(Articles|Gender, Kids, Married, Mentor, Prestige)
+predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
+```
 ##### Sampling
 
 ```{r}

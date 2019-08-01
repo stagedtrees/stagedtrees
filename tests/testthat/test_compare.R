@@ -9,7 +9,12 @@ mod2 <- indep(DD)
 
 test_that("compare.sevt correctly returns TRUE/FALSE", {
 
-  methods <- c("naive", "hamming", "stages")
+  if (!requireNamespace("pkg", quietly = TRUE)) {
+    methods <- c("naive", "stages")   
+  }else{
+    methods <- c("naive", "hamming", "stages")
+  }
+ 
   
   for (m in methods) {
     expect_true(compare.sevt(mod1, mod1, method = m))

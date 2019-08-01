@@ -7,7 +7,7 @@
 \method{logLik}{strt_ev_tree}(object, ...)
 }
 \arguments{
-\item{object}{the startified event tree object}
+\item{object}{the stratified event tree object}
 
 \item{...}{additional parameters}
 }
@@ -16,8 +16,7 @@ Compute log lik of a stratified tree
 }
 \examples{
 
-#########
-DD <- as.data.frame(sapply(1:5, function(i){
+DD <- as.data.frame(sapply(1:5, function(i) {
                           return(as.factor(sample(c(1:3),
                           size=100, replace = TRUE)))
                      }))

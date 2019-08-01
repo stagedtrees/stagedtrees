@@ -11,6 +11,16 @@ stages.sevt(object, var = NULL)
 
 \item{var}{name of one variable}
 }
+\value{
+If \code{var} is specified, it returns a character vector with the estimated stages associated to each situations related to that variable.
+Otherwise, If \code{var} is not specified, it returns a list of character vectors with the estimated stages associated to each situations related
+to all the variables of the dataset: this is exactly the output of what is stored in \code{object$stages}
+}
 \description{
 Print stages info
+}
+\examples{
+DD <- generate_xor_dataset(5, 100)
+model <- staged_ev_tree(DD, fit = TRUE, lambda = 0)
+stages.sevt(model, var = "X5")
 }

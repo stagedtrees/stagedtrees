@@ -9,7 +9,7 @@ naive.sevt(object, distance = kl, k = length(object$tree))
 \arguments{
 \item{object}{a full staged event tree}
 
-\item{distance}{a ditance between probabilities}
+\item{distance}{a distance between probabilities}
 
 \item{k}{the maximum number of variable to consider}
 }
@@ -21,7 +21,6 @@ Build a stage event tree with two stages for each variable
 }
 \examples{
 
-#########
 DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
 model_0 <- staged_ev_tree(DD[1:500,], full = TRUE, lambda = 1)
 naive_model <- naive.sevt(model_0)

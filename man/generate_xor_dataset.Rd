@@ -14,7 +14,8 @@ generate_xor_dataset(n = 2, N = 100, eps = 1.2)
 \item{eps}{error}
 }
 \value{
-The xor dataset
+The xor dataset with \code{n} + 1 variables, where the last one is
+the class variable \code{C} computed as xor logical operator.
 }
 \description{
 generate a xor dataset

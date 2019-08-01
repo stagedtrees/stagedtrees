@@ -2,7 +2,7 @@
 % Please edit documentation in R/5-classifier-model-functions.R
 \name{predict.sevt}
 \alias{predict.sevt}
-\title{Predcict method for staged event tree}
+\title{Predict method for staged event tree}
 \usage{
 \method{predict}{sevt}(object, newdata = NULL, class = NULL,
   prob = FALSE, log = FALSE, ...)
@@ -25,20 +25,33 @@ returned}
 }
 \value{
 A vector of predictions or the corresponding probabilities
-
-A vector of predicitons
 }
 \description{
-Predcict method for staged event tree
+Predict method for staged event tree
+}
+\details{
+Predict the most probable a posterior value for the class variable
+given all the other variables in the model. Ties are broken at random and
+if, for a given vector of predictor variables, all conditional probabilities
+are 0, NA is returned.
+
+if \code{prob = TRUE}, a matrix with number of rows equals to the number of
+rows in the \code{newdata} and number of columns as the number of levels of the
+\code{class} variable is returned. if \code{log = TRUE}, log-probabilities are returned.
+
+if \code{prob = FALSE}, a vector of length as the number of rows in the \code{newdata}
+with the level with higher estimated probability for each new observations is returned.
 }
 \examples{
 DD <- generate_xor_dataset(n = 5, 1000)
 order <- c("C", "X1", "X2", "X3", "X4", "X5")
-train <- DD[1:500, order]
+train <- DD[1:5, order]
 test <- DD[501:1000, order]
 model <- full(train)
 model <- bhc.sevt(model)
-pr <- predict(model, class = "C", newdata = test)
+pr <- predict(model, newdata = test, class = "C")
 table(pr, test$C)
-predict(model, class = "C", newdata = test, prob = TRUE)
+predict(model, newdata = test, class = "C")  # class
+predict(model, newdata = test, class = "C", prob = TRUE)  # probabilities
+predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  # log-probabilities
 }

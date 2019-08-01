@@ -9,7 +9,10 @@
 #' @param ... additional parameters
 #' @export
 #' @examples
-#' a <- c(1,2)
+#' mod <- strt_ev_tree(PhDArticles)
+#' str(mod)
+#' mod1 <- strt_ev_tree(PhDArticles, fit = TRUE)
+#' str(mod1)
 strt_ev_tree <- function(x, order = NULL, fit = FALSE, ...) {
   UseMethod("strt_ev_tree", object = x)
 }
@@ -103,8 +106,6 @@ strt_ev_tree.list <- function(x, ...) {
 #' @return A stratified event tree object, that is a list with a `tree` component
 #' @details This function build a stratified event tree object from a staged event tree.
 #'          The staged event tree returned will have a different stage for each path.
-#'          This is the function that can be used to initialize a staged event tree with
-#'          the more complex structure.
 #' @export
 #'
 strt_ev_tree.sevt <- function(x, ...) {
@@ -159,8 +160,6 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0) {
   if (is.data.frame(data)) {
     data <- table(data[,order])
   }
-  
-
   
   evt$ctables <- lapply(1:length(order), function(i) {
     path <- order[i:1]

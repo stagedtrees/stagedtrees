@@ -4,3 +4,5 @@
 .travis.yml
 ^README\.Rmd$
 README_files
+^cran-comments\.md$
+^CRAN-RELEASE$
