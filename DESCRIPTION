@@ -12,7 +12,15 @@ Authors@R: c(
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
 Maintainer: Gherardo Varando <gherardo.varando@gmail.com>
-Description: Package to create and fit staged event tree probability models.
+Description: Package to create and fit staged event tree probability models. They are probabilistic graphical models
+which are helpful for estimating asymmetric conditional independences among the discrete variables in the case study examined, 
+which would not be possible to define using Undirected Graphs (UG) or Bayesian networks (BN).
+For details see linked papers and book.
+Collazo R. A., Görgen C. and Smith J. Q. (2018, <ISBN:9781498729604>)
+Görgen C., Bigatti A., Riccomagno E. and Smith J. Q. (2018) <arXiv:1705.09457>
+Thwaites P. A., Smith, J. Q. (2017) <arXiv:1510.00186>
+Barclay L. M., Hutton J. L. and Smith J. Q. (2013) <doi:10.1016/j.ijar.2013.05.006>
+Smith J. Q. and Anderson P. E. (2008) <doi:10.1016/j.artint.2007.05.004>
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -29,3 +37,4 @@ Suggests:
     bnlearn,
     covr,
     clue
+    
