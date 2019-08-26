@@ -655,16 +655,18 @@ stages.sevt <- function(object, var = NULL) {
 #' Summary method for class \code{sevt}. 
 #' 
 #' @param object a staged event tree object
+#' @param ... arguments for compatibility
 #' @details Print model information and summary of stages.
-#' @return An object of class \code{summary.sevt} for which a \code{print}
+#' @return An object of class \code{summary.sevt} 
+#'         for which a \code{print}
 #'         method exist.
 #' @examples 
 #' model <- naive.sevt(full(PhDArticles, fit = TRUE, lambda = 1))
 #' summary(model)
 #' @export
-summary.sevt <- function(object) {
+summary.sevt <- function(object, ...) {
   stopifnot(is(object, "sevt"))
-  vns <- varnames.sevt(model)
+  vns <- varnames.sevt(object)
   nv <- nvar.sevt(object)
   out <- list()
   out[[vns[1]]] <- data.frame(stages = "1", 
@@ -686,20 +688,19 @@ summary.sevt <- function(object) {
     out[[vns[i]]] <- D
   }
   out <- list(stages.info = out)
-  out$call <- model$call
-  out$ll <- model$ll
-  out$lambda <- model$lambda
+  out$call <- object$call
+  out$ll <- object$ll
+  out$lambda <- object$lambda
   class(out) <- "summary.sevt"
   return(out)
 }
 
 #' @rdname summary.sevt
-#' @param x an object of class \code
+#' @param x an object of class \code{summary.sevt}
 #' @param max the maximum number of variables for which 
 #'            information is printed 
-#' @details Print the summary object of a staged event tree object.
 #' @export
-print.summary.sevt <- function(x, max = 10){
+print.summary.sevt <- function(x, max = 10, ...){
   if (!is.null(x$call)){ 
     cat("Call: \n")
     print(x$call)

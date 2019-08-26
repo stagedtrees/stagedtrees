@@ -12,7 +12,8 @@ inclusion.stages(object1, object2)
 \item{object2}{second staged event tree to compare}
 }
 \value{
-a list with inclusion relations between stage structures of each variable in the model
+a list with inclusion relations between stage
+structures of each variable in the model
 }
 \description{
 Inclusion relations between stage structures of two models estimated on the same dataset

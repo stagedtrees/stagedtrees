@@ -11,10 +11,8 @@ test_that("stages.sevt", {
 })
 
 
-test_that("stageinfo.sevt", {
-  expect_output(stageinfo.sevt(sev, "X1", "2"))
-  expect_silent(stageinfo.sevt(sev, "X1", "89"))
-  expect_error(stageinfo.sevt(sev, "FF", "4"))
+test_that("summary.sevt", {
+  expect_visible(summary(sev))
 })
 
 

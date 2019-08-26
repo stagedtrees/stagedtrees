@@ -5,20 +5,23 @@
 \alias{print.summary.sevt}
 \title{Summarizing staged event trees}
 \usage{
-\method{summary}{sevt}(object)
+\method{summary}{sevt}(object, ...)
 
-\method{print}{summary.sevt}(x, max = 10)
+\method{print}{summary.sevt}(x, max = 10, ...)
 }
 \arguments{
 \item{object}{a staged event tree object}
 
-\item{x}{an object of class \code}
+\item{...}{arguments for compatibility}
+
+\item{x}{an object of class \code{summary.sevt}}
 
 \item{max}{the maximum number of variables for which
 information is printed}
 }
 \value{
-An object of class \code{summary.sevt} for which a \code{print}
+An object of class \code{summary.sevt}
+for which a \code{print}
 method exist.
 }
 \description{
@@ -26,8 +29,6 @@ Summary method for class \code{sevt}.
 }
 \details{
 Print model information and summary of stages.
-
-Print the summary object of a staged event tree object.
 }
 \examples{
 model <- naive.sevt(full(PhDArticles, fit = TRUE, lambda = 1))
