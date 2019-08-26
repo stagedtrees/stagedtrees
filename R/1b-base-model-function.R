@@ -512,7 +512,8 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
 #' @param object1 first staged event tree to compare
 #' @param object2 second staged event tree to compare
 #'
-#' @return a list with inclusion relations between stage structures of each variable in the model
+#' @return a list with inclusion relations between stage 
+#' structures of each variable in the model
 #' @details it computes the inclusion/exclusion/equality/diversity between the estimated stages
 #' between the two given models, in \code{object1} and \code{object2}.
 #' @examples 
@@ -623,13 +624,17 @@ print.sevt <- function(x, ...) {
 
 
 
-#' Print stages info
+#' Stages of a variable
 #'
+#' Obtain the stages of a given variable in a staged event tree object.
 #' @param object a staged event tree object
 #' @param var name of one variable
-#' @return If \code{var} is specified, it returns a character vector with the estimated stages associated to each situations related to that variable.
-#' Otherwise, If \code{var} is not specified, it returns a list of character vectors with the estimated stages associated to each situations related
-#' to all the variables of the dataset: this is exactly the output of what is stored in \code{object$stages}
+#' @return If \code{var} is specified, it returns a character vector with 
+#'         stage names for the given variable 
+#'         (that is \code{object$stages[[var]]}.
+#'         Otherwise, If \code{var} is not specified, \code{stages.sevt} 
+#'         returns a list of character vectors containing the stages associated 
+#'         to each variable in the model (that is \code{object$stages}). 
 #' @examples 
 #' DD <- generate_xor_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 0)
@@ -645,65 +650,70 @@ stages.sevt <- function(object, var = NULL) {
 }
 
 
-#' Print stage(s) info
+#' Summarizing staged event trees
 #'
+#' Summary method for class \code{sevt}. 
+#' 
 #' @param object a staged event tree object
-#' @param var name of one variable
-#' @param stage name(s) of stage for variable \code{var}
-#' @return a print of most important informations associated to stages, for a given variable.
-#' If \code{stage} is specified, informations of only that stage are printed, otherwise
-#' the informations of all stages related to the specified variable are printed.
+#' @details Print model information and summary of stages.
+#' @return An object of class \code{summary.sevt} for which a \code{print}
+#'         method exist.
 #' @examples 
-#' model <- full(PhDArticles, fit = TRUE)
-#' model <- fbhc.sevt(model)
-#' stageinfo.sevt(model, var = "Mentor")
-#' stageinfo.sevt(model, var = "Mentor", stage = 24)
+#' model <- naive.sevt(full(PhDArticles, fit = TRUE, lambda = 1))
+#' summary(model)
 #' @export
-stageinfo.sevt <- function(object, var, stage = NULL) {
+summary.sevt <- function(object) {
   stopifnot(is(object, "sevt"))
-  stopifnot(var %in% varnames.sevt(object))
-  if (var == names(object$tree)[1]) {
-    cat("First variable ", var, "\n")
-    if (is_fitted.sevt(object)) {
-      cat("  ", "probabilities: ")
-      cat(paste0(names(object$prob[[var]][[1]]), collapse = "      "), "\n")
-      temp <- sapply(object$tree[[var]], nchar)
-      temp <-
-        sapply(sapply(temp, function(i)
-          rep(" ", i)), paste0, collapse = "")
-      temp <- paste0(round(object$prob[[var]][[1]], 3), temp)
-      cat(character(18), temp, "\n")
-      cat(character(3),
-          "sample size:",
-          attr(object$prob[[var]][[1]], "n"),
-          "\n")
-    }
+  vns <- varnames.sevt(model)
+  nv <- nvar.sevt(object)
+  out <- list()
+  out[[vns[1]]] <- data.frame(stages = "1", 
+                              npaths = 0)
+  if (is_fitted.sevt(object)){
+    out[[vns[1]]][["sample.size"]] <- attr(object$prob[[vns[1]]][[1]], "n")
   }
-  if (is.null(stage)) {
-    stage <- unique(object$stages[[var]])
-  }
-  invisible(sapply(stage, function(s) {
-    if (!(s %in% unique(object$stages[[var]]))) return() 
-    s <- as.character(s)
-    cat("Stage ", s, "for variable", var, "\n")
-    cat("  ", sum(object$stages[[var]] == s), "nodes in the stage \n")
-    if (is_fitted.sevt(object)) {
-      cat("  ", "probabilities: ")
-      cat(paste0(names(object$prob[[var]][[s]]), collapse = "      "), "\n")
-      temp <- sapply(object$tree[[var]], nchar)
-      temp <- sapply(sapply(temp, function(i)
-        rep(" ", i)),
-        paste0, collapse = "")
-      temp <- paste0(round(object$prob[[var]][[s]], 3), temp)
-      cat(character(18), temp, "\n")
-      cat(character(3),
-          "sample size:",
-          attr(object$prob[[var]][[s]], "n"),
-          "\n")
+  for (i in 2:nv){
+    v <- vns[i]
+    D <- data.frame(stages = unique(object$stages[[v]]))
+    D$npaths <- vapply(D$stages, function(s){
+      sum(object$stages[[v]] == s)
+    }, FUN.VALUE = 1)
+    if (is_fitted.sevt(object)){
+      D[["sample.size"]] <- vapply(D$stages, function(s){
+        attr(object$prob[[v]][[s]], "n")
+      }, FUN.VALUE = 1)
     }
-    #cat("  ", "paths: TO DO \n")
-    cat(rep("-", 32), "\n", sep = "")
-  }))
+    out[[vns[i]]] <- D
+  }
+  out <- list(stages.info = out)
+  out$call <- model$call
+  out$ll <- model$ll
+  out$lambda <- model$lambda
+  class(out) <- "summary.sevt"
+  return(out)
+}
+
+#' @rdname summary.sevt
+#' @param x an object of class \code
+#' @param max the maximum number of variables for which 
+#'            information is printed 
+#' @details Print the summary object of a staged event tree object.
+#' @export
+print.summary.sevt <- function(x, max = 10){
+  if (!is.null(x$call)){ 
+    cat("Call: \n")
+    print(x$call)
+  }
+  if (!is.null(x$lambda)) cat("lambda: ", x$lambda, "\n")
+  cat("Stages: \n")
+  for (i in 1:min(length(x$stages.info), max)){
+    cat("  Variable: ", names(x$stages.info)[i], "\n")
+    print.data.frame(x$stages.info[[i]],row.names = FALSE)
+    cat("  ------------ \n")
+  }
+  if (max < length(x$stages.info)){
+    cat("  only the first ", max, " variables are shown \n")
+  }
 }
 
 
@@ -832,13 +842,11 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' the two trees, according to the selected \code{method}.
 #' @export
 #' @examples
-#' \dontrun{
 #' data("PhDArticles")
-#' mod1 <- bhc.sevt(full(PhDArticles, lambda = 1))
-#' mod2 <- fbhc.sevt(full(PhDArticles, lambda = 1))
+#' mod1 <- bhc.sevt(full(PhDArticles[,1:4], lambda = 1))
+#' mod2 <- fbhc.sevt(full(PhDArticles[,1:4], lambda = 1))
 #' compare.sevt(mod1, mod2)
 #' compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
-#' }
 compare.sevt <-
   function(object1,
            object2,
@@ -889,7 +897,7 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
   stopifnot(is(object2, "sevt"))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
   if (!requireNamespace("clue", quietly = TRUE)) {
-    stop("Package \"clue\" needed for this function to work. Please install it.",
+    stop("Package \"clue\" needed for thus function to work. Please install it.",
          call. = FALSE)
   }
   object1 <- stndnaming.sevt(object1)
@@ -946,12 +954,10 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
 #' @examples
 #' 
 #' ##########
-#' \dontrun{
-#' m0 <- full(PhDArticles, fit = TRUE, lambda = 0)
+#' m0 <- full(PhDArticles[,1:4], fit = TRUE, lambda = 0)
 #' m1 <- bhc.sevt(m0)
 #' m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
 #' stagesdiff.sevt(m1, m2)
-#' }
 stagesdiff.sevt <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))

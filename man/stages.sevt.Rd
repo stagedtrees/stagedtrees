@@ -2,7 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{stages.sevt}
 \alias{stages.sevt}
-\title{Print stages info}
+\title{Stages of a variable}
 \usage{
 stages.sevt(object, var = NULL)
 }
@@ -12,12 +12,15 @@ stages.sevt(object, var = NULL)
 \item{var}{name of one variable}
 }
 \value{
-If \code{var} is specified, it returns a character vector with the estimated stages associated to each situations related to that variable.
-Otherwise, If \code{var} is not specified, it returns a list of character vectors with the estimated stages associated to each situations related
-to all the variables of the dataset: this is exactly the output of what is stored in \code{object$stages}
+If \code{var} is specified, it returns a character vector with
+stage names for the given variable
+(that is \code{object$stages[[var]]}.
+Otherwise, If \code{var} is not specified, \code{stages.sevt}
+returns a list of character vectors containing the stages associated
+to each variable in the model (that is \code{object$stages}).
 }
 \description{
-Print stages info
+Obtain the stages of a given variable in a staged event tree object.
 }
 \examples{
 DD <- generate_xor_dataset(5, 100)

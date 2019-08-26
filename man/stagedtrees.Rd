@@ -34,7 +34,7 @@ Plot, explore and compare:
 \itemize{
 \item Plot \code{\link{plot.sevt}}
 \item Compare \code{\link{compare.sevt}}
-\item Stages info \code{\link{stages.sevt}}, \code{\link{stageinfo.sevt}}
+\item Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
 }
 }
 \examples{

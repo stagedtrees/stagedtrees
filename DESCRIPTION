@@ -12,7 +12,18 @@ Authors@R: c(
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
 Maintainer: Gherardo Varando <gherardo.varando@gmail.com>
-Description: Package to create and fit staged event tree probability models.
+Description: Package to create and fit staged event tree probability models. 
+             Staged event trees are probabilistic graphical models capable of 
+             representing asymmetric conditional independences among categorical
+             variables. This package contains functions to create, plot and fit 
+             staged event trees from data, moreover different structure learning 
+             algorithms are available.
+             References:
+             Collazo R. A., Görgen C. and Smith J. Q. (2018, ISBN:9781498729604).
+             Görgen C., Bigatti A., Riccomagno E. and Smith J. Q. (2018) <arXiv:1705.09457>.
+             Thwaites P. A., Smith, J. Q. (2017) <arXiv:1510.00186>.
+             Barclay L. M., Hutton J. L. and Smith J. Q. (2013) <doi:10.1016/j.ijar.2013.05.006>.
+             Smith J. Q. and Anderson P. E. (2008) <doi:10.1016/j.artint.2007.05.004>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

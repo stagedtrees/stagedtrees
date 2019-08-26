@@ -2,7 +2,7 @@
 % Please edit documentation in R/0-util-functions.R
 \name{which_class}
 \alias{which_class}
-\title{find maximum value}
+\title{Find maximum value}
 \usage{
 which_class(x, levels)
 }
@@ -15,6 +15,6 @@ which_class(x, levels)
 factor
 }
 \description{
-find maximum value
+Find maximum value
 }
 \keyword{internal}

@@ -3,8 +3,6 @@
 #' give a safe-to-add label that is not in \code{labels}
 #' @param labels vector of labels
 #' @return a string label that is different from each \code{labels}
-#' @examples 
-#' \dontrun{new_label(c("1", "A", "b", "3" , 2))}
 #' @keywords internal
 new_label <- function(labels){
   k <- 1
@@ -22,8 +20,6 @@ new_label <- function(labels){
 #' @param x a named list
 #' @return A named list with unique ids
 #' @keywords internal
-#' @examples 
-#' \dontrun{uni_idx(list(A = c(1,2,3), B = c(1,2,3))}
 uni_idx <- function(x){
   nn <- names(x)
   x <- lapply(1:length(x), function(i){
@@ -45,12 +41,6 @@ uni_idx <- function(x){
 #' 
 #' @return an integer, the index of the node corresponding to \code{path}
 #' @keywords internal
-#' @examples 
-#' \dontrun{
-#' data("PhDArticles")
-#' mod <- full(PhDArticles)
-#' tree_idx(c("0", "male", "yes"), mod$tree)
-#' }
 tree_idx <- function(path, tree, complete = FALSE){
  k <- length(path)
  ls <- sapply(tree, length)
@@ -80,12 +70,6 @@ tree_idx <- function(path, tree, complete = FALSE){
 #' @param path vector of the path
 #' @return the stage name corresponding of the path
 #' @keywords internal 
-#' @examples 
-#' \dontrun{
-#' data("PhDArticles")
-#' mod <- full(PhDArticles)
-#' find_stage(mod, c("0", "male", "yes"))
-#' find_stage(mod, c("0", "male", "no"))}
 find_stage <- function(object, path) {
   k <- length(path)
   ix <- tree_idx(path = path, tree = object$tree)
@@ -351,7 +335,7 @@ generate_random_dataset <-
     return(DD)
   }
 
-#' find maximum value
+#' Find maximum value
 #' 
 #' @param x numerical, the log-probabilities 
 #' @param character the levels to be returned same length as x

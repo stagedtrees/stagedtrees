@@ -22,7 +22,7 @@
 #' Plot, explore and compare:
 #' * Plot \code{\link{plot.sevt}}
 #' * Compare \code{\link{compare.sevt}}
-#' * Stages info \code{\link{stages.sevt}}, \code{\link{stageinfo.sevt}} 
+#' * Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}} 
 #' @docType package
 #' @name stagedtrees
 #' @references 
