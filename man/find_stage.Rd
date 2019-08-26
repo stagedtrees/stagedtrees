@@ -17,11 +17,4 @@ the stage name corresponding of the path
 \description{
 no checking is done
 }
-\examples{
-\dontrun{
-data("PhDArticles")
-mod <- full(PhDArticles)
-find_stage(mod, c("0", "male", "yes"))
-find_stage(mod, c("0", "male", "no"))}
-}
 \keyword{internal}

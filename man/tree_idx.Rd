@@ -23,11 +23,4 @@ return path index
 Compute the integer index of the node associated with the
 given path in a symmetric tree defined by \code{tree}.
 }
-\examples{
-\dontrun{
-data("PhDArticles")
-mod <- full(PhDArticles)
-tree_idx(c("0", "male", "yes"), mod$tree)
-}
-}
 \keyword{internal}

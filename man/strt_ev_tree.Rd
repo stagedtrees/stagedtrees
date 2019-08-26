@@ -15,6 +15,9 @@ strt_ev_tree(x, order = NULL, fit = FALSE, ...)
 
 \item{...}{additional parameters}
 }
+\value{
+A stratified event tree object
+}
 \description{
 Builds the complete stratified event tree for a set of categorical variables,
 the order can be specified.

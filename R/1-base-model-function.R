@@ -7,6 +7,7 @@
 #' @param order Vector of variables names, the order to build the event tree
 #' @param fit If `TRUE` the contingency tables will be computed from `data`
 #' @param ... additional parameters
+#' @return A stratified event tree object
 #' @export
 #' @examples
 #' mod <- strt_ev_tree(PhDArticles)
@@ -21,6 +22,7 @@ strt_ev_tree <- function(x, order = NULL, fit = FALSE, ...) {
 #'
 #' @param x object to be coerced to data.frame
 #' @param ... additional parameters
+#' @return A stratified event tree object
 #' @export
 strt_ev_tree.default <- function(x, ...) {
   return(strt_ev_tree.data.frame(as.data.frame(x, ...)))
@@ -33,6 +35,7 @@ strt_ev_tree.default <- function(x, ...) {
 #' @param fit logical
 #' @param lambda laplace smoothing parameter
 #' @param ... additional parameters
+#' @return A stratified event tree object
 #' @export
 strt_ev_tree.table <- function(x,
                                order = names(dimnames(x)),
@@ -53,6 +56,7 @@ strt_ev_tree.table <- function(x,
 #' @param fit logical
 #' @param lambda laplace smoothing parameter
 #' @param ... additional parameters
+#' @return A stratified event tree object
 #' @export
 strt_ev_tree.data.frame <- function(x,
                                     order = colnames(x),
@@ -74,7 +78,7 @@ strt_ev_tree.data.frame <- function(x,
 #' @param x a list with component named as the variables and containing the vector
 #'          of factor
 #' @param ... additional parameters
-#' @return A stratified event tree object, that is a list with a `tree` component
+#' @return A stratified event tree object
 #' @details Build the stratified event tree object from a named list containing the
 #'          levels of the variables. The output is an object with the `tree` component.
 #' @export
@@ -146,7 +150,8 @@ strt_ev_tree.sevt <- function(x, ...) {
 #' @param  evt The stratified event tree object to be fitted
 #' @param data the data.frame used to fit the event tree
 #' @param lambda the laplace smoothing
-#' @return A stratified event tree object with the conditional probabilities fitted
+#' @return A stratified event tree object
+#' @details Distribute the counts along the event tree
 #' @export
 fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0) {
   order <- names(evt$tree)
