@@ -217,11 +217,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1        0 female  yes     yes   high     high
-## 2        0 female   no     yes    low      low
-## 3        0   male   no     yes medium      low
-## 4      1-2 female   no      no medium      low
-## 5      1-2   male   no     yes    low      low
+## 1        0 female   no      no    low      low
+## 2      1-2   male   no      no    low      low
+## 3       >2 female   no     yes   high     high
+## 4       >2 female   no     yes   high     high
+## 5       >2 female   no      no    low      low
 ```
 
 #### Explore the model
@@ -262,19 +262,45 @@ stages.sevt(mod4, "Kids")
 ```
 
 ``` r
-stageinfo.sevt(mod4, var = "Kids")
-## Stage  1 for variable Kids 
-##    3 nodes in the stage 
-##    probabilities: yes      no 
-##                   0.478    0.522   
-##    sample size: 494 
-## --------------------------------
-## Stage  2 for variable Kids 
-##    3 nodes in the stage 
-##    probabilities: yes      no 
-##                   0.191    0.809   
-##    sample size: 421 
-## --------------------------------
+summary(mod4)
+## Call: 
+## bj.sevt(mod_full)
+## lambda:  1 
+## Stages: 
+##   Variable:  Articles 
+##  stages npaths sample.size
+##       1      0         915
+##   ------------ 
+##   Variable:  Gender 
+##  stages npaths sample.size
+##       1      3         915
+##   ------------ 
+##   Variable:  Kids 
+##  stages npaths sample.size
+##       1      3         494
+##       2      3         421
+##   ------------ 
+##   Variable:  Married 
+##  stages npaths sample.size
+##       1      5         303
+##       2      6          13
+##      11      1         599
+##   ------------ 
+##   Variable:  Mentor 
+##  stages npaths sample.size
+##       1     13         431
+##       2      4         102
+##       3      3          13
+##      18      3         242
+##      22      1         127
+##   ------------ 
+##   Variable:  Prestige 
+##  stages npaths sample.size
+##       1     36         338
+##       4     14         274
+##       6     15         194
+##       8      7         109
+##   ------------
 ```
 
 ##### Subtrees

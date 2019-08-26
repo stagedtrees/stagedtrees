@@ -188,7 +188,7 @@ stages.sevt(mod4, "Kids")
 ```
 
 ```{r}
-stageinfo.sevt(mod4, var = "Kids")
+summary(mod4)
 ```
 
 ##### Subtrees
