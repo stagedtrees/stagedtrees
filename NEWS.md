@@ -5,6 +5,7 @@
 * test added for `noisy_xor`
 * more util functions marked as internal
 * fixed return problem with `NaN` log-probabilities in `predict.sevt`
+* `summary.sevt` function added
 
 # 0.9.5
 
