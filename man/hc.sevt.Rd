@@ -18,7 +18,7 @@ hc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf,
 printed to console}
 }
 \value{
-A staged event tree object, the output of the optimization.
+The final staged event tree obtained.
 }
 \description{
 Hill-climbing search of staged event trees with
@@ -30,8 +30,6 @@ score is performed. A node-moving is either chainging the stage
 associate to a node or move the node to a new stage.
 }
 \examples{
-
-#########
-mod <- hc.sevt(full(PhDArticles[,1:4], lambda = 1))
-BIC(mod)
+model <- hc.sevt(full(PhDArticles[,1:4], lambda = 1))
+summary(model)
 }

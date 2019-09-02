@@ -19,7 +19,7 @@ bj.sevt(object = NULL, distance = kl, thr = 0.1, trace = 0, ...)
 is printed (via \code{message})}
 }
 \value{
-the learned staged event tree.
+The final staged event tree obtained.
 }
 \description{
 Join stages from more complex to simpler models
@@ -31,9 +31,7 @@ At each iteration the two stages with minimum distance are selected and
 joined if their distance is less than \code{thr}.
 }
 \examples{
-
-########
 DD <- generate_xor_dataset(n = 5, N = 1000)
-model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-model <- bj.sevt(model_full, trace = 2)
+model <- bj.sevt(full(DD, lambda = 1), trace = 2)
+summary(model)
 }

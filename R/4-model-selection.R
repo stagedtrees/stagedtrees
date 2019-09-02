@@ -6,7 +6,7 @@
 #' @param trace if \code{> 0} print information to console
 #'
 #' @return a staged event tree with situations with 0
-#' observations merged
+#' observations merged in a single stage
 #'
 #' @details This function takes as input a (fitted) staged event tree object
 #' and looking at the \code{ctables} join all the situations with zero
@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
-#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+#' model_full <- full(DD, lambda = 1)
 #' model <- join_zero_counts(model_full, fit = TRUE)
 #' logLik(model_full)
 #' logLik(model)
@@ -70,10 +70,8 @@ join_zero_counts <-
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples
-#'
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
-#' model_0 <- staged_ev_tree(DD[1:500,], full = TRUE, lambda = 1)
-#' naive_model <- naive.sevt(model_0)
+#' naive_model <- naive.sevt(full(DD, lambda = 1))
 #' pr <- predict(naive_model, newdata = DD[501:1000,])
 #' table(pr,DD$C[501:1000])
 naive.sevt <-
@@ -112,6 +110,10 @@ naive.sevt <-
 #'
 #' @return The final staged event tree object
 #' @export
+#' @examples
+#' DD <- generate_xor_dataset(n = 4, N = 100)
+#' model <- bhcr.sevt(full(DD), trace = 2)
+#' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 bhcr.sevt <-
@@ -173,14 +175,11 @@ bhcr.sevt <-
 #' @details For each variable the algorithm try to join stages
 #' and move to the best model that increase the score. When no
 #' increase is possible it moves to the next variable.
-#' @return The final staged event tree object.
+#' @return The final staged event tree obtained.
 #' @examples
-#'
-#' #########
-#' DD <- generate_xor_dataset(n = 4, N = 1000)
-#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- bhc.sevt(model_full, trace = 2)
-#' BIC(model_full, model)
+#' DD <- generate_xor_dataset(n = 4, N = 100)
+#' model <- bhc.sevt(full(DD), trace = 2)
+#' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
@@ -258,12 +257,9 @@ bhc.sevt <-
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree obtained.
 #' @examples
-#'
-#' #########
-#' DD <- generate_xor_dataset(n = 5, N = 1000)
-#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- fbhc.sevt(model_full, trace = 2)
-#' BIC(model_full, model)
+#' DD <- generate_xor_dataset(n = 5, N = 100)
+#' model <- fbhc.sevt(full(DD), trace = 2)
+#' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
@@ -348,15 +344,11 @@ fbhc.sevt <-
 #' @details For each variable in the model stages are joined iteratively. 
 #' At each iteration the two stages with minimum distance are selected and
 #' joined if their distance is less than \code{thr}. 
-#' 
-#' @return the learned staged event tree.
-#'
+#' @return The final staged event tree obtained.
 #' @examples
-#'
-#' ########
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
-#' model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-#' model <- bj.sevt(model_full, trace = 2)
+#' model <- bj.sevt(full(DD, lambda = 1), trace = 2)
+#' summary(model)
 #' @importFrom  methods is
 #' @export
 bj.sevt <-
@@ -420,13 +412,11 @@ bj.sevt <-
 #' score is performed. A node-moving is either chainging the stage 
 #' associate to a node or move the node to a new stage. 
 #' 
-#' @return A staged event tree object, the output of the optimization.
+#' @return The final staged event tree obtained.
 #'
 #' @examples
-#'
-#' #########
-#' mod <- hc.sevt(full(PhDArticles[,1:4], lambda = 1))
-#' BIC(mod)
+#' model <- hc.sevt(full(PhDArticles[,1:4], lambda = 1))
+#' summary(model)
 #' @export
 hc.sevt <- function(object,
                     score = function(x)

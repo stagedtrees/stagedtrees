@@ -30,3 +30,8 @@ If joining the stages increase the score, the model is
 updated. The procedure is repeated until the
 number of iterations reach \code{max_iter}.
 }
+\examples{
+DD <- generate_xor_dataset(n = 4, N = 100)
+model <- bhcr.sevt(full(DD), trace = 2)
+summary(model)
+}

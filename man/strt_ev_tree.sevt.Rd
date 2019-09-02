@@ -12,12 +12,12 @@
 \item{...}{additional parameters}
 }
 \value{
-A stratified event tree object, that is a list with a \code{tree} component
+A stratified event tree object
 }
 \description{
 Stratified event tree from a staged event tree
 }
 \details{
-This function build a stratified event tree object from a staged event tree.
-The staged event tree returned will have a different stage for each path.
+This function build a stratified event tree object
+from a staged event tree.
 }

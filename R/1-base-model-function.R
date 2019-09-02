@@ -107,9 +107,9 @@ strt_ev_tree.list <- function(x, ...) {
 #'
 #' @param x a staged event tree object
 #' @param ... additional parameters
-#' @return A stratified event tree object, that is a list with a `tree` component
-#' @details This function build a stratified event tree object from a staged event tree.
-#'          The staged event tree returned will have a different stage for each path.
+#' @return A stratified event tree object
+#' @details This function build a stratified event tree object 
+#'          from a staged event tree.
 #' @export
 #'
 strt_ev_tree.sevt <- function(x, ...) {

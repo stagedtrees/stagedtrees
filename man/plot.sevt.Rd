@@ -2,7 +2,7 @@
 % Please edit documentation in R/2-plot-functions.R
 \name{plot.sevt}
 \alias{plot.sevt}
-\title{plot a staged event tree}
+\title{Plot method for staged event trees}
 \usage{
 \method{plot}{sevt}(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
   asp = 1, cex.label.nodes = 1, cex.label.edges = 1, cex.nodes = 2,
@@ -37,7 +37,10 @@ as input a vector of stages and output the corresponding colors.}
 \code{text} and \code{plot.window}.}
 }
 \description{
-plot a staged event tree
+\code{plot.sevt} is the plot method for staged event tree
+objects. It allows easy plotting for staged event tree with some
+options, mainly different ways to specify colors for the stages (see
+examples).
 }
 \examples{
 
