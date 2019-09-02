@@ -7,7 +7,6 @@
 #' @details it computes the probability of following a given path (\code{x}) starting from the root. 
 #' Can be a full path from the root to a leaf or a shorter path. 
 #' @examples
-#'
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
 #' path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE)  # root to leaf path
@@ -52,7 +51,6 @@ path_probability.sevt <-
 #' They can be as an \code{expand.grid} data.frame or a simple subset of the dataset on which
 #' the model is estimated. 
 #' @examples
-#'
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
 #' pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
@@ -93,16 +91,16 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   }
 }
 
-#' Compute log lik of a stratified tree
+#' Log-Likelihood of a stratified event tree
 #'
+#' Compute the log-likelihood of a stratified event tree.
 #' @param object the stratified event tree object
 #' @param ... additional parameters
-#'
+#' @return An object of class \code{\link{logLik}}.
 #' @importFrom stats logLik ftable
 #' @export
 #'
 #' @examples
-#'
 #' DD <- as.data.frame(sapply(1:5, function(i) {
 #'                           return(as.factor(sample(c(1:3),
 #'                           size=100, replace = TRUE)))
@@ -137,17 +135,15 @@ logLik.strt_ev_tree <- function(object, ...) {
 }
 
 
-#' Compute log lik of a staged tree
+#' Log-Likelihood of a staged event tree
 #'
+#' Compute, or extract the log-likelihood of a staged event tree.
 #' @param object the staged event tree object
 #' @param ... additional parameters
-#'
+#' @return An object of class \code{\link{logLik}}.
 #' @importFrom stats logLik
 #' @export
-#'
 #' @examples
-#'
-#' #########
 #' data("PhDArticles")
 #' mod <- staged_ev_tree(PhDArticles)
 #' logLik(mod)

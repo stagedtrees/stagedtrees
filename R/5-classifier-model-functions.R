@@ -1,5 +1,6 @@
 #' Predict method for staged event tree
 #'
+#' Predict class values from a staged event tree model.
 #' @param object A staged event tree
 #' @param newdata The newdata to perform predictions 
 #' @param class A string indicating the name of the variable to use as
@@ -10,7 +11,7 @@
 #' @param log logical, if \code{TRUE} log-probabilities are returned
 #' @param ... additional parameters, see details
 #' @details Predict the most probable a posterior value for the class variable
-#' given all the other variables in the model. Ties are broken at random and 
+#'  given all the other variables in the model. Ties are broken at random and 
 #'  if, for a given vector of predictor variables, all conditional probabilities
 #'  are 0, NA is returned.
 #' @return A vector of predictions or the corresponding probabilities
@@ -23,17 +24,18 @@
 #' model <- bhc.sevt(model)
 #' pr <- predict(model, newdata = test, class = "C")
 #' table(pr, test$C)
-#' predict(model, newdata = test, class = "C")  # class
-#' predict(model, newdata = test, class = "C", prob = TRUE)  # probabilities
-#' predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  # log-probabilities
+#' # class values:
+#' predict(model, newdata = test, class = "C")  
+#' # probabilities:
+#' predict(model, newdata = test, class = "C", prob = TRUE)  
+#' # log-probabilities:
+#' predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  
 #' @details if \code{prob = TRUE}, a matrix with number of rows equals to the number of
 #' rows in the \code{newdata} and number of columns as the number of levels of the 
 #' \code{class} variable is returned. if \code{log = TRUE}, log-probabilities are returned.
 #' 
 #' if \code{prob = FALSE}, a vector of length as the number of rows in the \code{newdata} 
 #' with the level with higher estimated probability for each new observations is returned.
-#' 
-#' 
 #' @export
 #' @importFrom stats predict
 predict.sevt <-

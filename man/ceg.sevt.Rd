@@ -21,9 +21,7 @@ additional information on the positions.
 }
 \examples{
 DD <- generate_xor_dataset(3, 100)
-model <- full(DD)
-model <- bhc.sevt(model)
+model <- bhc.sevt(full(DD))
 ceg <- ceg.sevt(model)
-model$stages
 ceg$positions
 }

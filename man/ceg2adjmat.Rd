@@ -21,10 +21,7 @@ It transforms the ceg object into an adjacent matrix.
 }
 \examples{
 DD <- generate_xor_dataset(3, 100)
-model <- full(DD)
-model <- bhc.sevt(model)
+model <- bhc.sevt(full(DD))
 ceg <- ceg.sevt(model)
-model$stages
-ceg$positions
 ceg2adjmat(ceg)
 }

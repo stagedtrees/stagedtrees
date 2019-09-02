@@ -24,7 +24,6 @@ it computes the probability of following a given path (\code{x}) starting from t
 Can be a full path from the root to a leaf or a shorter path.
 }
 \examples{
-
 DD <- generate_random_dataset(5, 100)
 model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
 path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE)  # root to leaf path

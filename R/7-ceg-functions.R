@@ -6,10 +6,8 @@
 #' @return a ceg object
 #' @examples 
 #' DD <- generate_xor_dataset(3, 100)
-#' model <- full(DD)
-#' model <- bhc.sevt(model)
+#' model <- bhc.sevt(full(DD))
 #' ceg <- ceg.sevt(model)
-#' model$stages
 #' ceg$positions
 #' @export
 ceg.sevt <- function(object){
@@ -57,11 +55,8 @@ ceg.sevt <- function(object){
 #' @return the adj matrix
 #' @examples 
 #' DD <- generate_xor_dataset(3, 100)
-#' model <- full(DD)
-#' model <- bhc.sevt(model)
+#' model <- bhc.sevt(full(DD))
 #' ceg <- ceg.sevt(model)
-#' model$stages
-#' ceg$positions
 #' ceg2adjmat(ceg)
 #' @export
 ceg2adjmat <- function(x) {
