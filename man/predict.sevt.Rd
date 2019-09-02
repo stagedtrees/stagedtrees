@@ -27,7 +27,7 @@ returned}
 A vector of predictions or the corresponding probabilities
 }
 \description{
-Predict method for staged event tree
+Predict class values from a staged event tree model.
 }
 \details{
 Predict the most probable a posterior value for the class variable
@@ -51,7 +51,10 @@ model <- full(train)
 model <- bhc.sevt(model)
 pr <- predict(model, newdata = test, class = "C")
 table(pr, test$C)
-predict(model, newdata = test, class = "C")  # class
-predict(model, newdata = test, class = "C", prob = TRUE)  # probabilities
-predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  # log-probabilities
+# class values:
+predict(model, newdata = test, class = "C")  
+# probabilities:
+predict(model, newdata = test, class = "C", prob = TRUE)  
+# log-probabilities:
+predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  
 }

@@ -1,14 +1,16 @@
 #' Sample from a staged event tree
 #'
+#' Generate a random sample from the distribution encoded
+#' in a staged event tree object.
 #' @param object the staged event tree object
 #' @param n number of observations to sample
-#' @details it samples \code{n} observations according to
+#' @details It samples \code{n} observations according to
 #' the estimated transition probabilities (\code{object$prob}) from 
 #' the dataset on which the staged event tree \code{object} is fitted
 #' @return A data frame containing a sample of size \code{n}
 #' @examples
-#' mod <- naive.sevt(full(PhDArticles, lambda = 1))
-#' sample.sevt(mod, 10)
+#' model <- naive.sevt(full(PhDArticles, lambda = 1))
+#' sample.sevt(model, 10)
 #' @export
 sample.sevt <- function(object, n = 1) {
   stopifnot(n > 0)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/3-inference-functions.R
 \name{logLik.sevt}
 \alias{logLik.sevt}
-\title{Compute log lik of a staged tree}
+\title{Log-Likelihood of a staged event tree}
 \usage{
 \method{logLik}{sevt}(object, ...)
 }
@@ -11,12 +11,13 @@
 
 \item{...}{additional parameters}
 }
+\value{
+An object of class \code{\link{logLik}}.
+}
 \description{
-Compute log lik of a staged tree
+Compute, or extract the log-likelihood of a staged event tree.
 }
 \examples{
-
-#########
 data("PhDArticles")
 mod <- staged_ev_tree(PhDArticles)
 logLik(mod)
