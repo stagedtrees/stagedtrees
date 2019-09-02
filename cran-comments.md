@@ -1,4 +1,5 @@
 This is a resubmission with changes as requested by CRAN:
+
 * function `stageinfo.sevt` has been removed, instead `summary.sevt` has been
   added with an R-like structure (`summary.sevt` object and 
   `print.summary.sevt` method)
@@ -7,7 +8,7 @@ This is a resubmission with changes as requested by CRAN:
   `unexpected end of input: uni_idx(list(A = c(,,), B = c(,,))` 
   in man/uni_idx.Rd 
 * removed `\dontrun{}` statements
-* Remove some examples to keep examples time low
+* Changed some examples to keep examples time low
 * Change `Url` fields to `URL` in DESCRIPTION
 * Remove `Authors` field in DESCRIPTION since `Authors@R` is present
 * Fix issue when suggested package `clue` is not available

@@ -1,5 +1,9 @@
-#' plot a staged event tree
+#' Plot method for staged event trees
 #'
+#' \code{plot.sevt} is the plot method for staged event tree
+#' objects. It allows easy plotting for staged event tree with some 
+#' options, mainly different ways to specify colors for the stages (see 
+#' examples).
 #' @param x staged event tree object
 #' @param limit maximum number of variables plotted
 #' @param xlim graphical parameter

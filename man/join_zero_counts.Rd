@@ -17,7 +17,7 @@ join_zero_counts(object, fit = TRUE, trace = 0, name = NULL)
 }
 \value{
 a staged event tree with situations with 0
-observations merged
+observations merged in a single stage
 }
 \description{
 Join situations with no observations
@@ -33,7 +33,7 @@ If \code{fit=TRUE} the model will be then re-fitted, if user sets
 }
 \examples{
 DD <- generate_xor_dataset(n = 5, N = 1000)
-model_full <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
+model_full <- full(DD, lambda = 1)
 model <- join_zero_counts(model_full, fit = TRUE)
 logLik(model_full)
 logLik(model)
