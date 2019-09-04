@@ -673,6 +673,8 @@ summary.sevt <- function(object, ...) {
                               npaths = 0, stringsAsFactors = FALSE)
   if (is_fitted.sevt(object)){
     out[[vns[1]]][["sample.size"]] <- attr(object$prob[[vns[1]]][[1]], "n")
+    out[[vns[1]]] <- cbind(out[[vns[1]]], 
+                           t(as.data.frame(object$prob[[vns[1]]])))
   }
   for (i in 2:nv){
     v <- vns[i]
@@ -685,6 +687,7 @@ summary.sevt <- function(object, ...) {
       D[["sample.size"]] <- vapply(D$stage, function(s){
         attr(object$prob[[v]][[s]], "n")
       }, FUN.VALUE = 1)
+      D <- cbind(D, t(as.data.frame(object$prob[[v]])))
     }
     out[[vns[i]]] <- D
   }
@@ -899,7 +902,7 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
   stopifnot(is(object2, "sevt"))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
   if (!requireNamespace("clue", quietly = TRUE)) {
-    stop("Package \"clue\" needed for thus function to work. Please install it.",
+    stop("Package \"clue\" needed for this function to work. Please install it.",
          call. = FALSE)
   }
   object1 <- stndnaming.sevt(object1)
