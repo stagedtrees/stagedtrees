@@ -673,17 +673,30 @@ summary.sevt <- function(object, ...) {
                               npaths = 0)
   if (is_fitted.sevt(object)){
     out[[vns[1]]][["sample.size"]] <- attr(object$prob[[vns[1]]][[1]], "n")
+    
+    for(j in 1:length(attr(object$prob[[vns[1]]][[1]], "names"))) {
+      out[[vns[1]]][[attr(object$prob[[vns[1]]][[1]], "names")[j]]] <- as.numeric(object$prob[[vns[1]]][[1]][j])
+    }
   }
   for (i in 2:nv){
     v <- vns[i]
-    D <- data.frame(stage = unique(object$stages[[v]]))
+    D <- data.frame(stage = factor(sort(unique(as.numeric(object$stages[[v]])))))
     D$npaths <- vapply(D$stage, function(s){
       sum(object$stages[[v]] == s)
     }, FUN.VALUE = 1)
+    
+    D <- D[order(as.numeric(levels(D$stage))[D$stage], decreasing = F), ] 
+    
     if (is_fitted.sevt(object)){
       D[["sample.size"]] <- vapply(D$stage, function(s){
-        attr(object$prob[[v]][[s]], "n")
+        attr(object$prob[[v]][[as.character(s)]], "n")
       }, FUN.VALUE = 1)
+      
+      for(k in 1:NROW(D)) {
+        for(j in 1:length(attr(object$prob[[v]][[D$stage[k]]], "names"))) {
+          D[k, attr(object$prob[[v]][[as.character(D$stage[k])]], "names")[j]] <- as.numeric(object$prob[[v]][[as.character(D$stage[k])]][j])
+        }
+      }
     }
     out[[vns[i]]] <- D
   }
