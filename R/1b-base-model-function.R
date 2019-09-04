@@ -670,13 +670,14 @@ summary.sevt <- function(object, ...) {
   nv <- nvar.sevt(object)
   out <- list()
   out[[vns[1]]] <- data.frame(stage = "1", 
-                              npaths = 0)
+                              npaths = 0, stringsAsFactors = FALSE)
   if (is_fitted.sevt(object)){
     out[[vns[1]]][["sample.size"]] <- attr(object$prob[[vns[1]]][[1]], "n")
   }
   for (i in 2:nv){
     v <- vns[i]
-    D <- data.frame(stage = unique(object$stages[[v]]))
+    D <- data.frame(stage = unique(object$stages[[v]]), 
+                    stringsAsFactors = FALSE)
     D$npaths <- vapply(D$stage, function(s){
       sum(object$stages[[v]] == s)
     }, FUN.VALUE = 1)
