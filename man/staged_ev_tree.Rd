@@ -2,18 +2,58 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{staged_ev_tree}
 \alias{staged_ev_tree}
+\alias{staged_ev_tree.default}
+\alias{staged_ev_tree.table}
+\alias{staged_ev_tree.data.frame}
+\alias{staged_ev_tree.list}
+\alias{staged_ev_tree.bn.fit}
+\alias{staged_ev_tree.strt_ev_tree}
+\alias{full}
+\alias{indep}
+\alias{indep.default}
+\alias{indep.data.frame}
 \title{Staged (stratified) event tree}
 \usage{
 staged_ev_tree(x, ...)
+
+\method{staged_ev_tree}{default}(x, ...)
+
+\method{staged_ev_tree}{table}(x, order = names(dimnames(x)),
+  full = FALSE, fit = TRUE, ...)
+
+\method{staged_ev_tree}{data.frame}(x, order = colnames(x),
+  full = FALSE, fit = TRUE, ...)
+
+\method{staged_ev_tree}{list}(x, full = FALSE, ...)
+
+\method{staged_ev_tree}{bn.fit}(x, ...)
+
+\method{staged_ev_tree}{strt_ev_tree}(x, lambda = 0, ...)
+
+full(x, ...)
+
+indep(x, ...)
+
+\method{indep}{default}(x, ...)
+
+\method{indep}{data.frame}(x, fit = TRUE, lambda = 0, ...)
 }
 \arguments{
-\item{x}{data.frame, list or stratified event tree object}
+\item{x}{data.frame, list, table, \code{bn.fit} object}
 
 \item{...}{additional parameters to be passed
-to the appropiate method, see \link{staged_ev_tree.data.frame}}
+to the appropriate method, see \link{sevt.fit}}
+
+\item{order}{order of the variables}
+
+\item{full}{logical, if \code{TRUE} the full model is created}
+
+\item{fit}{logical, if  \code{TRUE} the model is fitted}
+
+\item{lambda}{smoothing parameter}
 }
 \value{
-A staged event tree object (see Details)
+A staged event tree object
 }
 \description{
 Builds the staged event tree for a set of categorical variables,
@@ -22,22 +62,43 @@ the order can be specified.
 \details{
 A staged event tree object is a list with components:
 \itemize{
-         \item tree: A named list where for each variable, the levels of
-                 such variable are listed. The order of the variable is the
-                 order of the event tree.
-         \item stages: A named list where each component stores the stages
-                   for the given variable, stages are represented by numbers
-                   that do not need to be consecutive.
-         \item paths: A named list where for each variable we list in a
-         data.frame object all the possible paths up to that point and the
-         assigned stages.
-         \item prob: The conditional probability tables for every variable
-         and every stage (present only if the staged event tree has been
-         fitted)
-         }
+\item tree: A named list where for each variable,
+the levels of such variable are listed.
+The order of the variable is the
+order of the event tree.
+\item stages: A named list where each component
+stores the stages for the given variable.
+\item ctables: The contingency tables of the data.
+\item lambda: The smoothing parameter used to estimate the model.
+\item prob: The conditional probability tables for every
+variable and every stage.
+\item ll: The log-likelihood of the \code{estimated} model.
+}
 }
 \examples{
+
+######### from dataset
 DD <- generate_random_dataset(n = 5, 1000)
-sevt <- staged_ev_tree(DD, fit = TRUE, method = "indep")
-sevt_full <- staged_ev_tree(DD, method = "full", fit = TRUE, lambda = 1)
+indep <- staged_ev_tree(DD, fit = TRUE)
+full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
+
+######### from table
+modT <- staged_ev_tree(table(PhDArticles), fit = TRUE, full = TRUE, lambda = 1)
+plot(modT)
+
+######### from list
+model <- staged_ev_tree(list(X = c("good", "bad"),
+                             Y = c("high", "low")))
+
+######### full model
+
+DD <- generate_xor_dataset(7, 100)
+modfull <- full(DD, lambda = 1)
+
+######### independence model (data.frame)
+DD <- generate_xor_dataset(15, 100)
+system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
+system.time(model2 <- indep(DD, lambda = 1))
+model1
+model2
 }

@@ -1,0 +1,50 @@
+#' Pokemon Go Users
+#'
+#' Demographic information of a population of possible Pokemon Go users.
+#' 
+#'
+#' @format A data frame with 999 rows and 5 variables:
+#' \describe{
+#'   \item{Use}{\code{Y} if the individual used the app, \code{N} otherwise}
+#'   \item{Age}{\code{>30} if the individual is older than 30, 
+#'               \code{<=30} otherwise}
+#'   \item{Degree}{\code{Yes} if the individual completed a Higher 
+#'                 Education degree, \code{No} otherwise}
+#'   \item{Gender}{\code{Male} or \code{Female}}
+#'   \item{Activity}{\code{Yes} if the individual was physically active 
+#'                   (i.e. had a walk longer than 30 mins, went for a run or 
+#'                   had a bike ride to get some exercise) in the past week 
+#'                   before the experiment, \code{No} otherwise}
+#' }
+#' 
+#' @source \url{https://osf.io/xy5g6/}
+#' @references Gabbiadini, Alessandro, Christina Sagioglou, and Tobias Greitemeyer. 
+#' "Does Pokémon Go lead to a more physically active life style?."
+#'  *Computers in Human Behavior* 84 (2018): 258-263.
+"Pokemon"
+
+#' PhD Students Publications
+#'
+#' Number of publications of 915 PhD biochemistry students 
+#' during the 1950’s and 1960’s
+#' 
+#'
+#' @format A data frame with 915 rows and 6 variables:
+#' \describe{
+#'   \item{Articles}{Number of articles during the last 3 years of PhD: either 
+#'                   \code{0}, \code{1-2} or \code{>2}.}
+#'   \item{Gender}{\code{male} or \code{female}.}
+#'   \item{Kids}{\code{yes} if the student has at least one kid 5 or younger, 
+#'               \code{no} otherwise.}
+#'   \item{Married}{\code{yes} or \code{no}.}
+#'   \item{Mentor}{Number of publications of the student's mentor: 
+#'                \code{low} between 0 and 3, \code{medium} between 4 and 10, 
+#'                \code{high} otherwise.}
+#'   \item{Prestige}{\code{low} if the student is at a low-prestige university, 
+#'         \code{high} otherwise.}
+#' }
+#' 
+#' @source The data has been modified from the \code{Rchoice} package.
+#' @references Long, J. S. (1990). The origins of sex differences in science.
+#'  *Social Forces*, 68(4), 1297-1316.
+"PhDArticles"

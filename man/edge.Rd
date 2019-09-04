@@ -4,7 +4,7 @@
 \alias{edge}
 \title{Plot an edge}
 \usage{
-edge(from, to, label, col = "black", ...)
+edge(from, to, label = "", col = "black", cex.label = 1, ...)
 }
 \arguments{
 \item{from}{From}
@@ -14,6 +14,8 @@ edge(from, to, label, col = "black", ...)
 \item{label}{the label}
 
 \item{col}{color}
+
+\item{cex.label}{numerical}
 
 \item{...}{additional parameters passed to \code{par()}}
 }

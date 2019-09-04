@@ -18,6 +18,9 @@
 
 \item{...}{additional parameters}
 }
+\value{
+A stratified event tree object
+}
 \description{
 Stratified event tree from a table
 }

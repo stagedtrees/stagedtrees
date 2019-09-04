@@ -14,8 +14,11 @@ fit.strt_ev_tree(evt, data = NULL, lambda = 0)
 \item{lambda}{the laplace smoothing}
 }
 \value{
-A stratified event tree object with the conditional probabilities fitted
+A stratified event tree object
 }
 \description{
 Fit a stratified event tree
+}
+\details{
+Distribute the counts along the event tree
 }

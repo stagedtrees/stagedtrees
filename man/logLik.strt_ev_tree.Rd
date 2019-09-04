@@ -2,21 +2,25 @@
 % Please edit documentation in R/3-inference-functions.R
 \name{logLik.strt_ev_tree}
 \alias{logLik.strt_ev_tree}
-\title{Compute log lik of a stratified tree}
+\title{Log-Likelihood of a stratified event tree}
 \usage{
 \method{logLik}{strt_ev_tree}(object, ...)
 }
 \arguments{
-\item{object}{the startified event tree object}
+\item{object}{the stratified event tree object}
 
 \item{...}{additional parameters}
 }
+\value{
+An object of class \code{\link{logLik}}.
+}
 \description{
-Compute log lik of a stratified tree
+Compute the log-likelihood of a stratified event tree.
 }
 \examples{
-DD <- DD <- as.data.frame(sapply(1:5, function(i){
-                          return(as.factor(sample(c(1:3), size=100, replace = TRUE)))
+DD <- as.data.frame(sapply(1:5, function(i) {
+                          return(as.factor(sample(c(1:3),
+                          size=100, replace = TRUE)))
                      }))
 sevt <- staged_ev_tree(DD, fit = TRUE)
 evt <- strt_ev_tree(sevt)

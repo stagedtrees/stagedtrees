@@ -11,14 +11,20 @@ strt_ev_tree(x, order = NULL, fit = FALSE, ...)
 
 \item{order}{Vector of variables names, the order to build the event tree}
 
-\item{fit}{If `TRUE` the contingency tables will be computed from `data`}
+\item{fit}{If \code{TRUE} the contingency tables will be computed from \code{data}}
 
 \item{...}{additional parameters}
+}
+\value{
+A stratified event tree object
 }
 \description{
 Builds the complete stratified event tree for a set of categorical variables,
 the order can be specified.
 }
 \examples{
-a <- c(1,2)
+mod <- strt_ev_tree(PhDArticles)
+str(mod)
+mod1 <- strt_ev_tree(PhDArticles, fit = TRUE)
+str(mod1)
 }

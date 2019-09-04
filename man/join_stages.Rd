@@ -2,12 +2,12 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{join_stages}
 \alias{join_stages}
-\title{Join two stages}
+\title{Join stages}
 \usage{
-join_stages(sevt, v, s1, s2)
+join_stages(object, v, s1, s2)
 }
 \arguments{
-\item{sevt}{staged event tree}
+\item{object}{staged event tree}
 
 \item{v}{variable}
 
@@ -19,5 +19,16 @@ join_stages(sevt, v, s1, s2)
 the staged event tree where \code{s1} and \code{s2} are joined
 }
 \description{
-Probabilities are recomputed
+Join two stages in a staged event tree object, updating
+probabilities and log-likelihood accordingly.
+}
+\details{
+this function joins together two stages associated to the same variable.
+}
+\examples{
+model <- full(PhDArticles, fit = TRUE, lambda = 0)
+model <- fbhc.sevt(model)
+model$stages$Kids
+model <- join_stages(model, "Kids", "5", "6")
+model$stages$Kids
 }
