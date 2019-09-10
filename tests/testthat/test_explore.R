@@ -19,10 +19,10 @@ test_that("summary.sevt", {
 test_that("subtree.sevt", {
   expect_silent(sub <- subtree.sevt(sev, c("a", "1", "-1")))
   expect_silent(plot(sub))
-  expect_silent(sub <- fit.sevt(sub, data = DD))
-  expect_message(sub2 <- fbhc.sevt(sub, trace = 1))
-  expect_true(BIC(sub2) <= BIC(sub))
-  expect_true(logLik(sub2) <= logLik(sub))
+  expect_silent(fbhc.sevt(sub))
+  expect_silent(fit.sevt(sub, data = DD))
+#  expect_true(BIC(sub2) <= BIC(sub))
+#  expect_true(logLik(sub2) <= logLik(sub))
 })
 
 test_that("df.sevt", {

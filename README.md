@@ -14,9 +14,6 @@ status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/ba
 #development version from github
 # install.packages("devtools")
 devtools::install_github("gherardovarando/stagedtrees")
-
-#unstable development version from the dev branch
-devtools::install_github("gherardovarando/stagedtrees", ref = "dev")
 ```
 
 ### Usage
@@ -140,8 +137,8 @@ model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>%
                hc.sevt
 
 ## extract a sub_tree and join two stages
-sub_model <- model %>% subtree.sevt(path = c(">2")) %>% 
-  fit.sevt(data = PhDArticles) %>% join_stages("Mentor", "1", "2")
+sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%  
+              join_stages("Mentor", "1", "2")
 ```
 
 #### Probabilities, predictions and sampling
@@ -217,11 +214,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1        0 female   no      no    low      low
-## 2      1-2   male   no      no    low      low
-## 3       >2 female   no     yes   high     high
-## 4       >2 female   no     yes   high     high
-## 5       >2 female   no      no    low      low
+## 1        0 female   no      no   high      low
+## 2      1-2   male   no      no medium     high
+## 3       >2   male   no      no   high     high
+## 4      1-2 female   no     yes    low      low
+## 5        0 female   no      no medium     high
 ```
 
 #### Explore the model
@@ -268,38 +265,38 @@ summary(mod4)
 ## lambda:  1 
 ## Stages: 
 ##   Variable:  Articles 
-##  stages npaths sample.size
-##       1      0         915
+##  stage npaths sample.size         0      1-2        >2
+##      1      0         915 0.3006536 0.462963 0.2363834
 ##   ------------ 
 ##   Variable:  Gender 
-##  stages npaths sample.size
-##       1      3         915
+##  stage npaths sample.size      male    female
+##      1      3         915 0.5398037 0.4601963
 ##   ------------ 
 ##   Variable:  Kids 
-##  stages npaths sample.size
-##       1      3         494
-##       2      3         421
+##  stage npaths sample.size       yes        no
+##      1      3         494 0.4778226 0.5221774
+##      2      3         421 0.1914894 0.8085106
 ##   ------------ 
 ##   Variable:  Married 
-##  stages npaths sample.size
-##       1      5         303
-##       2      6          13
-##      11      1         599
+##  stage npaths sample.size          no       yes
+##      1      5         303 0.003278689 0.9967213
+##      2      6         599 0.515806988 0.4841930
+##     11      1          13 0.066666667 0.9333333
 ##   ------------ 
 ##   Variable:  Mentor 
-##  stages npaths sample.size
-##       1     13         431
-##       2      4         102
-##       3      3          13
-##      18      3         242
-##      22      1         127
+##  stage npaths sample.size       low    medium       high
+##      1     13         431 0.2557604 0.4377880 0.30645161
+##      2      4         242 0.4367347 0.3346939 0.22857143
+##      3      3         102 0.5142857 0.4000000 0.08571429
+##     18      3         127 0.1307692 0.3384615 0.53076923
+##     22      1          13 0.4375000 0.1875000 0.37500000
 ##   ------------ 
 ##   Variable:  Prestige 
-##  stages npaths sample.size
-##       1     36         338
-##       4     14         274
-##       6     15         194
-##       8      7         109
+##  stage npaths sample.size       low      high
+##      1     36         338 0.5323529 0.4676471
+##      4     14         274 0.6920290 0.3079710
+##      6     15         194 0.3622449 0.6377551
+##      8      7         109 0.1801802 0.8198198
 ##   ------------
 ```
 
