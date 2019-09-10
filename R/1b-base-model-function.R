@@ -743,13 +743,25 @@ subtree.sevt <- function(object, path) {
   varout <- varnames.sevt(object)[1:length(path)]
   object$tree[varout] <- NULL ##remove previous variables
   object$stages[varout] <- NULL ##remove stages info
+  object$ctables[varout] <- NULL
   var <- varnames.sevt(object)
   object$stages[[var[1]]] <-
     c(stage) ##keep stage name for first variable
+  if (is_fitted.sevt(object)){
+    object$ctables[[var[1]]] <- object$ctables[[var[1]]][idx, ] 
+    attr(object$ctables[[var[1]]], "names") <- object$tree[[var[1]]]
+  }
   for (i in 2:length(object$tree)) {
     m <- m * length(object$tree[[var[i - 1]]])
+    tmpidx <- ((idx - 1)  * m):(idx  * m - 1) + 1
     object$stages[[var[i]]] <-
-      object$stages[[var[i]]][((idx - 1)  * m):(idx  * m - 1) + 1]
+      object$stages[[var[i]]][tmpidx]
+    if (is_fitted.sevt(object)){ #update ctables
+      object$ctables[[var[i]]] <- ftable(object$ctables[[var[i]]][tmpidx , ]) 
+      attr(object$ctables[[var[i]]], "row.vars") <- object$tree[1:(i-1)]
+      attr(object$ctables[[var[i]]], "col.vars") <- object$tree[i]
+    }
+    
   }
   if (is_fitted.sevt(object)) {
     object$prob[varout] <- NULL
@@ -760,7 +772,7 @@ subtree.sevt <- function(object, path) {
     
     #object$ll <- logLik(object)
   }
-  object$ctables <- NULL
+  #object$ctables <- NULL
   object$ll <- NULL
   return(object)
 }
