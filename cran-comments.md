@@ -12,6 +12,7 @@ This is a resubmission with changes as requested by CRAN:
 * Change `Url` fields to `URL` in DESCRIPTION
 * Remove `Authors` field in DESCRIPTION since `Authors@R` is present
 * Fix issue when suggested package `clue` is not available
+* Function `subtree.sevt` now works as expected 
 
 ## Test environments
 * Ubuntu 18.04.2 R 3.6.0 (local) 
