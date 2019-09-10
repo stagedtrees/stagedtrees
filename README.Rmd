@@ -21,9 +21,6 @@ knitr::opts_chunk$set(
 #development version from github
 # install.packages("devtools")
 devtools::install_github("gherardovarando/stagedtrees")
-
-#unstable development version from the dev branch
-devtools::install_github("gherardovarando/stagedtrees", ref = "dev")
 ```
 
 ### Usage
@@ -109,8 +106,8 @@ model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>%
                hc.sevt
 
 ## extract a sub_tree and join two stages
-sub_model <- model %>% subtree.sevt(path = c(">2")) %>% 
-  fit.sevt(data = PhDArticles) %>% join_stages("Mentor", "1", "2")
+sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%  
+              join_stages("Mentor", "1", "2")
 ```
 
 
