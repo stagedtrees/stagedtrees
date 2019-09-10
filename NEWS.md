@@ -6,6 +6,7 @@
 * more util functions marked as internal
 * fixed return problem with `NaN` log-probabilities in `predict.sevt`
 * `summary.sevt` function added
+* `subtree.sevt` works now for fitted objects
 
 # 0.9.5
 
