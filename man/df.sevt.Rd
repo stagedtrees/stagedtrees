@@ -2,7 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{df.sevt}
 \alias{df.sevt}
-\title{Get number of parameters of the model}
+\title{Number of parameters of a staged event tree}
 \usage{
 df.sevt(x)
 }
@@ -13,7 +13,7 @@ df.sevt(x)
 integer, degrees of freedom of the staged event tree
 }
 \description{
-Get number of parameters of the model
+Return the number of parameters of the model.
 }
 \examples{
 

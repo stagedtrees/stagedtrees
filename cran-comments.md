@@ -1,3 +1,4 @@
+## Resubmission
 This is a resubmission with changes as requested by CRAN:
 
 * function `stageinfo.sevt` has been removed, instead `summary.sevt` has been
@@ -10,9 +11,12 @@ This is a resubmission with changes as requested by CRAN:
 * removed `\dontrun{}` statements
 * Changed some examples to keep examples time low
 * Change `Url` fields to `URL` in DESCRIPTION
-* Remove `Authors` field in DESCRIPTION since `Authors@R` is present
+* Remove `Authors` and `Manteiner` fields in DESCRIPTION 
+  since `Authors@R` is present
 * Fix issue when suggested package `clue` is not available
 * Function `subtree.sevt` now works as expected 
+* add `@keywords internal` to unexported functions
+
 
 ## Test environments
 * Ubuntu 18.04.2 R 3.6.1 (local) 

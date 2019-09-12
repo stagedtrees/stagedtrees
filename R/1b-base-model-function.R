@@ -193,11 +193,18 @@ staged_ev_tree.bn.fit <- function(x, ...) {
 
 #' Fit a staged event tree
 #'
+#' Estimate transition probabilities in a staged event tree from data. 
+#' Probabilities are estimated with the relative frequencies plus, 
+#' eventually,  an additive (Laplace) smoothing. 
 #' @param sevt a staged event tree
-#' @param data data.frame or stratified event tree
+#' @param data data.frame, contingency table, or fitted 
+#'        stratified event tree
 #' @param lambda smoothing parameter
 #' @param ... additional parameters
-#' @return a fitted staged event tree
+#' @return a fitted staged event tree, that is an object of class `sevt`
+#'         with `ctables` and `prob` arguments.  
+#' @details The log-likelihood of the model will be recomputed and 
+#'          stored in the returned object. 
 #' @export
 #' @examples
 #'
@@ -234,7 +241,6 @@ sevt.fit <- function(sevt,
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
   sevt$prob[[order[1]]] <- list("1" = pp)
-  #lambda <- lambda / dims[1]
   for (i in 2:length(order)) {
     stages <- unique(sevt$stages[[order[i]]])
     sevt$prob[[order[i]]] <-
@@ -253,7 +259,6 @@ sevt.fit <- function(sevt,
         return(tt) #return normalized prob
       })
     names(sevt$prob[[order[i]]]) <- stages
-    #lambda <- lambda / dims[i]
   }
   sevt$ll <- NULL ##force recompute log-likelihood
   sevt$ll <- logLik(sevt)
@@ -296,8 +301,8 @@ staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
 
 
 #'@rdname sevt.fit
-#'@details \code{fit.sevt} is just a wrapper of \code{sevt.fit},
-#'          it is provided for compatibilities. (DEPRECATED)
+#'@details \code{fit.sevt} is the same as \code{sevt.fit} 
+#'          and it will be probably removed in the future. 
 #'@export
 fit.sevt <- function(sevt,
                      data = NULL,
@@ -312,6 +317,7 @@ fit.sevt <- function(sevt,
 #' @param sevt Staged event tree
 #' @param path Vector of the path
 #' @param stage stage to be assigned
+#' @keywords internal
 set_stage <- function(sevt, path, stage) {
   stage <- as.character(stage)
   ## TO DO
@@ -817,7 +823,7 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' Compare two staged event tree
 #'
 #' Compare two stages event tree, return the differences of the stages 
-#' structure and plot the difference tree. Three different method to 
+#' structure and plot the difference tree. Three different methods to 
 #' compute the difference tree are available. 
 #' 
 #' @param object1 a staged event tree
@@ -831,7 +837,8 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' is the same. 
 #' Three methods are available: 
 #' * \code{naive} first applies \code{\link{stndnaming.sevt}} to both
-#' objects and then simply compares the resulting \code{$stages} lists.
+#' objects and then simply compares the resulting stages lists 
+#' (\code{stages.sevt(object1)} and \code{stages.sevt(object2)}).  
 #' * \code{hamming} uses the \code{hamming.sevt} function that try to map 
 #' stages in the different objects finding the few number of nodes that 
 #' must be changed to obtain the same structure. 
@@ -850,8 +857,8 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' To use the \code{hamming} method, the package \code{clue} 
 #' must be installed. 
 #' 
-#' Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
-#' used directly. 
+#' Functions \code{\link{hamming.sevt}} and \code{\link{stagesdiff.sevt}} 
+#' can also be used directly. 
 #'
 #' @return if \code{return.tree = FALSE}, logical: \code{TRUE} if the two 
 #' models are exactly equal, otherwise \code{FALSE}.
@@ -1032,8 +1039,9 @@ nvar.sevt <- function(x) {
 }
 
 
-#' Get number of parameters of the model
+#' Number of parameters of a staged event tree
 #'
+#' Return the number of parameters of the model.
 #' @param x a staged event tree object
 #' @return integer, degrees of freedom of the staged event tree
 #' @examples

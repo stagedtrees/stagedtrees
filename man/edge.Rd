@@ -22,3 +22,4 @@ edge(from, to, label = "", col = "black", cex.label = 1, ...)
 \description{
 Plot an edge
 }
+\keyword{internal}

@@ -5,8 +5,7 @@
 #' @param object the staged event tree object
 #' @param n number of observations to sample
 #' @details It samples \code{n} observations according to
-#' the estimated transition probabilities (\code{object$prob}) from 
-#' the dataset on which the staged event tree \code{object} is fitted
+#' the transition probabilities (\code{object$prob}) in the model.
 #' @return A data frame containing a sample of size \code{n}
 #' @examples
 #' model <- naive.sevt(full(PhDArticles, lambda = 1))

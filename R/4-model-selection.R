@@ -8,9 +8,9 @@
 #' @return a staged event tree with situations with 0
 #' observations merged in a single stage
 #'
-#' @details This function takes as input a (fitted) staged event tree object
-#' and looking at the \code{ctables} join all the situations with zero
-#' recorded observations in the same stage. Since such joining does not change
+#' @details It takes as input a (fitted) staged event tree object
+#' and looking at the \code{ctables} it joins, in the same stage, all the situations with zero
+#' recorded observations. Since such joining does not change
 #' the log-likelihood of the model, it is a useful (time-wise)
 #' pre-processing before others model selection algorithms.
 #' If \code{fit=TRUE} the model will be then re-fitted, if user sets
@@ -408,8 +408,8 @@ bj.sevt <-
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
 #'              
-#' @details For each variable the node-moving that best increase the 
-#' score is performed. A node-moving is either chainging the stage 
+#' @details For each variable the node-move that best increase the 
+#' score is performed. A node-move is either changing the stage 
 #' associate to a node or move the node to a new stage. 
 #' 
 #' @return The final staged event tree obtained.

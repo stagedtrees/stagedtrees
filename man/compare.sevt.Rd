@@ -34,7 +34,7 @@ the two trees, according to the selected \code{method}.
 }
 \description{
 Compare two stages event tree, return the differences of the stages
-structure and plot the difference tree. Three different method to
+structure and plot the difference tree. Three different methods to
 compute the difference tree are available.
 }
 \details{
@@ -44,7 +44,8 @@ is the same.
 Three methods are available:
 \itemize{
 \item \code{naive} first applies \code{\link{stndnaming.sevt}} to both
-objects and then simply compares the resulting \code{$stages} lists.
+objects and then simply compares the resulting stages lists
+(\code{stages.sevt(object1)} and \code{stages.sevt(object2)}).
 \item \code{hamming} uses the \code{hamming.sevt} function that try to map
 stages in the different objects finding the few number of nodes that
 must be changed to obtain the same structure.
@@ -64,8 +65,8 @@ since it is computationally faster.
 To use the \code{hamming} method, the package \code{clue}
 must be installed.
 
-Functions \code{hamming.sevt} and \code{stagesdiff.sevt} can also be
-used directly.
+Functions \code{\link{hamming.sevt}} and \code{\link{stagesdiff.sevt}}
+can also be used directly.
 }
 \examples{
 data("PhDArticles")
