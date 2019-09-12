@@ -16,7 +16,7 @@ the adj matrix
 Ceg to adjmat of graph
 }
 \details{
-it is used to prepar the plot of the ceg.
+it is used to prepare the plot of the ceg.
 It transforms the ceg object into an adjacent matrix.
 }
 \examples{

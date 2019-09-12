@@ -1019,7 +1019,7 @@ stagesdiff.sevt <- function(object1, object2) {
 
 #' Get variable names
 #'
-#' @param x a staged event tree obejct
+#' @param x a staged event tree object
 #' @return vector with variable names
 #' @examples
 #'

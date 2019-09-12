@@ -7,7 +7,7 @@
 varnames.sevt(x)
 }
 \arguments{
-\item{x}{a staged event tree obejct}
+\item{x}{a staged event tree object}
 }
 \value{
 vector with variable names
