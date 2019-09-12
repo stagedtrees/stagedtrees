@@ -58,6 +58,8 @@ Status: Ok
 
 ### win-builder (R 3.6.1)
 
+Installation time in seconds: 12
+Check time in seconds: 159
 Status: 1 NOTE
 
 Possibly mis-spelled words in DESCRIPTION:
