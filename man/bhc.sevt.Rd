@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{bhc.sevt}
 \alias{bhc.sevt}
-\title{Backword hill-climbing}
+\title{Backward hill-climbing}
 \usage{
 bhc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf,
   trace = 0)
@@ -21,7 +21,7 @@ is printed (via \code{message})}
 The final staged event tree obtained.
 }
 \description{
-Backword Hill-climbing search of staged event trees with
+Backward Hill-climbing search of staged event trees with
 iterative joining of stages
 }
 \details{

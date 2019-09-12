@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{bj.sevt}
 \alias{bj.sevt}
-\title{Backword joining of stages}
+\title{Backward joining of stages}
 \usage{
 bj.sevt(object = NULL, distance = kl, thr = 0.1, trace = 0, ...)
 }

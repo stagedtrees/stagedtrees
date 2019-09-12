@@ -870,7 +870,6 @@ stndnaming.sevt <- function(object, rep = FALSE) {
 #' mod1 <- bhc.sevt(full(PhDArticles[,1:4], lambda = 1))
 #' mod2 <- fbhc.sevt(full(PhDArticles[,1:4], lambda = 1))
 #' compare.sevt(mod1, mod2)
-#' compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
 compare.sevt <-
   function(object1,
            object2,

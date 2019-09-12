@@ -215,7 +215,7 @@ cd <- function(x, y, ...){
 
 #' noisy xor function
 #'
-#' @param x a vector of +1 nad -1
+#' @param x a vector of +1 and -1
 #' @param eps the uniform noise amount
 #' @return the computed noisy xor
 #' @keywords internal

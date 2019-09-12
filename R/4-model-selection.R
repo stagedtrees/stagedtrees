@@ -153,7 +153,7 @@ bhcr.sevt <-
       }
     }
     if (trace > 0) {
-      message(paste("backword HC random done after", iter, "iteration"))
+      message(paste("backward HC random done after", iter, "iteration"))
     }
     object$call <- sys.call()
     object$score <- list(value = now_score, f = score)
@@ -162,9 +162,9 @@ bhcr.sevt <-
 
 
 
-#' Backword hill-climbing
+#' Backward hill-climbing
 #'
-#' Backword Hill-climbing search of staged event trees with
+#' Backward Hill-climbing search of staged event trees with
 #' iterative joining of stages
 #'
 #' @param object a staged event tree model
@@ -242,9 +242,9 @@ bhc.sevt <-
   }
 
 
-#' Fast backword hill-climbing
+#' Fast backward hill-climbing
 #'
-#' Fast backword hill-climbing search of staged event trees with
+#' Fast backward hill-climbing search of staged event trees with
 #' iterative joining of stages.
 #'
 #' @param object a staged event tree model
@@ -329,7 +329,7 @@ fbhc.sevt <-
   }
 
 
-#' Backword joining of stages
+#' Backward joining of stages
 #'
 #' Join stages from more complex to simpler models
 #' using a distance and a threshold value

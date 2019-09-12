@@ -7,7 +7,7 @@
 noisy_xor(x, eps = 0)
 }
 \arguments{
-\item{x}{a vector of +1 nad -1}
+\item{x}{a vector of +1 and -1}
 
 \item{eps}{the uniform noise amount}
 }
