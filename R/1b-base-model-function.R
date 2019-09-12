@@ -893,7 +893,14 @@ compare.sevt <-
                        ))
                      }, USE.NAMES = TRUE),
       hamming = hamming.sevt(object1, object2, return.tree = TRUE),
-      stages = stagesdiff.sevt(object1, object2)
+      stages = stagesdiff.sevt(object1, object2),
+      sapply(names(object1$tree)[-1],
+             function(v) {
+               sign(abs(
+                 as.numeric(object1$stages[[v]]) -
+                   as.numeric(object2$stages[[v]])
+               ))
+             }, USE.NAMES = TRUE)
     )
     if (plot) {
       object1$stages <- difftree
