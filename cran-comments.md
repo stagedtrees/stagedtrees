@@ -18,6 +18,8 @@ errors, warnings and notes:
 * Function `subtree.sevt` now works as expected 
 * add `@keywords internal` to unexported functions
 * change in options for `README.Rmd` to generate a compatible `README.md`
+* empty line at the end of file LICENSE to avoid `devtools::check()` 
+  end of line warning.
 
 
 ## Test environments
@@ -43,4 +45,6 @@ Status: 1 NOTE
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘Gherardo Varando <gherardo.varando@gmail.com>’
 
-### win-builder (R 3.5.1, R devel and R 3.4.4)
+### win-builder (R 3.6.1)
+
+
