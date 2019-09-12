@@ -15,7 +15,7 @@ generate_random_dataset(n = 2, N = 10000)
 A data.frame with \code{n} independent random variables
 }
 \description{
-generate a random binary dataset
+Randomly generete a data.frame of independent binary variables
 }
 \examples{
 DD <- generate_random_dataset(n = 5, 1000)

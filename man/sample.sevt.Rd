@@ -20,8 +20,7 @@ in a staged event tree object.
 }
 \details{
 It samples \code{n} observations according to
-the estimated transition probabilities (\code{object$prob}) from
-the dataset on which the staged event tree \code{object} is fitted
+the transition probabilities (\code{object$prob}) in the model.
 }
 \examples{
 model <- naive.sevt(full(PhDArticles, lambda = 1))

@@ -184,6 +184,7 @@ plot.sevt <-
 #' @param cex.node cex parameter for nodes
 #' @param ... additional parameters passed to \code{par()}
 #' @importFrom graphics text lines points
+#' @keywords internal 
 node <- function(x,
                  label = "",
                  col = "black",
@@ -213,6 +214,7 @@ node <- function(x,
 #' @param cex.label numerical
 #' @param ... additional parameters passed to \code{par()}
 #' @importFrom graphics text lines
+#' @keywords internal 
 edge <-
   function(from,
            to,

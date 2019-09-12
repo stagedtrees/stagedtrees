@@ -23,3 +23,4 @@ node(x, label = "", col = "black", cex.label = 1, cex.node = 1,
 \description{
 Plot a node
 }
+\keyword{internal}

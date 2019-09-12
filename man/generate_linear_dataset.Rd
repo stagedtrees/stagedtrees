@@ -25,7 +25,7 @@ one class variable \code{C} computed as
 \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
 }
 \description{
-generate a random binary dataset for classification
+Randomly generate a simple classification problem
 }
 \examples{
 DD <- generate_linear_dataset(n = 5, 1000)

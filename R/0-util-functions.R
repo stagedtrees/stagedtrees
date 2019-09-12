@@ -89,12 +89,16 @@ find_paths <- function(obj, stage, var) {
 
 
 
-#' Compute the distance matrix
+#' Compute the distance matrix 
 #' 
+#' Compute the matrix of distances between probabilities, 
+#' e.g the transition probabilities for a given variable in a 
+#' staged event tree.
 #' @param x list of conditional probabilities for each stage
 #' @param distance the distance function e.g. \code{\link{kl}}
 #' @param ... additional parameters to be passed to the distance function
 #' @return The matrix with the distances between stages
+#' @keywords internal 
 distance_mat_stages <- function(x, distance = kl, ...) {
   d <- length(x)
   M <- matrix(nrow = d, ncol = d, 0)
@@ -112,6 +116,7 @@ distance_mat_stages <- function(x, distance = kl, ...) {
 #' from a distance (positive, symmetric) matrix
 #' @param M matrix of distance
 #' @return a list with component \code{I} and \code{J} (the two group of clusters)
+#' @keywords internal 
 simple_clustering <- function(M) {
   ##first we find the two indxs that return the maximum distance.
   idx <- which.max(M)
@@ -261,7 +266,8 @@ generate_xor_dataset <- function(n = 2,
 
 
 #' generate a random binary dataset for classification
-#'
+#' 
+#' Randomly generate a simple classification problem
 #' @param n number of variables
 #' @param N number of observations
 #' @param eps noise
@@ -311,6 +317,7 @@ generate_linear_dataset <-
 
 #' generate a random binary dataset
 #'
+#' Randomly generete a data.frame of independent binary variables
 #' @param n number of variables
 #' @param N number of observations
 #' @return A data.frame with \code{n} independent random variables

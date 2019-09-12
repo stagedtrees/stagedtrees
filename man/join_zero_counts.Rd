@@ -23,9 +23,9 @@ observations merged in a single stage
 Join situations with no observations
 }
 \details{
-This function takes as input a (fitted) staged event tree object
-and looking at the \code{ctables} join all the situations with zero
-recorded observations in the same stage. Since such joining does not change
+It takes as input a (fitted) staged event tree object
+and looking at the \code{ctables} it joins, in the same stage, all the situations with zero
+recorded observations. Since such joining does not change
 the log-likelihood of the model, it is a useful (time-wise)
 pre-processing before others model selection algorithms.
 If \code{fit=TRUE} the model will be then re-fitted, if user sets

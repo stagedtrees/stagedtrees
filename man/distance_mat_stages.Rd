@@ -17,5 +17,8 @@ distance_mat_stages(x, distance = kl, ...)
 The matrix with the distances between stages
 }
 \description{
-Compute the distance matrix
+Compute the matrix of distances between probabilities,
+e.g the transition probabilities for a given variable in a
+staged event tree.
 }
+\keyword{internal}

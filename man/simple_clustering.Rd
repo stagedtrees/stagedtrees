@@ -16,3 +16,4 @@ a list with component \code{I} and \code{J} (the two group of clusters)
 clustering in 2 groups is performed starting
 from a distance (positive, symmetric) matrix
 }
+\keyword{internal}

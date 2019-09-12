@@ -25,8 +25,8 @@ Hill-climbing search of staged event trees with
 iterative moving of nodes between stages.
 }
 \details{
-For each variable the node-moving that best increase the
-score is performed. A node-moving is either chainging the stage
+For each variable the node-move that best increase the
+score is performed. A node-move is either changing the stage
 associate to a node or move the node to a new stage.
 }
 \examples{

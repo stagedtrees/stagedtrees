@@ -16,3 +16,4 @@ set_stage(sevt, path, stage)
 \description{
 Set the given stage to the path for the stage event tree
 }
+\keyword{internal}

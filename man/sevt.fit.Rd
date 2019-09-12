@@ -12,21 +12,28 @@ fit.sevt(sevt, data = NULL, lambda = 0, ...)
 \arguments{
 \item{sevt}{a staged event tree}
 
-\item{data}{data.frame or stratified event tree}
+\item{data}{data.frame, contingency table, or fitted
+stratified event tree}
 
 \item{lambda}{smoothing parameter}
 
 \item{...}{additional parameters}
 }
 \value{
-a fitted staged event tree
+a fitted staged event tree, that is an object of class \code{sevt}
+with \code{ctables} and \code{prob} arguments.
 }
 \description{
-Fit a staged event tree
+Estimate transition probabilities in a staged event tree from data.
+Probabilities are estimated with the relative frequencies plus,
+eventually,  an additive (Laplace) smoothing.
 }
 \details{
-\code{fit.sevt} is just a wrapper of \code{sevt.fit},
-it is provided for compatibilities. (DEPRECATED)
+The log-likelihood of the model will be recomputed and
+stored in the returned object.
+
+\code{fit.sevt} is the same as \code{sevt.fit}
+and it will be probably removed in the future.
 }
 \examples{
 
