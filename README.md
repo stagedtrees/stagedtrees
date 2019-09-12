@@ -8,6 +8,11 @@ Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](ht
 [![Coverage
 status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
 
+### Overview
+
+`stagedtrees` is a package that implements staged event trees, a
+probability model for discrete random variables.
+
 ### Installation
 
 ``` r
@@ -214,11 +219,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 ##   Articles Gender Kids Married Mentor Prestige
-## 1        0 female   no      no   high      low
-## 2      1-2   male   no      no medium     high
-## 3       >2   male   no      no   high     high
-## 4      1-2 female   no     yes    low      low
-## 5        0 female   no      no medium     high
+## 1        0   male  yes     yes medium      low
+## 2      1-2 female   no      no    low      low
+## 3        0   male  yes     yes    low     high
+## 4        0 female   no     yes medium     high
+## 5      1-2   male   no      no   high      low
 ```
 
 #### Explore the model
