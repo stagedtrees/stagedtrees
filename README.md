@@ -219,11 +219,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1        0 female   no     yes medium     high
-#> 2        0   male  yes     yes    low      low
-#> 3       >2   male   no      no   high     high
-#> 4      1-2 female   no      no   high     high
-#> 5      1-2 female   no      no   high     high
+#> 1      1-2   male   no      no    low     high
+#> 2      1-2 female  yes     yes   high      low
+#> 3      1-2   male  yes     yes medium      low
+#> 4        0   male   no     yes    low      low
+#> 5      1-2   male   no      no    low     high
 ```
 
 #### Explore the model
