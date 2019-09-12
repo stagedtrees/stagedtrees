@@ -73,7 +73,6 @@ data("PhDArticles")
 mod1 <- bhc.sevt(full(PhDArticles[,1:4], lambda = 1))
 mod2 <- fbhc.sevt(full(PhDArticles[,1:4], lambda = 1))
 compare.sevt(mod1, mod2)
-compare.sevt(mod1, mod2, method = "stages", plot = TRUE)
 
 ##########
 m0 <- full(PhDArticles[,1:4], fit = TRUE, lambda = 0)
