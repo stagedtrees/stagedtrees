@@ -15,6 +15,12 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
  [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
  
+ 
+### Overview 
+
+`stagedtrees` is a package that implements staged event trees, a probability
+model for discrete random variables.   
+
 ### Installation 
   
 ```{r, eval = FALSE}
