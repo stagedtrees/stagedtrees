@@ -50,7 +50,7 @@ ceg.sevt <- function(object){
 #' Ceg to adjmat of graph
 #' 
 #' @param x the ceg object
-#' @details it is used to prepar the plot of the ceg.
+#' @details it is used to prepare the plot of the ceg.
 #' It transforms the ceg object into an adjacent matrix.
 #' @return the adj matrix
 #' @examples 

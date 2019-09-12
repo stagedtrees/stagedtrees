@@ -317,7 +317,7 @@ generate_linear_dataset <-
 
 #' generate a random binary dataset
 #'
-#' Randomly generete a data.frame of independent binary variables
+#' Randomly generate a data.frame of independent binary variables
 #' @param n number of variables
 #' @param N number of observations
 #' @return A data.frame with \code{n} independent random variables
