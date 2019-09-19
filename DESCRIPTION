@@ -11,7 +11,7 @@ Authors@R: c(
 	comment = c(ORCID = "0000-0002-2562-5192")),
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
-Description: Package to create and fit staged event tree probability models. 
+Description: Creates and fits staged event tree probability models. 
              Staged event trees are probabilistic graphical models capable of 
              representing asymmetric conditional independence statements
              among categorical variables. 

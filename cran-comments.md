@@ -2,6 +2,7 @@
 This is a resubmission with changes as requested by CRAN and to eliminate 
 errors, warnings and notes:
 
+* Change first sentence of description to "Creates and fits.."
 * function `stageinfo.sevt` has been removed, instead `summary.sevt` has been
   added with an R-like structure (`summary.sevt` object and 
   `print.summary.sevt` method)
