@@ -27,7 +27,7 @@ model for discrete random variables.
 ### Installation 
   
 ```{r, eval = FALSE}
-#stable version from github 
+#stable version from CRAN
 install.packages("stagedtrees")
 
 #development version from github
