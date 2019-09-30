@@ -1,31 +1,3 @@
-## Resubmission
-This is a resubmission with changes as requested by CRAN and to eliminate 
-errors, warnings and notes:
-
-* Change first sentence of description to "Creates and fits.."
-* function `stageinfo.sevt` has been removed, instead `summary.sevt` has been
-  added with an R-like structure (`summary.sevt` object and 
-  `print.summary.sevt` method)
-* removed examples for unexported functions
-* fixed error for 
-  `unexpected end of input: uni_idx(list(A = c(,,), B = c(,,))` 
-  in man/uni_idx.Rd 
-* removed `\dontrun{}` statements
-* Changed some examples to keep examples time low
-* Change `Url` fields to `URL` in DESCRIPTION
-* Remove `Authors` and `Mantainer`  fields in DESCRIPTION 
-  since `Authors@R` is present
-* Fix issue when suggested package `clue` is not available
-* Function `subtree.sevt` now works as expected 
-* add `@keywords internal` to unexported functions
-* change in options for `README.Rmd` to generate a compatible `README.md`
-* empty line at the end of file LICENSE to avoid `devtools::check()` 
-  end of line warning.
-* eliminate last line of example in `compare.sevt` to avoid error in
-  examples for arch i386 (win-builder).
-* Fixed spelling.
-
-
 ## Test environments
 * Ubuntu 18.04.2      (64-bit)  R 3.6.1 (local) 
 * Ubuntu 16.04.6      (64-bit)  R 3.6.1 (on travis-ci) 

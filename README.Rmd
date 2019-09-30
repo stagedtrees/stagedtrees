@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 [![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
  [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
+ [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
  
  
 ### Overview 
@@ -26,6 +27,9 @@ model for discrete random variables.
 ### Installation 
   
 ```{r, eval = FALSE}
+#stable version from github 
+install.packages("stagedtrees")
+
 #development version from github
 # install.packages("devtools")
 devtools::install_github("gherardovarando/stagedtrees")

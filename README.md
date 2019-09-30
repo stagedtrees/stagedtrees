@@ -7,6 +7,7 @@
 Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
 [![Coverage
 status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
+[![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
 ### Overview
 
@@ -16,6 +17,9 @@ probability model for discrete random variables.
 ### Installation
 
 ``` r
+#stable version from github 
+install.packages("stagedtrees")
+
 #development version from github
 # install.packages("devtools")
 devtools::install_github("gherardovarando/stagedtrees")
@@ -219,11 +223,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2   male   no      no    low     high
-#> 2      1-2 female  yes     yes   high      low
-#> 3      1-2   male  yes     yes medium      low
-#> 4        0   male   no     yes    low      low
-#> 5      1-2   male   no      no    low     high
+#> 1       >2   male   no      no   high     high
+#> 2      1-2   male   no      no    low     high
+#> 3      1-2 female  yes     yes    low      low
+#> 4      1-2   male   no     yes   high     high
+#> 5      1-2 female   no      no   high     high
 ```
 
 #### Explore the model
