@@ -1,0 +1,215 @@
+---
+title: "Overview"
+output: rmarkdown::html_vignette
+author: "Gherardo Varando"
+vignette: >
+  %\VignetteIndexEntry{overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+ 
+This vignette introduces staged event tree models and their implementation in the `stagedtrees` package. 
+
+```{r setup}
+library(stagedtrees)
+```
+
+## Intorduction and notation
+
+A stratified event tree is a graphical representation of the chain rule 
+for probability for a specific order of categorical random variables.
+Let $X_1, X_2, \ldots, X_n$ be $n$ categorical random variables. Each
+random variable $X_i$ takes values in a finite sample space
+$\mathcal{X}_j$.
+The factorized probability
+\[P(X_1, X_2, \ldots, X_n) = P(X_1)P(X_2|X_1)P(X_3|X_2, X_1)\cdots P(X_n|\ldots), \]
+can be represented graphically by a symmetric tree, where each level or stratum corresponds to a variable and thus it is colled a 
+stratified event tree. At each node $\alpha$ of the 
+tree there is attached the probability $P(X_i | \text{path from root to
+node } \alpha)$. 
+Once the order of the variables is fixed we can color the nodes in 
+the tree with the meaning that if two nodes ($\alpha,  \beta$) in the same stratum have the 
+same color then 
+\[P(X_i| \text{path from root to } \alpha) =
+P(X_i|\text{path from root to } \beta).\]
+We call staged event trees such models and they are the 
+main subjects in the `stagedtrees` package. 
+
+Things will be more clear with an example, consider the following
+three random variables:
+
+- $X_1 \in \{ a, b \}$
+- $X_2 \in \{ 1, 2, 3 \}$
+- $X_3 \in \{good, bad \}$
+
+The full staged event tree is the following tree where leafs represent 
+elementary events in the sample space $\{a,b\} \times \{1,2,3\} \times \{good, bad\}$.
+```{r, echo = TRUE, fig.height=5, fig.width=5}
+mod <- full(list(X1 = c("a", "b"), 
+                 X2 = c("1", "2", "3"),
+                 X3 = c("good", "bad")))
+plot(mod, cex.label.edges = 0.8, cex.label.nodes = 0, pch = 16)
+text(mod)
+```
+
+For each stratum (or variable) we can observe that the nodes have all 
+different colours thus the above staged tree represent a 
+full (or saturated) model over the three random variables. 
+
+Indeed the degrees of freedom are equals to  
+$|\{a,b\} \times \{1,2,3\} \times \{good, bad\}| - 1$,
+
+```{r}
+df.sevt(mod)
+```
+
+We can join now different stages and reduce the number of parameters 
+in the model, we will use the `magrittr` package from now on 
+since it eases model specification. 
+
+```{r, fig.height=5, fig.width=5}
+library(magrittr)
+
+### join stages 1 with 2 for variable X2 
+### and stages 2 with 5 and 3 with 4 for variable X3
+mod1 <- mod %>% join_stages("X2", 1, 2) %>% 
+        join_stages("X3", 2, 5) %>% join_stages("X3", 3, 4)
+plot(mod1, cex.label.edges = 0.8, 
+     cex.label.nodes = 0, pch = 16, main = "mod1")
+```
+
+The resulting staged tree has now a reduced number of parameters as 
+expected
+```{r}
+df.sevt(mod1)
+```
+
+In particular in the staged tree `mod1` we have the following equalities 
+among conditional probabilities:
+
+- $P(X_2 | X_1 = b) = P(X_2 | X_1 = a)$ that is 
+  $X_1$ and $X_2$ are independent
+- $P(X_3 | X_1 = a, X_2 = 2) = P(X_3| X_1 = b, X_2 = 2)$
+- $P(X_ | X_1 = a, X_2 = 3) = P(X_3 | X_1 = b, X_2 = 1)$
+
+The difference between the models becames relevant once we fit
+models with estimated probabilities. To do so we consider
+some observations of the random variables 
+```{r}
+data <- data.frame(X1 = c("a", "a", "b", "a", "b", "b"),
+                   X2 = c(1,1,2,2,3,1),
+                   X3 = c("good", "good", "bad", "bad", "bad", "good"))
+data
+```
+
+
+We can fit the two models `mod` and `mod1` with the same data
+and observe the differenc in the estimated probabilities.
+
+```{r}
+mod <- fit.sevt(mod, data)
+mod1 <- fit.sevt(mod1, data)
+```
+
+```{r}
+summary(mod)
+summary(mod1)
+```
+
+And in particular we can observe how in `mod1` the equalities 
+among probabilities are satisifed:
+
+```{r}
+sspace <- expand.grid(mod1$tree[1:2])
+cbind(sspace, P = prob.sevt(mod1, sspace))
+```
+
+## Staged tree objects
+
+The package `stagedtrees` contains an implementations 
+of stratifeid staged tree models in what we called
+staged tree objects with class attribute `sevt`. 
+
+```{r}
+class(mod)
+```
+
+A staged trees object has always at least two fields: `tree` and 
+`stages` that contains all the information on the structure of the 
+staged tree while optional fields appear in fitted objects: `ctables` and
+`prob` which store the contingency tables and the estimated probabilities. 
+User should rarely access and modify directly the staged tree object 
+but instead use the dedicated functions available in the package. 
+
+The constructor for staged tree object, `staged_ev_tree`, 
+works taking as input named list, tables or data.frames. 
+
+We already saw how to create staged trees from lists, we 
+will see now, more interestingly, how to do it from 
+data.frames and tables. 
+
+Instead of using the `staged_ev_tree` function the two convinient 
+wrappers `full` and `indep` can (and should) be used. 
+The `indep` constructor to create fully independent models is also
+faster than the `staged_ev_tree` function.
+
+
+```{r}
+## load the PhDArticles data.frame 
+data("PhDArticles")
+
+model <- full(PhDArticles)
+model0 <- indep(PhDArticles)
+
+## a full and fitted model
+model
+
+## independence and fitted model
+model0
+```
+
+It is possible to skip the fitting of the model and specify a 
+given order of the variables in the tree, the `order` arguments 
+permits also to select a subset of variables.
+
+```{r}
+full(PhDArticles, fit = FALSE)
+
+indep(PhDArticles, order = c("Kids", "Married", "Gender"))
+```
+
+Staged event tree objects can also be created from 
+data stored in contingecy tables. 
+We demonstarte it with the classical `Titanic` 
+dataset available in R. 
+
+```{r, fig.height=5, fig.width=5}
+class(Titanic)
+
+Titanic %>% full %>% print %>% plot
+```
+
+### Join stages
+
+Two stages can be joined with `join_stages`, the function requires 
+the variable and the name of two stages and it outputs a 
+new staged tree object where the two stages are joined (in the first 
+stage).
+
+```{r}
+Titanic %>% full %>% join_stages(v = "Age", "1", "2") 
+```
+
+## Model selection
+
+## Inference 
+
+
+

@@ -42,4 +42,7 @@ Suggests:
     testthat,
     bnlearn,
     covr,
-    clue
+    clue,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
