@@ -1,4 +1,5 @@
 ## Test environments
+
 * Ubuntu 18.04.2      (64-bit)  R 3.6.1 (local) 
 * Ubuntu 16.04.6      (64-bit)  R 3.6.1 (on travis-ci) 
 * Windows                       R 3.4.4 (local)

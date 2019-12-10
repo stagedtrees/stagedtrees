@@ -17,10 +17,10 @@ test_that("compare.sevt correctly returns TRUE/FALSE", {
  
   
   for (m in methods) {
-    expect_true(compare.sevt(mod1, mod1, method = m))
-    expect_true(compare.sevt(mod2, mod2, method = m))
-    expect_false(compare.sevt(mod1, mod2, method = m))
-    expect_false(compare.sevt(mod2, mod1, method = m))
+    expect_true(compare.sevt(mod1, mod1, method = !!m))
+    expect_true(compare.sevt(mod2, mod2, method = !!m))
+    expect_false(compare.sevt(mod1, mod2, method = !!m))
+    expect_false(compare.sevt(mod2, mod1, method = !!m))
   }
 })
 
