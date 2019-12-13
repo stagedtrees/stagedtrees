@@ -96,7 +96,7 @@ test_that("bh(x,x) is = 0", {
 
 test_that("lp(x,y) is >= 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- runif(10)
@@ -109,7 +109,7 @@ test_that("lp(x,y) is >= 0", {
 
 test_that("ry(x,y) is >= 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- runif(10)
@@ -122,7 +122,7 @@ test_that("ry(x,y) is >= 0", {
 
 test_that("kl(x,y) is >= 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- runif(10)
@@ -134,7 +134,7 @@ test_that("kl(x,y) is >= 0", {
 
 test_that("tv(x,y) is >= 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- runif(10)
@@ -146,7 +146,7 @@ test_that("tv(x,y) is >= 0", {
 
 test_that("hl(x,y) is >= 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- runif(10)
@@ -158,7 +158,7 @@ test_that("hl(x,y) is >= 0", {
 
 test_that("bh(x,y) is >= 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- runif(10)
