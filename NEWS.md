@@ -1,3 +1,8 @@
+# 1.0.1
+
+* fixing test without long double 
+* update some test with unquoted expression 
+
 # 1.0.0
 
 * Minor doc fix and references added
