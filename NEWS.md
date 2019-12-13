@@ -2,6 +2,7 @@
 
 * fixing test without long double 
 * update some test with unquoted expression 
+* added functions `get_stage` and `get_path`
 
 # 1.0.0
 
