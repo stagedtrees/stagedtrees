@@ -1126,9 +1126,9 @@ get_path <- function(object, var, stage) {
   if (!var %in% names(object$tree))
     stop(var, " is not a variable in the model")
   
-  paths <- expand.grid(object$tree[1:(which(var == varnames.sevt(object)) - 1)],
+  paths <- expand.grid(object$tree[(which(var == varnames.sevt(object)) - 1):1],
                        stringsAsFactors = FALSE)
-  paths <- paths[object$stages[[var]] %in% stage,]
+  paths <- paths[object$stages[[var]] %in% stage,ncol(paths):1]
   if (var %in% varnames.sevt(object)[2]){
     paths <- data.frame(paths)
     colnames(paths) <- varnames.sevt(object)[1]
