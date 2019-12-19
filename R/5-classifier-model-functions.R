@@ -85,6 +85,7 @@ predict.sevt <-
         res[cv] <-
           path_probability.sevt(object, x, log = TRUE)
       }
+      res[is.nan(res)] <- -Inf
       return(res - log(sum(exp(res)))) ##normalize, that is conditional prob
     }))
     if (prob) {
