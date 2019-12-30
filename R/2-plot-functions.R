@@ -155,13 +155,14 @@ plot.sevt <-
         for (j in 1:nv) {
           #plot nodes
           lj <- lj + 1
+          lst <- length(x$stages[[nms[k+1]]])
           if (k < d) {
             node(
               c(xx, y[j]),
-              label = x$stages[[nms[k + 1]]][lj],
+              label = x$stages[[nms[k + 1]]][(lj - 1) %% lst + 1],
               #label = nms[k+1],
               cex.label = cex.label.nodes[k + 1],
-              col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][lj]],
+              col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][(lj - 1) %% lst + 1]],
               cex.node = cex.nodes[k + 1],
               ...
             )
