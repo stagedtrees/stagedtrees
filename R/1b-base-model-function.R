@@ -6,6 +6,7 @@
 #' @param x data.frame, list, table, \code{bn.fit} object
 #' @param order order of the variables
 #' @param full logical, if \code{TRUE} the full model is created
+#' @param mk numeric, if not \code{NULL} the markov order of the tree
 #' @param fit logical, if  \code{TRUE} the model is fitted
 #' @param lambda smoothing parameter
 #' @param ... additional parameters to be passed
@@ -94,7 +95,7 @@ staged_ev_tree.data.frame <- function(x,
 #' model <- staged_ev_tree(list(X = c("good", "bad"),
 #'                              Y = c("high", "low")))
 #' @export
-staged_ev_tree.list <- function(x, full = FALSE, ...) {
+staged_ev_tree.list <- function(x, full = FALSE, mk = NULL, ...) {
   if (is.null(names(x))) {
     #if there are no names of variables
     #we assign variables names V1,V2,...
@@ -111,11 +112,21 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
   evt$tree <- x
   if (full) {
     evt$stages <- lapply(2:length(x), function(i) {
-      as.character(1:prod(dims[1:(i - 1)]))
+      if (is.null(mk)){
+        strt <- 1
+      }else{
+        strt <- max(1,i - mk)
+      }
+      as.character(1:prod(dims[strt:(i - 1)]))
     })
   } else{
     evt$stages <- lapply(2:length(x), function(i) {
-      rep("1", prod(dims[1:(i - 1)]))
+      if (is.null(mk)){
+        strt <- 1
+      }else{
+        strt <- max(1,i - mk)
+      }
+      rep("1", prod(dims[strt:(i - 1)]))
     })
   }
   names(evt$stages) <- names(x)[-1]
@@ -249,7 +260,8 @@ sevt.fit <- function(sevt,
         # this should work with reduced representation
         ix <- sevt$stages[[order[i]]] == s
         ###
-        if (sum(ix) > 1) {
+        if (sum(ix) > 1 || (sum(ix) > 0 && 
+                            length(ix) < dim(sevt$ctables[[order[i]]])[1])){
           tt <- apply(sevt$ctables[[order[i]]][ix,], MARGIN = 2, sum)
         } else{
           tt <- sevt$ctables[[order[i]]][ix,]
