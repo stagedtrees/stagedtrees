@@ -245,7 +245,10 @@ sevt.fit <- function(sevt,
     stages <- unique(sevt$stages[[order[i]]])
     sevt$prob[[order[i]]] <-
       lapply(stages, function(s) {
+        ###
+        # this should work with reduced representation
         ix <- sevt$stages[[order[i]]] == s
+        ###
         if (sum(ix) > 1) {
           tt <- apply(sevt$ctables[[order[i]]][ix,], MARGIN = 2, sum)
         } else{

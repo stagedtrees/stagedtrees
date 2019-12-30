@@ -62,7 +62,6 @@ tree_idx <- function(path, tree, complete = FALSE){
 }
 
 
-
 #' find the stage in the path
 #' 
 #' no checking is done 

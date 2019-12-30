@@ -121,18 +121,16 @@ strt_ev_tree.sevt <- function(x, ...) {
     if (length(x$prob[[vars[1]]]) > 1) {
       warning("Incorrect number of stages in first variable (should be one)")
     }
-    ## we recover the ctbales from the probability and the sample size
     x$prob[[vars[1]]] <- x$prob[[vars[1]]][[1]]
     for (i in 2:length(x$tree)) {
       #let's take care of the other variables
       ## we will create manually the ftable
-      ## the dimension are the same as path (-1 for the column)
       ft <- array(dim = c(prod(dims[1:(i - 1)]), dims[i]))
+      l <- length(x$stages[[vars[i]]])
       for (j in 1:(dim(ft)[1])) {
         ## fill the ftable
-        jstage <- x$stages[[vars[i]]][j]
+        jstage <- x$stages[[vars[i]]][(j - 1) %% l + 1]
         ft[j,] <- x$prob[[vars[i]]][[jstage]]
-        ###here we divide by the number of path in the same stage
       }
       attr(ft, "row.vars") <- x$tree[vars[1:(i - 1)]]
       attr(ft, "col.vars") <- x$tree[vars[i]]
