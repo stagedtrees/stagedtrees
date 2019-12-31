@@ -4,3 +4,5 @@
 *.Ruserdata
 *.Rproj
 .Rproj.user
+tests/testthat/Rplots.pdf
+
