@@ -47,14 +47,16 @@ test_that("test that the staged event tree is created with the right order II", 
 context("fitting of staged event tree")
 
 test_that("test that the staged event tree is fitted", {
-  DD <-
-    data.frame(A = as.factor(c(1, 2, 2, 1)), 
-               B = as.factor(c("a", "b", "a", "b")),
-               C = as.factor(c("SD", "de", "rew", "tyu")),
-               D = as.factor(c("a", "uu", "a", "uu")))
-  ev <- staged_ev_tree(x = DD, fit = TRUE, lambda = 0)
-  for (var in c("A","B","C","D")){
-    expect_equal(as.numeric(ev$prob[[var]][[1]]), as.numeric(table(DD[var]) / sum(table(DD[var]))))
+  for (mk in c(Inf,1 ,2, 3)){
+    DD <-
+      data.frame(A = as.factor(c(1, 2, 2, 1)), 
+                 B = as.factor(c("a", "b", "a", "b")),
+                 C = as.factor(c("SD", "de", "rew", "tyu")),
+                 D = as.factor(c("a", "uu", "a", "uu")))
+    ev <- staged_ev_tree(x = DD, fit = TRUE, lambda = 0, mk = mk)
+    for (var in c("A","B","C","D")){
+      expect_equal(as.numeric(ev$prob[[var]][[1]]), as.numeric(table(DD[var]) / sum(table(DD[var]))))
+    }  
   }
 })
 
@@ -66,21 +68,24 @@ test_that("test that probabilities are probabilities (indep model)", {
       replace = TRUE
     )))
   }))
-  sev <- staged_ev_tree(DD, fit = T, lambda = 1)
-  for (i in 1:4) {
-    for (j in 1:3) {
-      expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
+  for (mk in c(Inf, 1, 2, 3)){
+    sev <- staged_ev_tree(DD, fit = T, lambda = 1, mk = mk)
+    for (i in 1:4) {
+      for (j in 1:3) {
+        expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
+      }
+      expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
     }
-    expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
+    
+    sev <- indep(DD, lambda = 1, mk = mk)
+    for (i in 1:4) {
+      for (j in 1:3) {
+        expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
+      }
+      expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
+    }  
   }
   
-  sev <- indep(DD, lambda = 1)
-  for (i in 1:4) {
-    for (j in 1:3) {
-      expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
-    }
-    expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
-  }
   
 })
 
@@ -91,25 +96,27 @@ test_that("test that probabilities are probabilities (full model)", {
       replace = TRUE
     )))
   }))
-  sev <- staged_ev_tree(DD,
-                        full = TRUE,
-                        fit = T,
-                        lambda = 1)
-  for (i in 1:4) {
-    for (s in 1:length(sev$prob[[i]])) {
-      for (j in 1:3) {
-        expect_gte(sev$prob[[i]][[s]][j], 0) ##test prob are >=0
+  for (mk in c(Inf, 1, 2, 3)){
+    sev <- staged_ev_tree(DD,
+                          full = TRUE,
+                          fit = T,
+                          lambda = 1, mk = mk)
+    for (i in 1:4) {
+      for (s in 1:length(sev$prob[[i]])) {
+        for (j in 1:3) {
+          expect_gte(sev$prob[[i]][[s]][j], 0) ##test prob are >=0
+        }
+        expect_equal(sum(sev$prob[[i]][[s]]), 1) ## test prob sum up to one
       }
-      expect_equal(sum(sev$prob[[i]][[s]]), 1) ## test prob sum up to one
     }
-  }
-  
-  sev <- full(DD, lambda = 1)
-  for (i in 1:4) {
-    for (j in 1:3) {
-      expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
-    }
-    expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
+    
+    sev <- full(DD, lambda = 1, mk = mk)
+    for (i in 1:4) {
+      for (j in 1:3) {
+        expect_gte(sev$prob[[i]][[1]][j], 0) ##test prob are >=0
+      }
+      expect_equal(sum(sev$prob[[i]][[1]]), 1) ## test prob sum up to one
+    }  
   }
 })
 

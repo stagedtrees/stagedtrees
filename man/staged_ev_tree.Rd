@@ -24,7 +24,7 @@ staged_ev_tree(x, ...)
 \method{staged_ev_tree}{data.frame}(x, order = colnames(x),
   full = FALSE, fit = TRUE, ...)
 
-\method{staged_ev_tree}{list}(x, full = FALSE, ...)
+\method{staged_ev_tree}{list}(x, full = FALSE, mk = Inf, ...)
 
 \method{staged_ev_tree}{bn.fit}(x, ...)
 
@@ -49,6 +49,8 @@ to the appropriate method, see \link{sevt.fit}}
 \item{full}{logical, if \code{TRUE} the full model is created}
 
 \item{fit}{logical, if  \code{TRUE} the model is fitted}
+
+\item{mk}{numeric, the markov order of the tree, default is \code{Inf}}
 
 \item{lambda}{smoothing parameter}
 }

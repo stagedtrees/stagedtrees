@@ -6,7 +6,7 @@
 #' @param x data.frame, list, table, \code{bn.fit} object
 #' @param order order of the variables
 #' @param full logical, if \code{TRUE} the full model is created
-#' @param mk numeric, if not \code{NULL} the markov order of the tree
+#' @param mk numeric, the markov order of the tree, default is \code{Inf}
 #' @param fit logical, if  \code{TRUE} the model is fitted
 #' @param lambda smoothing parameter
 #' @param ... additional parameters to be passed
@@ -95,7 +95,7 @@ staged_ev_tree.data.frame <- function(x,
 #' model <- staged_ev_tree(list(X = c("good", "bad"),
 #'                              Y = c("high", "low")))
 #' @export
-staged_ev_tree.list <- function(x, full = FALSE, mk = NULL, ...) {
+staged_ev_tree.list <- function(x, full = FALSE, mk = Inf, ...) {
   if (is.null(names(x))) {
     #if there are no names of variables
     #we assign variables names V1,V2,...
@@ -112,20 +112,12 @@ staged_ev_tree.list <- function(x, full = FALSE, mk = NULL, ...) {
   evt$tree <- x
   if (full) {
     evt$stages <- lapply(2:length(x), function(i) {
-      if (is.null(mk)){
-        strt <- 1
-      }else{
-        strt <- max(1,i - mk)
-      }
+      strt <- max(1,i - mk)
       as.character(1:prod(dims[strt:(i - 1)]))
     })
   } else{
     evt$stages <- lapply(2:length(x), function(i) {
-      if (is.null(mk)){
-        strt <- 1
-      }else{
-        strt <- max(1,i - mk)
-      }
+      strt <- max(1,i - mk)
       rep("1", prod(dims[strt:(i - 1)]))
     })
   }
