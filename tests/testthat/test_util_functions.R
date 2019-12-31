@@ -35,19 +35,19 @@ context("testing distance functions")
 
 ds <- c(lp, ry, kl, tv, hl, bh, cd)
 
-test_that("lp(x,y) is = 0", {
+test_that("lp(x,x) is = 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
-    p <- rbinom(1, 20, 0.2)
+    p <- rbinom(1, 5, 0.2) + 1
     expect_equal(lp(!!x,!!x, p = !!p), 0)
   })
 })
 
-test_that("ry(x,y) is = 0", {
+test_that("ry(x,x) is = 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
     alpha <- runif(1, min = 1.1, max = 10)
@@ -55,27 +55,27 @@ test_that("ry(x,y) is = 0", {
   })
 })
 
-test_that("kl(x,y) is = 0", {
+test_that("kl(x,x) is = 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
     expect_equal(kl(!!x,!!x), 0)
   })
 })
 
-test_that("tv(x,y) is = 0", {
+test_that("tv(x,x) is = 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
     expect_equal(tv(!!x,!!x), 0)
   })
 })
 
-test_that("hl(x,y) is = 0", {
+test_that("hl(x,x) is = 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
     expect_equal(hl(!!x,!!x), 0)
@@ -84,7 +84,7 @@ test_that("hl(x,y) is = 0", {
 
 test_that("bh(x,x) is = 0", {
   replicate(10, {
-    x <- runif(10)
+    x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
     expect_equal(bh(!!x, !!x), 0)

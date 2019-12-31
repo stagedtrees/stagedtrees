@@ -11,7 +11,7 @@
 ### Ubuntu 18.04.2 R 3.6.1 (local) 
 
 #### devtools::check()
-Duration: 24.3s
+Duration: 26.8s
 
 0 errors | 0 warnings | 0 note
 
@@ -19,7 +19,7 @@ Duration: 24.3s
 
 Status: 1 NOTE
 
-* checking CRAN incoming feasibility ... NOTE
+* checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
 Maintainer: ‘Gherardo Varando <gherardo.varando@gmail.com>’
 
 ### Ubuntu 16.04.6 R 3.6.1 (on travis-ci)
