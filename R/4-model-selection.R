@@ -40,7 +40,8 @@ join_zero_counts <-
       else
         new <- name
       ix <- rowSums(object$ctables[[v]]) == 0
-      object$stages[[v]][ix] <- new
+      ls <- length(object$stages[[v]])
+      object$stages[[v]][(ix - 1) %% ls + 1] <- new
       tot <- tot + sum(ix)
       if (trace > 1) {
         message(v, " joined ", sum(ix), " situations")
