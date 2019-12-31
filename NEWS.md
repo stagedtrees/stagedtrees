@@ -1,8 +1,9 @@
 # 1.0.1
 
 * fixing test without long double 
+* fixing some errors in tests
 * update some test with unquoted expression 
-* added functions `get_stage` and `get_path`
+* new functions `get_stage` and `get_path` and relative tests
 
 # 1.0.0
 
