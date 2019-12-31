@@ -1078,3 +1078,68 @@ df.sevt <- function(x) {
     ) - 1))
 }
 
+#' Retrieve stage or path
+#' 
+#' Utility functions to obtain stages from paths and
+#' paths from stages.
+#'  
+#' @name getstagepath
+NULL
+
+
+#' @rdname getstagepath
+#' @param object a staged event tree object
+#' @param path a vector contating the path from root or
+#' a two dimensional array where each row is a path
+#' from root
+#' @return \code{get_stage} returns 
+#' the name of the stage for a given path (or paths).
+#' @examples 
+#' model <- fbhc.sevt(full(PhDArticles))
+#' get_stage(model, c("0", "male"))
+#' paths <- expand.grid(model$tree[2:1])[,2:1]
+#' get_stage(model, paths)
+#' 
+#' @export
+get_stage <- function(object, path){
+  if (is.null(object$stages)){
+    stop("object is not a staged tree")
+  }
+  if (is.null(dim(path))){
+    find_stage(object, path)
+  }else{
+    apply(path, MARGIN = 1, 
+          function(x) find_stage(object, x))
+  }
+}
+
+
+#' @rdname getstagepath
+#' 
+#' @param var string, one of the variable in 
+#'            the staged tree
+#' @param stage string or vector, the name
+#' of the stages for which the paths should be 
+#' returned
+#' @return \code{get_paths} return a
+#'         data.frame containing the paths 
+#'         corresponding to the given stage (or stages).
+#' @examples 
+#' get_path(model, "Kids", "11")
+#' get_path(model, "Gender", "2")
+#' get_path(model, "Kids", c("5", "6"))
+#' @export
+get_path <- function(object, var, stage) {
+  if (!var %in% names(object$tree))
+    stop(var, " is not a variable in the model")
+  
+  paths <- expand.grid(object$tree[(which(var == varnames.sevt(object)) - 1):1],
+                       stringsAsFactors = FALSE)
+  paths <- paths[object$stages[[var]] %in% stage,ncol(paths):1]
+  if (var %in% varnames.sevt(object)[2]){
+    paths <- data.frame(paths)
+    colnames(paths) <- varnames.sevt(object)[1]
+  }
+  return(paths)
+}
+

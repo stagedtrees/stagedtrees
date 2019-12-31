@@ -62,7 +62,8 @@ tree_idx <- function(path, tree, complete = FALSE){
 }
 
 
-#' find the stage in the path
+
+#' Find the stage  the path
 #' 
 #' no checking is done 
 #' @param object a staged event tree object
@@ -76,16 +77,6 @@ find_stage <- function(object, path) {
   ### stages can be defined in a reduced vector
   return(object$stages[[k]][(ix - 1) %% l + 1]) 
 }
-
-
-# find the paths for a given stage index
-# paths is a data.frame as the ones obtained with expand.grid
-# stage is an integer, the stage index
-find_paths <- function(obj, stage, var) {
-  ##to do
-}
-
-
 
 
 #' Compute the distance matrix 
