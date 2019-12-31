@@ -40,7 +40,7 @@ test_that("lp(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
-    p <- rbinom(1, 20, 0.2)
+    p <- rbinom(1, 5, 0.2) + 1
     expect_equal(lp(!!x,!!x, p = !!p), 0)
   })
 })
