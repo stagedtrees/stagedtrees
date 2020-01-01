@@ -507,6 +507,7 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
         model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
       attr(model$prob[[v]][["1"]], "n") <- n
       ix <- ctab > 0
+      class(model$prob[[v]][["1"]]) <- "numeric"
       model$ll <-
         model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
     }
@@ -780,7 +781,8 @@ subtree.sevt <- function(object, path) {
     object$prob[varout] <- NULL
     object$prob[[var[1]]] <- object$prob[[var[1]]][stage]
     for (i in 2:length(object$tree)) {
-      ###to do: clean unused probabilities
+      object$prob[[var[i]]] <- 
+        object$prob[[var[i]]][unique(object$stages[[var[i]]])]
     }
     
     #object$ll <- logLik(object)
