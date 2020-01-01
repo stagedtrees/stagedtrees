@@ -500,6 +500,7 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
         model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
       attr(model$prob[[v]][["1"]], "n") <- n
       ix <- ctab > 0
+      class(model$prob[[v]][["1"]]) <- "numeric"
       model$ll <-
         model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
     }
