@@ -1,5 +1,6 @@
 # 1.0.1
 
+* fix indep, probabilities should not be of class table
 * fix subtree probabilities 
 * fixing test without long double 
 * fixing some errors in tests
