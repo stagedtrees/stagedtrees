@@ -1,5 +1,6 @@
 # 1.0.1
 
+* fix subtree probabilities 
 * fixing test without long double 
 * fixing some errors in tests
 * update some test with unquoted expression 
