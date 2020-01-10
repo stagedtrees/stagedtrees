@@ -1,12 +1,12 @@
 # 1.0.1
 
-* fix indep, probabilities should not be of class table 
+* fix `indep`, probabilities should not be of class table 
   (it was triggering a bug in summary)
-* fix subtree, now removing unused probabilities 
+* fix `subtree`, now removing unused probabilities 
   (it was triggering a bug in summary) 
-* fixing test without long double 
-* fixing some errors in tests
-* update some test with unquoted expression 
+* fixing testing without long double 
+* fixing some errors in testing
+* update some tests with unquoted expression 
 * new functions `get_stage` and `get_path` and relative tests
 
 # 1.0.0
