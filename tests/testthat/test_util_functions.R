@@ -99,7 +99,7 @@ test_that("lp(x,y) is >= 0", {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
-    y <- runif(10)
+    y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
     p <- rbinom(1, 20, 0.2)
@@ -125,7 +125,7 @@ test_that("kl(x,y) is >= 0", {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
-    y <- runif(10)
+    y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
     expect_gte(kl(!!x,!!y), 0)
@@ -137,7 +137,7 @@ test_that("tv(x,y) is >= 0", {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
-    y <- runif(10)
+    y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
     expect_gte(tv(!!x,!!y), 0)
@@ -149,7 +149,7 @@ test_that("hl(x,y) is >= 0", {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
-    y <- runif(10)
+    y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
     expect_gte(hl(!!x,!!y), 0)
@@ -161,7 +161,7 @@ test_that("bh(x,y) is >= 0", {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
-    y <- runif(10)
+    y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
     expect_gte(bh(!!x, !!y), 0)
