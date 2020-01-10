@@ -1,17 +1,23 @@
+This release fix some errors in tests under no long double, some additional 
+bugs in some tests. Moreover two functions are added.
+
 ## Test environments
 
-* Ubuntu 18.04.2      (64-bit)  R 3.6.1 (local) 
-* Ubuntu 16.04.6      (64-bit)  R 3.6.1 (on travis-ci) 
-* Windows                       R 3.4.4 (local)
+* Ubuntu 18.04.2      (64-bit)  R 3.6.2 (local) 
 * macOS darwin15.6.0  (64-bit)  R 3.6.1 (local)
-* Windows Server 2008 (64-bit)  R 3.6.1 (win-builder)
+* Ubuntu 16.04.6      (64-bit)  R 3.6.1 (on travis-ci) 
+* Windows Server 2008 (64-bit)  R 3.6.2 (win-builder, R-release)
+* Windows Server 2008 (64-bit)  R 3.5.3 (win-builder, R-oldrelease)
+* Windows Server 2008 (64-bit)  R devel (win-builder, R-devel)
+* R-hub windows-x86_64-devel (r-devel)
 
-## R CMD check results
+## R CMD Check results
 
-### Ubuntu 18.04.2 R 3.6.1 (local) 
+### Ubuntu 18.04.2 R 3.6.2 (local) 
 
 #### devtools::check()
-Duration: 26.8s
+
+Duration: 29.7s
 
 0 errors | 0 warnings | 0 note
 
@@ -28,19 +34,24 @@ Status: OK
 
 ### OS X R 3.6.1 (local)
 
-Status: Ok
+Duration: 26.1s
 
-### win-builder (R 3.6.1)
+0 errors | 0 warnings | 0 notes
 
-Installation time in seconds: 12
-Check time in seconds: 159
-Status: 1 NOTE
+### win-builder
 
-Possibly mis-spelled words in DESCRIPTION:
-  Bigatti (22:25)
-  Collazo (21:14)
-  Görgen (21:29, 22:14)
-  Riccomagno (22:37)
-  Thwaites (23:14)
+#### R-release 
 
-All the detected possible miss-spelled word are false positive. 
+Status: OK
+
+#### R-devel 
+
+Status: OK
+
+#### R-oldrelease 
+
+Status: OK
+
+### r-hub
+
+0 errors | 0 warnings | 0 notes
