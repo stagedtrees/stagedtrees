@@ -3,6 +3,7 @@
 
 # stagedtrees
 
+[![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/web/packages/stagedtrees/index.html)
 [![Build
 Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
 [![Coverage
@@ -223,11 +224,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2   male  yes     yes   high     high
-#> 2      1-2 female   no      no medium     high
-#> 3      1-2 female  yes     yes   high     high
-#> 4      1-2 female   no     yes   high      low
-#> 5      1-2 female   no     yes   high      low
+#> 1        0 female   no     yes    low      low
+#> 2      1-2   male   no      no medium      low
+#> 3        0   male   no     yes medium      low
+#> 4        0   male   no      no   high     high
+#> 5       >2   male   no      no   high     high
 ```
 
 #### Explore the model
