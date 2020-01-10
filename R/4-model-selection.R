@@ -39,10 +39,13 @@ join_zero_counts <-
         new <- new_label(unique(object$stages[[v]]))
       else
         new <- name
+      ### MUST FIX
+      ### not working correctly with the reduced paramterization
       ix <- rowSums(object$ctables[[v]]) == 0
       ls <- length(object$stages[[v]])
       object$stages[[v]][(ix - 1) %% ls + 1] <- new
       tot <- tot + sum(ix)
+      ### MUST FIX
       if (trace > 1) {
         message(v, " joined ", sum(ix), " situations")
       }
