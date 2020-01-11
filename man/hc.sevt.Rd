@@ -30,6 +30,6 @@ score is performed. A node-move is either changing the stage
 associate to a node or move the node to a new stage.
 }
 \examples{
-model <- hc.sevt(full(PhDArticles[,1:4], lambda = 1))
+model <- hc.sevt(full(PhDArticles[,1:3], lambda = 1))
 summary(model)
 }
