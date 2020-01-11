@@ -43,10 +43,10 @@ if \code{prob = FALSE}, a vector of length as the number of rows in the \code{ne
 with the level with higher estimated probability for each new observations is returned.
 }
 \examples{
-DD <- generate_xor_dataset(n = 5, 1000)
-order <- c("C", "X1", "X2", "X3", "X4", "X5")
-train <- DD[1:5, order]
-test <- DD[501:1000, order]
+DD <- generate_xor_dataset(n = 4, 600)
+order <- c("C", "X1", "X2", "X3", "X4")
+train <- DD[1:500, order]
+test <- DD[501:600, order]
 model <- full(train)
 model <- bhc.sevt(model)
 pr <- predict(model, newdata = test, class = "C")
