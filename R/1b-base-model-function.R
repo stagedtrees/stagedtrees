@@ -29,7 +29,7 @@
 #' @examples
 #'
 #' ######### from dataset
-#' DD <- generate_random_dataset(n = 5, 1000)
+#' DD <- generate_random_dataset(n = 4, 1000)
 #' indep <- staged_ev_tree(DD, fit = TRUE)
 #' full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
 staged_ev_tree <- function(x, ...) {
@@ -456,7 +456,7 @@ is_fitted.sevt <- function(x) {
 #'
 #' ######### full model
 #'
-#' DD <- generate_xor_dataset(7, 100)
+#' DD <- generate_xor_dataset(4, 100)
 #' modfull <- full(DD, lambda = 1)
 #' @export
 full <- function(x, ...) {
@@ -479,7 +479,7 @@ indep.default <- function(x, ...) {
 #' @examples
 #'
 #' ######### independence model (data.frame)
-#' DD <- generate_xor_dataset(15, 100)
+#' DD <- generate_xor_dataset(4, 100)
 #' system.time(model1 <- staged_ev_tree(DD, fit = TRUE, lambda = 1))
 #' system.time(model2 <- indep(DD, lambda = 1))
 #' model1
