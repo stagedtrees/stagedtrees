@@ -115,7 +115,7 @@ test_that("ry(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
-    alpha <- runif(1, min = 1.1, max = 10)
+    alpha <- runif(1, min = 5, max = 10)
     expect_gte(ry(!!x,!!y, alpha = !alpha), 0)
   })
 })
