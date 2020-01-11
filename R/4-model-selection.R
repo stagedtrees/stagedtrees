@@ -416,7 +416,7 @@ bj.sevt <-
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' model <- hc.sevt(full(PhDArticles[,1:4], lambda = 1))
+#' model <- hc.sevt(full(PhDArticles[,1:3], lambda = 1))
 #' summary(model)
 #' @export
 hc.sevt <- function(object,
