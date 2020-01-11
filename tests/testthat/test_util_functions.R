@@ -51,7 +51,7 @@ test_that("ry(x,x) is = 0", {
     x <- x / sum(x)
     
     alpha <- runif(1, min = 1.1, max = 10)
-    expect_equal(ry(!!x,!!x, alpha = !alpha), 0)
+    expect_equal(ry(!!x,!!x, alpha = !!alpha), 0)
   })
 })
 
@@ -108,15 +108,15 @@ test_that("lp(x,y) is >= 0", {
 })
 
 test_that("ry(x,y) is >= 0", {
-  replicate(10000, {
+  replicate(1000, {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
-    alpha <- runif(1, min = 5, max = 10)
-    expect_gte(ry(!!x,!!y, alpha = !alpha), 0)
+    alpha <- runif(1, min = 1, max = 10)
+    expect_gte(ry(!!x,!!y, alpha = !!alpha), 0)
   })
 })
 
@@ -193,8 +193,8 @@ test_that("ry(x,y) is symmetric", {
     y <- y / sum(y)
     
     alpha <- runif(1, min = 1.1, max = 10)
-    expect_equal(ry(!!x,!!y, alpha = !alpha), 
-                 ry(!!y,!!x, alpha = !alpha))
+    expect_equal(ry(!!x,!!y, alpha = !!alpha), 
+                 ry(!!y,!!x, alpha = !!alpha))
   })
 })
 
