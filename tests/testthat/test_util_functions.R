@@ -108,7 +108,7 @@ test_that("lp(x,y) is >= 0", {
 })
 
 test_that("ry(x,y) is >= 0", {
-  replicate(1000, {
+  replicate(10, {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
     
