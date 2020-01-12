@@ -4,8 +4,7 @@
 \alias{hc.sevt}
 \title{Hill-Climb Score optimization}
 \usage{
-hc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf,
-  trace = 0)
+hc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf, trace = 0)
 }
 \arguments{
 \item{object}{a staged event tree object}

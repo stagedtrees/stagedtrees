@@ -4,8 +4,7 @@
 \alias{strt_ev_tree.table}
 \title{Stratified event tree from a table}
 \usage{
-\method{strt_ev_tree}{table}(x, order = names(dimnames(x)),
-  fit = FALSE, lambda = 0, ...)
+\method{strt_ev_tree}{table}(x, order = names(dimnames(x)), fit = FALSE, lambda = 0, ...)
 }
 \arguments{
 \item{x}{table}

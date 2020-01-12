@@ -4,8 +4,7 @@
 \alias{text.sevt}
 \title{Add text to a staged even tree plot}
 \usage{
-\method{text}{sevt}(x, y = ylim[1], limit = 10, xlim = c(0, 1),
-  ylim = c(0, 1), ...)
+\method{text}{sevt}(x, y = ylim[1], limit = 10, xlim = c(0, 1), ylim = c(0, 1), ...)
 }
 \arguments{
 \item{x}{staged event tree object}

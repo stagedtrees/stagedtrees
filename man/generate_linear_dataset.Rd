@@ -4,9 +4,13 @@
 \alias{generate_linear_dataset}
 \title{generate a random binary dataset for classification}
 \usage{
-generate_linear_dataset(n = 2, N = 10000, eps = 1.2,
-  gamma = runif(1, min = -n, max = n), alpha = runif(n, min = -n, max =
-  n))
+generate_linear_dataset(
+  n = 2,
+  N = 10000,
+  eps = 1.2,
+  gamma = runif(1, min = -n, max = n),
+  alpha = runif(n, min = -n, max = n)
+)
 }
 \arguments{
 \item{n}{number of variables}

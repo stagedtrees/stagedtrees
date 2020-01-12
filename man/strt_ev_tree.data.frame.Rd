@@ -4,8 +4,7 @@
 \alias{strt_ev_tree.data.frame}
 \title{Stratified event tree from data.frame}
 \usage{
-\method{strt_ev_tree}{data.frame}(x, order = colnames(x), fit = FALSE,
-  lambda = 0, ...)
+\method{strt_ev_tree}{data.frame}(x, order = colnames(x), fit = FALSE, lambda = 0, ...)
 }
 \arguments{
 \item{x}{data.frame}

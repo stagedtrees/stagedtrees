@@ -4,8 +4,12 @@
 \alias{bhcr.sevt}
 \title{Backward Random Hill-Climbing}
 \usage{
-bhcr.sevt(object, score = function(x) return(-BIC(x)), max_iter = 100,
-  trace = 0)
+bhcr.sevt(
+  object,
+  score = function(x) return(-BIC(x)),
+  max_iter = 100,
+  trace = 0
+)
 }
 \arguments{
 \item{object}{a staged event tree model}

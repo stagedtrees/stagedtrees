@@ -18,11 +18,9 @@ staged_ev_tree(x, ...)
 
 \method{staged_ev_tree}{default}(x, ...)
 
-\method{staged_ev_tree}{table}(x, order = names(dimnames(x)),
-  full = FALSE, fit = TRUE, ...)
+\method{staged_ev_tree}{table}(x, order = names(dimnames(x)), full = FALSE, fit = TRUE, ...)
 
-\method{staged_ev_tree}{data.frame}(x, order = colnames(x),
-  full = FALSE, fit = TRUE, ...)
+\method{staged_ev_tree}{data.frame}(x, order = colnames(x), full = FALSE, fit = TRUE, ...)
 
 \method{staged_ev_tree}{list}(x, full = FALSE, ...)
 

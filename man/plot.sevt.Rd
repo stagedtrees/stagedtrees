@@ -4,9 +4,18 @@
 \alias{plot.sevt}
 \title{Plot method for staged event trees}
 \usage{
-\method{plot}{sevt}(x, limit = 10, xlim = c(0, 1), ylim = c(0, 1),
-  asp = 1, cex.label.nodes = 1, cex.label.edges = 1, cex.nodes = 2,
-  col = NULL, ...)
+\method{plot}{sevt}(
+  x,
+  limit = 10,
+  xlim = c(0, 1),
+  ylim = c(0, 1),
+  asp = 1,
+  cex.label.nodes = 1,
+  cex.label.edges = 1,
+  cex.nodes = 2,
+  col = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{staged event tree object}

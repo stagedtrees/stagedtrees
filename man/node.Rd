@@ -4,8 +4,7 @@
 \alias{node}
 \title{Plot a node}
 \usage{
-node(x, label = "", col = "black", cex.label = 1, cex.node = 1,
-  ...)
+node(x, label = "", col = "black", cex.label = 1, cex.node = 1, ...)
 }
 \arguments{
 \item{x}{the center}

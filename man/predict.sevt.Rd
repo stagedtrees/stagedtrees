@@ -4,8 +4,7 @@
 \alias{predict.sevt}
 \title{Predict method for staged event tree}
 \usage{
-\method{predict}{sevt}(object, newdata = NULL, class = NULL,
-  prob = FALSE, log = FALSE, ...)
+\method{predict}{sevt}(object, newdata = NULL, class = NULL, prob = FALSE, log = FALSE, ...)
 }
 \arguments{
 \item{object}{A staged event tree}

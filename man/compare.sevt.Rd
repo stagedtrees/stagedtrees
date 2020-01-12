@@ -6,8 +6,14 @@
 \alias{stagesdiff.sevt}
 \title{Compare two staged event tree}
 \usage{
-compare.sevt(object1, object2, method = "naive", return.tree = FALSE,
-  plot = FALSE, ...)
+compare.sevt(
+  object1,
+  object2,
+  method = "naive",
+  return.tree = FALSE,
+  plot = FALSE,
+  ...
+)
 
 hamming.sevt(object1, object2, return.tree = FALSE)
 
