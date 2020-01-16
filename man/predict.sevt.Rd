@@ -51,9 +51,9 @@ model <- bhc.sevt(model)
 pr <- predict(model, newdata = test, class = "C")
 table(pr, test$C)
 # class values:
-predict(model, newdata = test, class = "C")  
+predict(model, newdata = test, class = "C")
 # probabilities:
-predict(model, newdata = test, class = "C", prob = TRUE)  
+predict(model, newdata = test, class = "C", prob = TRUE)
 # log-probabilities:
-predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)  
+predict(model, newdata = test, class = "C", prob = TRUE, log = TRUE)
 }

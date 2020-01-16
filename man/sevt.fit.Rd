@@ -38,9 +38,13 @@ and it will be probably removed in the future.
 \examples{
 
 #########
-model <- staged_ev_tree(list(X = c("good", "bad"),
-                        Y = c("high", "low")))
-D <- data.frame(X = c("good", "good", "bad"),
-                Y = c("high", "low", "low"))
+model <- staged_ev_tree(list(
+  X = c("good", "bad"),
+  Y = c("high", "low")
+))
+D <- data.frame(
+  X = c("good", "good", "bad"),
+  Y = c("high", "low", "low")
+)
 model.fit <- sevt.fit(model, data = D, lambda = 1)
 }

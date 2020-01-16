@@ -63,10 +63,11 @@ strt_ev_tree.data.frame <- function(x,
                                     fit = FALSE,
                                     lambda = 0,
                                     ...) {
-  evt <- strt_ev_tree.list(lapply(x, function(v)
+  evt <- strt_ev_tree.list(lapply(x, function(v) {
     return(levels(as.factor(
       v
-    ))))[order])
+    )))
+  })[order])
   if (fit) {
     evt <- fit.strt_ev_tree(evt, data = x, lambda = lambda)
   }
@@ -85,17 +86,18 @@ strt_ev_tree.data.frame <- function(x,
 #'
 strt_ev_tree.list <- function(x, ...) {
   if (is.null(names(x))) {
-    #if there are no names of variables
-    #we assign variables names V1,V2,...
+    # if there are no names of variables
+    # we assign variables names V1,V2,...
     names(x) <- paste0("V", 1:length(x))
   }
-  
+
   if (any(is.null(vapply(
-    x, FUN = length, FUN.VALUE = 1
+    x,
+    FUN = length, FUN.VALUE = 1
   )))) {
-    #naive check if levels are vector with lenght
+    # naive check if levels are vector with lenght
     warning("Levels should be well defined")
-    return(NULL) #exit without nothing
+    return(NULL) # exit without nothing
   }
   evt <- list(tree = x)
   class(evt) <- "strt_ev_tree"
@@ -108,7 +110,7 @@ strt_ev_tree.list <- function(x, ...) {
 #' @param x a staged event tree object
 #' @param ... additional parameters
 #' @return A stratified event tree object
-#' @details This function build a stratified event tree object 
+#' @details This function build a stratified event tree object
 #'          from a staged event tree.
 #' @export
 #'
@@ -116,23 +118,23 @@ strt_ev_tree.sevt <- function(x, ...) {
   vars <- names(x$tree)
   dims <- vapply(x$tree, length, FUN.VALUE = 1)
   if (!is.null(x$prob)) {
-    #if the model was fitted we have to recompilate the ctables
-    #the first one is easy we just have to forget the (only) stage (and we check validity)
+    # if the model was fitted we have to recompilate the ctables
+    # the first one is easy we just have to forget the (only) stage (and we check validity)
     if (length(x$prob[[vars[1]]]) > 1) {
       warning("Incorrect number of stages in first variable (should be one)")
     }
     ## we recover the ctbales from the probability and the sample size
     x$prob[[vars[1]]] <- x$prob[[vars[1]]][[1]]
     for (i in 2:length(x$tree)) {
-      #let's take care of the other variables
+      # let's take care of the other variables
       ## we will create manually the ftable
       ## the dimension are the same as path (-1 for the column)
       ft <- array(dim = c(prod(dims[1:(i - 1)]), dims[i]))
       for (j in 1:(dim(ft)[1])) {
         ## fill the ftable
         jstage <- x$stages[[vars[i]]][j]
-        ft[j,] <- x$prob[[vars[i]]][[jstage]]
-        ###here we divide by the number of path in the same stage
+        ft[j, ] <- x$prob[[vars[i]]][[jstage]]
+        ### here we divide by the number of path in the same stage
       }
       attr(ft, "row.vars") <- x$tree[vars[1:(i - 1)]]
       attr(ft, "col.vars") <- x$tree[vars[i]]
@@ -163,9 +165,9 @@ fit.strt_ev_tree <- function(evt, data = NULL, lambda = 0) {
     }
   }
   if (is.data.frame(data)) {
-    data <- table(data[,order])
+    data <- table(data[, order])
   }
-  
+
   evt$ctables <- lapply(1:length(order), function(i) {
     path <- order[i:1]
     tt <- apply(data, MARGIN = path, sum)

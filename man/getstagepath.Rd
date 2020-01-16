@@ -39,9 +39,8 @@ paths from stages.
 \examples{
 model <- fbhc.sevt(full(PhDArticles))
 get_stage(model, c("0", "male"))
-paths <- expand.grid(model$tree[2:1])[,2:1]
+paths <- expand.grid(model$tree[2:1])[, 2:1]
 get_stage(model, paths)
-
 get_path(model, "Kids", "11")
 get_path(model, "Gender", "2")
 get_path(model, "Kids", c("5", "6"))

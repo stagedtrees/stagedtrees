@@ -76,12 +76,12 @@ can also be used directly.
 }
 \examples{
 data("PhDArticles")
-mod1 <- bhc.sevt(full(PhDArticles[,1:4], lambda = 1))
-mod2 <- fbhc.sevt(full(PhDArticles[,1:4], lambda = 1))
+mod1 <- bhc.sevt(full(PhDArticles[, 1:4], lambda = 1))
+mod2 <- fbhc.sevt(full(PhDArticles[, 1:4], lambda = 1))
 compare.sevt(mod1, mod2)
 
 ##########
-m0 <- full(PhDArticles[,1:4], fit = TRUE, lambda = 0)
+m0 <- full(PhDArticles[, 1:4], fit = TRUE, lambda = 0)
 m1 <- bhc.sevt(m0)
 m2 <- bj.sevt(m0, distance = tv, thr = 0.25)
 stagesdiff.sevt(m1, m2)

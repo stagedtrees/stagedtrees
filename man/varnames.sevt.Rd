@@ -17,6 +17,6 @@ Get variable names
 }
 \examples{
 
-mod <-full(PhDArticles)
+mod <- full(PhDArticles)
 varnames.sevt(mod)
 }

@@ -26,12 +26,12 @@ Can be a full path from the root to a leaf or a shorter path.
 \examples{
 DD <- generate_random_dataset(5, 100)
 model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
-path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE)  # root to leaf path
-path_probability.sevt(model, c("1", "-1"))  # short path
+path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE) # root to leaf path
+path_probability.sevt(model, c("1", "-1")) # short path
 
-grid <- expand.grid(model$tree)  # all paths from root to leaves
+grid <- expand.grid(model$tree) # all paths from root to leaves
 
 # joint distribution. it sums up to 1.
-grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability.sevt, object = model) 
+grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability.sevt, object = model)
 cbind(grid, grid.prob)
 }

@@ -35,10 +35,11 @@ join_zero_counts <-
     stopifnot(is_fitted.sevt(object))
     tot <- 0
     for (v in names(object$tree)[-1]) {
-      if (is.null(name))
+      if (is.null(name)) {
         new <- new_label(unique(object$stages[[v]]))
-      else
+      } else {
         new <- name
+      }
       ix <- rowSums(object$ctables[[v]]) == 0
       object$stages[[v]][ix] <- new
       tot <- tot + sum(ix)
@@ -70,10 +71,10 @@ join_zero_counts <-
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples
-#' DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
+#' DD <- generate_xor_dataset(n = 4, N = 1000)[, 5:1]
 #' naive_model <- naive.sevt(full(DD, lambda = 1))
-#' pr <- predict(naive_model, newdata = DD[501:1000,])
-#' table(pr,DD$C[501:1000])
+#' pr <- predict(naive_model, newdata = DD[501:1000, ])
+#' table(pr, DD$C[501:1000])
 naive.sevt <-
   function(object,
            distance = kl,
@@ -81,7 +82,8 @@ naive.sevt <-
     stopifnot(is_fitted.sevt(object))
     for (v in names(object$tree)[2:k]) {
       M <- distance_mat_stages(object$prob[[v]],
-                               distance = distance)
+        distance = distance
+      )
       groups <- simple_clustering(M)
       ### compute probabilitites and assign stages
       object$prob[[v]] <- list()
@@ -119,11 +121,10 @@ naive.sevt <-
 #' @importFrom  methods is
 bhcr.sevt <-
   function(object,
-           score = function(x)
+           score = function(x) {
              return(-BIC(x))
-           ,
-           max_iter = 100
-           ,
+           },
+           max_iter = 100,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
@@ -137,15 +138,16 @@ bhcr.sevt <-
       if (length(unique(object$stages[[v]])) > 1) {
         stgs <-
           sample(unique(object$stages[[v]]),
-                 size = 2,
-                 replace = FALSE) ##select randomly two stages
+            size = 2,
+            replace = FALSE
+          ) ## select randomly two stages
         try <-
           join_stages(object, v, stgs[1], stgs[2]) ## join the 2 stages
         try_score <- score(try)
         if (try_score >= now_score) {
           object <- try
           r <-
-            abs((try_score - now_score) / now_score) ##compute relative score increase
+            abs((try_score - now_score) / now_score) ## compute relative score increase
           now_score <- try_score
           if (trace > 1) {
             message(paste(v, "joined stages: ", stgs[1], "and", stgs[2]))
@@ -186,28 +188,28 @@ bhcr.sevt <-
 #' @export
 bhc.sevt <-
   function(object,
-           score = function(x)
+           score = function(x) {
              return(-BIC(x))
-           ,
+           },
            max_iter = Inf,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
-    
+
     for (v in names(object$tree)[-1]) {
       r <- 1
       iter <- 0
       done <- FALSE
       while (!done && iter < max_iter) {
         iter <- iter + 1
-        temp <- object #clone the object
+        temp <- object # clone the object
         temp_score <- now_score
         done <- TRUE
         stages <- unique(object$stages[[v]])
         if (length(stages) > 1) {
           for (i in 2:length(stages)) {
-            ##try all stages pair
+            ## try all stages pair
             s1 <- stages[i]
             for (j in 1:(i - 1)) {
               s2 <- stages[j]
@@ -223,7 +225,7 @@ bhc.sevt <-
               }
             }
           }
-        } ##end if there are more than 1 stage
+        } ## end if there are more than 1 stage
         object <- temp
         now_score <- temp_score
         if ((trace > 1) && !done) {
@@ -266,8 +268,9 @@ bhc.sevt <-
 #' @export
 fbhc.sevt <-
   function(object = NULL,
-           score = function(x)
-             return(-BIC(x)),
+           score = function(x) {
+             return(-BIC(x))
+           },
            max_iter = Inf,
            trace = 0) {
     stopifnot(is(object, "sevt"))
@@ -279,15 +282,15 @@ fbhc.sevt <-
       done <- FALSE
       while (!done && iter < max_iter) {
         iter <- iter + 1
-        temp <- object #clone the object
-        temp_score <- now_score #clone the score
+        temp <- object # clone the object
+        temp_score <- now_score # clone the score
         s1_select <- NULL
         s2_select <- NULL
         done <- TRUE
         stages <- unique(object$stages[[v]])
         if (length(stages) > 1) {
           for (i in 2:length(stages)) {
-            ##try all stages pair
+            ## try all stages pair
             s1 <- stages[i]
             for (j in 1:(i - 1)) {
               s2 <- stages[j]
@@ -297,28 +300,34 @@ fbhc.sevt <-
               if (try_score >= temp_score) {
                 temp <- try
                 temp_score <- try_score
-                s1_select <- s1 #just to message it if verbose
-                s2_select <- s2 #just to message it if verose
+                s1_select <- s1 # just to message it if verbose
+                s2_select <- s2 # just to message it if verose
                 done <- FALSE
                 break
               }
             }
-            if (!done)
+            if (!done) {
               break
+            }
           }
-        } ##end if there are more than 1 stage
+        } ## end if there are more than 1 stage
         object <- temp
         now_score <- temp_score
-        if ((trace > 1) && !done)
-          message(v, " joined stages: ",
-                  s1_select, " and ", s2_select)
+        if ((trace > 1) && !done) {
+          message(
+            v, " joined stages: ",
+            s1_select, " and ", s2_select
+          )
+        }
       } ## end while
       if (trace > 0) {
-        message("fast HC over ",
-                v ,
-                " done after ",
-                iter,
-                " iterations.")
+        message(
+          "fast HC over ",
+          v,
+          " done after ",
+          iter,
+          " iterations."
+        )
       }
     } ## end for over variables
     if (trace > 0) {
@@ -341,10 +350,10 @@ fbhc.sevt <-
 #' @param trace if >0 increasingly amount of info
 #' @param ... additional parameters to be passed to the distance function
 #' is printed (via \code{message})
-#' 
-#' @details For each variable in the model stages are joined iteratively. 
+#'
+#' @details For each variable in the model stages are joined iteratively.
 #' At each iteration the two stages with minimum distance are selected and
-#' joined if their distance is less than \code{thr}. 
+#' joined if their distance is less than \code{thr}.
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
@@ -377,16 +386,18 @@ bj.sevt <-
           if (abs(M[i, j]) < thr) {
             object <-
               join_stages(object, v, s1, s2) ## join the 2 stages
-            finish <- FALSE #if joined the stages we are not finish
+            finish <- FALSE # if joined the stages we are not finish
             if (trace > 1) {
-              message(v, " joined stages: ", s1,
-                      " and ", s2)
+              message(
+                v, " joined stages: ", s1,
+                " and ", s2
+              )
             }
           }
         } ## end if there are more than 1 stage
       } ## end while
       if (trace > 0) {
-        message("backward join over ", v , " done")
+        message("backward join over ", v, " done")
       }
     } ## end for over variables
     if (trace > 0) {
@@ -402,26 +413,27 @@ bj.sevt <-
 #'
 #' Hill-climbing search of staged event trees with
 #' iterative moving of nodes between stages.
-#' 
+#'
 #' @param object a staged event tree object
 #' @param score a function that score staged event tree objects
 #' @param max_iter the maximum number of iterations per variable
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
-#'              
-#' @details For each variable the node-move that best increase the 
-#' score is performed. A node-move is either changing the stage 
-#' associate to a node or move the node to a new stage. 
-#' 
+#'
+#' @details For each variable the node-move that best increase the
+#' score is performed. A node-move is either changing the stage
+#' associate to a node or move the node to a new stage.
+#'
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' model <- hc.sevt(full(PhDArticles[,1:3], lambda = 1))
+#' model <- hc.sevt(full(PhDArticles[, 1:3], lambda = 1))
 #' summary(model)
 #' @export
 hc.sevt <- function(object,
-                    score = function(x)
-                      return(-BIC(x)),
+                    score = function(x) {
+                      return(-BIC(x))
+                    },
                     max_iter = Inf,
                     trace = 0) {
   stopifnot(is(object, "sevt"))
@@ -433,8 +445,8 @@ hc.sevt <- function(object,
     iter <- 0
     while (!done & iter < max_iter) {
       iter <- iter + 1
-      temp <- object #clone the object
-      temp_score <- now_score #clone the score
+      temp <- object # clone the object
+      temp_score <- now_score # clone the score
       stages <- object$stages[[v]]
       ustages <- unique(stages)
       newname <- new_label(ustages)
@@ -451,31 +463,35 @@ hc.sevt <- function(object,
             if (try_score > temp_score) {
               temp <- try
               temp_score <- try_score
-              ia <- i #just to message it if verbose
+              ia <- i # just to message it if verbose
               s1a <- s1
               s2a <- s2
               done <- FALSE
             }
           }
         }
-      }##end for over stages
+      } ## end for over stages
       object <- temp
       now_score <- temp_score
       if ((trace > 1) && !done) {
-        message(v, " moved ", ia, " from stage ", s1a, " to stage ",
-                s2a)
+        message(
+          v, " moved ", ia, " from stage ", s1a, " to stage ",
+          s2a
+        )
       }
-    }##end while
+    } ## end while
     if (trace > 0) {
       message(v, " HC done")
     }
-  }##end for over variables
+  } ## end for over variables
   if (trace > 0) {
-    message("HC over ",
-            v ,
-            " done after ",
-            iter,
-            " iterations.")
+    message(
+      "HC over ",
+      v,
+      " done after ",
+      iter,
+      " iterations."
+    )
   }
   object$call <- sys.call()
   return(object)

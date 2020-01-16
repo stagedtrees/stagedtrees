@@ -8,16 +8,15 @@ test_that("test that nvar.sevt return number of var", {
       C = c("3", "4")
     ))
   expect_equal(nvar.sevt(ev), 3)
-  
+
   ev <- staged_ev_tree.list(x = list(
     A = c(1, 2)
-  )) 
+  ))
   expect_equal(nvar.sevt(ev), 1)
-  
 })
 
 
-test_that("get_stage",{
+test_that("get_stage", {
   ev <-
     staged_ev_tree(list(
       A = c(1, 2),
@@ -30,14 +29,14 @@ test_that("get_stage",{
 })
 
 
-test_that("get_path",{
+test_that("get_path", {
   ev <-
     staged_ev_tree(list(
       A = c("1", "2"),
       B = c("x", "y"),
       C = c("3", "4")
     ))
-  expect_equivalent(get_stage(ev,get_path(ev, "B", "1")[1,]), "1")
-  expect_equivalent(get_stage(ev,get_path(ev, "C", "1")[1,]), "1")
-  expect_equivalent(get_stage(ev,get_path(ev, "C", "1")[2,]), "1")
+  expect_equivalent(get_stage(ev, get_path(ev, "B", "1")[1, ]), "1")
+  expect_equivalent(get_stage(ev, get_path(ev, "C", "1")[1, ]), "1")
+  expect_equivalent(get_stage(ev, get_path(ev, "C", "1")[2, ]), "1")
 })

@@ -4,25 +4,25 @@
 #' @param x the path, expressed as a character vector containing the sequence of the assumed levels
 #' @param log logical, if \code{TRUE} log-probability is returned
 #' @return The probability of the given path or its logarithm if \code{log=TRUE}
-#' @details it computes the probability of following a given path (\code{x}) starting from the root. 
-#' Can be a full path from the root to a leaf or a shorter path. 
+#' @details it computes the probability of following a given path (\code{x}) starting from the root.
+#' Can be a full path from the root to a leaf or a shorter path.
 #' @examples
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
-#' path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE)  # root to leaf path
-#' path_probability.sevt(model, c("1", "-1"))  # short path
-#' 
-#' grid <- expand.grid(model$tree)  # all paths from root to leaves
-#' 
+#' path_probability.sevt(model, c("1", "-1", "1", "-1", "1"), log = TRUE) # root to leaf path
+#' path_probability.sevt(model, c("1", "-1")) # short path
+#'
+#' grid <- expand.grid(model$tree) # all paths from root to leaves
+#'
 #' # joint distribution. it sums up to 1.
-#' grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability.sevt, object = model) 
+#' grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability.sevt, object = model)
 #' cbind(grid, grid.prob)
 #' @export
 path_probability.sevt <-
   function(object, x, log = FALSE) {
     stopifnot(is(object, "sevt"))
     if (!is.null(names(x))) {
-      #if it's a named vector just order it
+      # if it's a named vector just order it
       x <- x[names(object$tree)]
     }
     l <- log(object$prob[[1]][[1]][x[1]])
@@ -32,10 +32,11 @@ path_probability.sevt <-
         l <- l + log(object$prob[[i]][[s]][x[i]])
       }
     }
-    if (log)
+    if (log) {
       return(l)
-    else
+    } else {
       return(exp(l))
+    }
   }
 
 
@@ -44,18 +45,18 @@ path_probability.sevt <-
 #' @param object a (fitted) staged event tree object
 #' @param x the vector or data.frame of observations
 #' @param log logical, if \code{TRUE} log-probabilities are returned
-#' @param nan0 logical, if \code{NaN} should be converted to 0 
+#' @param nan0 logical, if \code{NaN} should be converted to 0
 #' @return the probabilities to observe each observation given in \code{x}
 #'
 #' @details it computes probabilities related to a vector or a data.frame of observations.
 #' They can be as an \code{expand.grid} data.frame or a simple subset of the dataset on which
-#' the model is estimated. 
+#' the model is estimated.
 #' @examples
 #' DD <- generate_random_dataset(5, 100)
 #' model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
-#' pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
+#' pr <- prob.sevt(model, expand.grid(model$tree[c(2, 3, 4)]))
 #' sum(pr)
-#' prob.sevt(model, DD[1:10, ])  
+#' prob.sevt(model, DD[1:10, ])
 #' @export
 prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   stopifnot(is(object, "sevt"))
@@ -71,7 +72,7 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   res <- vapply(
     1:n,
     FUN.VALUE = 1,
-    FUN =  function(i) {
+    FUN = function(i) {
       ll <- object$tree[1:k]
       ll[var1] <- vapply(x[i, var1], as.character, FUN.VALUE = "aaa")
       sum(apply(
@@ -86,7 +87,7 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   if (nan0) res[is.nan(res)] <- 0
   if (log) {
     return(log(res))
-  } else{
+  } else {
     return(res)
   }
 }
@@ -102,9 +103,10 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
 #'
 #' @examples
 #' DD <- as.data.frame(sapply(1:5, function(i) {
-#'                           return(as.factor(sample(c(1:3),
-#'                           size=100, replace = TRUE)))
-#'                      }))
+#'   return(as.factor(sample(c(1:3),
+#'     size = 100, replace = TRUE
+#'   )))
+#' }))
 #' sevt <- staged_ev_tree(DD, fit = TRUE)
 #' evt <- strt_ev_tree(sevt)
 #' logLik(evt)
@@ -116,14 +118,14 @@ logLik.strt_ev_tree <- function(object, ...) {
     1:length(object$tree),
     FUN = function(i) {
       if (any(is.nan(object$prob[[var[i]]]) &
-              object$ctables[[var[i]]] > 0)) {
+        object$ctables[[var[i]]] > 0)) {
         return(-Inf)
       }
       ix <-
         object$prob[[var[i]]] > 0 & !is.na(object$prob[[var[i]]]) &
-        !is.nan(object$prob[[var[i]]])
-      sum(log(object$prob[[var[i]]][ix])  *
-            object$ctables[[var[i]]][ix])
+          !is.nan(object$prob[[var[i]]])
+      sum(log(object$prob[[var[i]]][ix]) *
+        object$ctables[[var[i]]][ix])
     },
     FUN.VALUE = 1
   ))
@@ -159,12 +161,14 @@ logLik.sevt <- function(object, ...) {
   attr(ll, "df") <-
     sum(c(1, vapply(
       object$stages[ v[-1] ],
-      FUN = function(x)
-        length(unique(x)),
+      FUN = function(x) {
+        length(unique(x))
+      },
       FUN.VALUE = 1
     )) *
       (vapply(
-        object$tree, FUN = length, FUN.VALUE = 1
-      ) - 1))    ## compute the degree of freedom
+        object$tree,
+        FUN = length, FUN.VALUE = 1
+      ) - 1)) ## compute the degree of freedom
   return(ll)
 }

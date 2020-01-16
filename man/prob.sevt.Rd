@@ -29,7 +29,7 @@ the model is estimated.
 \examples{
 DD <- generate_random_dataset(5, 100)
 model <- staged_ev_tree(DD, fit = TRUE, lambda = 1)
-pr <- prob.sevt(model, expand.grid(model$tree[c(2,3,4)]))
+pr <- prob.sevt(model, expand.grid(model$tree[c(2, 3, 4)]))
 sum(pr)
-prob.sevt(model, DD[1:10, ])  
+prob.sevt(model, DD[1:10, ])
 }

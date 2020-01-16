@@ -19,9 +19,10 @@ Compute the log-likelihood of a stratified event tree.
 }
 \examples{
 DD <- as.data.frame(sapply(1:5, function(i) {
-                          return(as.factor(sample(c(1:3),
-                          size=100, replace = TRUE)))
-                     }))
+  return(as.factor(sample(c(1:3),
+    size = 100, replace = TRUE
+  )))
+}))
 sevt <- staged_ev_tree(DD, fit = TRUE)
 evt <- strt_ev_tree(sevt)
 logLik(evt)
