@@ -74,8 +74,8 @@ plot(mod, col = function(s) heat.colors(length(s)))
 ### manually give stages colors
 simple <- naive.sevt(full(PhDArticles, lambda = 1))
 #### simple has 2 stages per variable "1" and "2"
-col <- lapply(simple$stages, function(s){
- c("1" = "purple", "2" = "cyan")
+col <- lapply(simple$stages, function(s) {
+  c("1" = "purple", "2" = "cyan")
 })
 plot(simple, col = col)
 }

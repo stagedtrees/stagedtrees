@@ -17,9 +17,11 @@ sample.sevt <- function(object, n = 1) {
   stopifnot(is_fitted.sevt(object))
   p <- length(object$tree)
   vars <- names(object$tree)
-  S <- array(dim = c(n, p),
-             data = NA,
-             dimnames = list(NULL, vars))
+  S <- array(
+    dim = c(n, p),
+    data = NA,
+    dimnames = list(NULL, vars)
+  )
   S[, vars[1]] <-
     sample(
       object$tree[[vars[1]]],
@@ -30,8 +32,10 @@ sample.sevt <- function(object, n = 1) {
   for (i in 2:p) {
     for (j in 1:n) {
       stage <- find_stage(object, S[j, 1:(i - 1)])
-      S[j, i] <- sample(object$tree[[vars[i]]], size = 1,
-                        prob = object$prob[[vars[i]]][[stage]])
+      S[j, i] <- sample(object$tree[[vars[i]]],
+        size = 1,
+        prob = object$prob[[vars[i]]][[stage]]
+      )
     }
   }
   return(as.data.frame(S))

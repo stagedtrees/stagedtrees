@@ -85,8 +85,10 @@ modT <- staged_ev_tree(table(PhDArticles), fit = TRUE, full = TRUE, lambda = 1)
 plot(modT)
 
 ######### from list
-model <- staged_ev_tree(list(X = c("good", "bad"),
-                             Y = c("high", "low")))
+model <- staged_ev_tree(list(
+  X = c("good", "bad"),
+  Y = c("high", "low")
+))
 
 ######### full model
 

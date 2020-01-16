@@ -6,7 +6,7 @@
 \usage{
 bhcr.sevt(
   object,
-  score = function(x) return(-BIC(x)),
+  score = function(x) {     return(-BIC(x)) },
   max_iter = 100,
   trace = 0
 )

@@ -4,7 +4,12 @@
 \alias{hc.sevt}
 \title{Hill-Climb Score optimization}
 \usage{
-hc.sevt(object, score = function(x) return(-BIC(x)), max_iter = Inf, trace = 0)
+hc.sevt(
+  object,
+  score = function(x) {     return(-BIC(x)) },
+  max_iter = Inf,
+  trace = 0
+)
 }
 \arguments{
 \item{object}{a staged event tree object}
@@ -29,6 +34,6 @@ score is performed. A node-move is either changing the stage
 associate to a node or move the node to a new stage.
 }
 \examples{
-model <- hc.sevt(full(PhDArticles[,1:3], lambda = 1))
+model <- hc.sevt(full(PhDArticles[, 1:3], lambda = 1))
 summary(model)
 }

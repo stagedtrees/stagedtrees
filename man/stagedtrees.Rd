@@ -41,7 +41,6 @@ data("PhDArticles")
 mf <- full(PhDArticles)
 mod <- fbhc.sevt(mf)
 plot(mod)
-
 }
 \references{
 Collazo R. A., Görgen C. and Smith J. Q.

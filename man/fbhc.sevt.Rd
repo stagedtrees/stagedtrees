@@ -6,7 +6,7 @@
 \usage{
 fbhc.sevt(
   object = NULL,
-  score = function(x) return(-BIC(x)),
+  score = function(x) {     return(-BIC(x)) },
   max_iter = Inf,
   trace = 0
 )

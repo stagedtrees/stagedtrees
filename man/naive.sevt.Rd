@@ -20,8 +20,8 @@ A staged event tree with two stages per variable
 Build a stage event tree with two stages for each variable
 }
 \examples{
-DD <- generate_xor_dataset(n = 4, N = 1000)[,5:1]
+DD <- generate_xor_dataset(n = 4, N = 1000)[, 5:1]
 naive_model <- naive.sevt(full(DD, lambda = 1))
-pr <- predict(naive_model, newdata = DD[501:1000,])
-table(pr,DD$C[501:1000])
+pr <- predict(naive_model, newdata = DD[501:1000, ])
+table(pr, DD$C[501:1000])
 }
