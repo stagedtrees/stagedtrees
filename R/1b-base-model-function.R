@@ -705,7 +705,8 @@ summary.sevt <- function(object, ...) {
     v <- vns[i]
     D <- data.frame(
       stage = unique(object$stages[[v]]),
-      stringsAsFactors = FALSE
+      stringsAsFactors = FALSE,
+      row.names = make.names(unique(object$stages[[v]]))
     )
     D$npaths <- vapply(D$stage, function(s) {
       sum(object$stages[[v]] == s)
@@ -714,7 +715,7 @@ summary.sevt <- function(object, ...) {
       D[["sample.size"]] <- vapply(D$stage, function(s) {
         attr(object$prob[[v]][[s]], "n")
       }, FUN.VALUE = 1)
-      D <- cbind(D, t(as.data.frame(object$prob[[v]])))
+      D <- cbind(D, t(as.data.frame(object$prob[[v]]))[rownames(D),])
     }
     out[[vns[i]]] <- D
   }
