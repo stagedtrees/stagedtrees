@@ -1,3 +1,7 @@
+# 1.0.2
+
+* fix bug in `summary`, stages were wrongly matched to probabilities
+
 # 1.0.1
 
 * fix `indep`, probabilities should not be of class table 
