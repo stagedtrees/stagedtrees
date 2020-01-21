@@ -1,4 +1,4 @@
-# 1.0.2
+# development version
 
 * fix bug in `summary`, stages were wrongly matched to probabilities
 
