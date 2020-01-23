@@ -715,7 +715,11 @@ summary.sevt <- function(object, ...) {
       D[["sample.size"]] <- vapply(D$stage, function(s) {
         attr(object$prob[[v]][[s]], "n")
       }, FUN.VALUE = 1)
-      D <- cbind(D, t(as.data.frame(object$prob[[v]]))[rownames(D),])
+      if (nrow(D) <= 1){
+        D <- cbind(D, t(as.data.frame(object$prob[[v]])))
+      }else{
+        D <- cbind(D, t(as.data.frame(object$prob[[v]]))[rownames(D),])
+      }
     }
     out[[vns[i]]] <- D
   }
