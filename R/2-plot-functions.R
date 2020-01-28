@@ -43,6 +43,10 @@
 #'
 #' ### changing palette
 #' plot(mod, col = function(s) heat.colors(length(s)))
+#' 
+#' ### or changing global palette
+#' palette(hcl.colors(10, "Harmonic"))
+#' plot(mod)
 #'
 #' ### manually give stages colors
 #' simple <- naive.sevt(full(PhDArticles, lambda = 1))
@@ -287,12 +291,52 @@ text.sevt <-
 #' 
 #' @param object a staged tree object
 #' @param var name of varaibles in the model
+#' @param legend.text logical 
+#' @param col color mapping for the stages, see \code{col}
+#'        argument in \code{\link{plot.sevt}}
+#' @param ... addittional arguments passed to \code{\link{barplot}}
 #' @export
-barplot.sevt <- function(object, var, legend.text = FALSE, ...){
+#' @importFrom graphics barplot
+barplot_stages <- function(object, var, legend.text = FALSE, 
+                         col = NULL, ...){
+  stopifnot(is_fitted.sevt(object))
+  if (is.null(col)) {
+    col <- lapply(object$stages[var], function(stages) {
+      if (is.null(stages)) {
+        return(list("1" = "black"))
+      }
+      stages <- unique(stages)
+      vc <- 1:length(stages)
+      names(vc) <- stages
+      return(vc)
+    })
+  } else if (is(col, "function")) {
+    col <- lapply(object$stages[var], function(stages) {
+      if (is.null(stages)) {
+        return(list("1" = "black"))
+      }
+      cs <- col(unique(stages))
+      names(cs) <- unique(stages)
+      return(cs)
+    })
+  } else if (length(col) == 1 && col == "stages") {
+    if (col == "stages") {
+      col <- lapply(object$stages[var], function(stages) {
+        if (is.null(stages)) {
+          return(list("1" = 1))
+        }
+        stages <- unique(stages)
+        names(stages) <- stages
+        return(stages)
+      })
+    }
+  }
   tmp <- summary(object)[["stages.info"]]
   if (legend.text){
     legend.text = tmp[[var]]$stage
   }
-  barplot(as.matrix(tmp[[var]][,-(1:3)]), col = tmp[[var]]$stage, 
+  hei <- as.matrix(tmp[[var]][,-(1:3)])
+  hei[is.nan(hei)] <- 0
+  barplot(hei, col = col[[var]], 
           legend.text = legend.text, ...)
 }
