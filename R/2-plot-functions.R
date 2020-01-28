@@ -281,3 +281,18 @@ text.sevt <-
       xx <- xx + step
     }
   }
+
+
+#' Barplot method for staged event trees
+#' 
+#' @param object a staged tree object
+#' @param var name of varaibles in the model
+#' @export
+barplot.sevt <- function(object, var, legend.text = FALSE, ...){
+  tmp <- summary(object)[["stages.info"]]
+  if (legend.text){
+    legend.text = tmp[[var]]$stage
+  }
+  barplot(as.matrix(tmp[[var]][,-(1:3)]), col = tmp[[var]]$stage, 
+          legend.text = legend.text, ...)
+}
