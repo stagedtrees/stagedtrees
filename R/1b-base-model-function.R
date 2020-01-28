@@ -1131,8 +1131,9 @@ NULL
 #' get_stage(model, paths)
 #' @export
 get_stage <- function(object, path) {
+  stopifnot(is(object, "sevt"))
   if (is.null(object$stages)) {
-    stop("object is not a staged tree")
+    stop("object is not a staged tree (no stages found)")
   }
   if (is.null(dim(path))) {
     find_stage(object, path)
@@ -1174,4 +1175,27 @@ get_path <- function(object, var, stage) {
     colnames(paths) <- varnames.sevt(object)[1]
   }
   return(paths)
+}
+
+#' rename stage(s) in staged even tree
+#' 
+#' @param object staged event tree
+#' @param var string, one of the variable in
+#'            the staged tree
+#' @param stage string or vector, the name
+#' of the stage(s) to be renamed
+#' @param new.label new name for the stage(s)
+#' @return a staged event tree object where stages \code{stage} 
+#' have been renamed to \code{new.label}
+#' @export 
+rename_stage <- function(object, var, stage, new.label){
+  stopifnot(is(object, "sevt"))
+  if (!var %in% names(object$tree)) {
+    stop(var, " is not a variable in the model")
+  }
+  object$stages[[var]][object$stages[[var]] %in% stage] <- new.label
+  if (is_fitted.sevt(object)){
+    object <- sevt.fit(object)
+  }
+  return(object)
 }
