@@ -1,6 +1,9 @@
 # development version
 
 * fix bug in `summary`, stages were wrongly matched to probabilities
+* new function `barplot_stages` to draw barplots of the 
+  floret probabilities. Implemented relative tests.
+* new example in `plot.sevt`.
 
 # 1.0.1
 
