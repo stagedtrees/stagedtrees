@@ -128,7 +128,7 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
 
 #' @rdname staged_ev_tree
 #' @export
-staged_ev_tree.bn.fit <- function(x, ...) {
+staged_ev_tree.bn.fit <- function(x, order = NULL, ...) {
   bn <- bnlearn::bn.net(x)
   tree <- lapply(
     x,
@@ -140,7 +140,9 @@ staged_ev_tree.bn.fit <- function(x, ...) {
       }
     }
   )
-  order <- bnlearn::node.ordering(bn)
+  if (is.null(order)){
+    order <- bnlearn::node.ordering(bn)
+  }
   tree <- tree[order]
   object <- staged_ev_tree(tree)
   parents <- lapply(bn$nodes[order], function(n) {
@@ -192,7 +194,6 @@ staged_ev_tree.bn.fit <- function(x, ...) {
   object$stages <- lapply(object$stages, as.character)
   return(object)
 }
-
 
 
 

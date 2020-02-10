@@ -4,6 +4,7 @@
 * new function `barplot_stages` to draw barplots of the 
   floret probabilities. Implemented relative tests.
 * new example in `plot.sevt`.
+* now `order` can be passed to `staged_ev_tree.bn.fit`
 
 # 1.0.1
 
