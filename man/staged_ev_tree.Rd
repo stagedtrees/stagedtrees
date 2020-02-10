@@ -24,7 +24,7 @@ staged_ev_tree(x, ...)
 
 \method{staged_ev_tree}{list}(x, full = FALSE, ...)
 
-\method{staged_ev_tree}{bn.fit}(x, ...)
+\method{staged_ev_tree}{bn.fit}(x, order = NULL, ...)
 
 \method{staged_ev_tree}{strt_ev_tree}(x, lambda = 0, ...)
 
