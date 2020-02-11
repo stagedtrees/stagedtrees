@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' DD <- generate_xor_dataset(n = 5, N = 1000)
+#' DD <- generate_xor_dataset(n = 5, N = 10)
 #' model_full <- full(DD, lambda = 1)
 #' model <- join_zero_counts(model_full, fit = TRUE)
 #' logLik(model_full)
@@ -38,7 +38,7 @@ join_zero_counts <-
       if (is.null(name)) {
         new <- new_label(unique(object$stages[[v]]))
       } else {
-        new <- name
+        new <- paste0(name)
       }
       ix <- rowSums(object$ctables[[v]]) == 0
       object$stages[[v]][ix] <- new
@@ -60,6 +60,16 @@ join_zero_counts <-
     }
     return(object)
   }
+
+
+#' @rdname join_zero_counts
+#' @export
+join_zero <- function(object,
+                        fit = TRUE,
+                        trace = 0,
+                        name = NULL){
+  join_zero_counts(object, fit, trace, name)
+}
 
 
 #' Naive staged event tree

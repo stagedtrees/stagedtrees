@@ -2,9 +2,12 @@
 % Please edit documentation in R/4-model-selection.R
 \name{join_zero_counts}
 \alias{join_zero_counts}
+\alias{join_zero}
 \title{Join situations with no observations}
 \usage{
 join_zero_counts(object, fit = TRUE, trace = 0, name = NULL)
+
+join_zero(object, fit = TRUE, trace = 0, name = NULL)
 }
 \arguments{
 \item{object}{a fitted staged event tree}
@@ -32,7 +35,7 @@ If \code{fit=TRUE} the model will be then re-fitted, if user sets
 \code{fit=FALSE} the returned model will have no probabilities.
 }
 \examples{
-DD <- generate_xor_dataset(n = 5, N = 1000)
+DD <- generate_xor_dataset(n = 5, N = 10)
 model_full <- full(DD, lambda = 1)
 model <- join_zero_counts(model_full, fit = TRUE)
 logLik(model_full)
