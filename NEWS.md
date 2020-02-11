@@ -5,6 +5,7 @@
   floret probabilities. Implemented relative tests.
 * new example in `plot.sevt`.
 * now `order` can be passed to `staged_ev_tree.bn.fit`
+* `join_zero` alias for `join_zero_counts` 
 
 # 1.0.1
 
