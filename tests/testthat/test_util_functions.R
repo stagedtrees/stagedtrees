@@ -91,6 +91,15 @@ test_that("bh(x,x) is = 0", {
   })
 })
 
+test_that("cd(x,x) is = 0", {
+  replicate(10, {
+    x <- runif(10, min = 1, max = 2)
+    x <- x / sum(x)
+    
+    expect_equal(cd(!!x, !!x), 0)
+  })
+})
+
 ################# positive
 
 
@@ -165,6 +174,18 @@ test_that("bh(x,y) is >= 0", {
     y <- y / sum(y)
 
     expect_gte(bh(!!x, !!y), 0)
+  })
+})
+
+test_that("cd(x,y) is >= 0", {
+  replicate(10, {
+    x <- runif(10, min = 0:9, max = 1:10)
+    x <- x / sum(x)
+    
+    y <- x + runif(10, min = 1, max = 2)
+    y <- y / sum(y)
+    
+    expect_gte(cd(!!x, !!y), 0)
   })
 })
 
@@ -248,4 +269,36 @@ test_that("bh(x,y) is symmetric", {
 
     expect_equal(bh(!!x, !!y), bh(!!y, !!x))
   })
+})
+
+
+############## 
+
+
+test_that("generate_xor_dataset", {
+  DD <- generate_xor_dataset(n = 5, N = 99)
+  expect_equal(dim(DD), c(99,6))
+  expect_equal(colnames(DD)[6], "C")
+})
+
+test_that("generate_linear_dataset", {
+  DD <- generate_linear_dataset(n = 5, N = 99)
+  expect_equal(dim(DD), c(99,6))
+  expect_equal(colnames(DD)[6], "C")
+})
+
+test_that("generate_random_dataset", {
+  DD <- generate_random_dataset(n = 5, N = 99)
+  expect_equal(dim(DD), c(99,5))
+})
+
+#####################
+
+test_that("which_class (internal)",{
+  D <- factor("D", c("A", "B", "C", "D", "E"))
+  A <- factor("A", c("A", "B", "C", "D", "E"))
+  expect_equal(stagedtrees:::which_class(c(-Inf, -10, -4, -1, -6),
+                                         c("A", "B", "C", "D", "E")), !!D)
+  expect_equal(stagedtrees:::which_class(c(-0.1, -10, -4, -1, -6),
+                                         c("A", "B", "C", "D", "E")), !!A)
 })
