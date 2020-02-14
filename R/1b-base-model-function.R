@@ -109,6 +109,10 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
     # naive check if levels are vector with lenght
     stop("Levels should be well defined")
   }
+  if (any(dims == 0)) {
+    # naive check if levels are vector with lenght
+    stop("Levels should be well defined")
+  }
 
   evt <- list()
   evt$tree <- x

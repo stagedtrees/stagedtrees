@@ -96,8 +96,7 @@ strt_ev_tree.list <- function(x, ...) {
     FUN = length, FUN.VALUE = 1
   )))) {
     # naive check if levels are vector with lenght
-    warning("Levels should be well defined")
-    return(NULL) # exit without nothing
+    stop("Levels should be well defined")
   }
   evt <- list(tree = x)
   class(evt) <- "strt_ev_tree"

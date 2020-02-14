@@ -1,5 +1,6 @@
-This release fixes some errors in tests under no long double, some additional 
-bugs in some tests. Moreover two functions are added.
+## stagedtrees 1.0.2
+
+Fixed some bugs, new examples, increased test coverage and two new functions.
 
 ## Test environments
 
@@ -26,10 +27,7 @@ Duration: 29.7s
 
 #### R CMD check --as-cran
 
-Status: 1 NOTE
-
-* checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
-Maintainer: ‘Gherardo Varando <gherardo.varando@gmail.com>’
+Status: OK
 
 ### Ubuntu 16.04.6 R 3.6.1 (on travis-ci)
 

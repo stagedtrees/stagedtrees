@@ -2,12 +2,24 @@ context("basic model creation of staged event trees")
 
 test_that("test that the creator works for list", {
   ev <-
-    staged_ev_tree.list(x = list(
+    staged_ev_tree(x = list(
       A = c(1, 2),
       B = c("x", "y"),
       C = c("3", "4")
     ))
   expect_is(ev, "sevt")
+  ev <-
+    staged_ev_tree(x = list(
+      c(1, 2),
+      c("x", "y"),
+      c("3", "4")
+    ))
+  expect_is(ev, "sevt")
+  expect_error(staged_ev_tree(x = list(
+    NULL,
+    c("x", "y"),
+    c("3", "4")
+  )))
 })
 
 test_that("test that the creator works for data.frame", {
