@@ -4,7 +4,8 @@
 \name{Pokemon}
 \alias{Pokemon}
 \title{Pokemon Go Users}
-\format{A data frame with 999 rows and 5 variables:
+\format{
+A data frame with 999 rows and 5 variables:
 \describe{
 \item{Use}{\code{Y} if the individual used the app, \code{N} otherwise}
 \item{Age}{\code{>30} if the individual is older than 30,
@@ -16,7 +17,8 @@ Education degree, \code{No} otherwise}
 (i.e. had a walk longer than 30 mins, went for a run or
 had a bike ride to get some exercise) in the past week
 before the experiment, \code{No} otherwise}
-}}
+}
+}
 \source{
 \url{https://osf.io/xy5g6/}
 }

@@ -21,7 +21,7 @@ Fixed some bugs, new examples, increased test coverage and two new functions.
 
 #### devtools::check()
 
-Duration: 29.7s
+Duration: 24.6s
 
 0 errors | 0 warnings | 0 note
 
