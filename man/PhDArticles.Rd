@@ -4,7 +4,8 @@
 \name{PhDArticles}
 \alias{PhDArticles}
 \title{PhD Students Publications}
-\format{A data frame with 915 rows and 6 variables:
+\format{
+A data frame with 915 rows and 6 variables:
 \describe{
 \item{Articles}{Number of articles during the last 3 years of PhD: either
 \code{0}, \code{1-2} or \code{>2}.}
@@ -17,7 +18,8 @@
 \code{high} otherwise.}
 \item{Prestige}{\code{low} if the student is at a low-prestige university,
 \code{high} otherwise.}
-}}
+}
+}
 \source{
 The data has been modified from the \code{Rchoice} package.
 }
