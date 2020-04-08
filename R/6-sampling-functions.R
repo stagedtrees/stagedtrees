@@ -16,12 +16,15 @@ sample.sevt <- function(object, n = 1) {
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted.sevt(object))
   p <- length(object$tree)
+  # extract var names as vars
   vars <- names(object$tree)
+  # create empty array with colnames == vars
   S <- array(
     dim = c(n, p),
     data = NA,
     dimnames = list(NULL, vars)
   )
+  # sample from the distribution of the first variable
   S[, vars[1]] <-
     sample(
       object$tree[[vars[1]]],
@@ -29,9 +32,12 @@ sample.sevt <- function(object, n = 1) {
       size = n,
       prob = object$prob[[vars[1]]][[1]]
     )
+  # sequentially sample the other variables
   for (i in 2:p) {
     for (j in 1:n) {
+      # find the corresponding stage
       stage <- find_stage(object, S[j, 1:(i - 1)])
+      # sample from the conditional prob of the stage
       S[j, i] <- sample(object$tree[[vars[i]]],
         size = 1,
         prob = object$prob[[vars[i]]][[stage]]

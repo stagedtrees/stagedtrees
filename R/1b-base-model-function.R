@@ -57,11 +57,17 @@ staged_ev_tree.table <- function(x,
                                  full = FALSE,
                                  fit = TRUE,
                                  ...) {
+  # extract ordered list of levels
   tree <- dimnames(x)[order]
+  # extract ordered names of variable 
   vars <- names(tree)
+  # number of variables
   k <- length(tree)
+  # check if tree exist
   stopifnot(!is.null(tree))
+  # build staged tree from list
   model <- staged_ev_tree.list(tree, full = full, ...)
+  # if required, fit the model
   if (fit) {
     model <- sevt.fit(model, data = x, ...)
   }
@@ -76,10 +82,13 @@ staged_ev_tree.data.frame <- function(x,
                                       full = FALSE,
                                       fit = TRUE,
                                       ...) {
+  # extract ordered list of levels
   tree <- lapply(x, function(v) {
     return(levels(as.factor(v)))
   })[order]
+  # build staged tree from list 
   sevt <- staged_ev_tree.list(tree, full = full, ...)
+  # if required fit the staged tree
   if (fit) {
     return(sevt.fit(sevt, data = x, ...))
   } else {
@@ -103,7 +112,8 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
     # we assign variables names V1,V2,...
     names(x) <- paste0("V", 1:length(x))
   }
-
+  
+  # extract number of levels for each variable
   dims <- vapply(x, FUN = length, FUN.VALUE = 1)
   if (any(is.null(dims))) {
     # naive check if levels are vector with lenght
@@ -114,19 +124,28 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
     stop("Levels should be well defined")
   }
 
+  # initialize empty object
   evt <- list()
+  # store tree (ordered list of levels)
   evt$tree <- x
+  # if a full staged tree is required 
+  # build vector of different stages
   if (full) {
     evt$stages <- lapply(2:length(x), function(i) {
       as.character(1:prod(dims[1:(i - 1)]))
     })
   } else {
+    # otherwise the independence model is built
+    # using the same stage "1"
     evt$stages <- lapply(2:length(x), function(i) {
       rep("1", prod(dims[1:(i - 1)]))
     })
   }
+  # stages should be a named list
   names(evt$stages) <- names(x)[-1]
+  # assign class name 
   class(evt) <- "sevt"
+  # return staged tree object
   return(evt)
 }
 
@@ -134,6 +153,7 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
 #' @export
 staged_ev_tree.bn.fit <- function(x, order = NULL, ...) {
   bn <- bnlearn::bn.net(x)
+  # build the ordered list of levels
   tree <- lapply(
     x,
     function(tt) {
@@ -144,11 +164,16 @@ staged_ev_tree.bn.fit <- function(x, order = NULL, ...) {
       }
     }
   )
+  # if no order is provided from the user
+  # then a topological order is used
   if (is.null(order)){
     order <- bnlearn::node.ordering(bn)
   }
+  # order the list of levels
   tree <- tree[order]
+  # create staged tree from lsit
   object <- staged_ev_tree(tree)
+  # extract parents
   parents <- lapply(bn$nodes[order], function(n) {
     if (identical(n$parents, character(0))) {
       return(NULL)
@@ -156,6 +181,8 @@ staged_ev_tree.bn.fit <- function(x, order = NULL, ...) {
       return(n$parents)
     }
   })
+  # build stages info respecting conditional 
+  # independences depicted in the bayesian network
   for (i in 2:length(order)) {
     if (i <= 2) {
       if (order[i - 1] %in% parents[[i]]) {
@@ -246,8 +273,11 @@ sevt.fit <- function(sevt,
         strt_ev_tree(data, order = names(sevt$tree), fit = TRUE)$ctables
     }
   }
+  # store lambda 
   sevt$lambda <- lambda
+  # extract order of variables 
   order <- names(sevt$tree)
+  # 
   dims <- sapply(sevt$tree, length)
   sevt$prob <- list()
   n <- sum(sevt$ctables[[order[1]]])
@@ -433,11 +463,18 @@ join_stages <- function(object, v, s1, s2) {
 #' @export
 split_stage_random <- function(object, var, stage, p = 0.5) {
   stopifnot(is(object, "sevt"))
+  # if the given stage is not presetn 
   if (!(stage %in% object$stages[[var]])) {
+    # return the same object
     return(object)
   }
+  # obtain size of stages for given variable
   d <- length(object$stages[[var]])
+  # get a new label 
   label <- new_label(object$stages[[var]])
+  # find where stage should be changed
+  # changes should happen with probability p 
+  # and only for the given stage
   ix <-
     (object$stages[[var]] == stage) &
       sample(
@@ -446,10 +483,12 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
         prob = c(p, 1 - p),
         replace = TRUE
       )
+  # if there is a change to do 
   if (any(ix)) {
+    # set the new label 
     object$stages[[var]][ix] <- label
     if (is_fitted.sevt(object)) {
-      ### we should do better than this
+      # re-fit the model
       object <- sevt.fit(object, lambda = object$lambda)
     }
   }
@@ -501,28 +540,46 @@ indep.default <- function(x, ...) {
 #' model2
 #' @export
 indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
+  # create the staged tree object
   model <- staged_ev_tree(x, fit = FALSE, full = FALSE, ...)
+  # create empty probability list
   model$prob <- list()
+  # extract names of variables
   var <- names(model$tree)
   if (fit) {
+    # store lambda value
     model$lambda <- lambda
+    # initialize loglik to 0
     model$ll <- 0
+    # iterate for each variable 
     for (v in var) {
+      # extract the table of the given variable
       ctab <- table(x[[v]])
+      # obtain sums of cases
       n <- sum(ctab)
+      # compute probability table prob = (ctab + lambda)/sum(ctab + lambda)
       model$prob[[v]] <- list("1" = ctab + lambda)
       model$prob[[v]][["1"]] <-
         model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
+      # store sample size
       attr(model$prob[[v]][["1"]], "n") <- n
+      # compute where prob > 0
       ix <- ctab > 0
+      # set appropriate class (get rid of table formatting)
       class(model$prob[[v]][["1"]]) <- "numeric"
+      # update loglik
       model$ll <-
         model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
     }
+    # finish setting up loglik
+    # store degrees of freedom
     attr(model$ll, "df") <-
       sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
+    # store number of obs
     attr(model$ll, "nobs") <- nrow(x)
+    # set logLik class
     class(model$ll) <- "logLik"
+    # store contingency tables
     model$ctables <- strt_ev_tree(x, fit = TRUE, ...)$ctables
   }
   return(model)
@@ -604,7 +661,7 @@ inclusion.stages <- function(object1, object2) {
     ordering <- data.frame(ord1, ord2)
     ordering <- unique(ordering[order(ordering$ord1, ordering$ord2), ])
 
-    # nicer print
+    # nice print
     out2[[k]] <- data.frame(noquote(out2[[k]]))
     colnames(out2[[k]]) <- paste(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
     name.width <- max(sapply(colnames(out2[[k]]), nchar))
@@ -639,9 +696,6 @@ print.sevt <- function(x, ...) {
   )
   ls <- vapply(x$tree, length, 1)
   cat(paste(paste0(names(x$tree), "[", ls, "] "), collapse = "-> "), "\n")
-  # nstages <- vapply(x$stages, function(s) length(unique(s)), FUN.VALUE = 1)
-  # cat("n.stages: \n")
-  # print(nstages)
   if (!is.null(x$ll)) {
     print(x$ll)
   }
@@ -806,10 +860,7 @@ subtree.sevt <- function(object, path) {
       object$prob[[var[i]]] <-
         object$prob[[var[i]]][unique(object$stages[[var[i]]])]
     }
-
-    # object$ll <- logLik(object)
   }
-  # object$ctables <- NULL
   object$ll <- NULL
   return(object)
 }
@@ -908,11 +959,13 @@ compare.sevt <-
            return.tree = FALSE,
            plot = FALSE,
            ...) {
+    # check and rename stages
     stopifnot(is(object1, "sevt"))
     stopifnot(is(object2, "sevt"))
     stopifnot(all(names(object1$tree) == names(object2$tree)))
     object1 <- stndnaming.sevt(object1)
     object2 <- stndnaming.sevt(object2)
+    # use the appropriate method
     difftree <- switch(
       method,
       naive = sapply(names(object1$tree)[-1],
@@ -936,6 +989,7 @@ compare.sevt <-
         USE.NAMES = TRUE
       )
     )
+    # plot if required
     if (plot) {
       object1$stages <- difftree
       plot(
@@ -962,19 +1016,25 @@ compare.sevt <-
 hamming.sevt <- function(object1, object2, return.tree = FALSE) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
+  # check if models are over the same variables, and same order
   stopifnot(all(names(object1$tree) == names(object2$tree)))
   if (!requireNamespace("clue", quietly = TRUE)) {
     stop("Package \"clue\" needed for this function to work. Please install it.",
       call. = FALSE
     )
   }
+  # rename stages with increasing integers
   object1 <- stndnaming.sevt(object1)
   object2 <- stndnaming.sevt(object2)
+  # for each variable match stages to obtain hamming distance
   for (v in names(object1$tree)[-1]) {
+    # extract stages vectors
     ss1 <- object1$stages[[v]]
     ss2 <- object2$stages[[v]]
+    # and unique stages
     u1 <- unique(ss1)
     u2 <- unique(ss2)
+    # build matrix describing bipartite matching problem
     M <- matrix(
       nrow = length(u1),
       ncol = length(u2),
@@ -985,6 +1045,7 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
         M[s1, s2] <- sum(ss1 == s1 & ss2 == s2)
       }
     }
+    ## solve bipartite matching problem using function in clue package
     if (length(u1) < length(u2)) {
       res <- clue::solve_LSAP(M, maximum = TRUE)
       map <- cbind(u1[seq_along(res)], u2[res]) ## u1 -> u2
@@ -1001,12 +1062,14 @@ hamming.sevt <- function(object1, object2, return.tree = FALSE) {
       object2$stages[[v]] <- new
     }
   }
+  # build the tree of differences
   difftree <- sapply(names(object1$tree)[-1], function(v) {
     sign(abs(
       as.numeric(object1$stages[[v]]) -
         as.numeric(object2$stages[[v]])
     ))
   }, USE.NAMES = TRUE)
+  # return tree if required or simply the hamming distance
   if (return.tree) {
     return(difftree)
   } else {
@@ -1170,11 +1233,14 @@ get_path <- function(object, var, stage) {
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
   }
-
+  
+  # list all paths
   paths <- expand.grid(object$tree[(which(var == varnames.sevt(object)) - 1):1],
     stringsAsFactors = FALSE
   )
+  # extract paths for given stage
   paths <- paths[object$stages[[var]] %in% stage, ncol(paths):1]
+  # format to data.frame if var is not the first
   if (var %in% varnames.sevt(object)[2]) {
     paths <- data.frame(paths)
     colnames(paths) <- varnames.sevt(object)[1]
@@ -1198,7 +1264,10 @@ rename_stage <- function(object, var, stage, new.label){
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
   }
+  # set new label
   object$stages[[var]][object$stages[[var]] %in% stage] <- new.label
+  # if staged tree has probabilities re-fit the model
+  # (TODO: faster version without refitting)
   if (is_fitted.sevt(object)){
     object <- sevt.fit(object)
   }

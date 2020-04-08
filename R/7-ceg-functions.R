@@ -53,7 +53,7 @@ ceg.sevt <- function(object) {
 #'
 #' @param x the ceg object
 #' @details it is used to prepare the plot of the ceg.
-#' It transforms the ceg object into an adjacent matrix.
+#' It transforms the ceg object into an adjacency matrix.
 #' @return the adj matrix
 #' @examples
 #' DD <- generate_xor_dataset(3, 100)

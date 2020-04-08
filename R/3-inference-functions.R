@@ -25,13 +25,17 @@ path_probability.sevt <-
       # if it's a named vector just order it
       x <- x[names(object$tree)]
     }
+    # start computing the log probability with first variable
     l <- log(object$prob[[1]][[1]][x[1]])
     if (length(x) > 1) {
       for (i in 2:length(x)) {
+        # get corresponding stage
         s <- find_stage(object, x[1:(i - 1)])
+        # and add log-prob
         l <- l + log(object$prob[[i]][[s]][x[i]])
       }
     }
+    # return log prob or prob as requested
     if (log) {
       return(l)
     } else {
@@ -64,10 +68,14 @@ prob.sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
   }
+  # get dimensions and variables
   n <- nrow(x)
   i <- ncol(x)
+  # get variables in the model
   var <- names(object$tree)
+  # variables of the model that are in x
   var1 <- var[var %in% colnames(x)]
+  # index of last variable that appears in x
   k <- which(var %in% var1[length(var1)])
   res <- vapply(
     1:n,

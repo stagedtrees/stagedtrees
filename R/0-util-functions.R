@@ -235,7 +235,6 @@ generate_xor_dataset <- function(n = 2,
   for (i in 1:n) {
     DD[[paste("X", i, sep = "")]] <- sample(
       c(-1, +1),
-      # prob=rep(1,2),
       prob = runif(2, min = 0, max = 1),
       size = N,
       replace = TRUE

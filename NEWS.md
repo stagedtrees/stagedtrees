@@ -1,3 +1,8 @@
+# devel
+
+* improve code comments
+
+
 # 1.0.2
 
 * fix bug in `summary`, stages were wrongly matched to probabilities

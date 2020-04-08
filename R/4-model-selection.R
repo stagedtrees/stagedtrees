@@ -95,7 +95,7 @@ naive.sevt <-
         distance = distance
       )
       groups <- simple_clustering(M)
-      ### compute probabilitites and assign stages
+      ### remove probabilitites and assign stages
       object$prob[[v]] <- list()
       for (s in c("1", "2")) {
         object$stages[[v]][groups[[s]]] <- s

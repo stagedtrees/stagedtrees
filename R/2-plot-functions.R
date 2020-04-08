@@ -168,7 +168,6 @@ plot.sevt <-
             node(
               c(xx, y[j]),
               label = x$stages[[nms[k + 1]]][lj],
-              # label = nms[k+1],
               cex.label = cex.label.nodes[k + 1],
               col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][lj]],
               cex.node = cex.nodes[k + 1],
