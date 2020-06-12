@@ -78,6 +78,7 @@ join_zero <- function(object,
 #' @param object a full staged event tree
 #' @param distance a distance between probabilities
 #' @param k the maximum number of variable to consider
+#' @param ... additional arguments to be passeed to \code{distance}
 #' @return A staged event tree with two stages per variable
 #' @export
 #' @examples
@@ -88,11 +89,12 @@ join_zero <- function(object,
 naive.sevt <-
   function(object,
            distance = kl,
-           k = length(object$tree)) {
+           k = length(object$tree), ...) {
     stopifnot(is_fitted.sevt(object))
     for (v in names(object$tree)[2:k]) {
       M <- distance_mat_stages(object$prob[[v]],
-        distance = distance
+        distance = distance,
+        ...
       )
       groups <- simple_clustering(M)
       ### remove probabilitites and assign stages
