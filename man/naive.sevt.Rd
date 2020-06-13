@@ -4,7 +4,7 @@
 \alias{naive.sevt}
 \title{Naive staged event tree}
 \usage{
-naive.sevt(object, distance = kl, k = length(object$tree))
+naive.sevt(object, distance = kl, k = length(object$tree), ...)
 }
 \arguments{
 \item{object}{a full staged event tree}
@@ -12,6 +12,8 @@ naive.sevt(object, distance = kl, k = length(object$tree))
 \item{distance}{a distance between probabilities}
 
 \item{k}{the maximum number of variable to consider}
+
+\item{...}{additional arguments to be passeed to \code{distance}}
 }
 \value{
 A staged event tree with two stages per variable
