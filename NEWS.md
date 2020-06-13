@@ -1,7 +1,7 @@
 # devel
 
 * improve code comments
-
+* fix correct passing arguments to distance function in `naive.sevt`
 
 # 1.0.2
 
