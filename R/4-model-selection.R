@@ -99,8 +99,9 @@ naive.sevt <-
       groups <- simple_clustering(M)
       ### remove probabilitites and assign stages
       object$prob[[v]] <- list()
+      old <- object$stages[[v]]
       for (s in c("1", "2")) {
-        object$stages[[v]][groups[[s]]] <- s
+        object$stages[[v]][old %in% groups[[s]]] <- s
       }
     }
     object$call <- sys.call()

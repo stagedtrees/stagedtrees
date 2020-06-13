@@ -2,6 +2,9 @@
 
 * improve code comments
 * fix correct passing arguments to distance function in `naive.sevt`
+* improve `naive.sevt` now working also from non-full model, related
+  changes also to internal functions `distance_mat_stages``and 
+  `simple_clustering`
 
 # 1.0.2
 

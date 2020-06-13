@@ -97,6 +97,8 @@ distance_mat_stages <- function(x, distance = kl, ...) {
       M[i, j] <- distance(x[[i]], x[[j]], ...)
     }
   }
+  M <- M + t(M)
+  colnames(M) <- rownames(M) <- names(x)
   return(M + t(M))
 }
 
@@ -108,19 +110,20 @@ distance_mat_stages <- function(x, distance = kl, ...) {
 #' @return a list with component \code{I} and \code{J} (the two group of clusters)
 #' @keywords internal
 simple_clustering <- function(M) {
+  nm <- colnames(M)
   ## first we find the two indxs that return the maximum distance.
   idx <- which.max(M)
   i <- ceiling(idx / dim(M)[1])
   j <- idx - (i - 1) * dim(M)[1]
   todo <- (1:(dim(M)[1]))[-c(i, j)] ## index to assign to cluster
-  I <- c(i) # initialize clusters
-  J <- c(j) # initialize clusters
+  I <- c(nm[i]) # initialize clusters
+  J <- c(nm[j]) # initialize clusters
   for (k in todo) {
     ## assign other indxs to the closest cluster
     if (M[k, i] < M[k, j]) {
-      I <- c(I, k)
+      I <- c(I, nm[k])
     } else {
-      J <- c(J, k)
+      J <- c(J, nm[k])
     }
   }
   return(list(
