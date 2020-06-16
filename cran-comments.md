@@ -1,4 +1,4 @@
-## stagedtrees 1.0.2
+## stagedtrees 1.0.2.9999
 
 Fixed some bugs, new examples, increased test coverage and two new functions.
 
