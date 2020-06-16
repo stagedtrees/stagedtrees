@@ -4,11 +4,11 @@ Fixed some bugs, new examples, increased test coverage and two new functions.
 
 ## Test environments
 
-* Ubuntu 18.04.2      (64-bit)  R 3.6.2 (local) 
+* Ubuntu 18.04.2      (64-bit)  R 4.0.1 (local) 
 * macOS darwin15.6.0  (64-bit)  R 3.6.1 (local)
-* Ubuntu 16.04.6      (64-bit)  R 3.6.1 (on travis-ci) 
-* Windows Server 2008 (64-bit)  R 3.6.2 (win-builder, r-release)
-* Windows Server 2008 (64-bit)  R 3.5.3 (win-builder, r-oldrelease)
+* Ubuntu 16.04.6      (64-bit)  R 4.0.0 (on travis-ci) 
+* Windows Server 2008 (64-bit)  R 4.0.0 (win-builder, r-release)
+* Windows Server 2008 (64-bit)  R 3.6.3 (win-builder, r-oldrelease)
 * Windows Server 2008 (64-bit)  R devel (win-builder, r-devel)
 * R-hub debian-gcc-devel-nold (r-devel)
 * R-hub windows-x86_64-devel (r-devel)
@@ -41,7 +41,10 @@ Duration: 26.1s
 
 ### win-builder
 
-Status: OK
+Status: 1 NOTE 
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Gherardo Varando <gherardo.varando@gmail.com>'
 
 ### r-hub
 
