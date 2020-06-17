@@ -311,34 +311,37 @@ sevt.fit <- function(sevt,
 
 #' @rdname staged_ev_tree
 #' @export
-staged_ev_tree.strt_ev_tree <- function(x, lambda = 0, ...) {
+staged_ev_tree.strt_ev_tree <- function(x, fit = FALSE, lambda = 0, ...) {
   obj <- staged_ev_tree.list(x$tree, full = TRUE)
   vars <- names(x$tree)
   dims <- sapply(x$tree, length)
+  obj$lambda <- lambda
   if (!is.null(x$ctables)) {
     obj$ctables <- x$ctables
-    ## if the x is fitted we can just copy the probabilitites
-    n <- sum(x$ctables[[vars[1]]])
-    pp <- x$ctables[[vars[1]]] + lambda
-    pp <- pp / sum(pp)
-    obj$prob[[vars[1]]] <- list("1" = pp)
-    attr(obj$prob[[vars[1]]][["1"]], "n") <- n
-    # lambda <- lambda / dims[1]
-    for (i in 2:length(x$tree)) {
-      obj$prob[[vars[i]]] <-
-        lapply(1:(dim(x$ctables[[vars[i]]])[1]), function(k) {
-          n <- sum(x$ctables[[vars[i]]][k, ])
-          pp <- (x$ctables[[vars[i]]][k, ] + lambda)
-          pp <- pp / sum(pp)
-          names(pp) <- x$tree[[vars[i]]]
-          attr(pp, "n") <- n
-          return(pp)
-        })
-      # lambda <- lambda / dims[i]
-      names(obj$prob[[vars[i]]]) <-
-        as.character(1:length(obj$prob[[vars[i]]]))
+    if (fit){
+      ## if the x is fitted we can just copy the probabilitites
+      n <- sum(x$ctables[[vars[1]]])
+      pp <- x$ctables[[vars[1]]] + lambda
+      pp <- pp / sum(pp)
+      obj$prob[[vars[1]]] <- list("1" = pp)
+      attr(obj$prob[[vars[1]]][["1"]], "n") <- n
+      # lambda <- lambda / dims[1]
+      for (i in 2:length(x$tree)) {
+        obj$prob[[vars[i]]] <-
+          lapply(1:(dim(x$ctables[[vars[i]]])[1]), function(k) {
+            n <- sum(x$ctables[[vars[i]]][k, ])
+            pp <- (x$ctables[[vars[i]]][k, ] + lambda)
+            pp <- pp / sum(pp)
+            names(pp) <- x$tree[[vars[i]]]
+            attr(pp, "n") <- n
+            return(pp)
+          })
+        # lambda <- lambda / dims[i]
+        names(obj$prob[[vars[i]]]) <-
+          as.character(1:length(obj$prob[[vars[i]]]))
+      }
+      names(obj$prob) <- names(x$tree)
     }
-    names(obj$prob) <- names(x$tree)
   }
   return(obj)
 }
@@ -506,6 +509,8 @@ is_fitted.sevt <- function(x) {
 }
 
 #' @rdname staged_ev_tree
+#' @param join_zero logical, if situations with zero observations should 
+#'                           be joined
 #' @examples
 #'
 #' ######### full model
@@ -513,10 +518,36 @@ is_fitted.sevt <- function(x) {
 #' DD <- generate_xor_dataset(4, 100)
 #' modfull <- full(DD, lambda = 1)
 #' @export
-full <- function(x, ...) {
-  staged_ev_tree(x, full = TRUE, ...)
+full <- function(x, join_zero = FALSE, fit = TRUE, ...) {
+  UseMethod("full", x)
 }
 
+#' @rdname staged_ev_tree
+#' @param name.join name to pass to \code{\link{join_zero}}
+#' @export
+full.default <- function(x, join_zero = FALSE, fit = TRUE, 
+                         name.join = "NA", ...){
+  strt <- strt_ev_tree(x, fit = TRUE)
+  if (join_zero){
+    join_zero(staged_ev_tree(strt, fit = FALSE, ...), 
+              fit = fit, name = name.join)
+  }else{
+    staged_ev_tree(strt, fit = fit, ...)
+  }
+}
+
+#' @rdname staged_ev_tree
+#' @param name.join name to pass to \code{\link{join_zero}}
+#' @export
+full.strt_ev_tree <- function(x, join_zero = FALSE, fit = TRUE, 
+                              name.join = "NA", ...){
+  if (join_zero){
+    join_zero(staged_ev_tree(x, fit = FALSE, ...), fit = fit, 
+              name = name.join)
+  }else{
+    staged_ev_tree(x, fit = fit, full = TRUE,  ...)
+  }
+}
 #' @rdname staged_ev_tree
 #' @export
 indep <- function(x, ...) {
@@ -525,7 +556,7 @@ indep <- function(x, ...) {
 
 #' @rdname staged_ev_tree
 #' @export
-indep.default <- function(x, ...) {
+indep.default <- function(x,  ...) {
   staged_ev_tree(x, full = FALSE, ...)
 }
 

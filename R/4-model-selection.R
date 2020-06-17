@@ -32,7 +32,7 @@ join_zero_counts <-
            trace = 0,
            name = NULL) {
     stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted.sevt(object))
+    stopifnot(!is.null(object$ctables))
     tot <- 0
     for (v in names(object$tree)[-1]) {
       if (is.null(name)) {

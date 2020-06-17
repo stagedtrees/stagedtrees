@@ -5,6 +5,9 @@
 * improve `naive.sevt` now working also from non-full model, related
   changes also to internal functions `distance_mat_stages` and 
   `simple_clustering`
+* `staged_ev_tree.strt_ev_tree` accept now an additional parameter `fit` which control if probabilities should be computed. 
+* in `full` is now possible to specify if situations should be joined
+  using `join_zero`, in that case probabilities will be fitted only     after the empty situations are joined, imporving speed.  
 
 # 1.0.2
 

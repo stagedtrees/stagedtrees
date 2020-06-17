@@ -9,6 +9,8 @@
 \alias{staged_ev_tree.bn.fit}
 \alias{staged_ev_tree.strt_ev_tree}
 \alias{full}
+\alias{full.default}
+\alias{full.strt_ev_tree}
 \alias{indep}
 \alias{indep.default}
 \alias{indep.data.frame}
@@ -26,9 +28,13 @@ staged_ev_tree(x, ...)
 
 \method{staged_ev_tree}{bn.fit}(x, order = NULL, ...)
 
-\method{staged_ev_tree}{strt_ev_tree}(x, lambda = 0, ...)
+\method{staged_ev_tree}{strt_ev_tree}(x, fit = FALSE, lambda = 0, ...)
 
-full(x, ...)
+full(x, join_zero = FALSE, fit = TRUE, ...)
+
+\method{full}{default}(x, join_zero = FALSE, fit = TRUE, name.join = "NA", ...)
+
+\method{full}{strt_ev_tree}(x, join_zero = FALSE, fit = TRUE, name.join = "NA", ...)
 
 indep(x, ...)
 
@@ -49,6 +55,11 @@ to the appropriate method, see \link{sevt.fit}}
 \item{fit}{logical, if  \code{TRUE} the model is fitted}
 
 \item{lambda}{smoothing parameter}
+
+\item{join_zero}{logical, if situations with zero observations should
+be joined}
+
+\item{name.join}{name to pass to \code{\link{join_zero}}}
 }
 \value{
 A staged event tree object

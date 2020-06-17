@@ -1,6 +1,6 @@
 ## stagedtrees 1.0.2.9999
 
-Fixed some bugs, new examples, increased test coverage and two new functions.
+Some changes to improve computational speed.
 
 ## Test environments
 
