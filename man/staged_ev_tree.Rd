@@ -62,26 +62,41 @@ be joined}
 \item{name.join}{name to pass to \code{\link{join_zero}}}
 }
 \value{
-A staged event tree object
-}
-\description{
-Builds the staged event tree for a set of categorical variables,
-the order can be specified.
-}
-\details{
 A staged event tree object is a list with components:
 \itemize{
-\item tree: A named list where for each variable,
+\item tree (required): A named list where for each variable,
 the levels of such variable are listed.
 The order of the variable is the
 order of the event tree.
-\item stages: A named list where each component
+\item stages (required): A named list where each component
 stores the stages for the given variable.
 \item ctables: The contingency tables of the data.
 \item lambda: The smoothing parameter used to estimate the model.
 \item prob: The conditional probability tables for every
 variable and every stage.
 \item ll: The log-likelihood of the \code{estimated} model.
+}
+}
+\description{
+Builds the staged event tree for a set of categorical variables,
+the order can be specified.
+}
+\details{
+\code{staged_ev_tree} is the basic method to build a
+full or independent staged tree.
+The user will probably find more usefull the two
+wrappers \code{full} and \code{indep}. Moreover
+these last two methods have some advantages over
+the basic \code{staged_ev_tree} function:
+\itemize{
+\item \code{indep} is faster then the equivalent
+\code{staged_ev_tree(full = FALSE)} when used from
+a \code{data.frame}.
+\item \code{full} allows for an additional parameter
+\code{join_zero} which if set to \code{TRUE} will join
+stages with zero observations (using \code{\link{join_zero}}). If this option is used together
+with \code{fit=TRUE} it will speed-up the computations
+considerably.
 }
 }
 \examples{
