@@ -8,6 +8,7 @@ hc.sevt(
   object,
   score = function(x) {     return(-BIC(x)) },
   max_iter = Inf,
+  ignore = NULL,
   trace = 0
 )
 }
@@ -17,6 +18,8 @@ hc.sevt(
 \item{score}{a function that score staged event tree objects}
 
 \item{max_iter}{the maximum number of iterations per variable}
+
+\item{ignore}{a vector of stage names which will not be changed}
 
 \item{trace}{integer, if positive information on the progress is
 printed to console}
@@ -29,11 +32,21 @@ Hill-climbing search of staged event trees with
 iterative moving of nodes between stages.
 }
 \details{
-For each variable the node-move that best increase the
-score is performed. A node-move is either changing the stage
+For each variable node-moves that best increase the
+score are performed until no increase is possible.
+A node-move is either changing the stage
 associate to a node or move the node to a new stage.
+
+The \code{ignore} argument can be used to specify stages that should not
+be affected during the search, that is left untouched.
+This is usefult for preserving structural zeroes and to speed-up
+computations.
 }
 \examples{
 model <- hc.sevt(full(PhDArticles[, 1:3], lambda = 1))
 summary(model)
+
+## preserve zero stages
+start <- join_zero(indep(PhDArticles[,1:5]), name = "NA")
+model <- hc.sevt(start, ignore = "NA")
 }

@@ -340,7 +340,6 @@ staged_ev_tree.strt_ev_tree <- function(x, fit = FALSE, lambda = 0, ...) {
       pp <- pp / sum(pp)
       obj$prob[[vars[1]]] <- list("1" = pp)
       attr(obj$prob[[vars[1]]][["1"]], "n") <- n
-      # lambda <- lambda / dims[1]
       for (i in 2:length(x$tree)) {
         obj$prob[[vars[i]]] <-
           lapply(1:(dim(x$ctables[[vars[i]]])[1]), function(k) {
@@ -351,7 +350,6 @@ staged_ev_tree.strt_ev_tree <- function(x, fit = FALSE, lambda = 0, ...) {
             attr(pp, "n") <- n
             return(pp)
           })
-        # lambda <- lambda / dims[i]
         names(obj$prob[[vars[i]]]) <-
           as.character(1:length(obj$prob[[vars[i]]]))
       }

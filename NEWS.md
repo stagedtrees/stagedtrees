@@ -5,9 +5,17 @@
 * improve `naive.sevt` now working also from non-full model, related
   changes also to internal functions `distance_mat_stages` and 
   `simple_clustering`
-* `staged_ev_tree.strt_ev_tree` accept now an additional parameter `fit` which control if probabilities should be computed. 
+* `staged_ev_tree.strt_ev_tree` accepts now an additional parameter `fit` which control if probabilities should be computed. 
 * in `full` is now possible to specify if situations should be joined
   using `join_zero`, in that case probabilities will be fitted only     after the empty situations are joined, imporving speed.  
+* update internal function `new_label` to improve speed.
+* `hc.sevt` and `naive.sevt` accept now, as `ignore` 
+  argument, a vector of stage names. Such user specified stages will
+  be left untouched. 
+* `plot.sevt` allows now to specify the color of the edges with 
+   `col.edges`
+* In `plot.sevt` is possible to specify stages that should be ignored
+  and not plotted via the `ignore` argument.
 
 # 1.0.2
 

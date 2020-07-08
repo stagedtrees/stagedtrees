@@ -18,6 +18,8 @@
 #'        if \code{col == "stages"} the stage names will be used as
 #'        colors; otherwise if \code{col} is a function it will take
 #'        as input a vector of stages and output the corresponding colors.
+#' @param col.edges color for the edges
+#' @param ignore array of stages name that should not be plotted 
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.
@@ -27,7 +29,7 @@
 #' @examples
 #'
 #' data("PhDArticles")
-#' mod <- bj.sevt(full(PhDArticles))
+#' mod <- bj.sevt(full(PhDArticles, join_zero = TRUE))
 #'
 #' ### simple plotting
 #' plot(mod)
@@ -47,6 +49,9 @@
 #' ### or changing global palette
 #' palette(hcl.colors(10, "Harmonic"))
 #' plot(mod)
+#' 
+#' ### avoid plotting NA stages
+#' plot(mod, ignore = "NA")
 #'
 #' ### manually give stages colors
 #' simple <- naive.sevt(full(PhDArticles, lambda = 1))
@@ -65,10 +70,15 @@ plot.sevt <-
            cex.label.edges = 1,
            cex.nodes = 2,
            col = NULL,
+           col.edges = "black",
+           ignore = NULL,
            ...) {
     plot.new()
     d <- min(length(x$tree), limit) ## avoid too much plotting
     nms <- names(x$tree) ## name of variable
+    if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
+      x$stages[[nms[1]]] <- c("1")
+    }
     if (is.null(col)) {
       col <- lapply(x$stages[nms[1:d]], function(stages) {
         if (is.null(stages)) {
@@ -100,6 +110,9 @@ plot.sevt <-
         })
       }
     }
+    if (is.null(col.edges)){
+      col.edges <- "black"
+    }
     M <- prod(sapply(x$tree[1:d], length))
     cex.nodes <- rep(cex.nodes, d)[1:d]
     cex.label.nodes <- rep(cex.label.nodes, d)[1:d]
@@ -129,7 +142,7 @@ plot.sevt <-
       As[i - 1] <- Ls[i - 1] / (ns + (ns - 1) / (nv - 1))
     }
     s1 <- ifelse(is.null(x$stages[[nms[1]]]), "1",
-      x$stages[[nms[1]]][1]
+                 x$stages[[nms[1]]][1]
     )
     node(
       c(xlim[1], mean(ylim)),
@@ -161,27 +174,41 @@ plot.sevt <-
           )
         # compute new y positions
         yy <- c(yy, y)
-        for (j in 1:nv) {
-          # plot nodes
-          lj <- lj + 1
-          if (k < d) {
-            node(
-              c(xx, y[j]),
-              label = x$stages[[nms[k + 1]]][lj],
-              cex.label = cex.label.nodes[k + 1],
-              col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][lj]],
-              cex.node = cex.nodes[k + 1],
-              ...
-            )
+          for (j in 1:nv) {
+            # plot nodes
+            lj <- lj + 1
+            if (k < d) {
+              if (!(x$stages[[nms[k + 1]]][lj] %in% ignore)){
+                node(
+                  c(xx, y[j]),
+                  label = x$stages[[nms[k + 1]]][lj],
+                  cex.label = cex.label.nodes[k + 1],
+                  col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][lj]],
+                  cex.node = cex.nodes[k + 1],
+                  ... 
+                )
+                edge(c(
+                  xx - step,
+                  yyy[i]
+                ), c(xx, y[j]),
+                v[j],
+                col = col.edges,
+                cex.label = cex.label.edges, ...
+                ) # plot edge with previous nodes
+              }
+            }else{
+              if (!(x$stages[[nms[k]]][i] %in% ignore)){
+                edge(c(
+                  xx - step,
+                  yyy[i]
+                ), c(xx, y[j]),
+                v[j],
+                col = col.edges,
+                cex.label = cex.label.edges, ...
+                ) # plot edge with previous nodes
+              }
+            }
           }
-          edge(c(
-            xx - step,
-            yyy[i]
-          ), c(xx, y[j]),
-          v[j],
-          cex.label = cex.label.edges, ...
-          ) # plot edge with previous nodes
-        }
       }
       ns <- ns * nv
     }
@@ -297,7 +324,7 @@ text.sevt <-
 #' @export
 #' @importFrom graphics barplot
 barplot_stages <- function(object, var, legend.text = FALSE, 
-                         col = NULL, ...){
+                           col = NULL, ...){
   stopifnot(is_fitted.sevt(object))
   if (is.null(col)) {
     col <- lapply(object$stages[var], function(stages) {

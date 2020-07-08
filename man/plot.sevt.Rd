@@ -14,6 +14,8 @@
   cex.label.edges = 1,
   cex.nodes = 2,
   col = NULL,
+  col.edges = "black",
+  ignore = NULL,
   ...
 )
 }
@@ -41,6 +43,10 @@ if \code{col == "stages"} the stage names will be used as
 colors; otherwise if \code{col} is a function it will take
 as input a vector of stages and output the corresponding colors.}
 
+\item{col.edges}{color for the edges}
+
+\item{ignore}{array of stages name that should not be plotted}
+
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},
 \code{text} and \code{plot.window}.}
@@ -54,7 +60,7 @@ examples).
 \examples{
 
 data("PhDArticles")
-mod <- bj.sevt(full(PhDArticles))
+mod <- bj.sevt(full(PhDArticles, join_zero = TRUE))
 
 ### simple plotting
 plot(mod)
@@ -74,6 +80,9 @@ plot(mod, col = function(s) heat.colors(length(s)))
 ### or changing global palette
 palette(hcl.colors(10, "Harmonic"))
 plot(mod)
+
+### avoid plotting NA stages
+plot(mod, ignore = "NA")
 
 ### manually give stages colors
 simple <- naive.sevt(full(PhDArticles, lambda = 1))

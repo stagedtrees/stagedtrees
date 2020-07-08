@@ -2,7 +2,7 @@
 % Please edit documentation in R/0-util-functions.R
 \name{find_stage}
 \alias{find_stage}
-\title{Find the stage  the path}
+\title{Find the stage of the path}
 \usage{
 find_stage(object, path)
 }

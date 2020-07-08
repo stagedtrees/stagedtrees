@@ -5,7 +5,7 @@
 #' @return a string label that is different from each \code{labels}
 #' @keywords internal
 new_label <- function(labels) {
-  k <- 1
+  k <- 1 + length(labels)
   labels <- as.character(labels)
   while (TRUE) {
     if (!(as.character(k) %in% labels)) {
@@ -63,7 +63,7 @@ tree_idx <- function(path, tree, complete = FALSE) {
 
 
 
-#' Find the stage  the path
+#' Find the stage of the path
 #'
 #' no checking is done
 #' @param object a staged event tree object

@@ -4,12 +4,14 @@
 \alias{naive.sevt}
 \title{Naive staged event tree}
 \usage{
-naive.sevt(object, distance = kl, k = length(object$tree), ...)
+naive.sevt(object, distance = kl, ignore = NULL, k = length(object$tree), ...)
 }
 \arguments{
 \item{object}{a full staged event tree}
 
 \item{distance}{a distance between probabilities}
+
+\item{ignore}{vector of stages which will be left untouched}
 
 \item{k}{the maximum number of variable to consider}
 

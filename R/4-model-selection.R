@@ -77,6 +77,7 @@ join_zero <- function(object,
 #' Build a stage event tree with two stages for each variable
 #' @param object a full staged event tree
 #' @param distance a distance between probabilities
+#' @param ignore vector of stages which will be left untouched
 #' @param k the maximum number of variable to consider
 #' @param ... additional arguments to be passeed to \code{distance}
 #' @return A staged event tree with two stages per variable
@@ -89,10 +90,13 @@ join_zero <- function(object,
 naive.sevt <-
   function(object,
            distance = kl,
+           ignore = NULL,
            k = length(object$tree), ...) {
     stopifnot(is_fitted.sevt(object))
     for (v in names(object$tree)[2:k]) {
-      M <- distance_mat_stages(object$prob[[v]],
+      wch <- names(object$prob[[v]])
+      wch <- wch[!(wch %in% ignore)]
+      M <- distance_mat_stages(object$prob[[v]][wch],
         distance = distance,
         ...
       )
@@ -271,6 +275,8 @@ bhc.sevt <-
 #' @details For each variable the algorithm try to join stages
 #' and move to the first model that increase the score. When no
 #' increase is possible it moves to the next variable.
+#' 
+#' 
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 100)
@@ -430,24 +436,36 @@ bj.sevt <-
 #' @param object a staged event tree object
 #' @param score a function that score staged event tree objects
 #' @param max_iter the maximum number of iterations per variable
+#' @param ignore a vector of stage names which will not be changed
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
 #'
-#' @details For each variable the node-move that best increase the
-#' score is performed. A node-move is either changing the stage
+#' @details For each variable node-moves that best increase the
+#' score are performed until no increase is possible. 
+#' A node-move is either changing the stage
 #' associate to a node or move the node to a new stage.
+#' 
+#' The `ignore` argument can be used to specify stages that should not 
+#' be affected during the search, that is left untouched. 
+#' This is usefult for preserving structural zeroes and to speed-up 
+#' computations. 
 #'
 #' @return The final staged event tree obtained.
 #'
 #' @examples
 #' model <- hc.sevt(full(PhDArticles[, 1:3], lambda = 1))
 #' summary(model)
+#' 
+#' ## preserve zero stages
+#' start <- join_zero(indep(PhDArticles[,1:5]), name = "NA")
+#' model <- hc.sevt(start, ignore = "NA")
 #' @export
 hc.sevt <- function(object,
                     score = function(x) {
                       return(-BIC(x))
                     },
                     max_iter = Inf,
+                    ignore = NULL,
                     trace = 0) {
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted.sevt(object))
@@ -462,7 +480,8 @@ hc.sevt <- function(object,
       temp_score <- now_score # clone the score
       stages <- object$stages[[v]]
       ustages <- unique(stages)
-      newname <- new_label(ustages)
+      newname <- new_label(c(ustages, ignore))
+      ustages <- ustages[!(ustages %in% ignore)]
       done <- TRUE
       for (j in 1:length(ustages)) {
         s1 <- ustages[j]
