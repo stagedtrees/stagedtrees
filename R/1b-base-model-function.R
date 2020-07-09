@@ -1033,6 +1033,10 @@ compare.sevt <-
         USE.NAMES = TRUE
       )
     )
+    # root is always ok
+    tmp <- list()
+    tmp[[names(object1$tree)[1]]] <- 0
+    difftree <- c(tmp, difftree)
     # plot if required
     if (plot) {
       object1$stages <- difftree

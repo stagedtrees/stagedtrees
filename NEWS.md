@@ -17,6 +17,8 @@
 * `naive.sevt` can use now different hierarchical clustering methods
    (using `hclust` from `stats` package), moreover the number of 
    stages per variable can be specified. 
+* fix in `compare.sevt`: because of changes in `plot.sevt` we need to
+  specify that the root is always considered identical.
 
 # 1.0.2
 
