@@ -58,24 +58,27 @@ in a `data.frame` or `table` object.
 # Load the PhDArticles data
 data("PhDArticles")
 
-# Create the independence model 
+# Independence model 
 mod_indep <- indep(PhDArticles, lambda = 1)
 mod_indep
 
-#Create the full (saturated) model
+# Full (saturated) model
 mod_full <- full(PhDArticles, lambda = 1) 
 mod_full
+
+# Full model with not-observed situations joined in NA stages
+mod_full0 <- full(PhDArticles, join = TRUE, lambda = 1)
+mod_full0
 ```
 
 #### Model selection
 
-Starting from the independence model of the full model it is  
-possible to perform automatic model selection. 
+`stagedtrees` implements methods to perform automatic model selection. All methods can be initialized from an arbitrary staged tree object. 
 
 ##### Score methods
 
-This methods perform optimization of the model for a given score 
-using different types of heuristic methods. 
+This methods perform optimization for a given score 
+using different heuristics. 
 
 * **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
 ```{r}
@@ -97,15 +100,17 @@ mod3
 
 ##### Distance methods
 
-* **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
+* **Backward Joining** `bj.sevt(object, distance, thr, trace, ...)`
 ```{r}
 mod4 <- bj.sevt(mod_full)
 mod4
 ```
 
-* **Naive model** `naive.sevt(full, distance, k)`
+* **Naive model** `naive.sevt(object, distance, k, method, ignore, limit, ...)`
 ```{r}
-mod5 <- naive.sevt(mod_full)
+mod5 <- naive.sevt(mod_full0, 
+                   method = "mcquitty", 
+                   ignore = "NA")
 mod5
 ```
 
@@ -121,7 +126,7 @@ model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>%
 
 ## extract a sub_tree and join two stages
 sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%  
-              join_stages("Mentor", "1", "2")
+              join_stages("Mentor", "1", "3")
 ```
 
 
@@ -163,6 +168,7 @@ Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
 ## P(Articles|Gender, Kids, Married, Mentor, Prestige)
 predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ```
+
 ##### Sampling
 
 ```{r}
@@ -182,6 +188,9 @@ varnames.sevt(mod1)
 
 # number of variables
 nvar.sevt(mod1)
+
+# summary
+summary(mod1)
 ```
 
 ##### Plot 
@@ -190,6 +199,14 @@ nvar.sevt(mod1)
 plot(mod4, main = "Staged tree learned with bj.sevt", 
      cex.label.edges = 0.6, cex.nodes = 1.5)
 text(mod4, y = -0.03, cex = 0.7)
+```
+
+We can also manually specify colors and avoid plotting 
+some stages (e.g. the stages with not-observed situations).
+```{r}
+plot(mod5, main = "Staged tree learned with naive.sevt (structural zeroes)", 
+     cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
+text(mod5, y = -0.03, cex = 0.7)
 ```
 
 ##### Stages

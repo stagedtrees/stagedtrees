@@ -47,30 +47,36 @@ general we create a staged event tree from data in a `data.frame` or
 # Load the PhDArticles data
 data("PhDArticles")
 
-# Create the independence model 
+# Independence model 
 mod_indep <- indep(PhDArticles, lambda = 1)
 mod_indep
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
 #> 'log Lik.' -4407.498 (df=8)
 
-#Create the full (saturated) model
+# Full (saturated) model
 mod_full <- full(PhDArticles, lambda = 1) 
 mod_full
 #> Staged event tree (fitted) 
+#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]
+
+# Full model with not-observed situations joined in NA stages
+mod_full0 <- full(PhDArticles, join = TRUE, lambda = 1)
+mod_full0
+#> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4066.97 (df=143)
+#> 'log Lik.' -4066.97 (df=116)
 ```
 
 #### Model selection
 
-Starting from the independence model of the full model it is  
-possible to perform automatic model selection.
+`stagedtrees` implements methods to perform automatic model selection.
+All methods can be initialized from an arbitrary staged tree object.
 
 ##### Score methods
 
-This methods perform optimization of the model for a given score using
-different types of heuristic methods.
+This methods perform optimization for a given score using different
+heuristics.
 
   - **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
 
@@ -93,8 +99,7 @@ mod1
 mod2 <- bhc.sevt(mod_full)
 mod2
 #> Staged event tree (fitted) 
-#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4086.254 (df=19)
+#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]
 ```
 
   - **Backward Fast Hill-Climbing** `fbhc.sevt(object, score, max_iter,
@@ -106,13 +111,12 @@ mod2
 mod3 <- fbhc.sevt(mod_full, score = function(x) -BIC(x))
 mod3
 #> Staged event tree (fitted) 
-#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4146.642 (df=14)
+#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]
 ```
 
 ##### Distance methods
 
-  - **Backward Joining** `bj.sevt(full, distance, thr, trace, ...)`
+  - **Backward Joining** `bj.sevt(object, distance, thr, trace, ...)`
 
 <!-- end list -->
 
@@ -120,20 +124,22 @@ mod3
 mod4 <- bj.sevt(mod_full)
 mod4
 #> Staged event tree (fitted) 
-#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4090.79 (df=22)
+#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]
 ```
 
-  - **Naive model** `naive.sevt(full, distance, k)`
+  - **Naive model** `naive.sevt(object, distance, k, method, ignore,
+    limit, ...)`
 
 <!-- end list -->
 
 ``` r
-mod5 <- naive.sevt(mod_full)
+mod5 <- naive.sevt(mod_full0, 
+                   method = "mcquitty", 
+                   ignore = "NA")
 mod5
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4118.437 (df=14)
+#> 'log Lik.' -4099.129 (df=23)
 ```
 
 #### Combining model selections with `%>%`
@@ -148,7 +154,7 @@ model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>%
 
 ## extract a sub_tree and join two stages
 sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%  
-              join_stages("Mentor", "1", "2")
+              join_stages("Mentor", "1", "3")
 ```
 
 #### Probabilities, predictions and sampling
@@ -224,11 +230,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1        0   male   no      no medium      low
-#> 2        0 female   no      no    low     high
-#> 3       >2 female   no     yes   high     high
-#> 4      1-2   male  yes     yes    low     high
-#> 5        0   male  yes     yes    low     high
+#> 1        0 female   no      no   high     high
+#> 2        0   male  yes     yes   high     high
+#> 3        0   male  yes     yes    low      low
+#> 4       >2   male  yes     yes    low      low
+#> 5        0 female   no      no    low      low
 ```
 
 #### Explore the model
@@ -249,6 +255,42 @@ varnames.sevt(mod1)
 # number of variables
 nvar.sevt(mod1)
 #> [1] 6
+
+# summary
+summary(mod1)
+#> Call: 
+#> hc.sevt(mod_indep)
+#> lambda:  1 
+#> Stages: 
+#>   Variable:  Articles 
+#>  stage npaths sample.size         0      1-2        >2
+#>      1      0         915 0.3006536 0.462963 0.2363834
+#>   ------------ 
+#>   Variable:  Gender 
+#>  stage npaths sample.size      male    female
+#>      1      2         699 0.5121255 0.4878745
+#>      2      1         216 0.6284404 0.3715596
+#>   ------------ 
+#>   Variable:  Kids 
+#>  stage npaths sample.size       yes        no
+#>      1      3         494 0.4778226 0.5221774
+#>      2      3         421 0.1914894 0.8085106
+#>   ------------ 
+#>   Variable:  Married 
+#>  stage npaths sample.size          no       yes
+#>      2      6         316 0.003144654 0.9968553
+#>      1      6         599 0.515806988 0.4841930
+#>   ------------ 
+#>   Variable:  Mentor 
+#>  stage npaths sample.size       low    medium      high
+#>      1     17         625 0.3917197 0.3773885 0.2308917
+#>      2      7         290 0.1604096 0.4129693 0.4266212
+#>   ------------ 
+#>   Variable:  Prestige 
+#>  stage npaths sample.size       low      high
+#>      1     48         540 0.6236162 0.3763838
+#>      2     24         375 0.3262599 0.6737401
+#>   ------------
 ```
 
 ##### Plot
@@ -260,6 +302,18 @@ text(mod4, y = -0.03, cex = 0.7)
 ```
 
 ![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
+
+We can also manually specify colors and avoid plotting some stages
+(e.g. the stages with not-observed
+situations).
+
+``` r
+plot(mod5, main = "Staged tree learned with naive.sevt (structural zeroes)", 
+     cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
+text(mod5, y = -0.03, cex = 0.7)
+```
+
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
 ##### Stages
 
@@ -321,7 +375,7 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 #### Comparing models
 
@@ -337,7 +391,7 @@ compare.sevt(mod1, mod2, method = "hamming", plot = TRUE,
 text(mod1)
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 
@@ -362,5 +416,5 @@ BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #> mod2       19 8302.067
 #> mod3       14 8388.749
 #> mod4       22 8331.596
-#> mod5       14 8332.338
+#> mod5       23 8355.093
 ```
