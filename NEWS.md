@@ -19,6 +19,8 @@
    stages per variable can be specified. 
 * fix in `compare.sevt`: because of changes in `plot.sevt` we need to
   specify that the root is always considered identical.
+* `stndnaming.sevt` accepts now `uniq`, `prefix` and `ignore` arguments, which control how stage names are generated and if 
+some stage names should be left untouched.
 
 # 1.0.2
 

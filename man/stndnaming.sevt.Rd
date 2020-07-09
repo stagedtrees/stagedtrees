@@ -4,13 +4,16 @@
 \alias{stndnaming.sevt}
 \title{Standard renaming of stages}
 \usage{
-stndnaming.sevt(object, rep = FALSE)
+stndnaming.sevt(object, uniq = FALSE, prefix = FALSE, ignore = NULL)
 }
 \arguments{
 \item{object}{a staged event tree object}
 
-\item{rep}{logical, if stages name can be repeated for different
-variables}
+\item{uniq}{logical, if stage numbers shuold be unique over all tree}
+
+\item{prefix}{logical, if stage names should be prefixed with variable name}
+
+\item{ignore}{stages name which should be left untouched}
 }
 \value{
 a staged event tree object with stages named with

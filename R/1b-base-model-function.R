@@ -913,8 +913,9 @@ subtree.sevt <- function(object, path) {
 #'  Standard renaming of stages
 #'
 #' @param object a staged event tree object
-#' @param rep logical, if stages name can be repeated for different
-#'                variables
+#' @param uniq logical, if stage numbers shuold be unique over all tree
+#' @param prefix logical, if stage names should be prefixed with variable name
+#' @param ignore stages name which should be left untouched
 #' @return a staged event tree object with stages named with
 #' consecutive integers.
 #' @examples
@@ -925,14 +926,20 @@ subtree.sevt <- function(object, path) {
 #' model1 <- stndnaming.sevt(model)
 #' model1$stages
 #' @export
-stndnaming.sevt <- function(object, rep = FALSE) {
+stndnaming.sevt <- function(object, uniq = FALSE, 
+                            prefix = FALSE, ignore = NULL) {
   var <- names(object$tree)
+  start <- 0
   for (i in 2:length(var)) {
     v <- var[i]
     old <- unique(object$stages[[v]])
-    new <- as.character(1:length(old))
+    old <- old[!(old %in% ignore)]
+    new <- as.character(start + (1:length(old)))
+    if (prefix) new <- paste0(v, new)
+    if (uniq) start <- start + length(old)
     object$stages[[v]] <- vapply(object$stages[[v]], function(s) {
-      as.character(which(old %in% s, useNames = FALSE))
+      if (s %in% ignore) return(s)
+      new[which(old %in% s, useNames = FALSE)]
     }, FUN.VALUE = "a", USE.NAMES = FALSE)
     if (is_fitted.sevt(object)) {
       object$prob[[v]][new] <- object$prob[[v]][old]
