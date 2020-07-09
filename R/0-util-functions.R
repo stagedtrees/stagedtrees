@@ -97,9 +97,11 @@ distance_mat_stages <- function(x, distance = kl, ...) {
       M[i, j] <- distance(x[[i]], x[[j]], ...)
     }
   }
-  M <- M + t(M)
-  colnames(M) <- rownames(M) <- names(x)
-  return(M + t(M))
+  M <- M[lower.tri(M)]
+  class(M) <- "dist"
+  attr(M, "Size") <- length(x)
+  attr(M, "Labels") <- names(x)
+  return(M)
 }
 
 #' perform a simple clustering in 2 groups

@@ -4,16 +4,28 @@
 \alias{naive.sevt}
 \title{Naive staged event tree}
 \usage{
-naive.sevt(object, distance = kl, ignore = NULL, k = length(object$tree), ...)
+naive.sevt(
+  object,
+  distance = kl,
+  k = length(object$tree[[1]]),
+  method = "complete",
+  ignore = NULL,
+  limit = length(object$tree),
+  ...
+)
 }
 \arguments{
 \item{object}{a full staged event tree}
 
 \item{distance}{a distance between probabilities}
 
+\item{k}{number of clusters, that is stages per variable}
+
+\item{method}{the agglomeration method to be used in \code{\link{hclust}}}
+
 \item{ignore}{vector of stages which will be left untouched}
 
-\item{k}{the maximum number of variable to consider}
+\item{limit}{the maximum number of variable to consider}
 
 \item{...}{additional arguments to be passeed to \code{distance}}
 }
@@ -21,7 +33,7 @@ naive.sevt(object, distance = kl, ignore = NULL, k = length(object$tree), ...)
 A staged event tree with two stages per variable
 }
 \description{
-Build a stage event tree with two stages for each variable
+Build a stage event tree with \code{k} stages for each variable
 }
 \examples{
 DD <- generate_xor_dataset(n = 4, N = 1000)[, 5:1]

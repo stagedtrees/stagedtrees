@@ -17,6 +17,7 @@
 #' \code{fit=FALSE} the returned model will have no probabilities.
 #'
 #' @importFrom  methods is
+#' @importFrom stats cutree hclust
 #' @export
 #'
 #' @examples
@@ -74,11 +75,13 @@ join_zero <- function(object,
 
 #' Naive staged event tree
 #'
-#' Build a stage event tree with two stages for each variable
+#' Build a stage event tree with \code{k} stages for each variable
 #' @param object a full staged event tree
 #' @param distance a distance between probabilities
 #' @param ignore vector of stages which will be left untouched
-#' @param k the maximum number of variable to consider
+#' @param k number of clusters, that is stages per variable
+#' @param method the agglomeration method to be used in \code{\link{hclust}}
+#' @param limit the maximum number of variable to consider
 #' @param ... additional arguments to be passeed to \code{distance}
 #' @return A staged event tree with two stages per variable
 #' @export
@@ -90,22 +93,25 @@ join_zero <- function(object,
 naive.sevt <-
   function(object,
            distance = kl,
+           k = length(object$tree[[1]]),
+           method = "complete",
            ignore = NULL,
-           k = length(object$tree), ...) {
+           limit = length(object$tree),
+           ...) {
     stopifnot(is_fitted.sevt(object))
-    for (v in names(object$tree)[2:k]) {
+    for (v in names(object$tree)[2:limit]) {
       wch <- names(object$prob[[v]])
       wch <- wch[!(wch %in% ignore)]
       M <- distance_mat_stages(object$prob[[v]][wch],
         distance = distance,
         ...
       )
-      groups <- simple_clustering(M)
+      groups <- cutree(hclust(M, method = method), k = min(k, attr(M, "Size")))
       ### remove probabilitites and assign stages
       object$prob[[v]] <- list()
       old <- object$stages[[v]]
-      for (s in c("1", "2")) {
-        object$stages[[v]][old %in% groups[[s]]] <- s
+      for (s in 1:k) {
+        object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
       }
     }
     object$call <- sys.call()
@@ -395,7 +401,7 @@ bj.sevt <-
         finish <- TRUE
         stages <- unique(object$stages[[v]])
         if (length(stages) > 1) {
-          M <- distance_mat_stages(object$prob[[v]], distance, ...)
+          M <- as.matrix(distance_mat_stages(object$prob[[v]], distance, ...))
           diag(M) <- Inf
           idx <- which.min(M)
           i <- ceiling(idx / dim(M)[1])

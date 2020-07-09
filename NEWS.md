@@ -2,12 +2,10 @@
 
 * improve code comments
 * fix correct passing arguments to distance function in `naive.sevt`
-* improve `naive.sevt` now working also from non-full model, related
-  changes also to internal functions `distance_mat_stages` and 
-  `simple_clustering`
+* improve `naive.sevt` now working also from non-full model.
 * `staged_ev_tree.strt_ev_tree` accepts now an additional parameter `fit` which control if probabilities should be computed. 
 * in `full` is now possible to specify if situations should be joined
-  using `join_zero`, in that case probabilities will be fitted only     after the empty situations are joined, imporving speed.  
+  using `join_zero`, in that case probabilities will be fitted only     after the empty situations are joined, improving speed.  
 * update internal function `new_label` to improve speed.
 * `hc.sevt` and `naive.sevt` accept now, as `ignore` 
   argument, a vector of stage names. Such user specified stages will
@@ -16,6 +14,9 @@
    `col.edges`
 * In `plot.sevt` is possible to specify stages that should be ignored
   and not plotted via the `ignore` argument.
+* `naive.sevt` can use now different hierarchical clustering methods
+   (using `hclust` from `stats` package), moreover the number of 
+   stages per variable can be specified. 
 
 # 1.0.2
 

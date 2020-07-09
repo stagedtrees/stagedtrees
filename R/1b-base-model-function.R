@@ -540,7 +540,7 @@ full <- function(x, join_zero = FALSE, fit = TRUE, ...) {
 #' @export
 full.default <- function(x, join_zero = FALSE, fit = TRUE, 
                          name.join = "NA", ...){
-  strt <- strt_ev_tree(x, fit = TRUE)
+  strt <- strt_ev_tree(x, fit = TRUE, ...)
   if (join_zero){
     join_zero(staged_ev_tree(strt, fit = FALSE, ...), 
               fit = fit, name = name.join)
