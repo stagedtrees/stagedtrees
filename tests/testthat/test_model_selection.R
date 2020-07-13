@@ -3,7 +3,7 @@ context("model selection")
 data("PhDArticles")
 f <- full(PhDArticles[, 1:4])
 ind <- indep(PhDArticles[, 1:4])
-
+fl <- full(PhDArticles[, 1:4], lambda = 1)
 
 test_that("hc.sevt from full", {
   expect_message(mod <- hc.sevt(f, max_iter = 3, trace = 2))
@@ -68,7 +68,32 @@ test_that("join_zero_counts", {
 
 
 test_that("naive.sevt", {
-  expect_silent(mod <- naive.sevt(full(PhDArticles, lambda = 1)))
+  expect_silent(mod <- naive.sevt(fl))
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+
+test_that("hclust.sevt", {
+  expect_silent(mod <- hclust.sevt(join_zero(fl, name = "NA"), 
+                                   k = c(2,3), ignore = "NA"))
+  expect_silent(mod <- hclust.sevt(join_zero(fl, name = "NA"), k = c(2,3), 
+                                   scope = "Kids"))
+  expect_silent(mod <- hclust.sevt(fl))  
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+test_that("kmeans.sevt", {
+  expect_silent(mod <- kmeans.sevt(join_zero(fl, name = "NA"), 
+                                   k = c(2,3), ignore = "NA"))
+  expect_silent(mod <- kmeans.sevt(join_zero(fl, name = "NA"), k = c(2,3), 
+                                   scope = "Kids"))
+  expect_silent(mod <- kmeans.sevt(fl))  
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)

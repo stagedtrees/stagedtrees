@@ -106,9 +106,12 @@ mod4 <- bj.sevt(mod_full)
 mod4
 ```
 
-* **Naive model** `naive.sevt(object, distance, k, method, ignore, limit, ...)`
+##### Clustering methods
+
+* **Hierarchical Clustering** `hclust.sevt(object, distance, k, method, ignore, limit, scope)`
 ```{r}
-mod5 <- naive.sevt(mod_full0, 
+mod5 <- hclust.sevt(mod_full0, 
+                    distance = "totvar",
                    method = "mcquitty", 
                    ignore = "NA")
 mod5
@@ -204,7 +207,7 @@ text(mod4, y = -0.03, cex = 0.7)
 We can also manually specify colors and avoid plotting 
 some stages (e.g. the stages with not-observed situations).
 ```{r}
-plot(mod5, main = "Staged tree learned with naive.sevt (structural zeroes)", 
+plot(mod5, main = "Staged tree learned with hclust.sevt (structural zeroes)", 
      cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
 text(mod5, y = -0.03, cex = 0.7)
 ```

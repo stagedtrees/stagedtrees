@@ -66,9 +66,9 @@ join_zero_counts <-
 #' @rdname join_zero_counts
 #' @export
 join_zero <- function(object,
-                        fit = TRUE,
-                        trace = 0,
-                        name = NULL){
+                      fit = TRUE,
+                      trace = 0,
+                      name = NULL){
   join_zero_counts(object, fit, trace, name)
 }
 
@@ -83,7 +83,10 @@ join_zero <- function(object,
 #' @param method the agglomeration method to be used in \code{\link{hclust}}
 #' @param limit the maximum number of variable to consider
 #' @param ... additional arguments to be passeed to \code{distance}
-#' @return A staged event tree with two stages per variable
+#' @return A staged event tree with \code{k} stages per variable
+#' @details Old implementation which allows arbitrary distance 
+#'          function, see \code{\link{hclust.sevt}} for the 
+#'          most recent implementation. 
 #' @export
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 1000)[, 5:1]
@@ -103,8 +106,8 @@ naive.sevt <-
       wch <- names(object$prob[[v]])
       wch <- wch[!(wch %in% ignore)]
       M <- distance_mat_stages(object$prob[[v]][wch],
-        distance = distance,
-        ...
+                               distance = distance,
+                               ...
       )
       groups <- cutree(hclust(M, method = method), k = min(k, attr(M, "Size")))
       ### remove probabilitites and assign stages
@@ -161,8 +164,8 @@ bhcr.sevt <-
       if (length(unique(object$stages[[v]])) > 1) {
         stgs <-
           sample(unique(object$stages[[v]]),
-            size = 2,
-            replace = FALSE
+                 size = 2,
+                 replace = FALSE
           ) ## select randomly two stages
         try <-
           join_stages(object, v, stgs[1], stgs[2]) ## join the 2 stages
@@ -219,7 +222,7 @@ bhc.sevt <-
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
-
+    
     for (v in names(object$tree)[-1]) {
       r <- 1
       iter <- 0
@@ -533,4 +536,134 @@ hc.sevt <- function(object,
   }
   object$call <- sys.call()
   return(object)
+}
+
+#' Learn a staged tree with hierarchical clustering
+#' 
+#' Build a stage event tree with \code{k} stages for each variable by
+#' clustering stage probabilities with hierarchical clustering.
+#' @param object a staged event tree object.
+#' @param distance string, the distance measure to be used, either 
+#'                 a possible `method` for \code{\link{dist}} or 
+#'                 one of the folowing: \code{"totvar", "hellinger"}.
+#' @param ignore vector of stages which will be ignored.
+#' @param k integer or (named) vector: number of clusters, that is stages per variable. 
+#'        Values will be recycled if needed. 
+#' @param method the agglomeration method to be used in \code{\link{hclust}}.
+#' @param limit the maximum number of variables to consider.
+#' @param scope names of the variables to consider.
+#' @details \code{hclust.sevt} performs hierarchical clustering 
+#'          of the initial stage probabilities in \code{object} 
+#'          and it aggregates them into the specified number
+#'          of stages (\code{k}).
+#'          A different number of stages for the different variables 
+#'          in the model can be specified by supplying a (named) vector 
+#'          via the argument \code{k}.
+#'          
+#'          \code{hclust.sevt} is a different implementation of the 
+#'          same method as \code{\link{naive.sevt}}, the latter 
+#'          accepting a general distance function but being generally 
+#'          slower and accepting only one value for \code{k}.   
+#' @return A staged event tree object.
+#' @importFrom stats dist hclust cutree
+#' @examples 
+#' data("Titanic")
+#' model <- hclust.sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' summary(model)
+#' @export
+hclust.sevt <-
+  function(object,
+           distance = "totvar",
+           k = length(object$tree[[1]]),
+           method = "complete",
+           ignore = NULL,
+           limit = length(object$tree),
+           scope = NULL) {
+    stopifnot(is_fitted.sevt(object))
+    if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
+    stopifnot(all(scope %in% varnames.sevt(object)[2:limit]))
+    if (is.null(names(k))){
+      k <- rep(k, length(scope))[1:length(scope)]
+      names(k) <- scope
+    }
+    for (v in scope) {
+      wch <- names(object$prob[[v]])
+      wch <- wch[!(wch %in% ignore)]
+      pp <- t(as.matrix(as.data.frame(object$prob[[v]][wch])))
+      rownames(pp) <- wch
+      M <- switch(distance, 
+                  "totvar" = 0.5*dist(pp, method = "manhattan"),
+                  "hellinger" = dist(sqrt(pp), method = "euclidean") / sqrt(2),
+                  dist(pp, method = distance))
+      groups <- cutree(hclust(M, method = method), k = min(k[v], attr(M, "Size")))
+      ### remove probabilitites and assign stages
+      object$prob[[v]] <- list()
+      old <- object$stages[[v]]
+      for (s in 1:k[v]) {
+        object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
+      }
+    }
+    object$call <- sys.call()
+    return(sevt.fit(object, lambda = object$lambda))
+  }
+
+#' Learn a staged tree with k-means clustering
+#' 
+#' Build a stage event tree with \code{k} stages for each variable
+#' by clustering square-root probabilities with k-means. 
+#' @param object a staged event tree object.
+#' @param ignore vector of stages which will be ignored.
+#' @param k integer or (named) vector: number of clusters, that is stages per variable. 
+#'          Values will be recycled if needed.
+#' @param algorithm charachter: as in \code{\link{kmeans}}.
+#' @param limit the maximum number of variables to consider.
+#' @param scope names of the variables to consider.
+#' @param nstart as in \code{\link{kmeans}}
+#' @details \code{kmenas.sevt} performs k-means clustering 
+#' to aggregate the stage probabilities of the initial 
+#' staged tree \code{object}. 
+#' Different values for k can be specified by supplying a 
+#' (named) vector to \code{k}. 
+#' \code{\link{kmeans}} from the \code{stats} package is used
+#' internally and arguments \code{algorithm} and \code{nstart} 
+#' refer to the same arguments as \code{\link{kmeans}}. 
+#' @return A staged event tree.
+#' @importFrom stats kmeans
+#' @examples 
+#' data("Titanic")
+#' model <- kmeans.sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' summary(model)
+#' @export
+kmeans.sevt <- function(object,
+                        k = length(object$tree[[1]]),
+                        algorithm = "Hartigan-Wong",
+                        ignore = NULL,
+                        limit = length(object$tree),
+                        scope = NULL,
+                        nstart = 1){
+  stopifnot(is_fitted.sevt(object))
+  if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
+  stopifnot(all(scope %in% varnames.sevt(object)))
+  if (is.null(names(k))){
+    k <- rep(k, length(scope))[1:length(scope)]
+    names(k) <- scope
+  }
+  for (v in scope) {
+    wch <- names(object$prob[[v]])
+    wch <- wch[!(wch %in% ignore)]
+    pp <- sqrt(t(as.matrix(as.data.frame(object$prob[[v]][wch]))))
+    rownames(pp) <- wch
+    if (nrow(pp) > k[v]){
+      groups <- kmeans(pp, centers = min(k[v], nrow(pp) - 1), 
+                       algorithm = algorithm, nstart = nstart)$cluster
+      ### remove probabilitites and assign stages
+      object$prob[[v]] <- list()
+      old <- object$stages[[v]]
+      for (s in 1:k[v]) {
+        object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
+      }
+    }
+  }
+  object$call <- sys.call()
+  return(sevt.fit(object, lambda = object$lambda))
 }

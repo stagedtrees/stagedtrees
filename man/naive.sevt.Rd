@@ -30,10 +30,15 @@ naive.sevt(
 \item{...}{additional arguments to be passeed to \code{distance}}
 }
 \value{
-A staged event tree with two stages per variable
+A staged event tree with \code{k} stages per variable
 }
 \description{
 Build a stage event tree with \code{k} stages for each variable
+}
+\details{
+Old implementation which allows arbitrary distance
+function, see \code{\link{hclust.sevt}} for the
+most recent implementation.
 }
 \examples{
 DD <- generate_xor_dataset(n = 4, N = 1000)[, 5:1]

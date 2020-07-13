@@ -22,6 +22,10 @@
 * `stndnaming.sevt` accepts now `uniq`, `prefix` and `ignore`      
    arguments, which control how stage names are generated and if 
    some stage names should be left untouched.
+* two new model selection function: `hclust.sevt` and `kmeans.sevt`, 
+  to learn stage structure using hierarchical or k-means clustering. 
+  `hclust.sevt` is similar to `naive.sevt` but with a restricted 
+  choices of distance functions, relying on `dist`. 
 
 # 1.0.2
 
