@@ -256,7 +256,7 @@ generate_xor_dataset <- function(n = 2,
   for (i in 1:(n + 1)) {
     DD[[i]] <- factor(DD[[i]], levels = c(-1, 1))
   }
-  return(DD)
+  return(DD[,c(n+1,1:n)])
 }
 
 
@@ -308,7 +308,7 @@ generate_linear_dataset <-
     for (i in 1:(n + 1)) {
       DD[[i]] <- factor(DD[[i]], levels = c(-1, 1))
     }
-    return(DD)
+    return(DD[,c(n+1,1:n)])
   }
 
 #' generate a random binary dataset

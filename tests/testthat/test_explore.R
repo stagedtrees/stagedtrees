@@ -1,6 +1,6 @@
 context("explore functions")
 
-DD <- generate_linear_dataset(5, 100)[, 6:1]
+DD <- generate_linear_dataset(5, 100)
 levels(DD$C) <- c("a", "b")
 levels(DD$X3) <- c("qqqq", "pppp")
 sev <- full(DD, lambda = 0)
@@ -8,7 +8,7 @@ sev.lambda <- full(DD, lambda = 1)
 sev.indep <- indep(DD, lambda = 0)
 
 test_that("stages.sevt", {
-  expect_equal(stages.sevt(sev, "X1"), as.character(1:32))
+  expect_equal(stages.sevt(sev, "X5"), as.character(1:32))
   expect_equal(stages.sevt(sev, "X3"), as.character(1:8))
 })
 

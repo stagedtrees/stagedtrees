@@ -278,13 +278,13 @@ test_that("bh(x,y) is symmetric", {
 test_that("generate_xor_dataset", {
   DD <- generate_xor_dataset(n = 5, N = 99)
   expect_equal(dim(DD), c(99,6))
-  expect_equal(colnames(DD)[6], "C")
+  expect_equal(colnames(DD)[1], "C")
 })
 
 test_that("generate_linear_dataset", {
   DD <- generate_linear_dataset(n = 5, N = 99)
   expect_equal(dim(DD), c(99,6))
-  expect_equal(colnames(DD)[6], "C")
+  expect_equal(colnames(DD)[1], "C")
 })
 
 test_that("generate_random_dataset", {

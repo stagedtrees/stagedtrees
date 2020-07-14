@@ -1,7 +1,7 @@
 context("predict.sevt")
 
 
-DD <- generate_linear_dataset(5, 100)[, 6:1]
+DD <- generate_linear_dataset(5, 100)
 levels(DD$C) <- c("a", "b")
 levels(DD$X3) <- c("qqqq", "pppp")
 sev <- full(DD, lambda = 1)
@@ -47,8 +47,8 @@ test_that("probabilities are ok", {
   expect_true(all(pr >= 0))
   pr <- prob.sevt(sev, c(X1 = "1"))
   expect_true(all(pr >= 0))
-  pr <- prob.sevt(sev, c(X1 = "1"))
-  expect_true(all(abs(pr - sev$prob$X1$`1`["1"]) < 1e-10))
+  pr <- prob.sevt(sev, c(C = "a"))
+  expect_true(all(abs(pr - sev$prob$C$`1`["a"]) < 1e-10))
 })
 
 test_that("probabilities are positive", {
