@@ -8,6 +8,8 @@ bhc.sevt(
   object,
   score = function(x) {     return(-BIC(x)) },
   max_iter = Inf,
+  scope = NULL,
+  ignore = NULL,
   trace = 0
 )
 }
@@ -17,6 +19,10 @@ bhc.sevt(
 \item{score}{the score function to be maximized}
 
 \item{max_iter}{the maximum number of iterations per variable}
+
+\item{scope}{names of variables that should be considered for the optimization}
+
+\item{ignore}{stage names that should be ignored}
 
 \item{trace}{if >0 increasingly amount of info
 is printed (via \code{message})}

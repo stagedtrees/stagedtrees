@@ -199,6 +199,8 @@ bhcr.sevt <-
 #' @param object a staged event tree model
 #' @param score the score function to be maximized
 #' @param max_iter the maximum number of iterations per variable
+#' @param scope names of variables that should be considered for the optimization
+#' @param ignore stage names that should be ignored
 #' @param trace if >0 increasingly amount of info
 #' is printed (via \code{message})
 #' @details For each variable the algorithm try to join stages
@@ -218,12 +220,17 @@ bhc.sevt <-
              return(-BIC(x))
            },
            max_iter = Inf,
+           scope = NULL,
+           ignore = NULL,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
     now_score <- score(object)
-    
-    for (v in names(object$tree)[-1]) {
+    if (is.null(scope)){
+      scope <- varnames.sevt(object)[-1]
+    }
+    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+    for (v in scope) {
       r <- 1
       iter <- 0
       done <- FALSE
@@ -233,6 +240,7 @@ bhc.sevt <-
         temp_score <- now_score
         done <- TRUE
         stages <- unique(object$stages[[v]])
+        stages <- stages[!(stages %in% ignore)]
         if (length(stages) > 1) {
           for (i in 2:length(stages)) {
             ## try all stages pair
@@ -581,7 +589,7 @@ hclust.sevt <-
            scope = NULL) {
     stopifnot(is_fitted.sevt(object))
     if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
-    stopifnot(all(scope %in% varnames.sevt(object)[2:limit]))
+    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
     if (is.null(names(k))){
       k <- rep(k, length(scope))[1:length(scope)]
       names(k) <- scope
@@ -643,7 +651,7 @@ kmeans.sevt <- function(object,
                         nstart = 1){
   stopifnot(is_fitted.sevt(object))
   if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
-  stopifnot(all(scope %in% varnames.sevt(object)))
+  stopifnot(all(scope %in% varnames.sevt(object)[-1]))
   if (is.null(names(k))){
     k <- rep(k, length(scope))[1:length(scope)]
     names(k) <- scope
