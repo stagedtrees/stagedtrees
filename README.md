@@ -127,19 +127,23 @@ mod4
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]
 ```
 
-  - **Naive model** `naive.sevt(object, distance, k, method, ignore,
-    limit, ...)`
+##### Clustering methods
+
+  - **Hierarchical Clustering** `hclust.sevt(object, distance, k,
+    method, ignore, limit, scope)`
 
 <!-- end list -->
 
 ``` r
-mod5 <- naive.sevt(mod_full0, 
+mod5 <- hclust.sevt(mod_full0,
+                    k = 2, 
+                    distance = "totvar",
                    method = "mcquitty", 
                    ignore = "NA")
 mod5
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4099.129 (df=23)
+#> 'log Lik.' -4122.274 (df=17)
 ```
 
 #### Combining model selections with `%>%`
@@ -230,11 +234,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1        0 female   no      no   high     high
-#> 2        0   male  yes     yes   high     high
-#> 3        0   male  yes     yes    low      low
-#> 4       >2   male  yes     yes    low      low
-#> 5        0 female   no      no    low      low
+#> 1      1-2   male  yes     yes   high      low
+#> 2        0 female   no      no medium     high
+#> 3        0   male  yes     yes medium     high
+#> 4       >2   male   no     yes medium     high
+#> 5      1-2   male   no     yes    low      low
 ```
 
 #### Explore the model
@@ -304,11 +308,13 @@ text(mod4, y = -0.03, cex = 0.7)
 ![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
 
 We can also manually specify colors and avoid plotting some stages
-(e.g. the stages with not-observed
-situations).
+(e.g. the stages with not-observed situations).
 
 ``` r
-plot(mod5, main = "Staged tree learned with naive.sevt (structural zeroes)", 
+plot(stndnaming.sevt(mod5, uniq = TRUE), 
+     main = "Staged tree learned with hclust.sevt 
+     (structural zeroes)", 
+     col = "stages",
      cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
 text(mod5, y = -0.03, cex = 0.7)
 ```
@@ -416,5 +422,5 @@ BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #> mod2       19 8302.067
 #> mod3       14 8388.749
 #> mod4       22 8331.596
-#> mod5       23 8355.093
+#> mod5       17 8360.471
 ```

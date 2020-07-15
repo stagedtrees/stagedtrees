@@ -110,7 +110,8 @@ mod4
 
 * **Hierarchical Clustering** `hclust.sevt(object, distance, k, method, ignore, limit, scope)`
 ```{r}
-mod5 <- hclust.sevt(mod_full0, 
+mod5 <- hclust.sevt(mod_full0,
+                    k = 2, 
                     distance = "totvar",
                    method = "mcquitty", 
                    ignore = "NA")
@@ -207,7 +208,10 @@ text(mod4, y = -0.03, cex = 0.7)
 We can also manually specify colors and avoid plotting 
 some stages (e.g. the stages with not-observed situations).
 ```{r}
-plot(mod5, main = "Staged tree learned with hclust.sevt (structural zeroes)", 
+plot(stndnaming.sevt(mod5, uniq = TRUE), 
+     main = "Staged tree learned with hclust.sevt 
+     (structural zeroes)", 
+     col = "stages",
      cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
 text(mod5, y = -0.03, cex = 0.7)
 ```
