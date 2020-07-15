@@ -41,7 +41,7 @@ function, see \code{\link{hclust.sevt}} for the
 most recent implementation.
 }
 \examples{
-DD <- generate_xor_dataset(n = 4, N = 1000)[, 5:1]
+DD <- generate_xor_dataset(n = 4, N = 1000)
 naive_model <- naive.sevt(full(DD, lambda = 1))
 pr <- predict(naive_model, newdata = DD[501:1000, ])
 table(pr, DD$C[501:1000])

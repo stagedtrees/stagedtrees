@@ -24,9 +24,20 @@ Standard renaming of stages
 }
 \examples{
 DD <- generate_xor_dataset(4, 100)
-model <- staged_ev_tree(DD, full = TRUE)
-model <- fbhc.sevt(model)
+model <- fbhc.sevt(full(DD, join_zero = TRUE))
 model$stages
 model1 <- stndnaming.sevt(model)
 model1$stages
+
+### unique stage names in all tree
+model2 <- stndnaming.sevt(model, uniq = TRUE)
+model2$stages
+
+### prefix stage names with variable name 
+model3 <- stndnaming.sevt(model, prefix = TRUE)
+model3$stages
+
+### some stage names left untouched
+model4 <- stndnaming.sevt(model, ignore = c("2", "4"), prefix = TRUE)
+model4$stages
 }

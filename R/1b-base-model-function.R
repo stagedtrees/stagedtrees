@@ -920,11 +920,22 @@ subtree.sevt <- function(object, path) {
 #' consecutive integers.
 #' @examples
 #' DD <- generate_xor_dataset(4, 100)
-#' model <- staged_ev_tree(DD, full = TRUE)
-#' model <- fbhc.sevt(model)
+#' model <- fbhc.sevt(full(DD, join_zero = TRUE))
 #' model$stages
 #' model1 <- stndnaming.sevt(model)
 #' model1$stages
+#' 
+#' ### unique stage names in all tree
+#' model2 <- stndnaming.sevt(model, uniq = TRUE)
+#' model2$stages
+#' 
+#' ### prefix stage names with variable name 
+#' model3 <- stndnaming.sevt(model, prefix = TRUE)
+#' model3$stages
+#' 
+#' ### some stage names left untouched
+#' model4 <- stndnaming.sevt(model, ignore = c("2", "4"), prefix = TRUE)
+#' model4$stages
 #' @export
 stndnaming.sevt <- function(object, uniq = FALSE, 
                             prefix = FALSE, ignore = NULL) {
@@ -934,17 +945,19 @@ stndnaming.sevt <- function(object, uniq = FALSE,
     v <- var[i]
     old <- unique(object$stages[[v]])
     old <- old[!(old %in% ignore)]
-    new <- as.character(start + (1:length(old)))
-    if (prefix) new <- paste0(v, new)
-    if (uniq) start <- start + length(old)
-    object$stages[[v]] <- vapply(object$stages[[v]], function(s) {
-      if (s %in% ignore) return(s)
-      new[which(old %in% s, useNames = FALSE)]
-    }, FUN.VALUE = "a", USE.NAMES = FALSE)
-    if (is_fitted.sevt(object)) {
-      object$prob[[v]][new] <- object$prob[[v]][old]
-      object$prob[[v]][old[!(old %in% new)]] <-
-        NULL ## remove old prob
+    if (length(old) > 0){
+      new <- as.character(start + (1:length(old)))
+      if (prefix) new <- paste0(v, new)
+      if (uniq) start <- start + length(old)
+      object$stages[[v]] <- vapply(object$stages[[v]], function(s) {
+        if (s %in% ignore) return(s)
+        new[which(old %in% s, useNames = FALSE)]
+      }, FUN.VALUE = "a", USE.NAMES = FALSE)
+      if (is_fitted.sevt(object)) {
+        object$prob[[v]][new] <- object$prob[[v]][old]
+        object$prob[[v]][old[!(old %in% new)]] <-
+          NULL ## remove old prob
+      } 
     }
   }
   if (is_fitted.sevt(object)) {
