@@ -146,6 +146,22 @@ mod5
 #> 'log Lik.' -4122.274 (df=17)
 ```
 
+  - **K-Means Clustering** `kmeans.sevt(object, k, algorithm, ignore,
+    limit, scope, nstart)`
+
+<!-- end list -->
+
+``` r
+mod6 <- kmeans.sevt(mod_full0,
+                    k = 2, 
+                   algorithm = "Hartigan-Wong", 
+                   ignore = "NA")
+mod6
+#> Staged event tree (fitted) 
+#> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
+#> 'log Lik.' -4119.247 (df=17)
+```
+
 #### Combining model selections with `%>%`
 
 The pipe operator from the `magrittr` package can be used to combine
@@ -153,12 +169,12 @@ easily various model selection algorithms and to specify models easily.
 
 ``` r
 library(magrittr)
-model <- PhDArticles %>% full(lambda = 1) %>% naive.sevt %>% 
+model <- PhDArticles %>% full(lambda = 1) %>% hclust.sevt %>% 
                hc.sevt
 
 ## extract a sub_tree and join two stages
 sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%  
-              join_stages("Mentor", "1", "3")
+              join_stages("Mentor", "1", "2")
 ```
 
 #### Probabilities, predictions and sampling
@@ -234,11 +250,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2   male  yes     yes   high      low
-#> 2        0 female   no      no medium     high
-#> 3        0   male  yes     yes medium     high
-#> 4       >2   male   no     yes medium     high
-#> 5      1-2   male   no     yes    low      low
+#> 1      1-2 female   no     yes medium     high
+#> 2      1-2   male  yes     yes   high      low
+#> 3      1-2   male  yes     yes   high     high
+#> 4      1-2 female   no     yes medium     high
+#> 5        0   male   no      no medium     high
 ```
 
 #### Explore the model
@@ -305,13 +321,13 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 text(mod4, y = -0.03, cex = 0.7)
 ```
 
-![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
 We can also manually specify colors and avoid plotting some stages
 (e.g. the stages with not-observed situations).
 
 ``` r
-plot(stndnaming.sevt(mod5, uniq = TRUE), 
+plot(stndnaming.sevt(mod5, uniq = TRUE, ignore = "NA"), 
      main = "Staged tree learned with hclust.sevt 
      (structural zeroes)", 
      col = "stages",
@@ -319,7 +335,7 @@ plot(stndnaming.sevt(mod5, uniq = TRUE),
 text(mod5, y = -0.03, cex = 0.7)
 ```
 
-![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ##### Stages
 
@@ -381,7 +397,7 @@ plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 #### Comparing models
 
@@ -397,7 +413,7 @@ compare.sevt(mod1, mod2, method = "hamming", plot = TRUE,
 text(mod1)
 ```
 
-![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 
