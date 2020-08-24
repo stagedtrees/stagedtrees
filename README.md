@@ -10,6 +10,19 @@ Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](ht
 status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
 [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
+##### Preprint
+
+F Carli, M Leonelli, E Riccomagno, G Varando, The R Package stagedtrees
+for Structural Learning of Stratified Staged Trees, 2020
+[arXiv:2004.06459](https://arxiv.org/abs/2004.06459)
+
+    @misc{2004.06459,
+    Author = {Federico Carli and Manuele Leonelli and Eva Riccomagno and Gherardo Varando},
+    Title = {The R Package stagedtrees for Structural Learning of Stratified Staged Trees},
+    Year = {2020},
+    Eprint = {arXiv:2004.06459},
+    }
+
 ### Overview
 
 `stagedtrees` is a package that implements staged event trees, a
@@ -250,11 +263,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample.sevt(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2 female   no     yes medium     high
-#> 2      1-2   male  yes     yes   high      low
-#> 3      1-2   male  yes     yes   high     high
-#> 4      1-2 female   no     yes medium     high
-#> 5        0   male   no      no medium     high
+#> 1      1-2 female   no      no medium     high
+#> 2      1-2   male   no      no    low      low
+#> 3      1-2 female   no     yes medium      low
+#> 4      1-2 female  yes     yes medium     high
+#> 5        0   male  yes     yes    low     high
 ```
 
 #### Explore the model
