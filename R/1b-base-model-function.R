@@ -630,21 +630,24 @@ indep.data.frame <- function(x, fit = TRUE, lambda = 0, ...) {
 }
 
 
-#' Inclusion relations between stage structures of two models estimated on the same dataset
-#'
+#' Print inclusions of stages
+#'  
+#' Display the relationship between two staged tree models over the 
+#' same variables.
 #' @param object1 first staged event tree to compare
 #' @param object2 second staged event tree to compare
 #'
 #' @return a list with inclusion relations between stage
 #' structures of each variable in the model
-#' @details it computes the inclusion/exclusion/equality/diversity between the estimated stages
-#' between the two given models, in \code{object1} and \code{object2}.
+#' @details \code{inclusion.sevt} computes the 
+#'  inclusion/exclusion/equality/diversity between 
+#'  the stages structures of the two models.
 #' @examples
 #' mod1 <- bhc.sevt(full(PhDArticles[, 1:5], lambda = 1))
 #' mod2 <- fbhc.sevt(full(PhDArticles[, 1:5], lambda = 1))
-#' inclusion.stages(mod1, mod2)
+#' inclusion.sevt(mod1, mod2)
 #' @export
-inclusion.stages <- function(object1, object2) {
+inclusion.sevt <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
@@ -715,6 +718,15 @@ inclusion.stages <- function(object1, object2) {
     colnames(out2[[k]]) <- paste(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
   }
   return(out2)
+}
+
+#' @rdname inclusion.sevt
+#' @details \code{inlcusion.stages} is the deprecated name of
+#' \code{inclusion.sevt}, kept for back compatibility. 
+#' @export
+inclusion.stages <- function(object1, object2){
+  message("inclusion.stages is deprecated, use inclusion.sevt instead")
+  inclusion.sevt(object1, object2)
 }
 
 
