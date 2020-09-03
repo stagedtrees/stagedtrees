@@ -29,7 +29,7 @@
 #' 
 #' Modify models:
 #'  * Join and isolate unobserved situations \code{\link{join_zero}}
-#'  * Join two stages \code{\link{join_satges}}
+#'  * Join two stages \code{\link{join_stages}}
 #'  * Automatic renaming of stages \code{\link{stndnaming.sevt}}
 #'  * Rename a stage \code{\link{rename_stage}}
 #' @docType package

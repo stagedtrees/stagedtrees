@@ -42,7 +42,7 @@ Plot, explore and compare:
 Modify models:
 \itemize{
 \item Join and isolate unobserved situations \code{\link{join_zero}}
-\item Join two stages \code{\link{join_satges}}
+\item Join two stages \code{\link{join_stages}}
 \item Automatic renaming of stages \code{\link{stndnaming.sevt}}
 \item Rename a stage \code{\link{rename_stage}}
 }
