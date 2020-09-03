@@ -25,7 +25,8 @@ is printed (via \code{message})}
 The final staged event tree object
 }
 \description{
-Randomly try to join stages
+Randomly try to join stages.
+This is a pretty-useless function, kept only for lazyness.
 }
 \details{
 At each iteration a variable and

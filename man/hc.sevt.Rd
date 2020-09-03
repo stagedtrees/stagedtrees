@@ -8,6 +8,7 @@ hc.sevt(
   object,
   score = function(x) {     return(-BIC(x)) },
   max_iter = Inf,
+  scope = NULL,
   ignore = NULL,
   trace = 0
 )
@@ -18,6 +19,8 @@ hc.sevt(
 \item{score}{a function that score staged event tree objects}
 
 \item{max_iter}{the maximum number of iterations per variable}
+
+\item{scope}{names of variables that should be considered for the optimization}
 
 \item{ignore}{a vector of stage names which will not be changed}
 

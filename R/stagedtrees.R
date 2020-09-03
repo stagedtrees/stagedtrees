@@ -13,6 +13,8 @@
 #' * Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
 #' * Backward joining \code{\link{bj.sevt}}
 #' * Naive Staged Event Tree \code{\link{naive.sevt}}
+#' * Hierarchical Clustering \code{\link{hclust.sevt}}
+#' * K-Means Clustering \code{\link{kmeans.sevt}}
 #'
 #' Probabilities, log-likelihood and predictions:
 #' * Marginal probabilities \code{\link{prob.sevt}}
@@ -22,6 +24,7 @@
 #' Plot, explore and compare:
 #' * Plot \code{\link{plot.sevt}}
 #' * Compare \code{\link{compare.sevt}}
+#' * Stages inclusion \code{\link{inclusion.sevt}}
 #' * Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
 #' @docType package
 #' @name stagedtrees

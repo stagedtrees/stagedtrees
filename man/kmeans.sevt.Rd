@@ -8,6 +8,7 @@ kmeans.sevt(
   object,
   k = length(object$tree[[1]]),
   algorithm = "Hartigan-Wong",
+  transform = sqrt,
   ignore = NULL,
   limit = length(object$tree),
   scope = NULL,
@@ -22,6 +23,8 @@ Values will be recycled if needed.}
 
 \item{algorithm}{charachter: as in \code{\link{kmeans}}.}
 
+\item{transform}{function applied to the probabilities before clustering.}
+
 \item{ignore}{vector of stages which will be ignored.}
 
 \item{limit}{the maximum number of variables to consider.}
@@ -35,7 +38,7 @@ A staged event tree.
 }
 \description{
 Build a stage event tree with \code{k} stages for each variable
-by clustering square-root probabilities with k-means.
+by clustering (transformed) probabilities with k-means.
 }
 \details{
 \code{kmenas.sevt} performs k-means clustering

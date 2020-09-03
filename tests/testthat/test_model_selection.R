@@ -93,7 +93,9 @@ test_that("kmeans.sevt", {
                                    k = c(2,3), ignore = "NA"))
   expect_silent(mod <- kmeans.sevt(join_zero(fl, name = "NA"), k = c(2,3), 
                                    scope = "Kids"))
-  expect_silent(mod <- kmeans.sevt(fl))  
+  expect_silent(mod <- kmeans.sevt(fl, transform = function(x) x^2))
+  expect_silent(mod <- kmeans.sevt(fl, transform = NULL))
+  expect_silent(mod <- kmeans.sevt(fl)) 
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)

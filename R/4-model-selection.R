@@ -123,7 +123,8 @@ naive.sevt <-
 
 #' Backward Random Hill-Climbing
 #'
-#' Randomly try to join stages
+#' Randomly try to join stages. 
+#' This is a pretty-useless function, kept only for lazyness. 
 #'
 #' @param object a staged event tree model
 #' @param score the score function to be maximized
@@ -287,6 +288,8 @@ bhc.sevt <-
 #' @param object a staged event tree model
 #' @param score the score function to be maximized
 #' @param max_iter the maximum number of iteration
+#' @param scope names of variables that should be considered for the optimization
+#' @param ignore stage names that should be ignored
 #' @param trace if >0 increasingly amount of info
 #' is printed (via \code{message})
 #' @details For each variable the algorithm try to join stages
@@ -308,11 +311,17 @@ fbhc.sevt <-
              return(-BIC(x))
            },
            max_iter = Inf,
+           scope = NULL,
+           ignore = NULL,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
+    if (is.null(scope)){
+      scope <- varnames.sevt(object)[-1]
+    }
+    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
     now_score <- score(object)
-    for (v in names(object$tree)[-1]) {
+    for (v in scope) {
       iter <- 0
       r <- 1
       done <- FALSE
@@ -324,6 +333,7 @@ fbhc.sevt <-
         s2_select <- NULL
         done <- TRUE
         stages <- unique(object$stages[[v]])
+        stages <- stages[!(stages %in% ignore)]
         if (length(stages) > 1) {
           for (i in 2:length(stages)) {
             ## try all stages pair
@@ -383,6 +393,8 @@ fbhc.sevt <-
 #' @param object the staged event tree from where to start
 #' @param distance the distance between probabilities to use
 #' @param thr the threshold for joining stages
+#' @param scope names of variables that should be considered for the optimization
+#' @param ignore stage names that should be ignored
 #' @param trace if >0 increasingly amount of info
 #' @param ... additional parameters to be passed to the distance function
 #' is printed (via \code{message})
@@ -401,16 +413,23 @@ bj.sevt <-
   function(object = NULL,
            distance = kl,
            thr = 0.1,
+           scope = NULL,
+           ignore = NULL,
            trace = 0,
            ...) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted.sevt(object))
     stopifnot(is(distance, "function"))
-    for (v in names(object$tree)[-1]) {
+    if (is.null(scope)){
+      scope <- varnames.sevt(object)[-1]
+    }
+    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+    for (v in scope) {
       finish <- FALSE
       while (!finish) {
         finish <- TRUE
         stages <- unique(object$stages[[v]])
+        stages <- stages[!(stages %in% ignore)]
         if (length(stages) > 1) {
           M <- as.matrix(distance_mat_stages(object$prob[[v]], distance, ...))
           diag(M) <- Inf
@@ -453,6 +472,7 @@ bj.sevt <-
 #' @param object a staged event tree object
 #' @param score a function that score staged event tree objects
 #' @param max_iter the maximum number of iterations per variable
+#' @param scope names of variables that should be considered for the optimization
 #' @param ignore a vector of stage names which will not be changed
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
@@ -482,13 +502,18 @@ hc.sevt <- function(object,
                       return(-BIC(x))
                     },
                     max_iter = Inf,
+                    scope = NULL,
                     ignore = NULL,
                     trace = 0) {
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted.sevt(object))
   stopifnot(!is.null(object$ctables))
+  if (is.null(scope)){
+    scope <- varnames.sevt(object)[-1]
+  }
+  stopifnot(all(scope %in% varnames.sevt(object)[-1]))
   now_score <- score(object)
-  for (v in names(object$tree)[-1]) {
+  for (v in scope) {
     done <- FALSE
     iter <- 0
     while (!done & iter < max_iter) {
@@ -567,11 +592,10 @@ hc.sevt <- function(object,
 #'          A different number of stages for the different variables 
 #'          in the model can be specified by supplying a (named) vector 
 #'          via the argument \code{k}.
-#'          
 #'          \code{hclust.sevt} is a different implementation of the 
 #'          same method as \code{\link{naive.sevt}}, the latter 
 #'          accepting a general distance function but being generally 
-#'          slower and accepting only one value for \code{k}.   
+#'          slower and accepting only one value for \code{k}.
 #' @return A staged event tree object.
 #' @importFrom stats dist hclust cutree
 #' @examples 
@@ -618,12 +642,13 @@ hclust.sevt <-
 #' Learn a staged tree with k-means clustering
 #' 
 #' Build a stage event tree with \code{k} stages for each variable
-#' by clustering square-root probabilities with k-means. 
+#' by clustering (transformed) probabilities with k-means. 
 #' @param object a staged event tree object.
 #' @param ignore vector of stages which will be ignored.
 #' @param k integer or (named) vector: number of clusters, that is stages per variable. 
 #'          Values will be recycled if needed.
 #' @param algorithm charachter: as in \code{\link{kmeans}}.
+#' @param transform function applied to the probabilities before clustering.
 #' @param limit the maximum number of variables to consider.
 #' @param scope names of the variables to consider.
 #' @param nstart as in \code{\link{kmeans}}
@@ -645,11 +670,14 @@ hclust.sevt <-
 kmeans.sevt <- function(object,
                         k = length(object$tree[[1]]),
                         algorithm = "Hartigan-Wong",
+                        transform = sqrt,
                         ignore = NULL,
                         limit = length(object$tree),
                         scope = NULL,
                         nstart = 1){
   stopifnot(is_fitted.sevt(object))
+  stopifnot(is.function(transform) || is.null(transform))
+  if (is.null(transform)) transform <- function(x) return(x)
   if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
   stopifnot(all(scope %in% varnames.sevt(object)[-1]))
   if (is.null(names(k))){
@@ -659,7 +687,7 @@ kmeans.sevt <- function(object,
   for (v in scope) {
     wch <- names(object$prob[[v]])
     wch <- wch[!(wch %in% ignore)]
-    pp <- sqrt(t(as.matrix(as.data.frame(object$prob[[v]][wch]))))
+    pp <- transform(t(as.matrix(as.data.frame(object$prob[[v]][wch]))))
     rownames(pp) <- wch
     if (nrow(pp) > k[v]){
       groups <- kmeans(pp, centers = min(k[v], nrow(pp) - 1), 

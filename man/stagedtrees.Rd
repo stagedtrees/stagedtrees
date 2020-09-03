@@ -20,6 +20,8 @@ Model selection algorithms:
 \item Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
 \item Backward joining \code{\link{bj.sevt}}
 \item Naive Staged Event Tree \code{\link{naive.sevt}}
+\item Hierarchical Clustering \code{\link{hclust.sevt}}
+\item K-Means Clustering \code{\link{kmeans.sevt}}
 }
 
 Probabilities, log-likelihood and predictions:
@@ -33,6 +35,7 @@ Plot, explore and compare:
 \itemize{
 \item Plot \code{\link{plot.sevt}}
 \item Compare \code{\link{compare.sevt}}
+\item Stages inclusion \code{\link{inclusion.sevt}}
 \item Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
 }
 }

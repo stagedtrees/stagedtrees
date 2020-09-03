@@ -46,11 +46,11 @@ and it aggregates them into the specified number
 of stages (\code{k}).
 A different number of stages for the different variables
 in the model can be specified by supplying a (named) vector
-via the argument \code{k}.\preformatted{     \code{hclust.sevt} is a different implementation of the 
-     same method as \code{\link{naive.sevt}}, the latter 
-     accepting a general distance function but being generally 
-     slower and accepting only one value for \code{k}.   
-}
+via the argument \code{k}.
+\code{hclust.sevt} is a different implementation of the
+same method as \code{\link{naive.sevt}}, the latter
+accepting a general distance function but being generally
+slower and accepting only one value for \code{k}.
 }
 \examples{
 data("Titanic")

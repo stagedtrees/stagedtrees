@@ -26,6 +26,8 @@
   to learn stage structure using hierarchical or k-means clustering. 
   `hclust.sevt` is similar to `naive.sevt` but with a restricted 
   choices of distance functions, relying on `dist`. 
+* `fbhc.sevt`, `bj.sevt`, `hc.sevt` accept now `scope` and `ignore` parameters.
+* `inclusion.sevt` alias for `inclusion.stages` 
 
 # 1.0.2
 

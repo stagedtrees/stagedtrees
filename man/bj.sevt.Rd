@@ -4,7 +4,15 @@
 \alias{bj.sevt}
 \title{Backward joining of stages}
 \usage{
-bj.sevt(object = NULL, distance = kl, thr = 0.1, trace = 0, ...)
+bj.sevt(
+  object = NULL,
+  distance = kl,
+  thr = 0.1,
+  scope = NULL,
+  ignore = NULL,
+  trace = 0,
+  ...
+)
 }
 \arguments{
 \item{object}{the staged event tree from where to start}
@@ -12,6 +20,10 @@ bj.sevt(object = NULL, distance = kl, thr = 0.1, trace = 0, ...)
 \item{distance}{the distance between probabilities to use}
 
 \item{thr}{the threshold for joining stages}
+
+\item{scope}{names of variables that should be considered for the optimization}
+
+\item{ignore}{stage names that should be ignored}
 
 \item{trace}{if >0 increasingly amount of info}
 
