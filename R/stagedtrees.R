@@ -26,6 +26,12 @@
 #' * Compare \code{\link{compare.sevt}}
 #' * Stages inclusion \code{\link{inclusion.sevt}}
 #' * Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
+#' 
+#' Modify models:
+#'  * Join and isolate unobserved situations \code{\link{join_zero}}
+#'  * Join two stages \code{\link{join_satges}}
+#'  * Automatic renaming of stages \code{\link{stndnaming.sevt}}
+#'  * Rename a stage \code{\link{rename_stage}}
 #' @docType package
 #' @name stagedtrees
 #' @references
