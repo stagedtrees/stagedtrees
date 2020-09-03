@@ -38,6 +38,14 @@ Plot, explore and compare:
 \item Stages inclusion \code{\link{inclusion.sevt}}
 \item Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
 }
+
+Modify models:
+\itemize{
+\item Join and isolate unobserved situations \code{\link{join_zero}}
+\item Join two stages \code{\link{join_satges}}
+\item Automatic renaming of stages \code{\link{stndnaming.sevt}}
+\item Rename a stage \code{\link{rename_stage}}
+}
 }
 \examples{
 data("PhDArticles")
