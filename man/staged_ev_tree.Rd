@@ -5,6 +5,7 @@
 \alias{staged_ev_tree.default}
 \alias{staged_ev_tree.table}
 \alias{staged_ev_tree.data.frame}
+\alias{staged_ev_tree.list}
 \title{Build a staged event tree}
 \usage{
 staged_ev_tree(x, full = FALSE, ...)
@@ -14,6 +15,8 @@ staged_ev_tree(x, full = FALSE, ...)
 \method{staged_ev_tree}{table}(x, full = FALSE, order = names(dimnames(x)), ...)
 
 \method{staged_ev_tree}{data.frame}(x, full = FALSE, order = colnames(x), ...)
+
+\method{staged_ev_tree}{list}(x, full = FALSE, ...)
 }
 \arguments{
 \item{x}{a list, a data frame or a table with data}
@@ -38,4 +41,10 @@ DD <- generate_random_dataset(n = 4, 1000)
 indep <- staged_ev_tree(DD, fit = TRUE)
 full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
 
+
+######### from list
+model <- staged_ev_tree(list(
+  X = c("good", "bad"),
+  Y = c("high", "low")
+))
 }

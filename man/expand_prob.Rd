@@ -13,6 +13,6 @@ expand_prob(object)
 probability tables
 }
 \description{
-Crete the compelte probability tables
+Return the list of complete probability tables
 }
 \keyword{internal}

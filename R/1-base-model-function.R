@@ -89,7 +89,7 @@ staged_ev_tree.data.frame <- function(x,
   return(sevt)
 }
 
-#' Build a staged event tree 
+#' @rdname staged_ev_tree
 #' @export
 #' @examples
 #'
@@ -144,7 +144,7 @@ staged_ev_tree.list <- function(x, full = FALSE, ...) {
 
 #' Expand probabilities of a staged event tree
 #'
-#' Crete the compelte probability tables
+#' Return the list of complete probability tables
 #' @param object a fitted staged event tree object
 #' @return probability tables
 #' @keywords internal
