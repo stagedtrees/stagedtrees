@@ -28,7 +28,7 @@ probability \code{p}.
 }
 \examples{
 DD <- generate_random_dataset(5, 100)
-model <- staged_ev_tree(DD, full = TRUE, lambda = 1)
+model <- full(DD,lambda = 1)
 model <- bhc_sevt(model)
 model <- stndnaming(model)
 model$stages$X5

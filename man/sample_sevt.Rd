@@ -27,6 +27,6 @@ It samples \code{n} observations according to
 the transition probabilities (\code{object$prob}) in the model.
 }
 \examples{
-model <- naive.sevt(full(PhDArticles, lambda = 1))
+model <- naive_sevt(full(PhDArticles, lambda = 1))
 sample_sevt(model, 10)
 }

@@ -11,7 +11,7 @@
 #' the transition probabilities (\code{object$prob}) in the model.
 #' @return A data frame containing a sample of size \code{n}
 #' @examples
-#' model <- naive.sevt(full(PhDArticles, lambda = 1))
+#' model <- naive_sevt(full(PhDArticles, lambda = 1))
 #' sample_sevt(model, 10)
 #' @export
 sample_sevt <- function(object, nsim = 1, seed = NULL) {

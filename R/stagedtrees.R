@@ -56,6 +56,6 @@
 #' @examples
 #' data("PhDArticles")
 #' mf <- full(PhDArticles)
-#' mod <- fbhc.sevt(mf)
+#' mod <- fbhc_sevt(mf)
 #' plot(mod)
 NULL
