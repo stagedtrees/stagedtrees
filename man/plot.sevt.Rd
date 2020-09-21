@@ -60,7 +60,7 @@ examples).
 \examples{
 
 data("PhDArticles")
-mod <- bj.sevt(full(PhDArticles, join_zero = TRUE))
+mod <- bj_sevt(full(PhDArticles, join_zero = TRUE))
 
 ### simple plotting
 plot(mod)
@@ -85,7 +85,7 @@ plot(mod)
 plot(mod, ignore = "NA")
 
 ### manually give stages colors
-simple <- naive.sevt(full(PhDArticles, lambda = 1))
+simple <- naive_sevt(full(PhDArticles, lambda = 1))
 #### simple has 2 stages per variable "1" and "2"
 col <- lapply(simple$stages, function(s) {
   c("1" = "purple", "2" = "cyan")
