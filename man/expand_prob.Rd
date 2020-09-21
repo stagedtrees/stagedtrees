@@ -10,13 +10,9 @@ expand_prob(object)
 \item{object}{a fitted staged event tree object}
 }
 \value{
-
+probability tables
 }
 \description{
-Expand probabilities of a staged event tree
-}
-\details{
-This function build a stratified event tree object
-from a staged event tree.
+Crete the compelte probability tables
 }
 \keyword{internal}

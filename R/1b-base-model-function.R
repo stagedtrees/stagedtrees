@@ -888,6 +888,7 @@ stagesdiff <- function(object1, object2) {
 #'
 #' mod <- full(PhDArticles)
 #' variable.names(mod)
+#' @importFrom stats variable.names
 #' @export
 variable.names.sevt <- function(object, ...) {
   stopifnot(is(object, "sevt"))

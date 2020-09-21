@@ -7,30 +7,30 @@
 #' Model selection algorithms:
 #' * full model \code{\link{full}}
 #' * independence model \code{\link{indep}}
-#' * Hill-Climbing \code{\link{hc.sevt}}
-#' * Backward Hill-Climbing \code{\link{bhc.sevt}}
-#' * Fast Backward Hill-Climbing \code{\link{fbhc.sevt}}
-#' * Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
-#' * Backward joining \code{\link{bj.sevt}}
-#' * Naive Staged Event Tree \code{\link{naive.sevt}}
-#' * Hierarchical Clustering \code{\link{hclust.sevt}}
-#' * K-Means Clustering \code{\link{kmeans.sevt}}
+#' * Hill-Climbing \code{\link{hc_sevt}}
+#' * Backward Hill-Climbing \code{\link{bhc_sevt}}
+#' * Fast Backward Hill-Climbing \code{\link{fbhc_sevt}}
+#' * Backward Hill-Climbing Random \code{\link{bhcr_sevt}}
+#' * Backward joining \code{\link{bj_sevt}}
+#' * Naive Staged Event Tree \code{\link{naive_sevt}}
+#' * Hierarchical Clustering \code{\link{hclust_sevt}}
+#' * K-Means Clustering \code{\link{kmeans_sevt}}
 #'
 #' Probabilities, log-likelihood and predictions:
-#' * Marginal probabilities \code{\link{prob.sevt}}
+#' * Marginal probabilities \code{\link{prob_sevt}}
 #' * Log-Likelihood \code{\link{logLik.sevt}}
 #' * Predict method \code{\link{predict.sevt}}
 #'
 #' Plot, explore and compare:
 #' * Plot \code{\link{plot.sevt}}
-#' * Compare \code{\link{compare.sevt}}
-#' * Stages inclusion \code{\link{inclusion.sevt}}
-#' * Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
+#' * Compare \code{\link{compare_stages}}
+#' * Stages inclusion \code{\link{inclusion_stages}}
+#' * Stages info \code{\link{stages}}, \code{\link{summary.sevt}}
 #' 
 #' Modify models:
 #'  * Join and isolate unobserved situations \code{\link{join_zero}}
 #'  * Join two stages \code{\link{join_stages}}
-#'  * Automatic renaming of stages \code{\link{stndnaming.sevt}}
+#'  * Automatic renaming of stages \code{\link{stndnaming}}
 #'  * Rename a stage \code{\link{rename_stage}}
 #' @docType package
 #' @name stagedtrees

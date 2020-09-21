@@ -14,6 +14,8 @@ join_zero(object, fit = TRUE, trace = 0, name = NULL, lambda = object$lambda)
 \item{trace}{if \code{> 0} print information to console}
 
 \item{name}{string with a name for the new stage}
+
+\item{lambda}{smoothing parameter for the fitting}
 }
 \value{
 a staged event tree with situations with 0

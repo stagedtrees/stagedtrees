@@ -19,6 +19,6 @@ Compute, or extract the log-likelihood of a staged event tree.
 }
 \examples{
 data("PhDArticles")
-mod <- staged_ev_tree(PhDArticles)
+mod <- indep(PhDArticles)
 logLik(mod)
 }

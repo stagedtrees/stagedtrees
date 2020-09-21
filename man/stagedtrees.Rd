@@ -14,19 +14,19 @@ Model selection algorithms:
 \itemize{
 \item full model \code{\link{full}}
 \item independence model \code{\link{indep}}
-\item Hill-Climbing \code{\link{hc.sevt}}
-\item Backward Hill-Climbing \code{\link{bhc.sevt}}
-\item Fast Backward Hill-Climbing \code{\link{fbhc.sevt}}
-\item Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
-\item Backward joining \code{\link{bj.sevt}}
-\item Naive Staged Event Tree \code{\link{naive.sevt}}
-\item Hierarchical Clustering \code{\link{hclust.sevt}}
-\item K-Means Clustering \code{\link{kmeans.sevt}}
+\item Hill-Climbing \code{\link{hc_sevt}}
+\item Backward Hill-Climbing \code{\link{bhc_sevt}}
+\item Fast Backward Hill-Climbing \code{\link{fbhc_sevt}}
+\item Backward Hill-Climbing Random \code{\link{bhcr_sevt}}
+\item Backward joining \code{\link{bj_sevt}}
+\item Naive Staged Event Tree \code{\link{naive_sevt}}
+\item Hierarchical Clustering \code{\link{hclust_sevt}}
+\item K-Means Clustering \code{\link{kmeans_sevt}}
 }
 
 Probabilities, log-likelihood and predictions:
 \itemize{
-\item Marginal probabilities \code{\link{prob.sevt}}
+\item Marginal probabilities \code{\link{prob_sevt}}
 \item Log-Likelihood \code{\link{logLik.sevt}}
 \item Predict method \code{\link{predict.sevt}}
 }
@@ -34,16 +34,16 @@ Probabilities, log-likelihood and predictions:
 Plot, explore and compare:
 \itemize{
 \item Plot \code{\link{plot.sevt}}
-\item Compare \code{\link{compare.sevt}}
-\item Stages inclusion \code{\link{inclusion.sevt}}
-\item Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
+\item Compare \code{\link{compare_stages}}
+\item Stages inclusion \code{\link{inclusion_stages}}
+\item Stages info \code{\link{stages}}, \code{\link{summary.sevt}}
 }
 
 Modify models:
 \itemize{
 \item Join and isolate unobserved situations \code{\link{join_zero}}
 \item Join two stages \code{\link{join_stages}}
-\item Automatic renaming of stages \code{\link{stndnaming.sevt}}
+\item Automatic renaming of stages \code{\link{stndnaming}}
 \item Rename a stage \code{\link{rename_stage}}
 }
 }

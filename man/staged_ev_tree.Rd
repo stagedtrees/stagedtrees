@@ -11,9 +11,9 @@ staged_ev_tree(x, full = FALSE, ...)
 
 \method{staged_ev_tree}{default}(x, ...)
 
-\method{staged_ev_tree}{table}(x, full = FALSE, order = names(dimnames(x)))
+\method{staged_ev_tree}{table}(x, full = FALSE, order = names(dimnames(x)), ...)
 
-\method{staged_ev_tree}{data.frame}(x, order = colnames(x), full = FALSE)
+\method{staged_ev_tree}{data.frame}(x, full = FALSE, order = colnames(x), ...)
 }
 \arguments{
 \item{x}{a list, a data frame or a table with data}

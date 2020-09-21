@@ -4,7 +4,7 @@
 \alias{staged_ev_tree.list}
 \title{Build a staged event tree}
 \usage{
-\method{staged_ev_tree}{list}(x, full = FALSE)
+\method{staged_ev_tree}{list}(x, full = FALSE, ...)
 }
 \description{
 Build a staged event tree

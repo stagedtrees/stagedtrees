@@ -4,6 +4,7 @@
 #' @param fit if the model's probability should be computed
 #' @param name string with a name for the new stage
 #' @param trace if \code{> 0} print information to console
+#' @param lambda smoothing parameter for the fitting
 #'
 #' @return a staged event tree with situations with 0
 #' observations merged in a single stage
@@ -54,7 +55,7 @@ join_zero <-
     object$prob <- NULL
     object$ll <- NULL
     if (fit) {
-      object <- sevt.fit(object)
+      object <- sevt.fit(object, lambda = lambda)
       if (trace > 0) {
         message("object fitted using lambda = ", lambda)
       }
@@ -69,10 +70,11 @@ join_zero <-
 NULL
 
 #' @rdname full_indep
+#' @param data data to create the model, data.frame or table 
 #' @param join_zero logical, if situations with zero observations should 
 #'                           be joined
 #' @param name.join name to pass to \code{\link{join_zero}}
-#' @param lambda 
+#' @param lambda smoothing coefficient
 #' @examples
 #'
 #' ######### full model
@@ -80,17 +82,17 @@ NULL
 #' DD <- generate_xor_dataset(4, 100)
 #' modfull <- full(DD, lambda = 1)
 #' @export
-full <- function(x, join_zero = FALSE, name.join = "NA", lambda = 0) {
-  UseMethod("full", x)
+full <- function(data, join_zero = FALSE, name.join = "NA", lambda = 0) {
+  UseMethod("full", data)
 }
 
 #' @rdname full_indep
 #' @param name.join name to pass to \code{\link{join_zero}}
 #' @export
-full.default <- function(x, join_zero = FALSE,
+full.default <- function(data, join_zero = FALSE,
                          name.join = "NA", lambda = 0){
-  object <- staged_ev_tree(x, full = TRUE)
-  object$ctables <- make_ctables(object, x)
+  object <- staged_ev_tree(data, full = TRUE)
+  object$ctables <- make_ctables(object, data)
   if (join_zero){
     join_zero(object, 
               fit = TRUE, name = name.join, lambda = lambda)
@@ -101,17 +103,17 @@ full.default <- function(x, join_zero = FALSE,
 
 #' @rdname full_indep
 #' @export
-indep <- function(x, join_zero = FALSE, 
+indep <- function(data, join_zero = FALSE, 
                   name.join = "NA", lambda = 0) {
-  UseMethod("indep", x)
+  UseMethod("indep", data)
 }
 
 #' @rdname full_indep
 #' @export
-indep.default <- function(x, join_zero = FALSE, 
+indep.default <- function(data, join_zero = FALSE, 
                           name.join = "NA", lambda = 0) {
-  object <- staged_ev_tree(x, full = FALSE)
-  object$ctables <- make_ctables(object, x)
+  object <- staged_ev_tree(data, full = FALSE)
+  object$ctables <- make_ctables(object, data)
   if (join_zero){
     join_zero(object, 
               fit = TRUE, name = name.join, lambda = lambda)
@@ -128,9 +130,10 @@ indep.default <- function(x, join_zero = FALSE,
 #' system.time(model <- indep(DD, lambda = 1))
 #' model
 #' @export
-indep.data.frame <- function(x, lambda = 0) {
+indep.data.frame <- function(data, join_zero = FALSE, 
+                             name.join = "NA", lambda = 0) {
   # create the staged tree object
-  model <- staged_ev_tree(x, full = FALSE)
+  model <- staged_ev_tree(data, full = FALSE)
   # create empty probability list
   model$prob <- list()
   # extract names of variables
@@ -142,7 +145,7 @@ indep.data.frame <- function(x, lambda = 0) {
   # iterate for each variable 
   for (v in var) {
     # extract the table of the given variable
-    ctab <- table(x[[v]])
+    ctab <- table(data[[v]])
     # obtain sums of cases
     n <- sum(ctab)
     # compute probability table prob = (ctab + lambda)/sum(ctab + lambda)
@@ -164,12 +167,16 @@ indep.data.frame <- function(x, lambda = 0) {
   attr(model$ll, "df") <-
     sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
   # store number of obs
-  attr(model$ll, "nobs") <- nrow(x)
+  attr(model$ll, "nobs") <- nrow(data)
   # set logLik class
   class(model$ll) <- "logLik"
   # store contingency tables
-  model$ctables <- make_ctables(model, x)
-  return(model)
+  model$ctables <- make_ctables(model, data)
+  if (join_zero){
+    join_zero(model, fit = TRUE, name = name.join)
+  }else{
+    model
+  }
 }
 
 

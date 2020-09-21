@@ -9,23 +9,25 @@
 \alias{indep.data.frame}
 \title{Full and independent staged event tree}
 \usage{
-full(x, join_zero = FALSE, name.join = "NA", lambda = 0)
+full(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{full}{default}(x, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{full}{default}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-indep(x, join_zero = FALSE, name.join = "NA", lambda = 0)
+indep(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{indep}{default}(x, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{indep}{default}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{indep}{data.frame}(x, lambda = 0)
+\method{indep}{data.frame}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 }
 \arguments{
+\item{data}{data to create the model, data.frame or table}
+
 \item{join_zero}{logical, if situations with zero observations should
 be joined}
 
 \item{name.join}{name to pass to \code{\link{join_zero}}}
 
-\item{lambda}{}
+\item{lambda}{smoothing coefficient}
 }
 \description{
 Full and independent staged event tree

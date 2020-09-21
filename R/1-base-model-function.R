@@ -54,7 +54,8 @@ staged_ev_tree.default <- function(x, ...) {
 #' @export
 staged_ev_tree.table <- function(x,
                                  full = FALSE,
-                                 order = names(dimnames(x))) {
+                                 order = names(dimnames(x)),
+                                 ...) {
   # extract ordered list of levels
   tree <- dimnames(x)[order]
   # check if tree exist
@@ -76,8 +77,9 @@ staged_ev_tree.table <- function(x,
 #' full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
 #' 
 staged_ev_tree.data.frame <- function(x,
+                                      full = FALSE,
                                       order = colnames(x),
-                                      full = FALSE) {
+                                      ...) {
   # extract ordered list of levels
   tree <- lapply(x, function(v) {
     return(levels(as.factor(v)))
@@ -96,7 +98,7 @@ staged_ev_tree.data.frame <- function(x,
 #'   X = c("good", "bad"),
 #'   Y = c("high", "low")
 #' ))
-staged_ev_tree.list <- function(x, full = FALSE) {
+staged_ev_tree.list <- function(x, full = FALSE, ...) {
   if (is.null(names(x))) {
     # if there are no names of variables
     # we assign variables names V1,V2,...
@@ -142,10 +144,9 @@ staged_ev_tree.list <- function(x, full = FALSE) {
 
 #' Expand probabilities of a staged event tree
 #'
+#' Crete the compelte probability tables
 #' @param object a fitted staged event tree object
-#' @return 
-#' @details This function build a stratified event tree object
-#'          from a staged event tree.
+#' @return probability tables
 #' @keywords internal
 expand_prob <- function(object) {
   stopifnot(is_fitted_sevt(object))
@@ -194,6 +195,7 @@ expand_prob <- function(object) {
 #'          the stage information is never used and thus this function
 #'          will work for an object with only a \code{tree} field.
 #' @keywords internal
+#' @importFrom stats ftable
 make_ctables <- function(object, data) {
   order <- names(object$tree)
   if (is.data.frame(data)) {
