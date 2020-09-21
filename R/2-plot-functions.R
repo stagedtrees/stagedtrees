@@ -85,7 +85,7 @@ plot.sevt <-
           return(list("1" = "black"))
         }
         stages <- unique(stages)
-        vc <- 1:length(stages)
+        vc <- seq_along(stages)
         names(vc) <- stages
         return(vc)
       })
@@ -325,14 +325,14 @@ text.sevt <-
 #' @importFrom graphics barplot
 barplot_stages <- function(object, var, legend.text = FALSE, 
                            col = NULL, ...){
-  stopifnot(is_fitted.sevt(object))
+  stopifnot(is_fitted_sevt(object))
   if (is.null(col)) {
     col <- lapply(object$stages[var], function(stages) {
       if (is.null(stages)) {
         return(list("1" = "black"))
       }
       stages <- unique(stages)
-      vc <- 1:length(stages)
+      vc <- seq_along(stages)
       names(vc) <- stages
       return(vc)
     })

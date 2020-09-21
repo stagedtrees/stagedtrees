@@ -26,8 +26,8 @@ probabilities and log-likelihood accordingly.
 this function joins together two stages associated to the same variable.
 }
 \examples{
-model <- full(PhDArticles, fit = TRUE, lambda = 0)
-model <- fbhc.sevt(model)
+model <- full(PhDArticles, lambda = 0)
+model <- fbhc_sevt(model)
 model$stages$Kids
 model <- join_stages(model, "Kids", "5", "6")
 model$stages$Kids

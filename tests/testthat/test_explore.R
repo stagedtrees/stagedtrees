@@ -8,8 +8,8 @@ sev.lambda <- full(DD, lambda = 1)
 sev.indep <- indep(DD, lambda = 0)
 
 test_that("stages.sevt", {
-  expect_equal(stages.sevt(sev, "X5"), as.character(1:32))
-  expect_equal(stages.sevt(sev, "X3"), as.character(1:8))
+  expect_equal(stages(sev, "X5"), as.character(1:32))
+  expect_equal(stages(sev, "X3"), as.character(1:8))
 })
 
 
@@ -21,8 +21,8 @@ test_that("summary.sevt for full model", {
 })
 
 test_that("summary.sevt for subtree", {
-  expect_visible(summary(subtree.sevt(sev, c("a", "-1"))))
-  expect_silent(summary(subtree.sevt(sev, c("a", "-1"))))
+  expect_visible(summary(subtree(sev, c("a", "-1"))))
+  expect_silent(summary(subtree(sev, c("a", "-1"))))
 })
 
 test_that("summary.sevt for indep", {
@@ -31,15 +31,13 @@ test_that("summary.sevt for indep", {
 })
 
 
-test_that("subtree.sevt", {
-  expect_silent(sub <- subtree.sevt(sev, c("a", "1", "-1")))
+test_that("subtree", {
+  expect_silent(sub <- subtree(sev, c("a", "1", "-1")))
   expect_silent(plot(sub))
-  expect_silent(fbhc.sevt(sub))
-  expect_silent(fit.sevt(sub, data = DD))
-  #  expect_true(BIC(sub2) <= BIC(sub))
-  #  expect_true(logLik(sub2) <= logLik(sub))
+  expect_silent(fbhc_sevt(sub))
+  expect_silent(sevt.fit(sub, data = DD))
 })
 
-test_that("df.sevt", {
-  expect_equal(df.sevt(sev), 63)
+test_that("df_sevt", {
+  expect_equal(df_sevt(sev), 63)
 })

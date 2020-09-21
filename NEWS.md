@@ -1,33 +1,49 @@
 # devel
 
+This version introduces major changes, in functions capabilities
+and in functions naming. 
+These changes are almost surely breaking any previous code 
+using older versions of the package.
+In particular, models selection functions of the type `*.sevt` are 
+now called `*_sevt` and other functions named `*.sevt` are now
+called differently, either by dropping the `.sevt`, by replacing it 
+with `_sevt` or by changing the name entirely.
+Moreover, various improvements and functionalities are added 
+to better deal with unobserved situations and to improve 
+computations. 
+Additional model selection methods based on clustering are
+now available.
+
+DRAFT OF COMPLETE CHANGELOG:
+* DESCRIPTION updated 
 * improve code comments
-* fix correct passing arguments to distance function in `naive.sevt`
-* improve `naive.sevt` now working also from non-full model.
+* fix correct passing arguments to distance function in `naive_sevt`
+* improve `naive_sevt` now working also from non-full model.
 * `staged_ev_tree.strt_ev_tree` accepts now an additional parameter `fit` which control if probabilities should be computed. 
 * in `full` is now possible to specify if situations should be joined
   using `join_zero`, in that case probabilities will be fitted only     after the empty situations are joined, improving speed.  
 * update internal function `new_label` to improve speed.
-* `hc.sevt` and `naive.sevt` accept now, as `ignore` 
+* `hc_sevt` and `naive_sevt` accept now, as `ignore` 
   argument, a vector of stage names. Such user specified stages will
   be left untouched. 
 * `plot.sevt` allows now to specify the color of the edges with 
    `col.edges`
 * In `plot.sevt` is possible to specify stages that should be ignored
   and not plotted via the `ignore` argument.
-* `naive.sevt` can use now different hierarchical clustering methods
+* `naive_sevt` can use now different hierarchical clustering methods
    (using `hclust` from `stats` package), moreover the number of 
    stages per variable can be specified. 
-* fix in `compare.sevt`: because of changes in `plot.sevt` we need to
+* fix in `compare_sevt`: because of changes in `plot.sevt` we need to
   specify that the root is always considered identical.
-* `stndnaming.sevt` accepts now `uniq`, `prefix` and `ignore`      
+* `stndnaming` accepts now `uniq`, `prefix` and `ignore`      
    arguments, which control how stage names are generated and if 
    some stage names should be left untouched.
-* two new model selection function: `hclust.sevt` and `kmeans.sevt`, 
+* two new model selection function: `hclust_sevt` and `kmeans_sevt`, 
   to learn stage structure using hierarchical or k-means clustering. 
-  `hclust.sevt` is similar to `naive.sevt` but with a restricted 
+  `hclust_sevt` is similar to `naive_sevt` but with a restricted 
   choices of distance functions, relying on `dist`. 
-* `fbhc.sevt`, `bj.sevt`, `hc.sevt` accept now `scope` and `ignore` parameters.
-* `inclusion.sevt` alias for `inclusion.stages` 
+* `fbhc_sevt`, `bj_sevt`, `hc_sevt` accept `scope` and `ignore` parameters. 
+* replace `1:length(x)` with the suggested `seq_along`.
 
 # 1.0.2
 

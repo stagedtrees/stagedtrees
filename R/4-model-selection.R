@@ -1,7 +1,7 @@
 #' Join situations with no observations
 #'
 #' @param object a fitted staged event tree
-#' @param fit if the probability should be re-computed
+#' @param fit if the model's probability should be computed
 #' @param name string with a name for the new stage
 #' @param trace if \code{> 0} print information to console
 #'
@@ -16,22 +16,22 @@
 #' If \code{fit=TRUE} the model will be then re-fitted, if user sets
 #' \code{fit=FALSE} the returned model will have no probabilities.
 #'
-#' @importFrom  methods is
-#' @importFrom stats cutree hclust
+#' @importFrom methods is
 #' @export
 #'
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 10)
 #' model_full <- full(DD, lambda = 1)
-#' model <- join_zero_counts(model_full, fit = TRUE)
+#' model <- join_zero(model_full)
 #' logLik(model_full)
 #' logLik(model)
 #' BIC(model_full, model)
-join_zero_counts <-
+join_zero <-
   function(object,
            fit = TRUE,
            trace = 0,
-           name = NULL) {
+           name = NULL,
+           lambda = object$lambda) {
     stopifnot(is(object, "sevt"))
     stopifnot(!is.null(object$ctables))
     tot <- 0
@@ -54,22 +54,122 @@ join_zero_counts <-
     object$prob <- NULL
     object$ll <- NULL
     if (fit) {
-      object <- sevt.fit(object, lambda = object$lambda)
+      object <- sevt.fit(object)
       if (trace > 0) {
-        message("object fitted using lambda = ", object$lambda)
+        message("object fitted using lambda = ", lambda)
       }
     }
     return(object)
   }
 
+#' Full and independent staged event tree
+#' 
+#' @name full_indep
+#' @details  full and indep models
+NULL
 
-#' @rdname join_zero_counts
+#' @rdname full_indep
+#' @param join_zero logical, if situations with zero observations should 
+#'                           be joined
+#' @param name.join name to pass to \code{\link{join_zero}}
+#' @param lambda 
+#' @examples
+#'
+#' ######### full model
+#'
+#' DD <- generate_xor_dataset(4, 100)
+#' modfull <- full(DD, lambda = 1)
 #' @export
-join_zero <- function(object,
-                      fit = TRUE,
-                      trace = 0,
-                      name = NULL){
-  join_zero_counts(object, fit, trace, name)
+full <- function(x, join_zero = FALSE, name.join = "NA", lambda = 0) {
+  UseMethod("full", x)
+}
+
+#' @rdname full_indep
+#' @param name.join name to pass to \code{\link{join_zero}}
+#' @export
+full.default <- function(x, join_zero = FALSE,
+                         name.join = "NA", lambda = 0){
+  object <- staged_ev_tree(x, full = TRUE)
+  object$ctables <- make_ctables(object, x)
+  if (join_zero){
+    join_zero(object, 
+              fit = TRUE, name = name.join, lambda = lambda)
+  }else{
+    sevt.fit(object, lambda = lambda)
+  }
+}
+
+#' @rdname full_indep
+#' @export
+indep <- function(x, join_zero = FALSE, 
+                  name.join = "NA", lambda = 0) {
+  UseMethod("indep", x)
+}
+
+#' @rdname full_indep
+#' @export
+indep.default <- function(x, join_zero = FALSE, 
+                          name.join = "NA", lambda = 0) {
+  object <- staged_ev_tree(x, full = FALSE)
+  object$ctables <- make_ctables(object, x)
+  if (join_zero){
+    join_zero(object, 
+              fit = TRUE, name = name.join, lambda = lambda)
+  }else{
+    sevt.fit(object, lambda = lambda)
+  }
+}
+
+#' @rdname full_indep
+#' @examples
+#'
+#' ######### independence model (data.frame)
+#' DD <- generate_xor_dataset(4, 100)
+#' system.time(model <- indep(DD, lambda = 1))
+#' model
+#' @export
+indep.data.frame <- function(x, lambda = 0) {
+  # create the staged tree object
+  model <- staged_ev_tree(x, full = FALSE)
+  # create empty probability list
+  model$prob <- list()
+  # extract names of variables
+  var <- names(model$tree)
+  # store lambda value
+  model$lambda <- lambda
+  # initialize loglik to 0
+  model$ll <- 0
+  # iterate for each variable 
+  for (v in var) {
+    # extract the table of the given variable
+    ctab <- table(x[[v]])
+    # obtain sums of cases
+    n <- sum(ctab)
+    # compute probability table prob = (ctab + lambda)/sum(ctab + lambda)
+    model$prob[[v]] <- list("1" = ctab + lambda)
+    model$prob[[v]][["1"]] <-
+      model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
+    # store sample size
+    attr(model$prob[[v]][["1"]], "n") <- n
+    # compute where prob > 0
+    ix <- ctab > 0
+    # set appropriate class (get rid of table formatting)
+    class(model$prob[[v]][["1"]]) <- "numeric"
+    # update loglik
+    model$ll <-
+      model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
+  }
+  # finish setting up loglik
+  # store degrees of freedom
+  attr(model$ll, "df") <-
+    sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
+  # store number of obs
+  attr(model$ll, "nobs") <- nrow(x)
+  # set logLik class
+  class(model$ll) <- "logLik"
+  # store contingency tables
+  model$ctables <- make_ctables(model, x)
+  return(model)
 }
 
 
@@ -85,15 +185,16 @@ join_zero <- function(object,
 #' @param ... additional arguments to be passeed to \code{distance}
 #' @return A staged event tree with \code{k} stages per variable
 #' @details Old implementation which allows arbitrary distance 
-#'          function, see \code{\link{hclust.sevt}} for the 
+#'          function, see \code{\link{hclust_sevt}} for the 
 #'          most recent implementation. 
 #' @export
+#' @importFrom stats cutree hclust
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 1000)
-#' naive_model <- naive.sevt(full(DD, lambda = 1))
+#' naive_model <- naive_sevt(full(DD, lambda = 1))
 #' pr <- predict(naive_model, newdata = DD[501:1000, ])
 #' table(pr, DD$C[501:1000])
-naive.sevt <-
+naive_sevt <-
   function(object,
            distance = kl,
            k = length(object$tree[[1]]),
@@ -101,7 +202,7 @@ naive.sevt <-
            ignore = NULL,
            limit = length(object$tree),
            ...) {
-    stopifnot(is_fitted.sevt(object))
+    stopifnot(is_fitted_sevt(object))
     for (v in names(object$tree)[2:limit]) {
       wch <- names(object$prob[[v]])
       wch <- wch[!(wch %in% ignore)]
@@ -124,7 +225,7 @@ naive.sevt <-
 #' Backward Random Hill-Climbing
 #'
 #' Randomly try to join stages. 
-#' This is a pretty-useless function, kept only for lazyness. 
+#' This is a pretty-useless function, used for comparisons. 
 #'
 #' @param object a staged event tree model
 #' @param score the score function to be maximized
@@ -142,11 +243,11 @@ naive.sevt <-
 #' @export
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
-#' model <- bhcr.sevt(full(DD), trace = 2)
+#' model <- bhcr_sevt(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
-bhcr.sevt <-
+bhcr_sevt <-
   function(object,
            score = function(x) {
              return(-BIC(x))
@@ -154,7 +255,7 @@ bhcr.sevt <-
            max_iter = 100,
            trace = 0) {
     stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted.sevt(object))
+    stopifnot(is_fitted_sevt(object))
     now_score <- score(object)
     r <- 1
     iter <- 0
@@ -210,12 +311,12 @@ bhcr.sevt <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
-#' model <- bhc.sevt(full(DD), trace = 2)
+#' model <- bhc_sevt(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-bhc.sevt <-
+bhc_sevt <-
   function(object,
            score = function(x) {
              return(-BIC(x))
@@ -225,12 +326,12 @@ bhc.sevt <-
            ignore = NULL,
            trace = 0) {
     stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted.sevt(object))
+    stopifnot(is_fitted_sevt(object))
     now_score <- score(object)
     if (is.null(scope)){
-      scope <- varnames.sevt(object)[-1]
+      scope <- variable.names(object)[-1]
     }
-    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+    stopifnot(all(scope %in% variable.names(object)[-1]))
     for (v in scope) {
       r <- 1
       iter <- 0
@@ -300,12 +401,12 @@ bhc.sevt <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 100)
-#' model <- fbhc.sevt(full(DD), trace = 2)
+#' model <- fbhc_sevt(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-fbhc.sevt <-
+fbhc_sevt <-
   function(object = NULL,
            score = function(x) {
              return(-BIC(x))
@@ -315,11 +416,11 @@ fbhc.sevt <-
            ignore = NULL,
            trace = 0) {
     stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted.sevt(object))
+    stopifnot(is_fitted_sevt(object))
     if (is.null(scope)){
-      scope <- varnames.sevt(object)[-1]
+      scope <- variable.names(object)[-1]
     }
-    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+    stopifnot(all(scope %in% variable.names(object)[-1]))
     now_score <- score(object)
     for (v in scope) {
       iter <- 0
@@ -405,11 +506,11 @@ fbhc.sevt <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
-#' model <- bj.sevt(full(DD, lambda = 1), trace = 2)
+#' model <- bj_sevt(full(DD, lambda = 1), trace = 2)
 #' summary(model)
 #' @importFrom  methods is
 #' @export
-bj.sevt <-
+bj_sevt <-
   function(object = NULL,
            distance = kl,
            thr = 0.1,
@@ -418,12 +519,12 @@ bj.sevt <-
            trace = 0,
            ...) {
     stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted.sevt(object))
+    stopifnot(is_fitted_sevt(object))
     stopifnot(is(distance, "function"))
     if (is.null(scope)){
-      scope <- varnames.sevt(object)[-1]
+      scope <- variable.names(object)[-1]
     }
-    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+    stopifnot(all(scope %in% variable.names(object)[-1]))
     for (v in scope) {
       finish <- FALSE
       while (!finish) {
@@ -490,14 +591,14 @@ bj.sevt <-
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' model <- hc.sevt(full(PhDArticles[, 1:3], lambda = 1))
+#' model <- hc_sevt(full(PhDArticles[, 1:3], lambda = 1))
 #' summary(model)
 #' 
 #' ## preserve zero stages
 #' start <- join_zero(indep(PhDArticles[,1:5]), name = "NA")
-#' model <- hc.sevt(start, ignore = "NA")
+#' model <- hc_sevt(start, ignore = "NA")
 #' @export
-hc.sevt <- function(object,
+hc_sevt <- function(object,
                     score = function(x) {
                       return(-BIC(x))
                     },
@@ -506,12 +607,12 @@ hc.sevt <- function(object,
                     ignore = NULL,
                     trace = 0) {
   stopifnot(is(object, "sevt"))
-  stopifnot(is_fitted.sevt(object))
+  stopifnot(is_fitted_sevt(object))
   stopifnot(!is.null(object$ctables))
   if (is.null(scope)){
-    scope <- varnames.sevt(object)[-1]
+    scope <- variable.names(object)[-1]
   }
-  stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+  stopifnot(all(scope %in% variable.names(object)[-1]))
   now_score <- score(object)
   for (v in scope) {
     done <- FALSE
@@ -525,9 +626,9 @@ hc.sevt <- function(object,
       newname <- new_label(c(ustages, ignore))
       ustages <- ustages[!(ustages %in% ignore)]
       done <- TRUE
-      for (j in 1:length(ustages)) {
+      for (j in seq_along(ustages)) {
         s1 <- ustages[j]
-        idx <- (1:length(stages))[stages == s1]
+        idx <- (seq_along(stages))[stages == s1]
         for (i in idx) {
           try <- object
           for (s2 in c(ustages[-j], newname)) {
@@ -585,25 +686,25 @@ hc.sevt <- function(object,
 #' @param method the agglomeration method to be used in \code{\link{hclust}}.
 #' @param limit the maximum number of variables to consider.
 #' @param scope names of the variables to consider.
-#' @details \code{hclust.sevt} performs hierarchical clustering 
+#' @details \code{hclust_sevt} performs hierarchical clustering 
 #'          of the initial stage probabilities in \code{object} 
 #'          and it aggregates them into the specified number
 #'          of stages (\code{k}).
 #'          A different number of stages for the different variables 
 #'          in the model can be specified by supplying a (named) vector 
 #'          via the argument \code{k}.
-#'          \code{hclust.sevt} is a different implementation of the 
-#'          same method as \code{\link{naive.sevt}}, the latter 
+#'          \code{hclust_sevt} is a different implementation of the 
+#'          same method as \code{\link{naive_sevt}}, the latter 
 #'          accepting a general distance function but being generally 
 #'          slower and accepting only one value for \code{k}.
 #' @return A staged event tree object.
 #' @importFrom stats dist hclust cutree
 #' @examples 
 #' data("Titanic")
-#' model <- hclust.sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' model <- hclust_sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
-hclust.sevt <-
+hclust_sevt <-
   function(object,
            distance = "totvar",
            k = length(object$tree[[1]]),
@@ -611,11 +712,11 @@ hclust.sevt <-
            ignore = NULL,
            limit = length(object$tree),
            scope = NULL) {
-    stopifnot(is_fitted.sevt(object))
-    if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
-    stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+    stopifnot(is_fitted_sevt(object))
+    if (is.null(scope)) scope <- variable.names(object)[2:limit]
+    stopifnot(all(scope %in% variable.names(object)[-1]))
     if (is.null(names(k))){
-      k <- rep(k, length(scope))[1:length(scope)]
+      k <- rep(k, length(scope))[seq_along(scope)]
       names(k) <- scope
     }
     for (v in scope) {
@@ -652,7 +753,7 @@ hclust.sevt <-
 #' @param limit the maximum number of variables to consider.
 #' @param scope names of the variables to consider.
 #' @param nstart as in \code{\link{kmeans}}
-#' @details \code{kmenas.sevt} performs k-means clustering 
+#' @details \code{kmenas_sevt} performs k-means clustering 
 #' to aggregate the stage probabilities of the initial 
 #' staged tree \code{object}. 
 #' Different values for k can be specified by supplying a 
@@ -664,10 +765,10 @@ hclust.sevt <-
 #' @importFrom stats kmeans
 #' @examples 
 #' data("Titanic")
-#' model <- kmeans.sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' model <- kmeans_sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
-kmeans.sevt <- function(object,
+kmeans_sevt <- function(object,
                         k = length(object$tree[[1]]),
                         algorithm = "Hartigan-Wong",
                         transform = sqrt,
@@ -675,13 +776,13 @@ kmeans.sevt <- function(object,
                         limit = length(object$tree),
                         scope = NULL,
                         nstart = 1){
-  stopifnot(is_fitted.sevt(object))
+  stopifnot(is_fitted_sevt(object))
   stopifnot(is.function(transform) || is.null(transform))
   if (is.null(transform)) transform <- function(x) return(x)
-  if (is.null(scope)) scope <- varnames.sevt(object)[2:limit]
-  stopifnot(all(scope %in% varnames.sevt(object)[-1]))
+  if (is.null(scope)) scope <- variable.names(object)[2:limit]
+  stopifnot(all(scope %in% variable.names(object)[-1]))
   if (is.null(names(k))){
-    k <- rep(k, length(scope))[1:length(scope)]
+    k <- rep(k, length(scope))[seq_along(scope)]
     names(k) <- scope
   }
   for (v in scope) {

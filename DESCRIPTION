@@ -11,13 +11,12 @@ Authors@R: c(
 	comment = c(ORCID = "0000-0002-2562-5192")),
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
-Description: Creates and fits staged event tree probability models. 
-             Staged event trees are probabilistic graphical models capable of 
-             representing asymmetric conditional independence statements
-             among categorical variables. 
-             This package contains functions to create, plot and fit 
-             staged event trees from data, moreover different structure learning 
-             algorithms are available.
+Description: Creates and fits staged event tree probability models, 
+             which are probabilistic graphical models capable of representing 
+             asymmetric conditional independences for categorical variables. 
+             Includes functions to create, plot and fit staged 
+             event trees from data, as well as many efficient structure 
+             learning algorithms.
              References:
              Collazo R. A., Görgen C. and Smith J. Q. 
              (2018, ISBN:9781498729604).

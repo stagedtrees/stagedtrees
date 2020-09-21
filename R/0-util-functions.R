@@ -22,7 +22,7 @@ new_label <- function(labels) {
 #' @keywords internal
 uni_idx <- function(x) {
   nn <- names(x)
-  x <- lapply(1:length(x), function(i) {
+  x <- lapply(seq_along(x), function(i) {
     paste0(nn[i], ":", x[[i]])
   })
   names(x) <- nn
