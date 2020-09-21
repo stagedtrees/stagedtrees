@@ -22,9 +22,9 @@ test_that("uni_idx works as expected", {
 
 test_that("find_stage find the correct stage", {
   DD <-
-    data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
-  ev <- strt_ev_tree(x = DD, order = c("B", "A"))
-  sevt <- staged_ev_tree(ev)
+    data.frame(A = as.factor(c(1, 2, 2, 1)), 
+               B = as.factor(c("a", "b", "a", "b")))
+  sevt <- staged_ev_tree(DD, order = c("B", "A"), full = TRUE)
   stg1 <- stagedtrees:::find_stage(sevt, path = c("a"))
   stg2 <- stagedtrees:::find_stage(sevt, path = c("b"))
   expect_equal(c(stg1, stg2), c("1", "2"))

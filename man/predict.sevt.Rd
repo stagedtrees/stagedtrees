@@ -47,7 +47,7 @@ order <- c("C", "X1", "X2", "X3", "X4")
 train <- DD[1:500, order]
 test <- DD[501:600, order]
 model <- full(train)
-model <- bhc.sevt(model)
+model <- bhc_sevt(model)
 pr <- predict(model, newdata = test, class = "C")
 table(pr, test$C)
 # class values:

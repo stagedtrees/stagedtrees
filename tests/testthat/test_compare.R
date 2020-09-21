@@ -1,4 +1,4 @@
-context("compare_sevt")
+context("compare_stages")
 
 DD <- generate_linear_dataset(5, 10)
 levels(DD$C) <- c("a", "b")
@@ -7,7 +7,7 @@ levels(DD$X3) <- c("qqqq", "pppp")
 mod1 <- full(DD)
 mod2 <- indep(DD)
 
-test_that("compare_sevt correctly returns TRUE/FALSE", {
+test_that("compare_stages correctly returns TRUE/FALSE", {
   if (!requireNamespace("pkg", quietly = TRUE)) {
     methods <- c("naive", "stages")
   } else {
@@ -16,18 +16,18 @@ test_that("compare_sevt correctly returns TRUE/FALSE", {
 
 
   for (m in methods) {
-    expect_true(compare_sevt(mod1, mod1, method = !!m))
-    expect_true(compare_sevt(mod2, mod2, method = !!m))
-    expect_false(compare_sevt(mod1, mod2, method = !!m))
-    expect_false(compare_sevt(mod2, mod1, method = !!m))
+    expect_true(compare_stages(mod1, mod1, method = !!m))
+    expect_true(compare_stages(mod2, mod2, method = !!m))
+    expect_false(compare_stages(mod1, mod2, method = !!m))
+    expect_false(compare_stages(mod2, mod1, method = !!m))
   }
 })
 
-test_that("hamming_sevt", {
-  expect_true(hamming_sevt(mod1, mod2) >= 0)
+test_that("hamming_stages", {
+  expect_true(hamming_stages(mod1, mod2) >= 0)
 })
 
-test_that("inclusion.stages works properly", {
+test_that("inclusion_stages works properly", {
   comparison <- inclusion_stages(mod1, mod2)
 
   for (i in 2:(NCOL(DD) - 1)) {
@@ -35,7 +35,7 @@ test_that("inclusion.stages works properly", {
   }
 })
 
-test_that("inclusion.stages works symmetrically", {
+test_that("inclusion_stages works symmetrically", {
   comparison1 <- inclusion_stages(mod1, mod2)
   comparison2 <- inclusion_stages(mod2, mod1)
 

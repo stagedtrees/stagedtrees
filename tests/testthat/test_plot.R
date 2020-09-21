@@ -17,7 +17,7 @@ context("plot staged trees")
 
 DD <- data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
 DD <- cbind(DD, generate_random_dataset(6, 4))
-mod <- full(DD, fit = FALSE)
+mod <- staged_ev_tree(DD, full = TRUE)
 
 test_that("plot should accept col = 'stages' ", {
   expect_silent(plot(mod, col = "stages"))

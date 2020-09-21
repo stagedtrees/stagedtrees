@@ -64,7 +64,7 @@ path_probability <-
 #' @export
 prob_sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
   stopifnot(is(object, "sevt"))
-  stopifnot(is_fitted.sevt(object))
+  stopifnot(is_fitted_sevt(object))
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
   }
@@ -149,5 +149,7 @@ logLik.sevt <- function(object, ...) {
         object$tree,
         FUN = length, FUN.VALUE = 1
       ) - 1)) ## compute the degree of freedom
+  attr(ll, "nobs") <- sum(object$ctables[[vars[1]]])
+  class(ll) <- "logLik"
   return(ll)
 }

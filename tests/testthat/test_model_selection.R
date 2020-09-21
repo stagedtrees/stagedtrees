@@ -5,25 +5,16 @@ f <- full(PhDArticles[, 1:4])
 ind <- indep(PhDArticles[, 1:4])
 fl <- full(PhDArticles[, 1:4], lambda = 1)
 
-test_that("hc.sevt from full", {
-  expect_message(mod <- hc.sevt(f, max_iter = 3, trace = 2))
+test_that("hc_sevt from full", {
+  expect_message(mod <- hc_sevt(f, max_iter = 3, trace = 2))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
   expect_equal(ll1, ll2)
 })
 
-test_that("hc.sevt from indep", {
-  expect_message(mod <- hc.sevt(ind, max_iter = 3, trace = 2))
-  ll1 <- logLik(mod)
-  mod$ll <- NULL
-  ll2 <- logLik(mod)
-  expect_equal(ll1, ll2)
-})
-
-
-test_that("bhc.sevt", {
-  expect_message(mod <- bhc.sevt(f, max_iter = 5, trace = 2))
+test_that("hc_sevt from indep", {
+  expect_message(mod <- hc_sevt(ind, max_iter = 3, trace = 2))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
@@ -31,8 +22,8 @@ test_that("bhc.sevt", {
 })
 
 
-test_that("fbhc.sevt", {
-  expect_message(mod <- fbhc.sevt(f, max_iter = 5, trace = 2))
+test_that("bhc_sevt", {
+  expect_message(mod <- bhc_sevt(f, max_iter = 5, trace = 2))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
@@ -40,8 +31,8 @@ test_that("fbhc.sevt", {
 })
 
 
-test_that("bhcr.sevt", {
-  expect_message(mod <- bhcr.sevt(f, max_iter = 10, trace = 2))
+test_that("fbhc_sevt", {
+  expect_message(mod <- fbhc_sevt(f, max_iter = 5, trace = 2))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
@@ -49,8 +40,8 @@ test_that("bhcr.sevt", {
 })
 
 
-test_that("bj.sevt", {
-  expect_message(mod <- bj.sevt(f, max_iter = 5, trace = 2))
+test_that("bhcr_sevt", {
+  expect_message(mod <- bhcr_sevt(f, max_iter = 10, trace = 2))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
@@ -58,8 +49,8 @@ test_that("bj.sevt", {
 })
 
 
-test_that("join_zero_counts", {
-  expect_message(mod <- join_zero_counts(f, trace = 2, name = "zeros"))
+test_that("bj_sevt", {
+  expect_message(mod <- bj_sevt(f, max_iter = 5, trace = 2))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
@@ -67,8 +58,8 @@ test_that("join_zero_counts", {
 })
 
 
-test_that("naive.sevt", {
-  expect_silent(mod <- naive.sevt(fl))
+test_that("join_zero", {
+  expect_message(mod <- join_zero(f, trace = 2, name = "zeros"))
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
@@ -76,26 +67,35 @@ test_that("naive.sevt", {
 })
 
 
-test_that("hclust.sevt", {
-  expect_silent(mod <- hclust.sevt(join_zero(fl, name = "NA"), 
+test_that("naive_sevt", {
+  expect_silent(mod <- naive_sevt(fl))
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+
+test_that("hclust_sevt", {
+  expect_silent(mod <- hclust_sevt(join_zero(fl, name = "NA"), 
                                    k = c(2,3), ignore = "NA"))
-  expect_silent(mod <- hclust.sevt(join_zero(fl, name = "NA"), k = c(2,3), 
+  expect_silent(mod <- hclust_sevt(join_zero(fl, name = "NA"), k = c(2,3), 
                                    scope = "Kids"))
-  expect_silent(mod <- hclust.sevt(fl))  
+  expect_silent(mod <- hclust_sevt(fl))  
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
   expect_equal(ll1, ll2)
 })
 
-test_that("kmeans.sevt", {
-  expect_silent(mod <- kmeans.sevt(join_zero(fl, name = "NA"), 
+test_that("kmeans_sevt", {
+  expect_silent(mod <- kmeans_sevt(join_zero(fl, name = "NA"), 
                                    k = c(2,3), ignore = "NA"))
-  expect_silent(mod <- kmeans.sevt(join_zero(fl, name = "NA"), k = c(2,3), 
+  expect_silent(mod <- kmeans_sevt(join_zero(fl, name = "NA"), k = c(2,3), 
                                    scope = "Kids"))
-  expect_silent(mod <- kmeans.sevt(fl, transform = function(x) x^2))
-  expect_silent(mod <- kmeans.sevt(fl, transform = NULL))
-  expect_silent(mod <- kmeans.sevt(fl)) 
+  expect_silent(mod <- kmeans_sevt(fl, transform = function(x) x^2))
+  expect_silent(mod <- kmeans_sevt(fl, transform = NULL))
+  expect_silent(mod <- kmeans_sevt(fl)) 
   ll1 <- logLik(mod)
   mod$ll <- NULL
   ll2 <- logLik(mod)
