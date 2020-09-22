@@ -705,10 +705,18 @@ stndnaming <- function(object, uniq = FALSE,
 #' Functions \code{\link{hamming_stages}} and \code{\link{stagesdiff}}
 #' can also be used directly.
 #'
-#' @return if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
+#' @return 
+#' * \code{compare_stages}: if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
 #' models are exactly equal, otherwise \code{FALSE}.
-#' Else If \code{return.tree = TRUE}  it returns the differences between
+#' Else If \code{return.tree = TRUE}, the differences between
 #' the two trees, according to the selected \code{method}.
+#' * \code{hamming_stages}: if \code{return.tree = FALSE}, integer, the minimum
+#' number of situations where the stage should be changed to obtain the same 
+#' models. If \code{return.tree = TRUE} a stages-like structure showing which 
+#' situations should be modified to obtain the same models.
+#' * \code{stagesdiff}: a stages-like structure marking the situations belonging 
+#' to stages which are not the same.
+#' 
 #' @export
 #' @examples
 #' data("PhDArticles")

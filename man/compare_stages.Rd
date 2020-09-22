@@ -33,10 +33,18 @@ stagesdiff(object1, object2)
 \item{...}{additional parameters to be passed to \code{\link{plot.sevt}}}
 }
 \value{
-if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
+\itemize{
+\item \code{compare_stages}: if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
 models are exactly equal, otherwise \code{FALSE}.
-Else If \code{return.tree = TRUE}  it returns the differences between
+Else If \code{return.tree = TRUE}, the differences between
 the two trees, according to the selected \code{method}.
+\item \code{hamming_stages}: if \code{return.tree = FALSE}, integer, the minimum
+number of situations where the stage should be changed to obtain the same
+models. If \code{return.tree = TRUE} a stages-like structure showing which
+situations should be modified to obtain the same models.
+\item \code{stagesdiff}: a stages-like structure marking the situations belonging
+to stages which are not the same.
+}
 }
 \description{
 Compare two stages event tree, return the differences of the stages

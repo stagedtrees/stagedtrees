@@ -130,7 +130,7 @@ mod4
 
 * **Hierarchical Clustering** `stages_hclust(object, distance, k, method, ignore, limit, scope)`
 ```{r}
-mod5 <- hclust.sevt(mod_full0,
+mod5 <- stages_hclust(mod_full0,
                     k = 2, 
                     distance = "totvar",
                    method = "mcquitty", 
@@ -140,7 +140,7 @@ mod5
 
 * **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore, limit, scope, nstart)`
 ```{r}
-mod6 <- kmeans.sevt(mod_full0,
+mod6 <- stages_kmeans(mod_full0,
                     k = 2, 
                    algorithm = "Hartigan-Wong", 
                    ignore = "NA")
@@ -154,8 +154,8 @@ easily various model selection algorithms and to specify models easily.
 
 ```{r}
 library(magrittr)
-model <- PhDArticles %>% full(lambda = 1) %>% stages_hclust %>% 
-               hc
+model <- PhDArticles %>% full(lambda = 1) %>% 
+           stages_hclust %>% hc
 
 ## extract a sub_tree and join two stages
 sub_model <- model %>% subtree(path = c(">2"))  %>%  
@@ -220,6 +220,10 @@ df_sevt(mod_indep)
 # variables 
 variable.names(mod1)
 
+# stages
+stages(mod1, "Kids")
+
+
 # summary
 summary(mod1)
 ```
@@ -236,22 +240,23 @@ We can also manually specify colors and avoid plotting
 some stages (e.g. the stages with not-observed situations).
 ```{r}
 plot(stndnaming(mod5, uniq = TRUE, ignore = "NA"), 
-     main = "Staged tree learned with hclust.sevt 
+     main = "Staged tree learned with stages_hclust 
      (structural zeroes)", 
      col = "stages",
      cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
 text(mod5, y = -0.03, cex = 0.7)
 ```
 
-##### Stages
+###### Barplot
+
+`barplot_stages` permit to easily plot barplots (via `barplot`) 
+representing the different probabilities defined for the different
+stages of a variable.
 
 ```{r}
-stages(mod4, "Kids")
+barplot_stages(mod4, "Kids", legend.text = TRUE)
 ```
 
-```{r}
-summary(mod4)
-```
 
 ##### Subtrees
 

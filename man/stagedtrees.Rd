@@ -6,7 +6,7 @@
 \title{Staged event trees.}
 \description{
 Algorithms to create, learn, fit and explore staged event tree models.
-Functions to compute probabilities and make predictions from the fitted
+Functions to compute probabilities, make predictions from the fitted
 models and to plot, analyze and manipulate staged event trees.
 }
 \details{
