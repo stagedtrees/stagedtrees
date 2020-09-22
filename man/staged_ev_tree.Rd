@@ -2,30 +2,24 @@
 % Please edit documentation in R/1-base-model-function.R
 \name{staged_ev_tree}
 \alias{staged_ev_tree}
-\alias{staged_ev_tree.default}
 \alias{staged_ev_tree.table}
 \alias{staged_ev_tree.data.frame}
 \alias{staged_ev_tree.list}
 \title{Build a staged event tree}
 \usage{
-staged_ev_tree(x, full = FALSE, ...)
+staged_ev_tree(x, full = FALSE, order = NULL)
 
-\method{staged_ev_tree}{default}(x, ...)
+\method{staged_ev_tree}{table}(x, full = FALSE, order = names(dimnames(x)))
 
-\method{staged_ev_tree}{table}(x, full = FALSE, order = names(dimnames(x)), ...)
+\method{staged_ev_tree}{data.frame}(x, full = FALSE, order = colnames(x))
 
-\method{staged_ev_tree}{data.frame}(x, full = FALSE, order = colnames(x), ...)
-
-\method{staged_ev_tree}{list}(x, full = FALSE, ...)
+\method{staged_ev_tree}{list}(x, full = FALSE, order = names(x))
 }
 \arguments{
 \item{x}{a list, a data frame or a table with data}
 
 \item{full}{logical, if TRUE the full model is created
 otherwise the independence model.}
-
-\item{...}{additional parameters to be passed to the particular
-method.}
 
 \item{order}{order of the variables to build the
 tree, by default the order of the variables
@@ -36,10 +30,13 @@ Build a staged event tree
 }
 \examples{
 
-######### from dataset
+######### from table
+model.titanic <- staged_ev_tree(Titanic, full = TRUE) 
+
+######### from data frame
 DD <- generate_random_dataset(n = 4, 1000)
-indep <- staged_ev_tree(DD, fit = TRUE)
-full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
+indep <- staged_ev_tree(DD)
+full <- staged_ev_tree(DD, full = TRUE)
 
 
 ######### from list

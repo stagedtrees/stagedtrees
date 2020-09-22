@@ -34,7 +34,7 @@ test_that("summary.sevt for indep", {
 test_that("subtree", {
   expect_silent(sub <- subtree(sev, c("a", "1", "-1")))
   expect_silent(plot(sub))
-  expect_silent(fbhc_sevt(sub))
+  expect_silent(fbhc(sub))
   expect_silent(sevt.fit(sub, data = DD))
 })
 

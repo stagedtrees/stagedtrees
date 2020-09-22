@@ -24,6 +24,6 @@ Obtain the stages of a given variable in a staged event tree object.
 }
 \examples{
 DD <- generate_xor_dataset(5, 100)
-model <- staged_ev_tree(DD, lambda = 0)
+model <- full(DD)
 stages(model, var = "X5")
 }

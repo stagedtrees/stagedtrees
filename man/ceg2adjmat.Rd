@@ -21,7 +21,7 @@ It transforms the ceg object into an adjacency matrix.
 }
 \examples{
 DD <- generate_xor_dataset(3, 100)
-model <- bhc_sevt(full(DD))
-ceg <- sevt2ceg(model)
-ceg2adjmat(ceg)
+model <- bhc(full(DD))
+model.ceg <- ceg(model)
+ceg2adjmat(model.ceg)
 }

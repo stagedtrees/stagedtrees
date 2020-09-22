@@ -11,10 +11,10 @@
 #' the transition probabilities (\code{object$prob}) in the model.
 #' @return A data frame containing a sample of size \code{n}
 #' @examples
-#' model <- naive_sevt(full(PhDArticles, lambda = 1))
-#' sample_sevt(model, 10)
+#' model <- fbhc(full(PhDArticles, lambda = 1))
+#' sample_from(model, 10)
 #' @export
-sample_sevt <- function(object, nsim = 1, seed = NULL) {
+sample_from <- function(object, nsim = 1, seed = NULL) {
   stopifnot(nsim > 0)
   stopifnot(is(object, "sevt"))
   stopifnot(has_prob(object))

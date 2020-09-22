@@ -16,10 +16,11 @@ The order of the variable is the
 order of the event tree.
 \item stages (required): A named list where each component
 stores the stages for the given variable.
-\item ctables: The contingency tables of the data.
-\item lambda: The smoothing parameter used to estimate the model.
+\item ctables: The contingency tables of the data distributed
+along the tree structure.
+\item lambda: The smoothing parameter used to compute probabilities.
 \item prob: The conditional probability tables for every
-variable and every stage.
+variable and stage.
 \item ll: The log-likelihood of the \code{estimated} model.
 }
 The tree structure is never defined explicitly, but instead
@@ -32,4 +33,15 @@ the levels of \code{v}.
 The stages informations is instead stored as a list of
 vectors, where each vector is indexed as the internal nodes
 of the tree at a given depth.
+
+To define a staged tree from data (data frame or table) the
+user can call either \code{\link{full}} or \code{\link{indep}}
+which both construct the staged tree object, attach the data in
+\code{ctables} and compute probabilities. After, one of the
+available model selection algorithm can be used, see for example
+\code{\link{hc}}, \code{\link{bhc}} or
+\code{\link{stages_hclust}}.
+If, mainly for development, only the staged tree structure is needed (without data or
+probabilities) the basic \code{\link{staged_ev_tree}} constructor can
+be used.
 }

@@ -1,3 +1,13 @@
+#' Convert to sevt class
+#' 
+#' @param x     an R object to be coerced
+#' @param order order of the variables 
+#' @return the equivalent sevt object
+#' @export
+as.sevt <- function(x, order = NULL){
+  UseMethod("as.sevt", x)
+} 
+
 #' Convert a bn fit to a staged event tree object
 #' 
 #' @param x a \code{bn.fit} object
@@ -81,13 +91,12 @@ as.sevt.bn.fit <- function(x, order = NULL) {
 }
 
 
-
 #' Fit a staged event tree
 #'
 #' Estimate transition probabilities in a staged event tree from data.
 #' Probabilities are estimated with the relative frequencies plus,
 #' eventually,  an additive (Laplace) smoothing.
-#' @param object a staged event tree
+#' @param object a staged event tree.
 #' @param data data.frame or contingency table with observations of 
 #'             the variables in \code{object}.
 #' @param lambda smoothing parameter.
@@ -189,7 +198,7 @@ set_stage <- function(object, path, stage) {
 #' @details this function joins together two stages associated to the same variable.
 #' @examples
 #' model <- full(PhDArticles, lambda = 0)
-#' model <- fbhc_sevt(model)
+#' model <- fbhc(model)
 #' model$stages$Kids
 #' model <- join_stages(model, "Kids", "5", "6")
 #' model$stages$Kids
@@ -252,7 +261,7 @@ join_stages <- function(object, v, s1, s2) {
 #' @examples
 #' DD <- generate_random_dataset(5, 100)
 #' model <- full(DD,lambda = 1)
-#' model <- bhc_sevt(model)
+#' model <- bhc(model)
 #' model <- stndnaming(model)
 #' model$stages$X5
 #'
@@ -327,14 +336,15 @@ is_fitted_sevt <- function(object) {
 #'  inclusion/exclusion/equality/diversity between 
 #'  the stages structures of the two models.
 #' @examples
-#' mod1 <- bhc_sevt(full(PhDArticles[, 1:5], lambda = 1))
-#' mod2 <- fbhc_sevt(full(PhDArticles[, 1:5], lambda = 1))
+#' mod1 <- bhc(full(PhDArticles[, 1:5], lambda = 1))
+#' mod2 <- fbhc(full(PhDArticles[, 1:5], lambda = 1))
 #' inclusion_stages(mod1, mod2)
 #' @export
 inclusion_stages <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
-  stopifnot(all(names(object1$tree) == names(object2$tree)))
+  stopifnot(nvar_sevt(object1) == nvar_sevt(object2))
+  stopifnot(all(variable.names(object1) == variable.names(object2)))
   out <- rep(list(c()), length(object1$stages))
   attr(out, "names") <- attr(object1$stages, "names")
   out2 <- out
@@ -420,7 +430,7 @@ inclusion_stages <- function(object1, object2) {
 #' @export
 #' @examples
 #' DD <- generate_xor_dataset(5, 100)
-#' model <- staged_ev_tree(DD, lambda = 1)
+#' model <- full(DD, lambda  = 1)
 #' print(model)
 print.sevt <- function(x, ...) {
   cat(
@@ -450,7 +460,7 @@ print.sevt <- function(x, ...) {
 #'         to each variable in the model (that is \code{object$stages}).
 #' @examples
 #' DD <- generate_xor_dataset(5, 100)
-#' model <- staged_ev_tree(DD, lambda = 0)
+#' model <- full(DD)
 #' stages(model, var = "X5")
 #' @export
 stages <- function(object, var = NULL) {
@@ -474,7 +484,7 @@ stages <- function(object, var = NULL) {
 #'         for which a \code{print}
 #'         method exist.
 #' @examples
-#' model <- fbhc_sevt(full(PhDArticles, lambda = 1))
+#' model <- fbhc(full(PhDArticles, lambda = 1))
 #' summary(model)
 #' @export
 summary.sevt <- function(object, ...) {
@@ -609,7 +619,7 @@ subtree <- function(object, path) {
 #' consecutive integers.
 #' @examples
 #' DD <- generate_xor_dataset(4, 100)
-#' model <- fbhc_sevt(full(DD, join_zero = TRUE))
+#' model <- fbhc(full(DD, join_zero = TRUE))
 #' model$stages
 #' model1 <- stndnaming(model)
 #' model1$stages
@@ -702,8 +712,8 @@ stndnaming <- function(object, uniq = FALSE,
 #' @export
 #' @examples
 #' data("PhDArticles")
-#' mod1 <- bhc_sevt(full(PhDArticles[, 1:4], lambda = 1))
-#' mod2 <- fbhc_sevt(full(PhDArticles[, 1:4], lambda = 1))
+#' mod1 <- bhc(full(PhDArticles[, 1:4], lambda = 1))
+#' mod2 <- fbhc(full(PhDArticles[, 1:4], lambda = 1))
 #' compare_stages(mod1, mod2)
 compare_stages <-
   function(object1,
@@ -715,6 +725,7 @@ compare_stages <-
     # check and rename stages
     stopifnot(is(object1, "sevt"))
     stopifnot(is(object2, "sevt"))
+    stopifnot(nvar_sevt(object1) == nvar_sevt(object2))
     stopifnot(all(names(object1$tree) == names(object2$tree)))
     object1 <- stndnaming(object1)
     object2 <- stndnaming(object2)
@@ -774,6 +785,7 @@ hamming_stages <- function(object1, object2, return.tree = FALSE) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
   # check if models are over the same variables, and same order
+  stopifnot(nvar_sevt(object1) == nvar_sevt(object2))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
   if (!requireNamespace("clue", quietly = TRUE)) {
     stop("Package \"clue\" needed for this function to work. Please install it.",
@@ -843,8 +855,8 @@ hamming_stages <- function(object1, object2, return.tree = FALSE) {
 #'
 #' ##########
 #' m0 <- full(PhDArticles[, 1:4], lambda = 0)
-#' m1 <- bhc_sevt(m0)
-#' m2 <- bj_sevt(m0, distance = tv, thr = 0.25)
+#' m1 <- bhc(m0)
+#' m2 <- bj(m0, distance = "tv", thr = 0.25)
 #' stagesdiff(m1, m2)
 stagesdiff <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
@@ -957,7 +969,7 @@ NULL
 #' @return \code{get_stage} returns
 #' the name of the stage for a given path (or paths).
 #' @examples
-#' model <- fbhc_sevt(full(PhDArticles))
+#' model <- fbhc(full(PhDArticles))
 #' get_stage(model, c("0", "male"))
 #' paths <- expand.grid(model$tree[2:1])[, 2:1]
 #' get_stage(model, paths)
@@ -1028,12 +1040,15 @@ rename_stage <- function(object, var, stage, new.label){
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
   }
+  if (!stage %in% object$stages[[var]]){
+    stop(stage, " is not a stage of variable ", var, " in the model")
+  }
   # set new label
   object$stages[[var]][object$stages[[var]] %in% stage] <- new.label
-  # if staged tree has probabilities re-fit the model
-  # (TODO: faster version without refitting)
-  if (is_fitted_sevt(object)){
-    object <- sevt.fit(object)
+  # if staged tree has probabilities move it to the new-label
+  if (has_prob(object)){
+    object$prob[[var]][[new.label]] <- object$prob[[var]][[stage]]
+    object$prob[[var]][[stage]] <- NULL
   }
   return(object)
 }

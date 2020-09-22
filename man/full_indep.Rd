@@ -3,19 +3,22 @@
 \name{full_indep}
 \alias{full_indep}
 \alias{full}
-\alias{full.default}
+\alias{full.table}
+\alias{full.data.frame}
 \alias{indep}
-\alias{indep.default}
+\alias{indep.table}
 \alias{indep.data.frame}
 \title{Full and independent staged event tree}
 \usage{
 full(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{full}{default}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{full}{table}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+
+\method{full}{data.frame}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
 indep(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{indep}{default}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{indep}{table}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 
 \method{indep}{data.frame}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
 }

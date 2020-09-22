@@ -2,7 +2,7 @@
 % Please edit documentation in R/1-base-model-function.R
 \name{make_ctables}
 \alias{make_ctables}
-\title{Add data to a stratified event tree}
+\title{Distribute counts along tree}
 \usage{
 make_ctables(object, data)
 }
@@ -16,7 +16,8 @@ of the variable in \code{object}}
 A list of \code{ftable}s.
 }
 \description{
-Add the \code{ctables} field with data distributed along
+Create the listo of \code{ftable}s
+storing the observations distributed along
 the path of the tree.
 }
 \details{

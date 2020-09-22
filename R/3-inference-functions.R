@@ -1,24 +1,14 @@
 #' Compute probability of a path from root
 #'
+#' Internal function to compute probability of a path. It does not
+#' check the validity of the path.
 #' @param object a staged event tree object
 #' @param x the path, expressed as a character vector containing the sequence of the assumed levels
 #' @param log logical, if \code{TRUE} log-probability is returned
 #' @return The probability of the given path or its logarithm if \code{log=TRUE}
 #' @details it computes the probability of following a given path (\code{x}) starting from the root.
 #' Can be a full path from the root to a leaf or a shorter path.
-#' @examples
-#' DD <- generate_random_dataset(5, 100)
-#' model <- full(DD, lambda = 1)
-#' path_probability(model, c("1", "-1", "1", "-1", "1"), log = TRUE) # root to leaf path
-#' path_probability(model, c("1", "-1")) # short path
-#'
-#' grid <- expand.grid(model$tree) # all paths from root to leaves
-#'
-#' # joint distribution. it sums up to 1.
-#' grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability,
-#'  object = model)
-#' cbind(grid, grid.prob)
-#' @export
+#' @keywords internal
 path_probability <-
   function(object, x, log = FALSE) {
     stopifnot(is(object, "sevt"))
@@ -59,13 +49,13 @@ path_probability <-
 #' @examples
 #' DD <- generate_random_dataset(5, 100)
 #' model <- full(DD, lambda = 1)
-#' pr <- prob_sevt(model, expand.grid(model$tree[c(2, 3, 4)]))
+#' pr <- prob(model, expand.grid(model$tree[c(2, 3, 4)]))
 #' sum(pr)
-#' prob_sevt(model, DD[1:10, ])
+#' prob(model, DD[1:10, ])
 #' @export
-prob_sevt <- function(object, x, log = FALSE, nan0 = TRUE) {
+prob <- function(object, x, log = FALSE, nan0 = TRUE) {
   stopifnot(is(object, "sevt"))
-  stopifnot(is_fitted_sevt(object))
+  stopifnot(has_prob(object))
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
   }
@@ -119,7 +109,7 @@ logLik.sevt <- function(object, ...) {
     return(object$ll)
   }
   stopifnot(is(object, "sevt"))
-  stopifnot(!is.null(object$prob))
+  stopifnot(has_prob(object))
   stopifnot(!is.null(object$ctables))
   vars <- names(object$tree)
   prob <- expand_prob(object)

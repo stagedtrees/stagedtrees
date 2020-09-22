@@ -10,10 +10,11 @@
 #'                      order of the event tree.
 #'          \item stages (required): A named list where each component
 #'                        stores the stages for the given variable.
-#'          \item ctables: The contingency tables of the data.
-#'          \item lambda: The smoothing parameter used to estimate the model.
+#'          \item ctables: The contingency tables of the data distributed 
+#'                         along the tree structure.
+#'          \item lambda: The smoothing parameter used to compute probabilities.
 #'          \item prob: The conditional probability tables for every
-#'                      variable and every stage.
+#'                      variable and stage.
 #'          \item ll: The log-likelihood of the \code{estimated} model.
 #'        }
 #'        The tree structure is never defined explicitly, but instead 
@@ -26,6 +27,17 @@
 #'        The stages informations is instead stored as a list of
 #'        vectors, where each vector is indexed as the internal nodes
 #'        of the tree at a given depth. 
+#'        
+#' To define a staged tree from data (data frame or table) the 
+#' user can call either \code{\link{full}} or \code{\link{indep}}
+#' which both construct the staged tree object, attach the data in 
+#' \code{ctables} and compute probabilities. After, one of the 
+#' available model selection algorithm can be used, see for example 
+#' \code{\link{hc}}, \code{\link{bhc}} or 
+#' \code{\link{stages_hclust}}. 
+#' If, mainly for development, only the staged tree structure is needed (without data or 
+#' probabilities) the basic \code{\link{staged_ev_tree}} constructor can 
+#' be used.
 #' @name sevt class
 NULL
 
@@ -34,28 +46,24 @@ NULL
 #' @param x a list, a data frame or a table with data
 #' @param full logical, if TRUE the full model is created 
 #'              otherwise the independence model.
-#' @param ... additional parameters to be passed to the particular 
-#'            method.
+#' @param order order of the variables
 #' @export
-staged_ev_tree <- function(x, full = FALSE, ...) {
+staged_ev_tree <- function(x, full = FALSE, order = NULL) {
   UseMethod("staged_ev_tree", object = x)
-}
-
-#' @rdname staged_ev_tree
-#' @export
-staged_ev_tree.default <- function(x, ...) {
-  return(staged_ev_tree.data.frame(as.data.frame(x, ...)))
 }
 
 #' @rdname staged_ev_tree
 #' @param order order of the variables to build the 
 #'              tree, by default the order of the variables
-#'              in the table \code{x}. 
+#'              in the table \code{x}.
+#' @examples 
+#' 
+#' ######### from table
+#' model.titanic <- staged_ev_tree(Titanic, full = TRUE) 
 #' @export
 staged_ev_tree.table <- function(x,
                                  full = FALSE,
-                                 order = names(dimnames(x)),
-                                 ...) {
+                                 order = names(dimnames(x))) {
   # extract ordered list of levels
   tree <- dimnames(x)[order]
   # check if tree exist
@@ -71,15 +79,14 @@ staged_ev_tree.table <- function(x,
 #' @export
 #' @examples
 #'
-#' ######### from dataset
+#' ######### from data frame
 #' DD <- generate_random_dataset(n = 4, 1000)
-#' indep <- staged_ev_tree(DD, fit = TRUE)
-#' full <- staged_ev_tree(DD, full = TRUE, fit = TRUE, lambda = 1)
+#' indep <- staged_ev_tree(DD)
+#' full <- staged_ev_tree(DD, full = TRUE)
 #' 
 staged_ev_tree.data.frame <- function(x,
                                       full = FALSE,
-                                      order = colnames(x),
-                                      ...) {
+                                      order = colnames(x)) {
   # extract ordered list of levels
   tree <- lapply(x, function(v) {
     return(levels(as.factor(v)))
@@ -98,13 +105,15 @@ staged_ev_tree.data.frame <- function(x,
 #'   X = c("good", "bad"),
 #'   Y = c("high", "low")
 #' ))
-staged_ev_tree.list <- function(x, full = FALSE, ...) {
+staged_ev_tree.list <- function(x, full = FALSE, order = names(x)) {
   if (is.null(names(x))) {
     # if there are no names of variables
     # we assign variables names V1,V2,...
     names(x) <- paste0("V", seq_along(x))
+    order <- names(x)
   }
   
+  x <- x[order[order %in% names(x)]]
   # extract number of levels for each variable
   dims <- vapply(x, FUN = length, FUN.VALUE = 1)
   if (any(is.null(dims))) {
@@ -179,9 +188,10 @@ expand_prob <- function(object) {
   return(prob)
 }
 
-#' Add data to a stratified event tree
+#' Distribute counts along tree
 #'
-#' Add the \code{ctables} field with data distributed along 
+#' Create the listo of \code{ftable}s 
+#' storing the observations distributed along 
 #' the path of the tree.
 #' @param object A stratified event tree, a list with a \code{tree} field
 #' @param data table or data.frame containing observations 

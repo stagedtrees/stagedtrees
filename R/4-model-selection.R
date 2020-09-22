@@ -87,9 +87,8 @@ full <- function(data, join_zero = FALSE, name.join = "NA", lambda = 0) {
 }
 
 #' @rdname full_indep
-#' @param name.join name to pass to \code{\link{join_zero}}
 #' @export
-full.default <- function(data, join_zero = FALSE,
+full.table <- function(data, join_zero = FALSE,
                          name.join = "NA", lambda = 0){
   object <- staged_ev_tree(data, full = TRUE)
   object$ctables <- make_ctables(object, data)
@@ -103,6 +102,21 @@ full.default <- function(data, join_zero = FALSE,
 
 #' @rdname full_indep
 #' @export
+full.data.frame <- function(data, join_zero = FALSE,
+                            name.join = "NA", lambda = 0){
+  object <- staged_ev_tree(data, full = TRUE)
+  object$ctables <- make_ctables(object, data)
+  if (join_zero){
+    join_zero(object, 
+              fit = TRUE, name = name.join, lambda = lambda)
+  }else{
+    sevt.fit(object, lambda = lambda)
+  }
+}
+
+
+#' @rdname full_indep
+#' @export
 indep <- function(data, join_zero = FALSE, 
                   name.join = "NA", lambda = 0) {
   UseMethod("indep", data)
@@ -110,7 +124,7 @@ indep <- function(data, join_zero = FALSE,
 
 #' @rdname full_indep
 #' @export
-indep.default <- function(data, join_zero = FALSE, 
+indep.table <- function(data, join_zero = FALSE, 
                           name.join = "NA", lambda = 0) {
   object <- staged_ev_tree(data, full = FALSE)
   object$ctables <- make_ctables(object, data)
@@ -180,54 +194,6 @@ indep.data.frame <- function(data, join_zero = FALSE,
 }
 
 
-#' Naive staged event tree
-#'
-#' Build a stage event tree with \code{k} stages for each variable
-#' @param object a full staged event tree
-#' @param distance a distance between probabilities
-#' @param ignore vector of stages which will be left untouched
-#' @param k number of clusters, that is stages per variable
-#' @param method the agglomeration method to be used in \code{\link{hclust}}
-#' @param limit the maximum number of variable to consider
-#' @param ... additional arguments to be passeed to \code{distance}
-#' @return A staged event tree with \code{k} stages per variable
-#' @details Old implementation which allows arbitrary distance 
-#'          function, see \code{\link{hclust_sevt}} for the 
-#'          most recent implementation. 
-#' @export
-#' @importFrom stats cutree hclust
-#' @examples
-#' DD <- generate_xor_dataset(n = 4, N = 1000)
-#' naive_model <- naive_sevt(full(DD, lambda = 1))
-#' pr <- predict(naive_model, newdata = DD[501:1000, ])
-#' table(pr, DD$C[501:1000])
-naive_sevt <-
-  function(object,
-           distance = kl,
-           k = length(object$tree[[1]]),
-           method = "complete",
-           ignore = NULL,
-           limit = length(object$tree),
-           ...) {
-    stopifnot(is_fitted_sevt(object))
-    for (v in names(object$tree)[2:limit]) {
-      wch <- names(object$prob[[v]])
-      wch <- wch[!(wch %in% ignore)]
-      M <- distance_mat_stages(object$prob[[v]][wch],
-                               distance = distance,
-                               ...
-      )
-      groups <- cutree(hclust(M, method = method), k = min(k, attr(M, "Size")))
-      ### remove probabilitites and assign stages
-      object$prob[[v]] <- list()
-      old <- object$stages[[v]]
-      for (s in 1:k) {
-        object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
-      }
-    }
-    object$call <- sys.call()
-    return(sevt.fit(object, lambda = object$lambda))
-  }
 
 #' Backward Random Hill-Climbing
 #'
@@ -250,11 +216,11 @@ naive_sevt <-
 #' @export
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
-#' model <- bhcr_sevt(full(DD), trace = 2)
+#' model <- bhcr(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
-bhcr_sevt <-
+bhcr <-
   function(object,
            score = function(x) {
              return(-BIC(x))
@@ -318,12 +284,12 @@ bhcr_sevt <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
-#' model <- bhc_sevt(full(DD), trace = 2)
+#' model <- bhc(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-bhc_sevt <-
+bhc <-
   function(object,
            score = function(x) {
              return(-BIC(x))
@@ -408,12 +374,12 @@ bhc_sevt <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 100)
-#' model <- fbhc_sevt(full(DD), trace = 2)
+#' model <- fbhc(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-fbhc_sevt <-
+fbhc <-
   function(object = NULL,
            score = function(x) {
              return(-BIC(x))
@@ -496,15 +462,15 @@ fbhc_sevt <-
 #' Backward joining of stages
 #'
 #' Join stages from more complex to simpler models
-#' using a distance and a threshold value
+#' using a distance and a threshold value.
 #'
-#' @param object the staged event tree from where to start
-#' @param distance the distance between probabilities to use
+#' @param object the staged event tree from where to start.
+#' @param distance string, see details.
 #' @param thr the threshold for joining stages
-#' @param scope names of variables that should be considered for the optimization
-#' @param ignore stage names that should be ignored
-#' @param trace if >0 increasingly amount of info
-#' @param ... additional parameters to be passed to the distance function
+#' @param scope names of variables that should be considered 
+#'              for the optimization.
+#' @param ignore stage names that should be ignored.
+#' @param trace if >0 increasingly amount of info.
 #' is printed (via \code{message})
 #'
 #' @details For each variable in the model stages are joined iteratively.
@@ -513,21 +479,32 @@ fbhc_sevt <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
-#' model <- bj_sevt(full(DD, lambda = 1), trace = 2)
+#' model <- bj(full(DD, lambda = 1), trace = 2)
 #' summary(model)
 #' @importFrom  methods is
 #' @export
-bj_sevt <-
+bj <-
   function(object = NULL,
-           distance = kl,
+           distance = "kl",
            thr = 0.1,
            scope = NULL,
            ignore = NULL,
-           trace = 0,
-           ...) {
+           trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
-    stopifnot(is(distance, "function"))
+    stopifnot(is(distance, "character"))
+    stopifnot(distance %in% c("l1", "l2", "ry", "kl", "tv", "hl",
+                              "bh", "cd"))
+    dist_fun <- switch(distance, 
+                       l1 = probdist.l1,
+                       l2 = probdist.l2,
+                       ry = probdist.ry,
+                       kl = probdist.kl,
+                       tv = probdist.tv,
+                       hl = probdist.hl,
+                       bh = probdist.bh,
+                       cd = probdist.cd,
+                       )
     if (is.null(scope)){
       scope <- variable.names(object)[-1]
     }
@@ -539,7 +516,7 @@ bj_sevt <-
         stages <- unique(object$stages[[v]])
         stages <- stages[!(stages %in% ignore)]
         if (length(stages) > 1) {
-          M <- as.matrix(distance_mat_stages(object$prob[[v]], distance, ...))
+          M <- as.matrix(distance_mat_stages(object$prob[[v]], dist_fun))
           diag(M) <- Inf
           idx <- which.min(M)
           i <- ceiling(idx / dim(M)[1])
@@ -598,14 +575,14 @@ bj_sevt <-
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' model <- hc_sevt(full(PhDArticles[, 1:3], lambda = 1))
+#' model <- hc(full(PhDArticles[, 1:3], lambda = 1))
 #' summary(model)
 #' 
 #' ## preserve zero stages
 #' start <- join_zero(indep(PhDArticles[,1:5]), name = "NA")
-#' model <- hc_sevt(start, ignore = "NA")
+#' model <- hc(start, ignore = "NA")
 #' @export
-hc_sevt <- function(object,
+hc <- function(object,
                     score = function(x) {
                       return(-BIC(x))
                     },
@@ -687,7 +664,7 @@ hc_sevt <- function(object,
 #' @param distance string, the distance measure to be used, either 
 #'                 a possible `method` for \code{\link{dist}} or 
 #'                 one of the folowing: \code{"totvar", "hellinger"}.
-#' @param ignore vector of stages which will be ignored.
+#' @param ignore vector of stages which will be ignored and left untouched.
 #' @param k integer or (named) vector: number of clusters, that is stages per variable. 
 #'        Values will be recycled if needed. 
 #' @param method the agglomeration method to be used in \code{\link{hclust}}.
@@ -700,18 +677,14 @@ hc_sevt <- function(object,
 #'          A different number of stages for the different variables 
 #'          in the model can be specified by supplying a (named) vector 
 #'          via the argument \code{k}.
-#'          \code{hclust_sevt} is a different implementation of the 
-#'          same method as \code{\link{naive_sevt}}, the latter 
-#'          accepting a general distance function but being generally 
-#'          slower and accepting only one value for \code{k}.
 #' @return A staged event tree object.
 #' @importFrom stats dist hclust cutree
 #' @examples 
 #' data("Titanic")
-#' model <- hclust_sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' model <- stages_hclust(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
-hclust_sevt <-
+stages_hclust <-
   function(object,
            distance = "totvar",
            k = length(object$tree[[1]]),
@@ -772,10 +745,10 @@ hclust_sevt <-
 #' @importFrom stats kmeans
 #' @examples 
 #' data("Titanic")
-#' model <- kmeans_sevt(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' model <- stages_kmeans(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
-kmeans_sevt <- function(object,
+stages_kmeans <- function(object,
                         k = length(object$tree[[1]]),
                         algorithm = "Hartigan-Wong",
                         transform = sqrt,

@@ -4,7 +4,7 @@
 \alias{as.sevt.bn.fit}
 \title{Convert a bn fit to a staged event tree object}
 \usage{
-as.sevt.bn.fit(x, order = NULL)
+\method{as.sevt}{bn.fit}(x, order = NULL)
 }
 \arguments{
 \item{x}{a \code{bn.fit} object}

@@ -5,33 +5,33 @@ mod <- indep(DD)
 prob <- mod$prob
 
 test_that("sample size is correct", {
-  D <- sample_sevt(mod, 27)
+  D <- sample_from(mod, 27)
   expect_equal(nrow(D), 27)
 })
 
 
 test_that("variables number and names are correct", {
-  D <- sample_sevt(mod, 35)
+  D <- sample_from(mod, 35)
   expect_equal(colnames(D), colnames(DD))
 })
 
 
 
 test_that("sampling of 1 observation works", {
-  D <- sample_sevt(mod, 1)
+  D <- sample_from(mod, 1)
   expect_equal(colnames(D), colnames(DD))
   expect_equal(nrow(D), 1)
 })
 
 
 test_that("sampling of 0 or <0 should throw error", {
-  expect_error(D <- sample_sevt(mod, 0))
+  expect_error(D <- sample_from(mod, 0))
 })
 
 mod$prob <- NULL
 
 test_that("sampling from a non fitted model shoudl throw error", {
-  expect_error(D <- sample_sevt(mod, 10))
+  expect_error(D <- sample_from(mod, 10))
 })
 
 mod$prob <- prob
@@ -40,5 +40,5 @@ mod$prob <- prob
 
 test_that("sampling from a non sevt object shoudl throw error", {
   class(mod) <- "ajsjhhsajh"
-  expect_error(D <- sample_sevt(mod, 10))
+  expect_error(D <- sample_from(mod, 10))
 })

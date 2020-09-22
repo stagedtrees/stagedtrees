@@ -27,7 +27,7 @@ this function joins together two stages associated to the same variable.
 }
 \examples{
 model <- full(PhDArticles, lambda = 0)
-model <- fbhc_sevt(model)
+model <- fbhc(model)
 model$stages$Kids
 model <- join_stages(model, "Kids", "5", "6")
 model$stages$Kids

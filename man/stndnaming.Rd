@@ -24,7 +24,7 @@ Standard renaming of stages
 }
 \examples{
 DD <- generate_xor_dataset(4, 100)
-model <- fbhc_sevt(full(DD, join_zero = TRUE))
+model <- fbhc(full(DD, join_zero = TRUE))
 model$stages
 model1 <- stndnaming(model)
 model1$stages

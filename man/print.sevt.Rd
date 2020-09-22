@@ -25,6 +25,6 @@ If available the log-likelihood of the model is printed.
 }
 \examples{
 DD <- generate_xor_dataset(5, 100)
-model <- staged_ev_tree(DD, lambda = 1)
+model <- full(DD, lambda  = 1)
 print(model)
 }

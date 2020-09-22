@@ -7,17 +7,16 @@
 #' Model selection algorithms:
 #' * full model \code{\link{full}}
 #' * independence model \code{\link{indep}}
-#' * Hill-Climbing \code{\link{hc_sevt}}
-#' * Backward Hill-Climbing \code{\link{bhc_sevt}}
-#' * Fast Backward Hill-Climbing \code{\link{fbhc_sevt}}
-#' * Backward Hill-Climbing Random \code{\link{bhcr_sevt}}
-#' * Backward joining \code{\link{bj_sevt}}
-#' * Naive Staged Event Tree \code{\link{naive_sevt}}
-#' * Hierarchical Clustering \code{\link{hclust_sevt}}
-#' * K-Means Clustering \code{\link{kmeans_sevt}}
+#' * Hill-Climbing \code{\link{hc}}
+#' * Backward Hill-Climbing \code{\link{bhc}}
+#' * Fast Backward Hill-Climbing \code{\link{fbhc}}
+#' * Backward Hill-Climbing Random \code{\link{bhcr}}
+#' * Backward joining \code{\link{bj}}
+#' * Hierarchical Clustering \code{\link{stages_hclust}}
+#' * K-Means Clustering \code{\link{stages_kmeans}}
 #'
 #' Probabilities, log-likelihood and predictions:
-#' * Marginal probabilities \code{\link{prob_sevt}}
+#' * Marginal probabilities \code{\link{prob}}
 #' * Log-Likelihood \code{\link{logLik.sevt}}
 #' * Predict method \code{\link{predict.sevt}}
 #'
@@ -56,6 +55,6 @@
 #' @examples
 #' data("PhDArticles")
 #' mf <- full(PhDArticles)
-#' mod <- fbhc_sevt(mf)
+#' mod <- fbhc(mf)
 #' plot(mod)
 NULL

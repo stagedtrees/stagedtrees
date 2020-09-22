@@ -14,19 +14,18 @@ Model selection algorithms:
 \itemize{
 \item full model \code{\link{full}}
 \item independence model \code{\link{indep}}
-\item Hill-Climbing \code{\link{hc_sevt}}
-\item Backward Hill-Climbing \code{\link{bhc_sevt}}
-\item Fast Backward Hill-Climbing \code{\link{fbhc_sevt}}
-\item Backward Hill-Climbing Random \code{\link{bhcr_sevt}}
-\item Backward joining \code{\link{bj_sevt}}
-\item Naive Staged Event Tree \code{\link{naive_sevt}}
-\item Hierarchical Clustering \code{\link{hclust_sevt}}
-\item K-Means Clustering \code{\link{kmeans_sevt}}
+\item Hill-Climbing \code{\link{hc}}
+\item Backward Hill-Climbing \code{\link{bhc}}
+\item Fast Backward Hill-Climbing \code{\link{fbhc}}
+\item Backward Hill-Climbing Random \code{\link{bhcr}}
+\item Backward joining \code{\link{bj}}
+\item Hierarchical Clustering \code{\link{stages_hclust}}
+\item K-Means Clustering \code{\link{stages_kmeans}}
 }
 
 Probabilities, log-likelihood and predictions:
 \itemize{
-\item Marginal probabilities \code{\link{prob_sevt}}
+\item Marginal probabilities \code{\link{prob}}
 \item Log-Likelihood \code{\link{logLik.sevt}}
 \item Predict method \code{\link{predict.sevt}}
 }
@@ -50,7 +49,7 @@ Modify models:
 \examples{
 data("PhDArticles")
 mf <- full(PhDArticles)
-mod <- fbhc_sevt(mf)
+mod <- fbhc(mf)
 plot(mod)
 }
 \references{

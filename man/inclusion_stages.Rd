@@ -30,7 +30,7 @@ inclusion/exclusion/equality/diversity between
 the stages structures of the two models.
 }
 \examples{
-mod1 <- bhc_sevt(full(PhDArticles[, 1:5], lambda = 1))
-mod2 <- fbhc_sevt(full(PhDArticles[, 1:5], lambda = 1))
+mod1 <- bhc(full(PhDArticles[, 1:5], lambda = 1))
+mod2 <- fbhc(full(PhDArticles[, 1:5], lambda = 1))
 inclusion_stages(mod1, mod2)
 }

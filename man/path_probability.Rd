@@ -17,22 +17,11 @@ path_probability(object, x, log = FALSE)
 The probability of the given path or its logarithm if \code{log=TRUE}
 }
 \description{
-Compute probability of a path from root
+Internal function to compute probability of a path. It does not
+check the validity of the path.
 }
 \details{
 it computes the probability of following a given path (\code{x}) starting from the root.
 Can be a full path from the root to a leaf or a shorter path.
 }
-\examples{
-DD <- generate_random_dataset(5, 100)
-model <- full(DD, lambda = 1)
-path_probability(model, c("1", "-1", "1", "-1", "1"), log = TRUE) # root to leaf path
-path_probability(model, c("1", "-1")) # short path
-
-grid <- expand.grid(model$tree) # all paths from root to leaves
-
-# joint distribution. it sums up to 1.
-grid.prob <- apply(t(apply(grid, 1, as.character)), 1, path_probability,
- object = model)
-cbind(grid, grid.prob)
-}
+\keyword{internal}

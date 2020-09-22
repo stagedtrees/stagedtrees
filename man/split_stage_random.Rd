@@ -29,7 +29,7 @@ probability \code{p}.
 \examples{
 DD <- generate_random_dataset(5, 100)
 model <- full(DD,lambda = 1)
-model <- bhc_sevt(model)
+model <- bhc(model)
 model <- stndnaming(model)
 model$stages$X5
 
