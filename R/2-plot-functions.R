@@ -322,6 +322,9 @@ text.sevt <-
 #'        argument in \code{\link{plot.sevt}}
 #' @param ... addittional arguments passed to \code{\link{barplot}}
 #' @export
+#' @examples 
+#' model <- fbhc(full(PhDArticles, lambda = 1))
+#' barplot_stages(model, "Kids", beside = TRUE)
 #' @importFrom graphics barplot
 barplot_stages <- function(object, var, legend.text = FALSE, 
                            col = NULL, ...){

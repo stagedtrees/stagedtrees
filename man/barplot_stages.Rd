@@ -21,3 +21,7 @@ argument in \code{\link{plot.sevt}}}
 \description{
 Barplot method for staged event trees
 }
+\examples{
+model <- fbhc(full(PhDArticles, lambda = 1))
+barplot_stages(model, "Kids", beside = TRUE)
+}

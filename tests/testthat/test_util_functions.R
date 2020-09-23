@@ -335,3 +335,8 @@ test_that("which_class (internal)",{
   expect_equal(stagedtrees:::which_class(c(-0.1, -10, -4, -1, -6),
                                          c("A", "B", "C", "D", "E")), !!A)
 })
+
+test_that("simple_clustering", {
+  M <- matrix(runif(25), ncol = 5, dimnames = list(1:5,1:5))
+  expect_is(stagedtrees:::simple_clustering(M), "list")
+})

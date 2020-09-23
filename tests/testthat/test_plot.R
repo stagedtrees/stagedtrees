@@ -30,6 +30,13 @@ test_that("plot should accept col = function() ", {
   }))
 })
 
+test_that("text.sevt works", {
+  expect_silent({
+    plot(mod)
+    text(mod)
+    })
+})
+
 context("barplot stages")
 
 test_that("barplot_stages should exit if not fitted", {
@@ -42,9 +49,19 @@ test_that("barplot_stages should accept col = 'stages'", {
   expect_silent(barplot_stages(mod, "B", col = "stages"))
 })
 
-
 test_that("barplot_stages should accept col = function()", {
   expect_silent(barplot_stages(mod, "B", col = function(s) {
     return(grDevices::hcl.colors(length(s)))
   }))
 })
+
+
+test_that("barplot_stages should accept col = LL", {
+  expect_silent(barplot_stages(mod, "B", col = NULL))
+})
+
+
+test_that("barplot_stages with legend.text=TRUE", {
+  expect_silent(barplot_stages(mod, "B", legend.text = TRUE))
+})
+

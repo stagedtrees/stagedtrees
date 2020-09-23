@@ -15,6 +15,12 @@ test_that("variables number and names are correct", {
   expect_equal(colnames(D), colnames(DD))
 })
 
+test_that("sampling with seed", {
+  D <- sample_from(mod, 35, seed = 23)
+  expect_equal(colnames(D), colnames(DD))
+  expect_equal(nrow(D), 35)
+})
+
 
 
 test_that("sampling of 1 observation works", {

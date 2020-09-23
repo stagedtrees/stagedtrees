@@ -41,3 +41,18 @@ test_that("subtree", {
 test_that("df_sevt", {
   expect_equal(df_sevt(sev), 63)
 })
+
+
+test_that("print.sevt", {
+  expect_output(print(sev))
+})
+
+test_that("summary.sevt is printed", {
+  expect_output(print(summary(sev)))
+})
+
+
+test_that("rename_stage", {
+  expect_is(rename_stage(sev, var = "X2", 
+                         stage = "2", new.label = "NEW"), "sevt")
+})
