@@ -4,25 +4,31 @@
 #' objects. It allows easy plotting for staged event tree with some
 #' options, mainly different ways to specify colors for the stages (see
 #' examples).
-#' @param x staged event tree object
-#' @param limit maximum number of variables plotted
-#' @param xlim graphical parameter
-#' @param ylim graphical parameter
-#' @param asp graphical parameter
-#' @param cex.label.nodes graphical parameter
-#' @param cex.label.edges graphical parameter
-#' @param cex.nodes graphical parameter
+#' @param x staged event tree object.
+#' @param limit maximum number of variables plotted.
+#' @param xlim the x limits (x1, x2) of the plot.
+#' @param ylim the y limits of the plot.
+#' @param main an overall title for the plot.
+#' @param sub a sub title for the plot.
+#' @param asp the y/x aspect ratio.
+#' @param cex.label.nodes amount of scaling for the node labels. 
+#'                        If set to \code{0} node labels are not showed.
+#' @param cex.label.edges amount of scaling for the edge labels. 
+#'                        If set to \code{0} edge labels are not showed.
+#' @param cex.nodes amount of scaling for the nodes of the tree.
 #' @param col color mapping for the stages, a named list with
 #'        names equal to the variables names in the model and
 #'        vectors named with stages names as components; otherwise
 #'        if \code{col == "stages"} the stage names will be used as
 #'        colors; otherwise if \code{col} is a function it will take
 #'        as input a vector of stages and output the corresponding colors.
-#' @param col.edges color for the edges
-#' @param ignore array of stages name that should not be plotted 
+#' @param col.edges color for the edges. 
+#' @param ignore array of stages name that should not be plotted.
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.
+#' @details 
+#' Plot method for staged event tree models. 
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
 #'
@@ -65,6 +71,8 @@ plot.sevt <-
            limit = 10,
            xlim = c(0, 1),
            ylim = c(0, 1),
+           main = NULL,
+           sub = NULL,
            asp = 1,
            cex.label.nodes = 1,
            cex.label.edges = 1,
@@ -122,7 +130,7 @@ plot.sevt <-
       asp = asp,
       ...
     )
-    title(...)
+    title(main = main, sub = sub, ...)
     n <- x$tree
     p <- length(x$tree)
     Ls <- rep(0, d)

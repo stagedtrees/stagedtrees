@@ -9,6 +9,8 @@
   limit = 10,
   xlim = c(0, 1),
   ylim = c(0, 1),
+  main = NULL,
+  sub = NULL,
   asp = 1,
   cex.label.nodes = 1,
   cex.label.edges = 1,
@@ -20,21 +22,27 @@
 )
 }
 \arguments{
-\item{x}{staged event tree object}
+\item{x}{staged event tree object.}
 
-\item{limit}{maximum number of variables plotted}
+\item{limit}{maximum number of variables plotted.}
 
-\item{xlim}{graphical parameter}
+\item{xlim}{the x limits (x1, x2) of the plot.}
 
-\item{ylim}{graphical parameter}
+\item{ylim}{the y limits of the plot.}
 
-\item{asp}{graphical parameter}
+\item{main}{an overall title for the plot.}
 
-\item{cex.label.nodes}{graphical parameter}
+\item{sub}{a sub title for the plot.}
 
-\item{cex.label.edges}{graphical parameter}
+\item{asp}{the y/x aspect ratio.}
 
-\item{cex.nodes}{graphical parameter}
+\item{cex.label.nodes}{amount of scaling for the node labels.
+If set to \code{0} node labels are not showed.}
+
+\item{cex.label.edges}{amount of scaling for the edge labels.
+If set to \code{0} edge labels are not showed.}
+
+\item{cex.nodes}{amount of scaling for the nodes of the tree.}
 
 \item{col}{color mapping for the stages, a named list with
 names equal to the variables names in the model and
@@ -43,9 +51,9 @@ if \code{col == "stages"} the stage names will be used as
 colors; otherwise if \code{col} is a function it will take
 as input a vector of stages and output the corresponding colors.}
 
-\item{col.edges}{color for the edges}
+\item{col.edges}{color for the edges.}
 
-\item{ignore}{array of stages name that should not be plotted}
+\item{ignore}{array of stages name that should not be plotted.}
 
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},
@@ -56,6 +64,9 @@ as input a vector of stages and output the corresponding colors.}
 objects. It allows easy plotting for staged event tree with some
 options, mainly different ways to specify colors for the stages (see
 examples).
+}
+\details{
+Plot method for staged event tree models.
 }
 \examples{
 
