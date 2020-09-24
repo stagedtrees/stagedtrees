@@ -13,23 +13,23 @@ generate_linear_dataset(
 )
 }
 \arguments{
-\item{n}{number of variables}
+\item{n}{number of variables.}
 
-\item{N}{number of observations}
+\item{N}{number of observations.}
 
-\item{eps}{noise}
+\item{eps}{noise.}
 
-\item{gamma}{numeric}
+\item{gamma}{numeric.}
 
-\item{alpha}{numeric vector of length \code{n}}
+\item{alpha}{numeric vector of length \code{n}.}
 }
 \value{
 A data.frame with \code{n} independent random variables and
 one class variable \code{C} computed as
-\code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+\code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}.
 }
 \description{
-Randomly generate a simple classification problem
+Randomly generate a simple classification problem.
 }
 \examples{
 DD <- generate_linear_dataset(n = 5, 1000)

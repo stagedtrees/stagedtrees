@@ -7,12 +7,12 @@
 new_label(labels)
 }
 \arguments{
-\item{labels}{vector of labels}
+\item{labels}{vector of labels.}
 }
 \value{
-a string label that is different from each \code{labels}
+a string label that is different from each \code{labels}.
 }
 \description{
-give a safe-to-add label that is not in \code{labels}
+give a safe-to-add label that is not in \code{labels}.
 }
 \keyword{internal}

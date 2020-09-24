@@ -1,8 +1,10 @@
 #' Convert to sevt class
 #' 
-#' @param x     an R object to be coerced
-#' @param order order of the variables 
-#' @return the equivalent sevt object
+#' @param x     an R object to be coerced.
+#' @param order order of the variables. 
+#' @return the equivalent sevt object.
+#' @details Only a method for objects of class \code{bn.fit} 
+#'          (\code{bnlearn} package) is available.
 #' @export
 as.sevt <- function(x, order = NULL){
   UseMethod("as.sevt", x)
@@ -10,10 +12,10 @@ as.sevt <- function(x, order = NULL){
 
 #' Convert a bn fit to a staged event tree object
 #' 
-#' @param x a \code{bn.fit} object
+#' @param x a \code{bn.fit} object.
 #' @param order a topological order of the variables, 
-#'              WARNING: the order will not be checked
-#' @return A staged event tree object  
+#'              WARNING: the order will not be checked.
+#' @return A staged event tree object.
 #' @export
 as.sevt.bn.fit <- function(x, order = NULL) {
   bn <- bnlearn::bn.net(x)
@@ -95,15 +97,16 @@ as.sevt.bn.fit <- function(x, order = NULL) {
 #'
 #' Estimate transition probabilities in a staged event tree from data.
 #' Probabilities are estimated with the relative frequencies plus,
-#' eventually,  an additive (Laplace) smoothing.
+#' eventually, an additive (Laplace) smoothing.
 #' @param object a staged event tree.
 #' @param data data.frame or contingency table with observations of 
 #'             the variables in \code{object}.
 #' @param lambda smoothing parameter.
-#' @return a fitted staged event tree, that is an object of class `sevt`
-#'         with `ctables` and `prob` arguments.
-#' @details The log-likelihood of the model will be recomputed and
-#'          stored in the returned object.
+#' @return A fitted staged event tree, that is an object of class `sevt`
+#'         with `ctables`, `prob` and `ll` components.
+#' @details The data in form of contingency tables and the 
+#'          log-likelihood of the model is 
+#'          stored in the returned staged event tree.
 #' @export
 #' @examples
 #'
@@ -173,13 +176,13 @@ sevt.fit <- function(object,
 
 #' Set stage to path
 #'
-#' Set the given stage to the path for the stage event tree
 #' @param object Staged event tree
 #' @param path Vector of the path
 #' @param stage stage to be assigned
 #' @keywords internal
 set_stage <- function(object, path, stage) {
   stage <- as.character(stage)
+  warning("NOT YET IMPLEMENTED")
   ## TO DO
   return(object)
 }
@@ -189,13 +192,15 @@ set_stage <- function(object, path, stage) {
 #' Join two stages in a staged event tree object, updating
 #' probabilities and log-likelihood accordingly.
 #'
-#'
 #' @param object staged event tree
 #' @param v variable
 #' @param s1 first stage
 #' @param s2 second stage
 #' @return the staged event tree where \code{s1} and \code{s2} are joined
-#' @details this function joins together two stages associated to the same variable.
+#' @details This function joins together two stages associated to the 
+#'          same variable, 
+#'          computing the updated probability and log-likelihood if 
+#'          the object was fitted.
 #' @examples
 #' model <- full(PhDArticles, lambda = 0)
 #' model <- fbhc(model)
@@ -247,15 +252,15 @@ join_stages <- function(object, v, s1, s2) {
 
 #' Split randomly a stage
 #'
-#' Randomly assign some of the path to a new stage
+#' Randomly assign some of the paths to a new stage.
+#' @param object a staged event tree object.
+#' @param var the variable name.
+#' @param stage the name of the stage.
+#' @param p probability to move a situation from the 
+#'          original stage into the new stage.
 #'
-#' @param object a staged event tree object
-#' @param var the variable where to split the stage
-#' @param stage the name of the stage to split
-#' @param p probability to move a situation from the original stage into the new stage
-#'
-#' @return a staged event tree object
-#' @details It splits randomly a given stage into two stages. More precisely,
+#' @return a staged event tree object.
+#' @details Splits randomly a given stage into two stages. More precisely,
 #' it assigns each situation within the given stage into a new stage with
 #' probability \code{p}.
 #' @examples
@@ -313,8 +318,8 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 
 #' Check if a staged event tree is fitted
 #'
-#' @param object a staged event tree object
-#' @return logical
+#' @param object a staged event tree object.
+#' @return logical.
 #'
 #' @export
 is_fitted_sevt <- function(object) {
@@ -323,7 +328,7 @@ is_fitted_sevt <- function(object) {
 
 
 
-#' Print inclusions of stages
+#' Inclusions of stages
 #'  
 #' Display the relationship between two staged tree models over the 
 #' same variables.
@@ -332,7 +337,7 @@ is_fitted_sevt <- function(object) {
 #'
 #' @return a list with inclusion relations between stage
 #' structures of each variable in the model
-#' @details \code{inclusion_stages} computes the 
+#' @details Computes the 
 #'  inclusion/exclusion/equality/diversity between 
 #'  the stages structures of the two models.
 #' @examples
@@ -419,10 +424,10 @@ inclusion_stages <- function(object1, object2) {
 
 #' Print a staged event tree
 #'
-#' @param x the staged event tree object
+#' @param x the staged event tree object.
 #' @param ... additional parameters (compatibility)
 #'
-#' @return An invisible copy of \code{x}
+#' @return An invisible copy of \code{x}.
 #' @details The order of the variables in the stratified tree
 #'  is printed (from root). In addition the number of levels of each
 #'  variable is shown in square brackets.
@@ -450,8 +455,8 @@ print.sevt <- function(x, ...) {
 #' Stages of a variable
 #'
 #' Obtain the stages of a given variable in a staged event tree object.
-#' @param object a staged event tree object
-#' @param var name of one variable
+#' @param object a staged event tree.
+#' @param var name of one variable in \code{object}.
 #' @return If \code{var} is specified, it returns a character vector with
 #'         stage names for the given variable
 #'         (that is \code{object$stages[[var]]}.
@@ -477,8 +482,8 @@ stages <- function(object, var = NULL) {
 #'
 #' Summary method for class \code{sevt}.
 #'
-#' @param object a staged event tree object
-#' @param ... arguments for compatibility
+#' @param object a staged event tree.
+#' @param ... arguments for compatibility.
 #' @details Print model information and summary of stages.
 #' @return An object of class \code{summary.sevt}
 #'         for which a \code{print}
@@ -534,9 +539,9 @@ summary.sevt <- function(object, ...) {
 }
 
 #' @rdname summary.sevt
-#' @param x an object of class \code{summary.sevt}
+#' @param x an object of class \code{summary.sevt}.
 #' @param max the maximum number of variables for which
-#'            information is printed
+#'            information is printed.
 #' @export
 print.summary.sevt <- function(x, max = 10, ...) {
   if (!is.null(x$call)) {
@@ -558,11 +563,11 @@ print.summary.sevt <- function(x, max = 10, ...) {
 
 #' Extract subtree
 #'
-#' @param object a staged event tree object
-#' @param path, the path after which extract the subtree
-#' @details it returns the subtree of the staged event tree given in input as \code{object}.
-#' The new root of the subtree is the given \code{path}.
-#' @return the staged event tree object corresponding to the subtree
+#' @param object a staged event tree.
+#' @param path, the path after which extract the subtree.
+#' @details Returns the subtree of the staged event tree, starting from 
+#' \code{path}.
+#' @return A staged event tree object corresponding to the subtree.
 #' @examples
 #' DD <- generate_random_dataset(4, 100)
 #' model <- staged_ev_tree(DD, full = TRUE)
@@ -611,10 +616,11 @@ subtree <- function(object, path) {
 
 #'  Standard renaming of stages
 #'
-#' @param object a staged event tree object
-#' @param uniq logical, if stage numbers shuold be unique over all tree
-#' @param prefix logical, if stage names should be prefixed with variable name
-#' @param ignore stages name which should be left untouched
+#' Rename all stages in a staged event tree.
+#' @param object a staged event tree.
+#' @param uniq logical, if stage numbers should be unique over all tree.
+#' @param prefix logical, if stage names should be prefixed with variable name.
+#' @param ignore stages name which should be left untouched.
 #' @return a staged event tree object with stages named with
 #' consecutive integers.
 #' @examples
@@ -670,13 +676,13 @@ stndnaming <- function(object, uniq = FALSE,
 #' Compare two stages event tree, return the differences of the stages
 #' structure and plot the difference tree. Three different methods to
 #' compute the difference tree are available.
-#'
-#' @param object1 a staged event tree
-#' @param object2 a staged event tree
-#' @param method method to compare staged event trees. It can be: \code{"naive"}, \code{"hamming"} or \code{"stages"}
-#' @param return.tree logical, if \code{TRUE} the difference tree is returned
-#' @param plot logical
-#' @param ... additional parameters to be passed to \code{\link{plot.sevt}}
+#' @param object1 a staged event tree.
+#' @param object2 a staged event tree.
+#' @param method method to compare staged event trees. It can be: \code{"naive"}, 
+#' \code{"hamming"} or \code{"stages"}.
+#' @param return.tree logical, if \code{TRUE} the difference tree is returned.
+#' @param plot logical.
+#' @param ... additional parameters to be passed to \code{\link{plot.sevt}}.
 #' @details \code{compare_stages} tests if the stage structure of two \code{sevt}
 #' objects
 #' is the same.
@@ -901,9 +907,9 @@ stagesdiff <- function(object1, object2) {
 #'
 #' Utility returning variable-names in a staged event tree
 #' model.
-#' @param object a staged event tree object
-#' @param ... further arguments passed to or from other methods
-#' @return A character vector
+#' @param object a staged event tree.
+#' @param ... further arguments passed to or from other methods.
+#' @return A character vector.
 #' @examples
 #'
 #' mod <- full(PhDArticles)
@@ -919,8 +925,8 @@ variable.names.sevt <- function(object, ...) {
 #'
 #' Utility returning the number of variables 
 #' in a staged event tree model.
-#' @param object a staged event tree object
-#' @return integer, the number of variables
+#' @param object An object of class \code{sevt}.
+#' @return integer, the number of variables.
 #' @examples
 #'
 #' mod <- indep(PhDArticles)
@@ -935,8 +941,8 @@ nvar_sevt <- function(object) {
 #' Number of parameters of a staged event tree
 #'
 #' Return the number of parameters of the model.
-#' @param x a staged event tree object
-#' @return integer, degrees of freedom of the staged event tree
+#' @param x An object of class \code{sevt}.
+#' @return integer, degrees of freedom of the staged event tree.
 #' @examples
 #'
 #' #########
@@ -970,10 +976,10 @@ NULL
 
 
 #' @rdname getstagepath
-#' @param object a staged event tree object
-#' @param path a vector contating the path from root or
+#' @param object An object of class \code{sevt}.
+#' @param path character vector, the path from root or
 #' a two dimensional array where each row is a path
-#' from root
+#' from root.
 #' @return \code{get_stage} returns
 #' the name of the stage for a given path (or paths).
 #' @examples
@@ -1001,10 +1007,10 @@ get_stage <- function(object, path) {
 #' @rdname getstagepath
 #'
 #' @param var string, one of the variable in
-#'            the staged tree
-#' @param stage string or vector, the name
+#'            the staged tree.
+#' @param stage character vector, the name
 #' of the stages for which the paths should be
-#' returned
+#' returned.
 #' @return \code{get_paths} return a
 #'         data.frame containing the paths
 #'         corresponding to the given stage (or stages).
@@ -1034,14 +1040,12 @@ get_path <- function(object, var, stage) {
 
 #' rename stage(s) in staged even tree
 #' 
-#' @param object staged event tree
-#' @param var string, one of the variable in
-#'            the staged tree
-#' @param stage string or vector, the name
-#' of the stage(s) to be renamed
-#' @param new.label new name for the stage(s)
+#' @param object An object of class \code{sevt}.
+#' @param var name of a variable in \code{object}.
+#' @param stage name of the stage to be renamed.
+#' @param new.label new name for the stage.
 #' @return a staged event tree object where stages \code{stage} 
-#' have been renamed to \code{new.label}
+#' have been renamed to \code{new.label}.
 #' @export 
 rename_stage <- function(object, var, stage, new.label){
   stopifnot(is(object, "sevt"))
@@ -1053,7 +1057,7 @@ rename_stage <- function(object, var, stage, new.label){
   }
   # set new label
   object$stages[[var]][object$stages[[var]] %in% stage] <- new.label
-  # if staged tree has probabilities move it to the new-label
+  # if staged tree has prob move it to the new-label
   if (has_prob(object)){
     object$prob[[var]][[new.label]] <- object$prob[[var]][[stage]]
     object$prob[[var]][[stage]] <- NULL

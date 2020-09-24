@@ -10,14 +10,14 @@
 \method{print}{summary.sevt}(x, max = 10, ...)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree.}
 
-\item{...}{arguments for compatibility}
+\item{...}{arguments for compatibility.}
 
-\item{x}{an object of class \code{summary.sevt}}
+\item{x}{an object of class \code{summary.sevt}.}
 
 \item{max}{the maximum number of variables for which
-information is printed}
+information is printed.}
 }
 \value{
 An object of class \code{summary.sevt}

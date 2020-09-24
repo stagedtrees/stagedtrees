@@ -14,6 +14,6 @@ set_stage(object, path, stage)
 \item{stage}{stage to be assigned}
 }
 \description{
-Set the given stage to the path for the stage event tree
+Set stage to path
 }
 \keyword{internal}

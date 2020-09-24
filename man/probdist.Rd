@@ -12,32 +12,26 @@
 \alias{probdist.cd}
 \title{Distances between probabilities}
 \usage{
-probdist.l2(x, y, ...)
+probdist.l2(x, y)
 
-probdist.l1(x, y, ...)
+probdist.l1(x, y)
 
 probdist.ry(x, y)
 
-probdist.kl(x, y, ...)
+probdist.kl(x, y)
 
-probdist.tv(x, y, ...)
+probdist.tv(x, y)
 
-probdist.hl(x, y, ...)
+probdist.hl(x, y)
 
-probdist.bh(x, y, ...)
+probdist.bh(x, y)
 
-probdist.cd(x, y, ...)
+probdist.cd(x, y)
 }
 \arguments{
-\item{x}{vector of probabilities}
+\item{x}{vector of probabilities.}
 
-\item{y}{vector of probabilities}
-
-\item{...}{additional parameters for compatibility}
-
-\item{p}{exponent in the \eqn{L^p} norm}
-
-\item{alpha}{the order of the Renyi divergence}
+\item{y}{vector of probabilities.}
 }
 \value{
 The distance between \code{p} and \code{q}

@@ -22,7 +22,7 @@
 )
 }
 \arguments{
-\item{x}{staged event tree object.}
+\item{x}{an object of class \code{sevt}.}
 
 \item{limit}{maximum number of variables plotted.}
 
@@ -61,12 +61,9 @@ as input a vector of stages and output the corresponding colors.}
 }
 \description{
 \code{plot.sevt} is the plot method for staged event tree
-objects. It allows easy plotting for staged event tree with some
+objects. It allows easy plotting of staged event tree with some
 options, mainly different ways to specify colors for the stages (see
 examples).
-}
-\details{
-Plot method for staged event tree models.
 }
 \examples{
 

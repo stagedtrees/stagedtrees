@@ -2,15 +2,16 @@
 % Please edit documentation in R/0-util-functions.R
 \name{simple_clustering}
 \alias{simple_clustering}
-\title{perform a simple clustering in 2 groups}
+\title{Perform a simple clustering in 2 groups}
 \usage{
 simple_clustering(M)
 }
 \arguments{
-\item{M}{matrix of distance}
+\item{M}{matrix of distance.}
 }
 \value{
-a list with component \code{I} and \code{J} (the two group of clusters)
+a list with component \code{I} and \code{J}
+(the two clusters).
 }
 \description{
 clustering in 2 groups is performed starting

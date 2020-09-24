@@ -7,12 +7,12 @@
 expand_prob(object)
 }
 \arguments{
-\item{object}{a fitted staged event tree object}
+\item{object}{a fitted staged event tree object.}
 }
 \value{
-probability tables
+probability tables.
 }
 \description{
-Return the list of complete probability tables
+Return the list of complete probability tables.
 }
 \keyword{internal}

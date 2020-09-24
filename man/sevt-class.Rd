@@ -4,27 +4,37 @@
 \alias{sevt class}
 \title{Staged event tree (sevt) class}
 \description{
-Structure and usage of S3 class \code{sevt}
+Structure and usage of S3 class \code{sevt},
 used to store a staged event tree.
 }
 \details{
 A staged event tree object is a list with components:
 \itemize{
-\item tree (required): A named list where for each variable,
-the levels of such variable are listed.
+\item tree (required): A named list with one component
+for each variable in the model,
+a character vector withe the names of
+the levels for that variable.
 The order of the variable is the
 order of the event tree.
-\item stages (required): A named list where each component
-stores the stages for the given variable.
-\item ctables: The contingency tables of the data distributed
-along the tree structure.
+\item stages (required): A named list with one component
+for each variable but the first,
+a character vector storing the stages for
+the situations related to path ending in that
+variable.
+\item ctables: A named list with one component
+for each variable, the flat contingency table of that variable
+given the previous variables.
 \item lambda: The smoothing parameter used to compute probabilities.
 \item prob: The conditional probability tables for every
-variable and stage.
+variable and stage. Stored in a named list with
+one component for each variable, a list with
+one component for each stage,
 \item ll: The log-likelihood of the \code{estimated} model.
+If present, \code{\link{logLik.sevt}} will
+return this value instead of computing the log-likelihood.
 }
 The tree structure is never defined explicitly, but instead
-it is defined by the list \code{tree} containing the order
+is implicitly defined by the list \code{tree} containing the order
 of the variables and the names of their levels. This is
 sufficient to define a complete symmetric tree where an
 internal node at a depth related to a variable \code{v}
@@ -41,7 +51,8 @@ which both construct the staged tree object, attach the data in
 available model selection algorithm can be used, see for example
 \code{\link{hc}}, \code{\link{bhc}} or
 \code{\link{stages_hclust}}.
-If, mainly for development, only the staged tree structure is needed (without data or
-probabilities) the basic \code{\link{staged_ev_tree}} constructor can
+If, mainly for development, only the staged tree structure is needed
+(without data or probabilities) the basic
+\code{\link{staged_ev_tree}} constructor can
 be used.
 }

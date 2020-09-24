@@ -7,10 +7,10 @@
 has_ctables(object)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree object.}
 }
 \value{
-logical
+logical.
 }
 \description{
 Check if the stages event tree has ctables field

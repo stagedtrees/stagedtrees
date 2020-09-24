@@ -7,22 +7,23 @@
 split_stage_random(object, var, stage, p = 0.5)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree object.}
 
-\item{var}{the variable where to split the stage}
+\item{var}{the variable name.}
 
-\item{stage}{the name of the stage to split}
+\item{stage}{the name of the stage.}
 
-\item{p}{probability to move a situation from the original stage into the new stage}
+\item{p}{probability to move a situation from the
+original stage into the new stage.}
 }
 \value{
-a staged event tree object
+a staged event tree object.
 }
 \description{
-Randomly assign some of the path to a new stage
+Randomly assign some of the paths to a new stage.
 }
 \details{
-It splits randomly a given stage into two stages. More precisely,
+Splits randomly a given stage into two stages. More precisely,
 it assigns each situation within the given stage into a new stage with
 probability \code{p}.
 }

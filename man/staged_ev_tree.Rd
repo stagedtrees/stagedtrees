@@ -16,17 +16,22 @@ staged_ev_tree(x, full = FALSE, order = NULL)
 \method{staged_ev_tree}{list}(x, full = FALSE, order = names(x))
 }
 \arguments{
-\item{x}{a list, a data frame or a table with data}
+\item{x}{a list, a data frame or table object.}
 
 \item{full}{logical, if TRUE the full model is created
 otherwise the independence model.}
 
-\item{order}{order of the variables to build the
+\item{order}{character vector,
+order of the variables to build the
 tree, by default the order of the variables
-in the data frame \code{x}.}
+in \code{x}.}
+}
+\value{
+A staged event tree object, element of \code{sevt}
+class.
 }
 \description{
-Build a staged event tree
+Basic constructor for staged event tree class (\code{sevt}).
 }
 \examples{
 
@@ -37,7 +42,6 @@ model.titanic <- staged_ev_tree(Titanic, full = TRUE)
 DD <- generate_random_dataset(n = 4, 1000)
 indep <- staged_ev_tree(DD)
 full <- staged_ev_tree(DD, full = TRUE)
-
 
 ######### from list
 model <- staged_ev_tree(list(

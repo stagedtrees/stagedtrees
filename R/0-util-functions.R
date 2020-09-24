@@ -1,8 +1,8 @@
 #' New label
 #'
-#' give a safe-to-add label that is not in \code{labels}
-#' @param labels vector of labels
-#' @return a string label that is different from each \code{labels}
+#' give a safe-to-add label that is not in \code{labels}.
+#' @param labels vector of labels.
+#' @return a string label that is different from each \code{labels}.
 #' @keywords internal
 new_label <- function(labels) {
   k <- 1 + length(labels)
@@ -17,8 +17,8 @@ new_label <- function(labels) {
 
 #' Unique id from named list
 #'
-#' @param x a named list
-#' @return A named list with unique ids
+#' @param x a named list.
+#' @return A named list with unique ids.
 #' @keywords internal
 uni_idx <- function(x) {
   nn <- names(x)
@@ -32,9 +32,10 @@ uni_idx <- function(x) {
 
 #' return path index
 #'
-#' @param path a path from root in the tree
-#' @param tree a symmetric tree given as a list of levels
-#' @param complete logical, if \code{TRUE} the complete indexing is returned
+#' @param path a path from root in the tree.
+#' @param tree a symmetric tree given as a list of levels.
+#' @param complete logical, if \code{TRUE} the complete indexing 
+#'                 is returned.
 #'
 #' @details Compute the integer index of the node associated with the
 #' given path in a symmetric tree defined by \code{tree}.
@@ -65,10 +66,10 @@ tree_idx <- function(path, tree, complete = FALSE) {
 
 #' Find the stage of the path
 #'
-#' no checking is done
-#' @param object a staged event tree object
-#' @param path vector of the path
-#' @return the stage name corresponding of the path
+#' no checking is done.
+#' @param object a staged event tree object.
+#' @param path vector of the path.
+#' @return the stage name corresponding of the path.
 #' @keywords internal
 find_stage <- function(object, path) {
   k <- length(path)
@@ -84,9 +85,9 @@ find_stage <- function(object, path) {
 #' Compute the matrix of distances between probabilities,
 #' e.g the transition probabilities for a given variable in a
 #' staged event tree.
-#' @param x list of conditional probabilities for each stage
-#' @param distance the distance function e.g. \code{\link{probdist.kl}}
-#' @return The matrix with the distances between stages
+#' @param x list of conditional probabilities for each stage.
+#' @param distance the distance function e.g. \code{\link{probdist.kl}}.
+#' @return The matrix with the distances between stages.
 #' @keywords internal
 distance_mat_stages <- function(x, distance = probdist.kl) {
   d <- length(x)
@@ -103,12 +104,13 @@ distance_mat_stages <- function(x, distance = probdist.kl) {
   return(M)
 }
 
-#' perform a simple clustering in 2 groups
+#' Perform a simple clustering in 2 groups
 #'
 #' clustering in 2 groups is performed starting
 #' from a distance (positive, symmetric) matrix
-#' @param M matrix of distance
-#' @return a list with component \code{I} and \code{J} (the two group of clusters)
+#' @param M matrix of distance.
+#' @return a list with component \code{I} and \code{J} 
+#'          (the two clusters).
 #' @keywords internal
 simple_clustering <- function(M) {
   nm <- colnames(M)
@@ -137,11 +139,8 @@ simple_clustering <- function(M) {
 
 #' Distances between probabilities
 #'
-#' @param x vector of probabilities
-#' @param y vector of probabilities
-#' @param p exponent in the \eqn{L^p} norm
-#' @param alpha the order of the Renyi divergence
-#' @param ... additional parameters for compatibility
+#' @param x vector of probabilities.
+#' @param y vector of probabilities.
 #' @details Functions to compute distances between probabilities:
 #' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p} for \eqn{p = 1,2}
 #' * \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha = 2} 
@@ -159,13 +158,13 @@ NULL
 
 #' @rdname probdist
 #' @keywords internal
-probdist.l2 <- function(x, y, ...) {
+probdist.l2 <- function(x, y) {
   (sum(abs(x - y)^2))^(1 / 2)
 }
 
 #' @rdname probdist
 #' @keywords internal
-probdist.l1 <- function(x, y, ...) {
+probdist.l1 <- function(x, y) {
   sum(abs(x - y))
 }
 
@@ -179,41 +178,41 @@ probdist.ry <- function(x, y) {
 
 #' @rdname probdist
 #' @keywords internal
-probdist.kl <- function(x, y, ...) {
+probdist.kl <- function(x, y) {
   return(sum(x * (log(x) - log(y))) +
     sum(y * (log(y) - log(x))))
 }
 
 #' @rdname probdist
 #' @keywords internal
-probdist.tv <- function(x, y, ...) {
+probdist.tv <- function(x, y) {
   sum(abs(x - y))
 }
 
 #' @rdname probdist
 #' @keywords internal
-probdist.hl <- function(x, y, ...) {
+probdist.hl <- function(x, y) {
   sum((sqrt(x) - sqrt(y))^2)
 }
 
 #' @rdname probdist
 #' @keywords internal
-probdist.bh <- function(x, y, ...) {
+probdist.bh <- function(x, y) {
   -log(sum(sqrt(x * y)))
 }
 
 #' @rdname probdist
 #' @keywords internal
-probdist.cd <- function(x, y, ...) {
+probdist.cd <- function(x, y) {
   log(max(x / y)) - log(min(x / y))
 }
 
 
 #' noisy xor function
 #'
-#' @param x a vector of +1 and -1
-#' @param eps the uniform noise amount
-#' @return the computed noisy xor
+#' @param x a vector of +1 and -1.
+#' @param eps the uniform noise amount.
+#' @return the computed noisy xor.
 #' @keywords internal
 #' @importFrom stats runif
 noisy_xor <- function(x, eps = 0) {
@@ -224,11 +223,11 @@ noisy_xor <- function(x, eps = 0) {
 
 #' generate a xor dataset
 #'
-#' @param n number of variables
-#' @param N number of observations
-#' @param eps error
-#' @return The xor dataset with \code{n} + 1 variables, where the last one is
-#' the class variable \code{C} computed as xor logical operator.
+#' @param n number of variables.
+#' @param N number of observations.
+#' @param eps error.
+#' @return The xor dataset with \code{n} + 1 variables, where the first one is
+#' the class variable \code{C} computed as a noisy xor.
 #'
 #' @export
 #' @importFrom stats runif
@@ -263,16 +262,16 @@ generate_xor_dataset <- function(n = 2,
 
 #' generate a random binary dataset for classification
 #'
-#' Randomly generate a simple classification problem
-#' @param n number of variables
-#' @param N number of observations
-#' @param eps noise
-#' @param gamma numeric
-#' @param alpha numeric vector of length \code{n}
+#' Randomly generate a simple classification problem.
+#' @param n number of variables.
+#' @param N number of observations.
+#' @param eps noise.
+#' @param gamma numeric.
+#' @param alpha numeric vector of length \code{n}.
 #'
 #' @return A data.frame with \code{n} independent random variables and
 #'  one class variable \code{C} computed as
-#'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}
+#'  \code{sign(sum(x * alpha) + runif(1, -eps, eps) + gamma)}.
 #' @export
 #' @importFrom stats runif
 #' @examples
@@ -312,12 +311,12 @@ generate_linear_dataset <-
     return(DD[,c(n+1,1:n)])
   }
 
-#' generate a random binary dataset
+#' Generate a random binary dataset
 #'
-#' Randomly generate a data.frame of independent binary variables
-#' @param n number of variables
-#' @param N number of observations
-#' @return A data.frame with \code{n} independent random variables
+#' Randomly generate a data.frame of independent binary variables.
+#' @param n number of variables.
+#' @param N number of observations.
+#' @return A data.frame with \code{n} independent random variables.
 #' @export
 #' @importFrom stats runif
 #' @examples
@@ -342,10 +341,10 @@ generate_random_dataset <-
 
 #' Find maximum value
 #'
-#' @param x numerical, the log-probabilities
-#' @param character the levels to be returned same length as x
+#' @param x numerical, the log-probabilities.
+#' @param character the levels to be returned same length as x.
 #'
-#' @return factor
+#' @return factor.
 #' @keywords internal
 which_class <- function(x, levels) {
   y <- seq_along(x)[x == max(x)]

@@ -20,17 +20,18 @@ hamming_stages(object1, object2, return.tree = FALSE)
 stagesdiff(object1, object2)
 }
 \arguments{
-\item{object1}{a staged event tree}
+\item{object1}{a staged event tree.}
 
-\item{object2}{a staged event tree}
+\item{object2}{a staged event tree.}
 
-\item{method}{method to compare staged event trees. It can be: \code{"naive"}, \code{"hamming"} or \code{"stages"}}
+\item{method}{method to compare staged event trees. It can be: \code{"naive"},
+\code{"hamming"} or \code{"stages"}.}
 
-\item{return.tree}{logical, if \code{TRUE} the difference tree is returned}
+\item{return.tree}{logical, if \code{TRUE} the difference tree is returned.}
 
-\item{plot}{logical}
+\item{plot}{logical.}
 
-\item{...}{additional parameters to be passed to \code{\link{plot.sevt}}}
+\item{...}{additional parameters to be passed to \code{\link{plot.sevt}}.}
 }
 \value{
 \itemize{

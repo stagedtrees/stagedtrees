@@ -2,20 +2,20 @@
 % Please edit documentation in R/0-util-functions.R
 \name{generate_random_dataset}
 \alias{generate_random_dataset}
-\title{generate a random binary dataset}
+\title{Generate a random binary dataset}
 \usage{
 generate_random_dataset(n = 2, N = 10000)
 }
 \arguments{
-\item{n}{number of variables}
+\item{n}{number of variables.}
 
-\item{N}{number of observations}
+\item{N}{number of observations.}
 }
 \value{
-A data.frame with \code{n} independent random variables
+A data.frame with \code{n} independent random variables.
 }
 \description{
-Randomly generate a data.frame of independent binary variables
+Randomly generate a data.frame of independent binary variables.
 }
 \examples{
 DD <- generate_random_dataset(n = 5, 1000)

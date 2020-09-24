@@ -569,7 +569,7 @@ bj <-
 #' 
 #' The `ignore` argument can be used to specify stages that should not 
 #' be affected during the search, that is left untouched. 
-#' This is usefult for preserving structural zeroes and to speed-up 
+#' This is usefull for preserving structural zeroes and to speed-up 
 #' computations. 
 #'
 #' @return The final staged event tree obtained.
@@ -728,7 +728,7 @@ stages_hclust <-
 #' @param ignore vector of stages which will be ignored.
 #' @param k integer or (named) vector: number of clusters, that is stages per variable. 
 #'          Values will be recycled if needed.
-#' @param algorithm charachter: as in \code{\link{kmeans}}.
+#' @param algorithm character: as in \code{\link{kmeans}}.
 #' @param transform function applied to the probabilities before clustering.
 #' @param limit the maximum number of variables to consider.
 #' @param scope names of the variables to consider.

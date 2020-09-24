@@ -7,9 +7,9 @@
 stages(object, var = NULL)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree.}
 
-\item{var}{name of one variable}
+\item{var}{name of one variable in \code{object}.}
 }
 \value{
 If \code{var} is specified, it returns a character vector with

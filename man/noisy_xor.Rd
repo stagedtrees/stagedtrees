@@ -7,12 +7,12 @@
 noisy_xor(x, eps = 0)
 }
 \arguments{
-\item{x}{a vector of +1 and -1}
+\item{x}{a vector of +1 and -1.}
 
-\item{eps}{the uniform noise amount}
+\item{eps}{the uniform noise amount.}
 }
 \value{
-the computed noisy xor
+the computed noisy xor.
 }
 \description{
 noisy xor function

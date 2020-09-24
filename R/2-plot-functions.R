@@ -1,10 +1,10 @@
 #' Plot method for staged event trees
 #'
 #' \code{plot.sevt} is the plot method for staged event tree
-#' objects. It allows easy plotting for staged event tree with some
+#' objects. It allows easy plotting of staged event tree with some
 #' options, mainly different ways to specify colors for the stages (see
 #' examples).
-#' @param x staged event tree object.
+#' @param x an object of class \code{sevt}.
 #' @param limit maximum number of variables plotted.
 #' @param xlim the x limits (x1, x2) of the plot.
 #' @param ylim the y limits of the plot.
@@ -27,8 +27,6 @@
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.
-#' @details 
-#' Plot method for staged event tree models. 
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
 #'
@@ -321,14 +319,14 @@ text.sevt <-
   }
 
 
-#' Barplot method for staged event trees
+#' Barplot of stage probabilities
 #' 
-#' @param object a staged tree object
-#' @param var name of varaibles in the model
-#' @param legend.text logical 
+#' @param object An object of class \code{sevt}.
+#' @param var name of a variable in \code{object}.
+#' @param legend.text logical.
 #' @param col color mapping for the stages, see \code{col}
-#'        argument in \code{\link{plot.sevt}}
-#' @param ... addittional arguments passed to \code{\link{barplot}}
+#'        argument in \code{\link{plot.sevt}}.
+#' @param ... additional arguments passed to \code{\link{barplot}}.
 #' @export
 #' @examples 
 #' model <- fbhc(full(PhDArticles, lambda = 1))

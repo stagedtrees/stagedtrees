@@ -11,18 +11,18 @@ get_stage(object, path)
 get_path(object, var, stage)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{An object of class \code{sevt}.}
 
-\item{path}{a vector contating the path from root or
+\item{path}{character vector, the path from root or
 a two dimensional array where each row is a path
-from root}
+from root.}
 
 \item{var}{string, one of the variable in
-the staged tree}
+the staged tree.}
 
-\item{stage}{string or vector, the name
+\item{stage}{character vector, the name
 of the stages for which the paths should be
-returned}
+returned.}
 }
 \value{
 \code{get_stage} returns

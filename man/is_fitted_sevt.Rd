@@ -7,10 +7,10 @@
 is_fitted_sevt(object)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree object.}
 }
 \value{
-logical
+logical.
 }
 \description{
 Check if a staged event tree is fitted

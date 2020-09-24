@@ -23,7 +23,10 @@ Join two stages in a staged event tree object, updating
 probabilities and log-likelihood accordingly.
 }
 \details{
-this function joins together two stages associated to the same variable.
+This function joins together two stages associated to the
+same variable,
+computing the updated probability and log-likelihood if
+the object was fitted.
 }
 \examples{
 model <- full(PhDArticles, lambda = 0)

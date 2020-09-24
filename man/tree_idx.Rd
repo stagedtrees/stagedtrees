@@ -7,11 +7,12 @@
 tree_idx(path, tree, complete = FALSE)
 }
 \arguments{
-\item{path}{a path from root in the tree}
+\item{path}{a path from root in the tree.}
 
-\item{tree}{a symmetric tree given as a list of levels}
+\item{tree}{a symmetric tree given as a list of levels.}
 
-\item{complete}{logical, if \code{TRUE} the complete indexing is returned}
+\item{complete}{logical, if \code{TRUE} the complete indexing
+is returned.}
 }
 \value{
 an integer, the index of the node corresponding to \code{path}

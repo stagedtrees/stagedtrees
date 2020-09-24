@@ -7,10 +7,10 @@
 uni_idx(x)
 }
 \arguments{
-\item{x}{a named list}
+\item{x}{a named list.}
 }
 \value{
-A named list with unique ids
+A named list with unique ids.
 }
 \description{
 Unique id from named list

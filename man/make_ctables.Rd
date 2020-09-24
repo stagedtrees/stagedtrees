@@ -7,16 +7,16 @@
 make_ctables(object, data)
 }
 \arguments{
-\item{object}{A stratified event tree, a list with a \code{tree} field}
+\item{object}{A stratified event tree, a list with a \code{tree} field.}
 
 \item{data}{table or data.frame containing observations
-of the variable in \code{object}}
+of the variable in \code{object}.}
 }
 \value{
 A list of \code{ftable}s.
 }
 \description{
-Create the listo of \code{ftable}s
+Create the list of \code{ftable}s
 storing the observations distributed along
 the path of the tree.
 }

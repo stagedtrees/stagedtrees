@@ -21,7 +21,7 @@ stages_kmeans(
 \item{k}{integer or (named) vector: number of clusters, that is stages per variable.
 Values will be recycled if needed.}
 
-\item{algorithm}{charachter: as in \code{\link{kmeans}}.}
+\item{algorithm}{character: as in \code{\link{kmeans}}.}
 
 \item{transform}{function applied to the probabilities before clustering.}
 

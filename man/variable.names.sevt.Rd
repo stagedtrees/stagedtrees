@@ -7,12 +7,12 @@
 \method{variable.names}{sevt}(object, ...)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree.}
 
-\item{...}{further arguments passed to or from other methods}
+\item{...}{further arguments passed to or from other methods.}
 }
 \value{
-A character vector
+A character vector.
 }
 \description{
 Utility returning variable-names in a staged event tree

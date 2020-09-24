@@ -7,19 +7,19 @@
 subtree(object, path)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree.}
 
-\item{path, }{the path after which extract the subtree}
+\item{path, }{the path after which extract the subtree.}
 }
 \value{
-the staged event tree object corresponding to the subtree
+A staged event tree object corresponding to the subtree.
 }
 \description{
 Extract subtree
 }
 \details{
-it returns the subtree of the staged event tree given in input as \code{object}.
-The new root of the subtree is the given \code{path}.
+Returns the subtree of the staged event tree, starting from
+\code{path}.
 }
 \examples{
 DD <- generate_random_dataset(4, 100)

@@ -7,12 +7,12 @@
 distance_mat_stages(x, distance = probdist.kl)
 }
 \arguments{
-\item{x}{list of conditional probabilities for each stage}
+\item{x}{list of conditional probabilities for each stage.}
 
-\item{distance}{the distance function e.g. \code{\link{probdist.kl}}}
+\item{distance}{the distance function e.g. \code{\link{probdist.kl}}.}
 }
 \value{
-The matrix with the distances between stages
+The matrix with the distances between stages.
 }
 \description{
 Compute the matrix of distances between probabilities,

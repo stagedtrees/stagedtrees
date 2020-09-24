@@ -15,17 +15,18 @@ the variables in \code{object}.}
 \item{lambda}{smoothing parameter.}
 }
 \value{
-a fitted staged event tree, that is an object of class \code{sevt}
-with \code{ctables} and \code{prob} arguments.
+A fitted staged event tree, that is an object of class \code{sevt}
+with \code{ctables}, \code{prob} and \code{ll} components.
 }
 \description{
 Estimate transition probabilities in a staged event tree from data.
 Probabilities are estimated with the relative frequencies plus,
-eventually,  an additive (Laplace) smoothing.
+eventually, an additive (Laplace) smoothing.
 }
 \details{
-The log-likelihood of the model will be recomputed and
-stored in the returned object.
+The data in form of contingency tables and the
+log-likelihood of the model is
+stored in the returned staged event tree.
 }
 \examples{
 

@@ -7,12 +7,12 @@
 \method{print}{sevt}(x, ...)
 }
 \arguments{
-\item{x}{the staged event tree object}
+\item{x}{the staged event tree object.}
 
 \item{...}{additional parameters (compatibility)}
 }
 \value{
-An invisible copy of \code{x}
+An invisible copy of \code{x}.
 }
 \description{
 Print a staged event tree

@@ -7,10 +7,10 @@
 df_sevt(x)
 }
 \arguments{
-\item{x}{a staged event tree object}
+\item{x}{An object of class \code{sevt}.}
 }
 \value{
-integer, degrees of freedom of the staged event tree
+integer, degrees of freedom of the staged event tree.
 }
 \description{
 Return the number of parameters of the model.

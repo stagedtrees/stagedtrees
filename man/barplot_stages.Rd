@@ -2,24 +2,24 @@
 % Please edit documentation in R/2-plot-functions.R
 \name{barplot_stages}
 \alias{barplot_stages}
-\title{Barplot method for staged event trees}
+\title{Barplot of stage probabilities}
 \usage{
 barplot_stages(object, var, legend.text = FALSE, col = NULL, ...)
 }
 \arguments{
-\item{object}{a staged tree object}
+\item{object}{An object of class \code{sevt}.}
 
-\item{var}{name of varaibles in the model}
+\item{var}{name of a variable in \code{object}.}
 
-\item{legend.text}{logical}
+\item{legend.text}{logical.}
 
 \item{col}{color mapping for the stages, see \code{col}
-argument in \code{\link{plot.sevt}}}
+argument in \code{\link{plot.sevt}}.}
 
-\item{...}{addittional arguments passed to \code{\link{barplot}}}
+\item{...}{additional arguments passed to \code{\link{barplot}}.}
 }
 \description{
-Barplot method for staged event trees
+Barplot of stage probabilities
 }
 \examples{
 model <- fbhc(full(PhDArticles, lambda = 1))

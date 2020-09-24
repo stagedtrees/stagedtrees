@@ -7,13 +7,13 @@
 \method{as.sevt}{bn.fit}(x, order = NULL)
 }
 \arguments{
-\item{x}{a \code{bn.fit} object}
+\item{x}{a \code{bn.fit} object.}
 
 \item{order}{a topological order of the variables,
-WARNING: the order will not be checked}
+WARNING: the order will not be checked.}
 }
 \value{
-A staged event tree object
+A staged event tree object.
 }
 \description{
 Convert a bn fit to a staged event tree object

@@ -7,20 +7,20 @@
 stndnaming(object, uniq = FALSE, prefix = FALSE, ignore = NULL)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree.}
 
-\item{uniq}{logical, if stage numbers shuold be unique over all tree}
+\item{uniq}{logical, if stage numbers should be unique over all tree.}
 
-\item{prefix}{logical, if stage names should be prefixed with variable name}
+\item{prefix}{logical, if stage names should be prefixed with variable name.}
 
-\item{ignore}{stages name which should be left untouched}
+\item{ignore}{stages name which should be left untouched.}
 }
 \value{
 a staged event tree object with stages named with
 consecutive integers.
 }
 \description{
-Standard renaming of stages
+Rename all stages in a staged event tree.
 }
 \examples{
 DD <- generate_xor_dataset(4, 100)

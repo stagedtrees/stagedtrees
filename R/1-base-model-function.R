@@ -1,24 +1,34 @@
 #' Staged event tree (sevt) class
 #'
-#' Structure and usage of S3 class \code{sevt}
+#' Structure and usage of S3 class \code{sevt},
 #' used to store a staged event tree. 
 #' @details  A staged event tree object is a list with components:
 #' \itemize{
-#'          \item tree (required): A named list where for each variable,
-#'                      the levels of such variable are listed.
+#'          \item tree (required): A named list with one component
+#'                      for each variable in the model,
+#'                      a character vector withe the names of
+#'                      the levels for that variable.
 #'                      The order of the variable is the
 #'                      order of the event tree.
-#'          \item stages (required): A named list where each component
-#'                        stores the stages for the given variable.
-#'          \item ctables: The contingency tables of the data distributed 
-#'                         along the tree structure.
+#'          \item stages (required): A named list with one component
+#'                        for each variable but the first, 
+#'                        a character vector storing the stages for 
+#'                        the situations related to path ending in that 
+#'                        variable.
+#'          \item ctables: A named list with one component 
+#'          for each variable, the flat contingency table of that variable
+#'          given the previous variables.
 #'          \item lambda: The smoothing parameter used to compute probabilities.
 #'          \item prob: The conditional probability tables for every
-#'                      variable and stage.
+#'                      variable and stage. Stored in a named list with 
+#'                      one component for each variable, a list with
+#'                      one component for each stage,
 #'          \item ll: The log-likelihood of the \code{estimated} model.
+#'                    If present, \code{\link{logLik.sevt}} will 
+#'                    return this value instead of computing the log-likelihood.
 #'        }
 #'        The tree structure is never defined explicitly, but instead 
-#'        it is defined by the list \code{tree} containing the order
+#'        is implicitly defined by the list \code{tree} containing the order
 #'        of the variables and the names of their levels. This is 
 #'        sufficient to define a complete symmetric tree where an 
 #'        internal node at a depth related to a variable \code{v} 
@@ -35,27 +45,31 @@
 #' available model selection algorithm can be used, see for example 
 #' \code{\link{hc}}, \code{\link{bhc}} or 
 #' \code{\link{stages_hclust}}. 
-#' If, mainly for development, only the staged tree structure is needed (without data or 
-#' probabilities) the basic \code{\link{staged_ev_tree}} constructor can 
+#' If, mainly for development, only the staged tree structure is needed 
+#' (without data or probabilities) the basic 
+#' \code{\link{staged_ev_tree}} constructor can 
 #' be used.
 #' @name sevt class
 NULL
 
 #' Build a staged event tree
 #' 
-#' @param x a list, a data frame or a table with data
+#' Basic constructor for staged event tree class (\code{sevt}).
+#' @param x a list, a data frame or table object.
 #' @param full logical, if TRUE the full model is created 
 #'              otherwise the independence model.
-#' @param order order of the variables
+#' @param order character vector, 
+#'              order of the variables to build the 
+#'              tree, by default the order of the variables
+#'              in \code{x}.
+#' @return A staged event tree object, element of \code{sevt} 
+#' class.
 #' @export
 staged_ev_tree <- function(x, full = FALSE, order = NULL) {
   UseMethod("staged_ev_tree", object = x)
 }
 
 #' @rdname staged_ev_tree
-#' @param order order of the variables to build the 
-#'              tree, by default the order of the variables
-#'              in the table \code{x}.
 #' @examples 
 #' 
 #' ######### from table
@@ -73,9 +87,6 @@ staged_ev_tree.table <- function(x,
 }
 
 #' @rdname staged_ev_tree
-#' @param order order of the variables to build the 
-#'              tree, by default the order of the variables
-#'              in the data frame \code{x}.
 #' @export
 #' @examples
 #'
@@ -83,7 +94,6 @@ staged_ev_tree.table <- function(x,
 #' DD <- generate_random_dataset(n = 4, 1000)
 #' indep <- staged_ev_tree(DD)
 #' full <- staged_ev_tree(DD, full = TRUE)
-#' 
 staged_ev_tree.data.frame <- function(x,
                                       full = FALSE,
                                       order = colnames(x)) {
@@ -153,9 +163,9 @@ staged_ev_tree.list <- function(x, full = FALSE, order = names(x)) {
 
 #' Expand probabilities of a staged event tree
 #'
-#' Return the list of complete probability tables
-#' @param object a fitted staged event tree object
-#' @return probability tables
+#' Return the list of complete probability tables.
+#' @param object a fitted staged event tree object.
+#' @return probability tables.
 #' @keywords internal
 expand_prob <- function(object) {
   stopifnot(is_fitted_sevt(object))
@@ -190,12 +200,12 @@ expand_prob <- function(object) {
 
 #' Distribute counts along tree
 #'
-#' Create the listo of \code{ftable}s 
+#' Create the list of \code{ftable}s 
 #' storing the observations distributed along 
 #' the path of the tree.
-#' @param object A stratified event tree, a list with a \code{tree} field
+#' @param object A stratified event tree, a list with a \code{tree} field.
 #' @param data table or data.frame containing observations 
-#'             of the variable in \code{object}
+#'             of the variable in \code{object}.
 #' @return  A list of \code{ftable}s.
 #' @details Distribute the counts along the event tree.
 #'          This is an internal function, the user will 
@@ -226,8 +236,8 @@ make_ctables <- function(object, data) {
 
 #' Check if the stages event tree has ctables field
 #' 
-#' @param object a staged event tree object
-#' @return logical 
+#' @param object a staged event tree object.
+#' @return logical.
 #' @keywords internal
 has_ctables <- function(object){
   isFALSE(is.null(object$ctables))
@@ -235,8 +245,8 @@ has_ctables <- function(object){
 
 #' Check if the stages event tree has probabilitites
 #' 
-#' @param object a staged event tree object
-#' @return logical 
+#' @param object a staged event tree object.
+#' @return logical.
 #' @keywords internal
 has_prob <- function(object){
   isFALSE(is.null(object$prob))

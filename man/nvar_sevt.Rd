@@ -7,10 +7,10 @@
 nvar_sevt(object)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{An object of class \code{sevt}.}
 }
 \value{
-integer, the number of variables
+integer, the number of variables.
 }
 \description{
 Utility returning the number of variables

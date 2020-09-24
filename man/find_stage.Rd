@@ -7,14 +7,14 @@
 find_stage(object, path)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{a staged event tree object.}
 
-\item{path}{vector of the path}
+\item{path}{vector of the path.}
 }
 \value{
-the stage name corresponding of the path
+the stage name corresponding of the path.
 }
 \description{
-no checking is done
+no checking is done.
 }
 \keyword{internal}

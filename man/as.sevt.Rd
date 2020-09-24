@@ -7,13 +7,17 @@
 as.sevt(x, order = NULL)
 }
 \arguments{
-\item{x}{an R object to be coerced}
+\item{x}{an R object to be coerced.}
 
-\item{order}{order of the variables}
+\item{order}{order of the variables.}
 }
 \value{
-the equivalent sevt object
+the equivalent sevt object.
 }
 \description{
 Convert to sevt class
+}
+\details{
+Only a method for objects of class \code{bn.fit}
+(\code{bnlearn} package) is available.
 }
