@@ -64,7 +64,7 @@ test_that("test that the staged event tree is fitted", {
       C = as.factor(c("SD", "de", "rew", "tyu")),
       D = as.factor(c("a", "uu", "a", "uu"))
     )
-  ev <- staged_ev_tree(x = DD, fit = TRUE, lambda = 0)
+  ev <- sevt.fit(staged_ev_tree(x = DD), data = DD, lambda = 0)
   for (var in c("A", "B", "C", "D")) {
     expect_equal(as.numeric(ev$prob[[var]][[1]]), as.numeric(table(DD[var]) / sum(table(DD[var]))))
   }
@@ -79,7 +79,7 @@ test_that("test that probabilities are probabilities (indep model)", {
       replace = TRUE
     )))
   }))
-  sev <- staged_ev_tree(DD, fit = T, lambda = 1)
+  sev <- sevt.fit(staged_ev_tree(DD), data = DD, lambda = 1 )
   for (i in 1:4) {
     for (j in 1:3) {
       expect_gte(sev$prob[[i]][[1]][j], 0) ## test prob are >=0
@@ -104,11 +104,8 @@ test_that("test that probabilities are probabilities (full model)", {
       replace = TRUE
     )))
   }))
-  sev <- staged_ev_tree(DD,
-    full = TRUE,
-    fit = T,
-    lambda = 1
-  )
+  sev <- sevt.fit(staged_ev_tree(DD, full = TRUE), data = DD, 
+                  lambda = 1)
   for (i in 1:4) {
     for (s in 1:length(sev$prob[[i]])) {
       for (j in 1:3) {
@@ -136,9 +133,9 @@ test_that("test indep model", {
       replace = TRUE
     )))
   }))
-  sev1 <- staged_ev_tree(DD, lambda = 1)
+  sev1 <- sevt.fit(staged_ev_tree(DD), data = DD, lambda = 1)
 
   sev2 <- indep(DD, lambda = 1)
 
-  expect_true(compare.sevt(sev1, sev2))
+  expect_true(compare_stages(sev1, sev2))
 })

@@ -2,7 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{split_stage_random}
 \alias{split_stage_random}
-\title{split randomly a stage}
+\title{Split randomly a stage}
 \usage{
 split_stage_random(object, var, stage, p = 0.5)
 }
@@ -28,9 +28,9 @@ probability \code{p}.
 }
 \examples{
 DD <- generate_random_dataset(5, 100)
-model <- staged_ev_tree(DD, fit = TRUE, full = TRUE, lambda = 1)
-model <- bhc.sevt(model)
-model <- stndnaming.sevt(model)
+model <- full(DD,lambda = 1)
+model <- bhc(model)
+model <- stndnaming(model)
 model$stages$X5
 
 # no split

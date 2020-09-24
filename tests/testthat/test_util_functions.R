@@ -22,9 +22,9 @@ test_that("uni_idx works as expected", {
 
 test_that("find_stage find the correct stage", {
   DD <-
-    data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
-  ev <- strt_ev_tree(x = DD, order = c("B", "A"))
-  sevt <- staged_ev_tree(ev)
+    data.frame(A = as.factor(c(1, 2, 2, 1)), 
+               B = as.factor(c("a", "b", "a", "b")))
+  sevt <- staged_ev_tree(DD, order = c("B", "A"), full = TRUE)
   stg1 <- stagedtrees:::find_stage(sevt, path = c("a"))
   stg2 <- stagedtrees:::find_stage(sevt, path = c("b"))
   expect_equal(c(stg1, stg2), c("1", "2"))
@@ -33,15 +33,26 @@ test_that("find_stage find the correct stage", {
 
 context("testing distance functions")
 
-ds <- c(lp, ry, kl, tv, hl, bh, cd)
+ds <- c(probdist.l1, probdist.l2, probdist.ry, 
+        probdist.kl, probdist.tv, 
+        probdist.hl, probdist.bh, probdist.cd)
 
-test_that("lp(x,x) is = 0", {
+test_that("l1(x,x) is = 0", {
   replicate(10, {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
 
     p <- rbinom(1, 5, 0.2) + 1
-    expect_equal(lp(!!x, !!x, p = !!p), 0)
+    expect_equal(probdist.l1(!!x, !!x, p = !!p), 0)
+  })
+})
+
+test_that("l2(x,x) is = 0", {
+  replicate(10, {
+    x <- runif(10, min = 1, max = 2)
+    x <- x / sum(x)
+   
+    expect_equal(probdist.l2(!!x, !!x), 0)
   })
 })
 
@@ -50,8 +61,7 @@ test_that("ry(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
 
-    alpha <- runif(1, min = 1.1, max = 10)
-    expect_equal(ry(!!x, !!x, alpha = !!alpha), 0)
+    expect_equal(probdist.ry(!!x, !!x), 0)
   })
 })
 
@@ -60,7 +70,7 @@ test_that("kl(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
 
-    expect_equal(kl(!!x, !!x), 0)
+    expect_equal(probdist.kl(!!x, !!x), 0)
   })
 })
 
@@ -69,7 +79,7 @@ test_that("tv(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
 
-    expect_equal(tv(!!x, !!x), 0)
+    expect_equal(probdist.tv(!!x, !!x), 0)
   })
 })
 
@@ -78,7 +88,7 @@ test_that("hl(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
 
-    expect_equal(hl(!!x, !!x), 0)
+    expect_equal(probdist.hl(!!x, !!x), 0)
   })
 })
 
@@ -87,7 +97,7 @@ test_that("bh(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
 
-    expect_equal(bh(!!x, !!x), 0)
+    expect_equal(probdist.bh(!!x, !!x), 0)
   })
 })
 
@@ -96,14 +106,14 @@ test_that("cd(x,x) is = 0", {
     x <- runif(10, min = 1, max = 2)
     x <- x / sum(x)
     
-    expect_equal(cd(!!x, !!x), 0)
+    expect_equal(probdist.cd(!!x, !!x), 0)
   })
 })
 
 ################# positive
 
 
-test_that("lp(x,y) is >= 0", {
+test_that("l1(x,y) is >= 0", {
   replicate(10, {
     x <- runif(10, min = 0:9, max = 1:10)
     x <- x / sum(x)
@@ -111,11 +121,22 @@ test_that("lp(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
 
-    p <- rbinom(1, 20, 0.2)
-    expect_gte(lp(!!x, !!y, p = !!p), 0)
+    expect_gte(probdist.l1(!!x, !!y), 0)
   })
 })
 
+
+test_that("l2(x,y) is >= 0", {
+  replicate(10, {
+    x <- runif(10, min = 0:9, max = 1:10)
+    x <- x / sum(x)
+    
+    y <- x + runif(10, min = 1, max = 2)
+    y <- y / sum(y)
+    
+    expect_gte(probdist.l2(!!x, !!y), 0)
+  })
+})
 test_that("ry(x,y) is >= 0", {
   replicate(10, {
     x <- runif(10, min = 0:9, max = 1:10)
@@ -124,8 +145,7 @@ test_that("ry(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
 
-    alpha <- runif(1, min = 1, max = 10)
-    expect_gte(ry(!!x, !!y, alpha = !!alpha), 0)
+    expect_gte(probdist.ry(!!x, !!y), 0)
   })
 })
 
@@ -137,7 +157,7 @@ test_that("kl(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
 
-    expect_gte(kl(!!x, !!y), 0)
+    expect_gte(probdist.kl(!!x, !!y), 0)
   })
 })
 
@@ -149,7 +169,7 @@ test_that("tv(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
 
-    expect_gte(tv(!!x, !!y), 0)
+    expect_gte(probdist.tv(!!x, !!y), 0)
   })
 })
 
@@ -161,7 +181,7 @@ test_that("hl(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
 
-    expect_gte(hl(!!x, !!y), 0)
+    expect_gte(probdist.hl(!!x, !!y), 0)
   })
 })
 
@@ -173,7 +193,7 @@ test_that("bh(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
 
-    expect_gte(bh(!!x, !!y), 0)
+    expect_gte(probdist.bh(!!x, !!y), 0)
   })
 })
 
@@ -185,13 +205,28 @@ test_that("cd(x,y) is >= 0", {
     y <- x + runif(10, min = 1, max = 2)
     y <- y / sum(y)
     
-    expect_gte(cd(!!x, !!y), 0)
+    expect_gte(probdist.cd(!!x, !!y), 0)
   })
 })
 
 ################### symmetric
 
-test_that("lp(x,y) is symmetric", {
+test_that("l1(x,y) is symmetric", {
+  replicate(10, {
+    x <- runif(10)
+    x <- x / sum(x)
+    
+    y <- runif(10)
+    y <- y / sum(y)
+    
+    expect_equal(
+      probdist.l1(!!x, !!y),
+      probdist.l1(!!y, !!x)
+    )
+  })
+})
+
+test_that("l2(x,y) is symmetric", {
   replicate(10, {
     x <- runif(10)
     x <- x / sum(x)
@@ -199,10 +234,9 @@ test_that("lp(x,y) is symmetric", {
     y <- runif(10)
     y <- y / sum(y)
 
-    p <- rbinom(1, 20, 0.2)
     expect_equal(
-      lp(!!x, !!y, p = !!p),
-      lp(!!y, !!x, p = !!p)
+      probdist.l2(!!x, !!y),
+      probdist.l2(!!y, !!x)
     )
   })
 })
@@ -215,10 +249,9 @@ test_that("ry(x,y) is symmetric", {
     y <- runif(10)
     y <- y / sum(y)
 
-    alpha <- runif(1, min = 1.1, max = 10)
     expect_equal(
-      ry(!!x, !!y, alpha = !!alpha),
-      ry(!!y, !!x, alpha = !!alpha)
+      probdist.ry(!!x, !!y),
+      probdist.ry(!!y, !!x)
     )
   })
 })
@@ -231,7 +264,7 @@ test_that("kl(x,y) is symmetric", {
     y <- runif(10)
     y <- y / sum(y)
 
-    expect_equal(kl(!!x, !!y), kl(!!y, !!x))
+    expect_equal(probdist.kl(!!x, !!y), probdist.kl(!!y, !!x))
   })
 })
 
@@ -243,7 +276,7 @@ test_that("tv(x,y) is symmetric", {
     y <- runif(10)
     y <- y / sum(y)
 
-    expect_equal(tv(!!x, !!y), tv(!!y, !!x))
+    expect_equal(probdist.tv(!!x, !!y), probdist.tv(!!y, !!x))
   })
 })
 
@@ -255,7 +288,7 @@ test_that("hl(x,y) is symmetric", {
     y <- runif(10)
     y <- y / sum(y)
 
-    expect_equal(hl(!!x, !!y), hl(!!y, !!x))
+    expect_equal(probdist.hl(!!x, !!y), probdist.hl(!!y, !!x))
   })
 })
 
@@ -267,7 +300,7 @@ test_that("bh(x,y) is symmetric", {
     y <- runif(10)
     y <- y / sum(y)
 
-    expect_equal(bh(!!x, !!y), bh(!!y, !!x))
+    expect_equal(probdist.bh(!!x, !!y), probdist.bh(!!y, !!x))
   })
 })
 
@@ -301,4 +334,9 @@ test_that("which_class (internal)",{
                                          c("A", "B", "C", "D", "E")), !!D)
   expect_equal(stagedtrees:::which_class(c(-0.1, -10, -4, -1, -6),
                                          c("A", "B", "C", "D", "E")), !!A)
+})
+
+test_that("simple_clustering", {
+  M <- matrix(runif(25), ncol = 5, dimnames = list(1:5,1:5))
+  expect_is(stagedtrees:::simple_clustering(M), "list")
 })

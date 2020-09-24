@@ -2,22 +2,17 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{sevt.fit}
 \alias{sevt.fit}
-\alias{fit.sevt}
 \title{Fit a staged event tree}
 \usage{
-sevt.fit(sevt, data = NULL, lambda = 0, ...)
-
-fit.sevt(sevt, data = NULL, lambda = 0, ...)
+sevt.fit(object, data = NULL, lambda = object$lambda)
 }
 \arguments{
-\item{sevt}{a staged event tree}
+\item{object}{a staged event tree.}
 
-\item{data}{data.frame, contingency table, or fitted
-stratified event tree}
+\item{data}{data.frame or contingency table with observations of
+the variables in \code{object}.}
 
-\item{lambda}{smoothing parameter}
-
-\item{...}{additional parameters}
+\item{lambda}{smoothing parameter.}
 }
 \value{
 a fitted staged event tree, that is an object of class \code{sevt}
@@ -31,9 +26,6 @@ eventually,  an additive (Laplace) smoothing.
 \details{
 The log-likelihood of the model will be recomputed and
 stored in the returned object.
-
-\code{fit.sevt} is the same as \code{sevt.fit}
-and it will be probably removed in the future.
 }
 \examples{
 

@@ -1,36 +1,35 @@
 #' Staged event trees.
 #'
 #' Algorithms to create, learn, fit and explore staged event tree models.
-#' Functions to compute probabilities and make predictions from the fitted
+#' Functions to compute probabilities, make predictions from the fitted
 #' models and to plot, analyze and manipulate staged event trees.
 #'
 #' Model selection algorithms:
 #' * full model \code{\link{full}}
 #' * independence model \code{\link{indep}}
-#' * Hill-Climbing \code{\link{hc.sevt}}
-#' * Backward Hill-Climbing \code{\link{bhc.sevt}}
-#' * Fast Backward Hill-Climbing \code{\link{fbhc.sevt}}
-#' * Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
-#' * Backward joining \code{\link{bj.sevt}}
-#' * Naive Staged Event Tree \code{\link{naive.sevt}}
-#' * Hierarchical Clustering \code{\link{hclust.sevt}}
-#' * K-Means Clustering \code{\link{kmeans.sevt}}
+#' * Hill-Climbing \code{\link{hc}}
+#' * Backward Hill-Climbing \code{\link{bhc}}
+#' * Fast Backward Hill-Climbing \code{\link{fbhc}}
+#' * Backward Hill-Climbing Random \code{\link{bhcr}}
+#' * Backward joining \code{\link{bj}}
+#' * Hierarchical Clustering \code{\link{stages_hclust}}
+#' * K-Means Clustering \code{\link{stages_kmeans}}
 #'
 #' Probabilities, log-likelihood and predictions:
-#' * Marginal probabilities \code{\link{prob.sevt}}
+#' * Marginal probabilities \code{\link{prob}}
 #' * Log-Likelihood \code{\link{logLik.sevt}}
 #' * Predict method \code{\link{predict.sevt}}
 #'
 #' Plot, explore and compare:
 #' * Plot \code{\link{plot.sevt}}
-#' * Compare \code{\link{compare.sevt}}
-#' * Stages inclusion \code{\link{inclusion.sevt}}
-#' * Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
+#' * Compare \code{\link{compare_stages}}
+#' * Stages inclusion \code{\link{inclusion_stages}}
+#' * Stages info \code{\link{stages}}, \code{\link{summary.sevt}}
 #' 
 #' Modify models:
 #'  * Join and isolate unobserved situations \code{\link{join_zero}}
 #'  * Join two stages \code{\link{join_stages}}
-#'  * Automatic renaming of stages \code{\link{stndnaming.sevt}}
+#'  * Automatic renaming of stages \code{\link{stndnaming}}
 #'  * Rename a stage \code{\link{rename_stage}}
 #' @docType package
 #' @name stagedtrees
@@ -56,6 +55,6 @@
 #' @examples
 #' data("PhDArticles")
 #' mf <- full(PhDArticles)
-#' mod <- fbhc.sevt(mf)
+#' mod <- fbhc(mf)
 #' plot(mod)
 NULL

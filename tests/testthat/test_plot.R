@@ -17,7 +17,7 @@ context("plot staged trees")
 
 DD <- data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
 DD <- cbind(DD, generate_random_dataset(6, 4))
-mod <- full(DD, fit = FALSE)
+mod <- staged_ev_tree(DD, full = TRUE)
 
 test_that("plot should accept col = 'stages' ", {
   expect_silent(plot(mod, col = "stages"))
@@ -28,6 +28,13 @@ test_that("plot should accept col = function() ", {
   expect_silent(plot(mod, col = function(s) {
     return(rep(2, length(s)))
   }))
+})
+
+test_that("text.sevt works", {
+  expect_silent({
+    plot(mod)
+    text(mod)
+    })
 })
 
 context("barplot stages")
@@ -42,9 +49,19 @@ test_that("barplot_stages should accept col = 'stages'", {
   expect_silent(barplot_stages(mod, "B", col = "stages"))
 })
 
-
 test_that("barplot_stages should accept col = function()", {
   expect_silent(barplot_stages(mod, "B", col = function(s) {
     return(grDevices::hcl.colors(length(s)))
   }))
 })
+
+
+test_that("barplot_stages should accept col = LL", {
+  expect_silent(barplot_stages(mod, "B", col = NULL))
+})
+
+
+test_that("barplot_stages with legend.text=TRUE", {
+  expect_silent(barplot_stages(mod, "B", legend.text = TRUE))
+})
+

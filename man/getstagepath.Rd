@@ -37,7 +37,7 @@ Utility functions to obtain stages from paths and
 paths from stages.
 }
 \examples{
-model <- fbhc.sevt(full(PhDArticles))
+model <- fbhc(full(PhDArticles))
 get_stage(model, c("0", "male"))
 paths <- expand.grid(model$tree[2:1])[, 2:1]
 get_stage(model, paths)

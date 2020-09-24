@@ -2,37 +2,40 @@
 % Please edit documentation in R/0-util-functions.R
 \name{probdist}
 \alias{probdist}
-\alias{lp}
-\alias{ry}
-\alias{kl}
-\alias{tv}
-\alias{hl}
-\alias{bh}
-\alias{cd}
+\alias{probdist.l2}
+\alias{probdist.l1}
+\alias{probdist.ry}
+\alias{probdist.kl}
+\alias{probdist.tv}
+\alias{probdist.hl}
+\alias{probdist.bh}
+\alias{probdist.cd}
 \title{Distances between probabilities}
 \usage{
-lp(x, y, p = 2, ...)
+probdist.l2(x, y, ...)
 
-ry(x, y, alpha = 2, ...)
+probdist.l1(x, y, ...)
 
-kl(x, y, ...)
+probdist.ry(x, y)
 
-tv(x, y, ...)
+probdist.kl(x, y, ...)
 
-hl(x, y, ...)
+probdist.tv(x, y, ...)
 
-bh(x, y, ...)
+probdist.hl(x, y, ...)
 
-cd(x, y, ...)
+probdist.bh(x, y, ...)
+
+probdist.cd(x, y, ...)
 }
 \arguments{
 \item{x}{vector of probabilities}
 
 \item{y}{vector of probabilities}
 
-\item{p}{exponent in the \eqn{L^p} norm}
-
 \item{...}{additional parameters for compatibility}
+
+\item{p}{exponent in the \eqn{L^p} norm}
 
 \item{alpha}{the order of the Renyi divergence}
 }
@@ -45,8 +48,8 @@ Distances between probabilities
 \details{
 Functions to compute distances between probabilities:
 \itemize{
-\item \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
-\item \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha}
+\item \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p} for \eqn{p = 1,2}
+\item \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha = 2}
 \item \code{kl}: the symmetrized Kullback-Leibler divergence
 \item \code{tv}: the total variation or \eqn{L^1} norm
 \item \code{hl}: the (squared) Hellinger distance
@@ -54,3 +57,4 @@ Functions to compute distances between probabilities:
 \item \code{cd}: the Chan-Darwiche distance
 }
 }
+\keyword{internal}

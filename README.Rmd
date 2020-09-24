@@ -19,6 +19,14 @@ knitr::opts_chunk$set(
  [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
  [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
  
+##### (almost) v2.0.0
+
+The current version of `stagedtrees` available on github is a 
+major update over the previous version (1.0.2). The update will 
+almost surely break any code written with v1.0.2. 
+Functions naming and functions parameters have been updated to
+simplify user experience. 
+
 ##### Preprint
 
 F Carli, M Leonelli, E Riccomagno, G Varando, The R Package stagedtrees for Structural Learning of Stratified Staged Trees, 2020
@@ -92,46 +100,47 @@ mod_full0
 This methods perform optimization for a given score 
 using different heuristics. 
 
-* **Hill-Climbing** `hc.sevt(object, score, max_iter, trace)`
+* **Hill-Climbing** `hc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
-mod1 <- hc.sevt(mod_indep)
+mod1 <- hc(mod_indep)
 mod1
 ```
-* **Backward Hill-Climbing** `bhc.sevt(object, score, max_iter, trace)`
+* **Backward Hill-Climbing** `bhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
-mod2 <- bhc.sevt(mod_full)
+mod2 <- bhc(mod_full)
 mod2
 ```
 * **Backward Fast Hill-Climbing** 
-`fbhc.sevt(object, score, max_iter, trace)`
+`fbhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
-mod3 <- fbhc.sevt(mod_full, score = function(x) -BIC(x))
+mod3 <- fbhc(mod_full, score = function(x) -BIC(x))
 mod3
 ```
 
 
 ##### Distance methods
 
-* **Backward Joining** `bj.sevt(object, distance, thr, trace, ...)`
+* **Backward Joining** `bj(object, distance, thr, trace, ...)`
 ```{r}
-mod4 <- bj.sevt(mod_full)
+mod4 <- bj(mod_full)
 mod4
 ```
 
 ##### Clustering methods
 
-* **Hierarchical Clustering** `hclust.sevt(object, distance, k, method, ignore, limit, scope)`
+* **Hierarchical Clustering** `stages_hclust(object, distance, k, method, ignore, limit, scope)`
 ```{r}
-mod5 <- hclust.sevt(mod_full0,
+mod5 <- stages_hclust(mod_full0,
                     k = 2, 
                     distance = "totvar",
                    method = "mcquitty", 
                    ignore = "NA")
 mod5
 ```
-* **K-Means Clustering** `kmeans.sevt(object, k, algorithm, ignore, limit, scope, nstart)`
+
+* **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore, limit, scope, nstart)`
 ```{r}
-mod6 <- kmeans.sevt(mod_full0,
+mod6 <- stages_kmeans(mod_full0,
                     k = 2, 
                    algorithm = "Hartigan-Wong", 
                    ignore = "NA")
@@ -145,11 +154,11 @@ easily various model selection algorithms and to specify models easily.
 
 ```{r}
 library(magrittr)
-model <- PhDArticles %>% full(lambda = 1) %>% hclust.sevt %>% 
-               hc.sevt
+model <- PhDArticles %>% full(lambda = 1) %>% 
+           stages_hclust %>% hc
 
 ## extract a sub_tree and join two stages
-sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%  
+sub_model <- model %>% subtree(path = c(">2"))  %>%  
               join_stages("Mentor", "1", "2")
 ```
 
@@ -158,18 +167,19 @@ sub_model <- model %>% subtree.sevt(path = c(">2"))  %>%
 
 ##### Marginal probabilities
 
-Obtain marginal probabilities with the  `prob.sevt` function.
+Obtain marginal probabilities with the  `prob` function.
 ```{r}
 # estimated probability of c(Gender = "male", Married = "yes")
 # using different models
-prob.sevt(mod_indep, c(Gender = "male", Married = "yes")) 
-prob.sevt(mod3, c(Gender = "male", Married = "yes"))
+prob(mod_indep, c(Gender = "male", Married = "yes")) 
+prob(mod3, c(Gender = "male", Married = "yes"))
 ```
 
 Or for a  `data.frame` of observations:
+
 ```{r}
 obs <- expand.grid(mod_full$tree[c(2,3,5)])
-p <- prob.sevt(mod2, obs)
+p <- prob(mod2, obs)
 cbind(obs, P = p)
 ```
 
@@ -196,7 +206,7 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ##### Sampling
 
 ```{r}
-sample.sevt(mod4, 5)
+sample_from(mod4, 5)
 ```
 #### Explore the model
 
@@ -204,14 +214,15 @@ sample.sevt(mod4, 5)
 
 ```{r}
 # Degrees of freedom
-df.sevt(mod_full)
-df.sevt(mod_indep)
+df_sevt(mod_full)
+df_sevt(mod_indep)
 
 # variables 
-varnames.sevt(mod1)
+variable.names(mod1)
 
-# number of variables
-nvar.sevt(mod1)
+# stages
+stages(mod1, "Kids")
+
 
 # summary
 summary(mod1)
@@ -228,23 +239,24 @@ text(mod4, y = -0.03, cex = 0.7)
 We can also manually specify colors and avoid plotting 
 some stages (e.g. the stages with not-observed situations).
 ```{r}
-plot(stndnaming.sevt(mod5, uniq = TRUE, ignore = "NA"), 
-     main = "Staged tree learned with hclust.sevt 
+plot(stndnaming(mod5, uniq = TRUE, ignore = "NA"), 
+     main = "Staged tree learned with stages_hclust 
      (structural zeroes)", 
      col = "stages",
      cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
 text(mod5, y = -0.03, cex = 0.7)
 ```
 
-##### Stages
+###### Barplot
+
+`barplot_stages` permit to easily plot barplots (via `barplot`) 
+representing the different probabilities defined for the different
+stages of a variable.
 
 ```{r}
-stages.sevt(mod4, "Kids")
+barplot_stages(mod4, "Kids", legend.text = TRUE)
 ```
 
-```{r}
-summary(mod4)
-```
 
 ##### Subtrees
 
@@ -252,7 +264,7 @@ A subtree can be extracted, the result is another staged event tree object
 in the remaining variables.
 
 ```{r}
-sub <- subtree.sevt(mod4, c(">2", "female"))
+sub <- subtree(mod4, c(">2", "female"))
 plot(sub)
 text(sub, y = -0.03, cex = 0.7)
 ```
@@ -261,15 +273,15 @@ text(sub, y = -0.03, cex = 0.7)
 
 Check if models are equal.
 ```{r}
-compare.sevt(mod1, mod2)
+compare_stages(mod1, mod2)
 
-compare.sevt(mod1, mod2, method = "hamming", plot = TRUE, 
+compare_stages(mod1, mod2, method = "hamming", plot = TRUE, 
              cex.label.nodes = 0, cex.label.edges = 0)
 text(mod1)
 
-hamming.sevt(mod1, mod2)
+hamming_stages(mod1, mod2)
 
-difftree <- compare.sevt(mod1, mod2, method = "stages", plot = FALSE, 
+difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
              return.tree = TRUE)
 
 difftree$Married

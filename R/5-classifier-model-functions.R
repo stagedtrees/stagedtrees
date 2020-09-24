@@ -21,7 +21,7 @@
 #' train <- DD[1:500, order]
 #' test <- DD[501:600, order]
 #' model <- full(train)
-#' model <- bhc.sevt(model)
+#' model <- bhc(model)
 #' pr <- predict(model, newdata = test, class = "C")
 #' table(pr, test$C)
 #' # class values:
@@ -46,18 +46,18 @@ predict.sevt <-
            log = FALSE,
            ...) {
     stopifnot(is(object, "sevt"))
-    if (!is_fitted.sevt(object)) {
-      stop("Provide a fitted object")
+    vars <- names(object$tree)
+    if (!has_prob(object)) {
+      stop("Provide a fitted staged event tree")
     }
     if (is.null(newdata)) {
-      newdata <- object$data
+      newdata <- object$ctables[[vars[length(vars)]]]
       if (is.null(newdata)) {
         stop("Nothing to predict, newdata argument is missing and data is not
              attached to object")
       }
       newdata <- as.data.frame(newdata)
     } ## we are now sure we have newdata as a data.frame
-    vars <- names(object$tree)
     # we search now for wich variable we need to make predicitons
     if (is.null(class)) {
       if (!is.null(object$class)) {
@@ -85,7 +85,7 @@ predict.sevt <-
       for (cv in object$tree[[class]]) {
         x[class_idx] <- cv
         res[cv] <-
-          path_probability.sevt(object, x, log = TRUE)
+          path_probability(object, x, log = TRUE)
       }
       res[is.nan(res)] <- -Inf
       return(res - log(sum(exp(res)))) ## normalize, that is conditional prob

@@ -6,7 +6,7 @@
 \title{Staged event trees.}
 \description{
 Algorithms to create, learn, fit and explore staged event tree models.
-Functions to compute probabilities and make predictions from the fitted
+Functions to compute probabilities, make predictions from the fitted
 models and to plot, analyze and manipulate staged event trees.
 }
 \details{
@@ -14,19 +14,18 @@ Model selection algorithms:
 \itemize{
 \item full model \code{\link{full}}
 \item independence model \code{\link{indep}}
-\item Hill-Climbing \code{\link{hc.sevt}}
-\item Backward Hill-Climbing \code{\link{bhc.sevt}}
-\item Fast Backward Hill-Climbing \code{\link{fbhc.sevt}}
-\item Backward Hill-Climbing Random \code{\link{bhcr.sevt}}
-\item Backward joining \code{\link{bj.sevt}}
-\item Naive Staged Event Tree \code{\link{naive.sevt}}
-\item Hierarchical Clustering \code{\link{hclust.sevt}}
-\item K-Means Clustering \code{\link{kmeans.sevt}}
+\item Hill-Climbing \code{\link{hc}}
+\item Backward Hill-Climbing \code{\link{bhc}}
+\item Fast Backward Hill-Climbing \code{\link{fbhc}}
+\item Backward Hill-Climbing Random \code{\link{bhcr}}
+\item Backward joining \code{\link{bj}}
+\item Hierarchical Clustering \code{\link{stages_hclust}}
+\item K-Means Clustering \code{\link{stages_kmeans}}
 }
 
 Probabilities, log-likelihood and predictions:
 \itemize{
-\item Marginal probabilities \code{\link{prob.sevt}}
+\item Marginal probabilities \code{\link{prob}}
 \item Log-Likelihood \code{\link{logLik.sevt}}
 \item Predict method \code{\link{predict.sevt}}
 }
@@ -34,23 +33,23 @@ Probabilities, log-likelihood and predictions:
 Plot, explore and compare:
 \itemize{
 \item Plot \code{\link{plot.sevt}}
-\item Compare \code{\link{compare.sevt}}
-\item Stages inclusion \code{\link{inclusion.sevt}}
-\item Stages info \code{\link{stages.sevt}}, \code{\link{summary.sevt}}
+\item Compare \code{\link{compare_stages}}
+\item Stages inclusion \code{\link{inclusion_stages}}
+\item Stages info \code{\link{stages}}, \code{\link{summary.sevt}}
 }
 
 Modify models:
 \itemize{
 \item Join and isolate unobserved situations \code{\link{join_zero}}
 \item Join two stages \code{\link{join_stages}}
-\item Automatic renaming of stages \code{\link{stndnaming.sevt}}
+\item Automatic renaming of stages \code{\link{stndnaming}}
 \item Rename a stage \code{\link{rename_stage}}
 }
 }
 \examples{
 data("PhDArticles")
 mf <- full(PhDArticles)
-mod <- fbhc.sevt(mf)
+mod <- fbhc(mf)
 plot(mod)
 }
 \references{

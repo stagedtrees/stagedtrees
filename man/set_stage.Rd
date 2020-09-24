@@ -4,10 +4,10 @@
 \alias{set_stage}
 \title{Set stage to path}
 \usage{
-set_stage(sevt, path, stage)
+set_stage(object, path, stage)
 }
 \arguments{
-\item{sevt}{Staged event tree}
+\item{object}{Staged event tree}
 
 \item{path}{Vector of the path}
 

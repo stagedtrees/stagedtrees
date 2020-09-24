@@ -22,7 +22,7 @@ new_label <- function(labels) {
 #' @keywords internal
 uni_idx <- function(x) {
   nn <- names(x)
-  x <- lapply(1:length(x), function(i) {
+  x <- lapply(seq_along(x), function(i) {
     paste0(nn[i], ":", x[[i]])
   })
   names(x) <- nn
@@ -85,16 +85,15 @@ find_stage <- function(object, path) {
 #' e.g the transition probabilities for a given variable in a
 #' staged event tree.
 #' @param x list of conditional probabilities for each stage
-#' @param distance the distance function e.g. \code{\link{kl}}
-#' @param ... additional parameters to be passed to the distance function
+#' @param distance the distance function e.g. \code{\link{probdist.kl}}
 #' @return The matrix with the distances between stages
 #' @keywords internal
-distance_mat_stages <- function(x, distance = kl, ...) {
+distance_mat_stages <- function(x, distance = probdist.kl) {
   d <- length(x)
   M <- matrix(nrow = d, ncol = d, 0)
   for (i in 1:d) {
     for (j in 1:i) {
-      M[i, j] <- distance(x[[i]], x[[j]], ...)
+      M[i, j] <- distance(x[[i]], x[[j]])
     }
   }
   M <- M[lower.tri(M)]
@@ -144,8 +143,8 @@ simple_clustering <- function(M) {
 #' @param alpha the order of the Renyi divergence
 #' @param ... additional parameters for compatibility
 #' @details Functions to compute distances between probabilities:
-#' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p}
-#' * \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha}
+#' * \code{lp}: the \eqn{L^p} distance, \eqn{||x - y||_p^p} for \eqn{p = 1,2}
+#' * \code{ry}: the symmetric Renyi divergence of order \eqn{\alpha = 2} 
 #' * \code{kl}: the symmetrized Kullback-Leibler divergence
 #' * \code{tv}: the total variation or \eqn{L^1} norm
 #' * \code{hl}: the (squared) Hellinger distance
@@ -153,57 +152,59 @@ simple_clustering <- function(M) {
 #' * \code{cd}: the Chan-Darwiche distance
 #' @return The distance between \code{p} and \code{q}
 #' @name probdist
+#' @keywords internal
 NULL
 
 
 
 #' @rdname probdist
-#' @export
-lp <- function(x, y, p = 2, ...) {
-  (sum(abs(x - y)^p))^(1 / p)
+#' @keywords internal
+probdist.l2 <- function(x, y, ...) {
+  (sum(abs(x - y)^2))^(1 / 2)
 }
 
 #' @rdname probdist
-#' @export
-ry <- function(x, y, alpha = 2, ...) {
-  if (alpha == 1) {
-    return(kl(x, y))
-  }
-  if (alpha == Inf) {
-    return(log(max(x / y)) + log(max(y / x)))
-  }
+#' @keywords internal
+probdist.l1 <- function(x, y, ...) {
+  sum(abs(x - y))
+}
+
+#' @rdname probdist
+#' @keywords internal
+probdist.ry <- function(x, y) {
+  alpha <- 2
   (log(sum(x^(alpha) / y^(alpha - 1))) +
     log(sum(y^(alpha) / x^(alpha - 1)))) / (alpha - 1)
 }
 
 #' @rdname probdist
-#' @export
-kl <- function(x, y, ...) {
+#' @keywords internal
+probdist.kl <- function(x, y, ...) {
   return(sum(x * (log(x) - log(y))) +
     sum(y * (log(y) - log(x))))
 }
 
 #' @rdname probdist
-#' @export
-tv <- function(x, y, ...) {
+#' @keywords internal
+probdist.tv <- function(x, y, ...) {
   sum(abs(x - y))
 }
 
 #' @rdname probdist
-#' @export
-hl <- function(x, y, ...) {
+#' @keywords internal
+probdist.hl <- function(x, y, ...) {
   sum((sqrt(x) - sqrt(y))^2)
 }
 
 #' @rdname probdist
-#' @export
-bh <- function(x, y, ...) {
+#' @keywords internal
+probdist.bh <- function(x, y, ...) {
   -log(sum(sqrt(x * y)))
 }
 
 #' @rdname probdist
-#' @export
-cd <- function(x, y, ...) {
+#' @keywords internal
+probdist.cd <- function(x, y, ...) {
   log(max(x / y)) - log(min(x / y))
 }
 

@@ -31,6 +31,6 @@ Summary method for class \code{sevt}.
 Print model information and summary of stages.
 }
 \examples{
-model <- naive.sevt(full(PhDArticles, fit = TRUE, lambda = 1))
+model <- fbhc(full(PhDArticles, lambda = 1))
 summary(model)
 }
