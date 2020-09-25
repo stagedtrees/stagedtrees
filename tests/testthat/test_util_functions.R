@@ -43,7 +43,7 @@ test_that("l1(x,x) is = 0", {
     x <- x / sum(x)
 
     p <- rbinom(1, 5, 0.2) + 1
-    expect_equal(probdist.l1(!!x, !!x, p = !!p), 0)
+    expect_equal(probdist.l1(!!x, !!x), 0)
   })
 })
 
