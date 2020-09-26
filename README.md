@@ -15,7 +15,8 @@ status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/ba
 The current version of `stagedtrees` available on github is a major
 update over the previous version (1.0.2). The update will almost surely
 break any code written with v1.0.2. Functions naming and functions
-parameters have been updated to simplify user experience.
+parameters have been updated to simplify user experience. Check the
+[complete changelog](NEWS.md) for details.
 
 ##### Preprint
 
@@ -275,10 +276,10 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2   male   no     yes    low     high
-#> 2        0   male  yes      no   high      low
-#> 3      1-2 female   no      no   high     high
-#> 4      1-2 female  yes     yes    low      low
+#> 1       >2   male   no     yes    low      low
+#> 2        0   male  yes     yes    low      low
+#> 3       >2 female   no      no   high     high
+#> 4        0   male   no      no    low     high
 #> 5       >2   male  yes     yes   high      low
 ```
 

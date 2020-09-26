@@ -26,6 +26,7 @@ major update over the previous version (1.0.2). The update will
 almost surely break any code written with v1.0.2. 
 Functions naming and functions parameters have been updated to
 simplify user experience. 
+Check the [complete changelog](NEWS.md) for details.
 
 ##### Preprint
 
@@ -49,7 +50,7 @@ model for discrete random variables.
 ### Installation 
   
 ```{r, eval = FALSE}
-#stable version from CRAN
+#stable version from CRAN 
 install.packages("stagedtrees")
 
 #development version from github
