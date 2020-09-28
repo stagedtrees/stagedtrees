@@ -10,33 +10,66 @@
 \alias{indep.data.frame}
 \title{Full and independent staged event tree}
 \usage{
-full(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+full(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{full}{table}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{full}{table}(
+  data,
+  order = names(dimnames(data)),
+  join_zero = FALSE,
+  name.join = "NA",
+  lambda = 0
+)
 
-\method{full}{data.frame}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{full}{data.frame}(
+  data,
+  order = colnames(data),
+  join_zero = FALSE,
+  name.join = "NA",
+  lambda = 0
+)
 
-indep(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+indep(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0)
 
-\method{indep}{table}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{indep}{table}(
+  data,
+  order = names(dimnames(data)),
+  join_zero = FALSE,
+  name.join = "NA",
+  lambda = 0
+)
 
-\method{indep}{data.frame}(data, join_zero = FALSE, name.join = "NA", lambda = 0)
+\method{indep}{data.frame}(
+  data,
+  order = colnames(data),
+  join_zero = FALSE,
+  name.join = "NA",
+  lambda = 0
+)
 }
 \arguments{
-\item{data}{data to create the model, data.frame or table}
+\item{data}{data to create the model, data.frame or table.}
+
+\item{order}{character vector, order of variables.}
 
 \item{join_zero}{logical, if situations with zero observations should
-be joined}
+be joined.}
 
-\item{name.join}{name to pass to \code{\link{join_zero}}}
+\item{name.join}{name to pass to \code{\link{join_zero}}.}
 
-\item{lambda}{smoothing coefficient}
+\item{lambda}{smoothing coefficient.}
 }
 \description{
 Full and independent staged event tree
 }
 \details{
-full and indep models
+Functions to create full or independent staged tree models.
+The full (or saturated) staged tree is the model where every
+situation is in a different stage, and thus the model has the
+maximum number of parameters.
+Conversely, the independent staged tree (\code{indep}) assign
+all the situation related to the same variable to the same
+stage, thus it is equivalent to the independence factorization
+\eqn{P(X1, X2, X3, ...) = P(X1)P(X2)P(X3)...} .
 }
 \examples{
 

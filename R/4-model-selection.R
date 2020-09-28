@@ -66,15 +66,23 @@ join_zero <-
 #' Full and independent staged event tree
 #' 
 #' @name full_indep
-#' @details  full and indep models
+#' @details  Functions to create full or independent staged tree models.
+#'           The full (or saturated) staged tree is the model where every 
+#'           situation is in a different stage, and thus the model has the 
+#'           maximum number of parameters. 
+#'           Conversely, the independent staged tree (`indep`) assign
+#'           all the situation related to the same variable to the same 
+#'           stage, thus it is equivalent to the independence factorization
+#'           \eqn{P(X1, X2, X3, ...) = P(X1)P(X2)P(X3)...} .
 NULL
 
 #' @rdname full_indep
-#' @param data data to create the model, data.frame or table 
+#' @param data data to create the model, data.frame or table. 
+#' @param order character vector, order of variables.
 #' @param join_zero logical, if situations with zero observations should 
-#'                           be joined
-#' @param name.join name to pass to \code{\link{join_zero}}
-#' @param lambda smoothing coefficient
+#'                           be joined.
+#' @param name.join name to pass to \code{\link{join_zero}}.
+#' @param lambda smoothing coefficient.
 #' @examples
 #'
 #' ######### full model
@@ -82,15 +90,16 @@ NULL
 #' DD <- generate_xor_dataset(4, 100)
 #' modfull <- full(DD, lambda = 1)
 #' @export
-full <- function(data, join_zero = FALSE, name.join = "NA", lambda = 0) {
+full <- function(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0) {
   UseMethod("full", data)
 }
 
 #' @rdname full_indep
 #' @export
-full.table <- function(data, join_zero = FALSE,
+full.table <- function(data, order = names(dimnames(data)), 
+                       join_zero = FALSE,
                          name.join = "NA", lambda = 0){
-  object <- staged_ev_tree(data, full = TRUE)
+  object <- staged_ev_tree(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
   if (join_zero){
     join_zero(object, 
@@ -102,9 +111,10 @@ full.table <- function(data, join_zero = FALSE,
 
 #' @rdname full_indep
 #' @export
-full.data.frame <- function(data, join_zero = FALSE,
+full.data.frame <- function(data, order = colnames(data),
+                            join_zero = FALSE,
                             name.join = "NA", lambda = 0){
-  object <- staged_ev_tree(data, full = TRUE)
+  object <- staged_ev_tree(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
   if (join_zero){
     join_zero(object, 
@@ -117,16 +127,18 @@ full.data.frame <- function(data, join_zero = FALSE,
 
 #' @rdname full_indep
 #' @export
-indep <- function(data, join_zero = FALSE, 
+indep <- function(data, order = NULL,
+                  join_zero = FALSE, 
                   name.join = "NA", lambda = 0) {
   UseMethod("indep", data)
 }
 
 #' @rdname full_indep
 #' @export
-indep.table <- function(data, join_zero = FALSE, 
+indep.table <- function(data, order = names(dimnames(data)),
+                        join_zero = FALSE, 
                           name.join = "NA", lambda = 0) {
-  object <- staged_ev_tree(data, full = FALSE)
+  object <- staged_ev_tree(data, full = FALSE, order = order)
   object$ctables <- make_ctables(object, data)
   if (join_zero){
     join_zero(object, 
@@ -144,10 +156,11 @@ indep.table <- function(data, join_zero = FALSE,
 #' system.time(model <- indep(DD, lambda = 1))
 #' model
 #' @export
-indep.data.frame <- function(data, join_zero = FALSE, 
+indep.data.frame <- function(data, order = colnames(data),
+                             join_zero = FALSE, 
                              name.join = "NA", lambda = 0) {
   # create the staged tree object
-  model <- staged_ev_tree(data, full = FALSE)
+  model <- staged_ev_tree(data, full = FALSE, order = order)
   # create empty probability list
   model$prob <- list()
   # extract names of variables
