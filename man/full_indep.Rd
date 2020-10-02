@@ -88,7 +88,7 @@ stage, thus it is equivalent to the independence factorization
 ######### full model
 
 DD <- generate_xor_dataset(4, 100)
-modfull <- full(DD, lambda = 1)
+model_full <- full(DD, lambda = 1)
 
 ######### independence model (data.frame)
 DD <- generate_xor_dataset(4, 100)

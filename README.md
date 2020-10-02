@@ -184,7 +184,7 @@ mod6 <- stages_kmeans(mod_full0,
 mod6
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4119.375 (df=14)
+#> 'log Lik.' -4119.247 (df=14)
 ```
 
 #### Combining model selections with `%>%`
@@ -275,11 +275,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2 female   no     yes   high      low
-#> 2      1-2   male   no      no    low     high
-#> 3        0 female   no      no medium     high
-#> 4       >2   male  yes     yes    low      low
-#> 5      1-2 female   no     yes   high      low
+#> 1      1-2   male   no      no    low      low
+#> 2      1-2   male   no     yes   high      low
+#> 3      1-2   male  yes     yes    low     high
+#> 4      1-2   male   no     yes    low     high
+#> 5      1-2   male   no      no medium     high
 ```
 
 #### Explore the model
@@ -398,7 +398,7 @@ compare_stages(mod1, mod2, method = "hamming", plot = TRUE,
     #> [1] 43
     
     difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
-                 return.tree = TRUE)
+                 return_tree = TRUE)
     
     difftree$Married
     #>  [1] 0 1 0 1 0 1 0 1 0 1 0 1

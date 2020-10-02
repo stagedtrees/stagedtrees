@@ -659,7 +659,7 @@ stndnaming <- function(object, uniq = FALSE,
 #' @param object2 a staged event tree.
 #' @param method method to compare staged event trees. It can be: \code{"naive"}, 
 #' \code{"hamming"} or \code{"stages"}.
-#' @param return.tree logical, if \code{TRUE} the difference tree is returned.
+#' @param return_tree logical, if \code{TRUE} the difference tree is returned.
 #' @param plot logical.
 #' @param ... additional parameters to be passed to \code{\link{plot.sevt}}.
 #' @details \code{compare_stages} tests if the stage structure of two \code{sevt}
@@ -674,12 +674,12 @@ stndnaming <- function(object, uniq = FALSE,
 #' * \code{stages} uses the \code{diff_stages} function that compare
 #' stages to check if the same stage structure is present in both models.
 #'
-#' Setting \code{return.tree = TRUE} will return the stages
+#' Setting \code{return_tree = TRUE} will return the stages
 #' structure difference obtained with the selected method.
 #'
 #' With \code{plot = TRUE} the plot of the difference tree is obtained.
 #'
-#' If \code{return.tree = FALSE} the logical output is the same for the
+#' If \code{return_tree = FALSE} the logical output is the same for the
 #' three methods and thus the \code{naive} method should be used
 #' since it is computationally faster.
 #'
@@ -690,13 +690,13 @@ stndnaming <- function(object, uniq = FALSE,
 #' can also be used directly.
 #'
 #' @return 
-#' * \code{compare_stages}: if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
+#' * \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
 #' models are exactly equal, otherwise \code{FALSE}.
-#' Else If \code{return.tree = TRUE}, the differences between
+#' Else If \code{return_tree = TRUE}, the differences between
 #' the two trees, according to the selected \code{method}.
-#' * \code{hamming_stages}: if \code{return.tree = FALSE}, integer, the minimum
+#' * \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
 #' number of situations where the stage should be changed to obtain the same 
-#' models. If \code{return.tree = TRUE} a stages-like structure showing which 
+#' models. If \code{return_tree = TRUE} a stages-like structure showing which 
 #' situations should be modified to obtain the same models.
 #' * \code{diff_stages}: a stages-like structure marking the situations belonging 
 #' to stages which are not the same.
@@ -711,7 +711,7 @@ compare_stages <-
   function(object1,
            object2,
            method = "naive",
-           return.tree = FALSE,
+           return_tree = FALSE,
            plot = FALSE,
            ...) {
     # check and rename stages
@@ -733,7 +733,7 @@ compare_stages <-
         },
         USE.NAMES = TRUE
       ),
-      hamming = hamming_stages(object1, object2, return.tree = TRUE),
+      hamming = hamming_stages(object1, object2, return_tree = TRUE),
       stages = diff_stages(object1, object2),
       sapply(names(object1$tree)[-1],
         function(v) {
@@ -761,7 +761,7 @@ compare_stages <-
         ...
       )
     }
-    if (return.tree) {
+    if (return_tree) {
       return(difftree)
     } else {
       return(all(sapply(difftree, function(x) {
@@ -773,7 +773,7 @@ compare_stages <-
 
 #' @rdname compare_stages
 #' @export
-hamming_stages <- function(object1, object2, return.tree = FALSE) {
+hamming_stages <- function(object1, object2, return_tree = FALSE) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
   # check if models are over the same variables, and same order
@@ -831,7 +831,7 @@ hamming_stages <- function(object1, object2, return.tree = FALSE) {
     ))
   }, USE.NAMES = TRUE)
   # return tree if required or simply the hamming distance
-  if (return.tree) {
+  if (return_tree) {
     return(difftree)
   } else {
     sum(sapply(difftree, function(x) {

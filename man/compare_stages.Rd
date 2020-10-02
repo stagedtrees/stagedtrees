@@ -10,12 +10,12 @@ compare_stages(
   object1,
   object2,
   method = "naive",
-  return.tree = FALSE,
+  return_tree = FALSE,
   plot = FALSE,
   ...
 )
 
-hamming_stages(object1, object2, return.tree = FALSE)
+hamming_stages(object1, object2, return_tree = FALSE)
 
 diff_stages(object1, object2)
 }
@@ -27,7 +27,7 @@ diff_stages(object1, object2)
 \item{method}{method to compare staged event trees. It can be: \code{"naive"},
 \code{"hamming"} or \code{"stages"}.}
 
-\item{return.tree}{logical, if \code{TRUE} the difference tree is returned.}
+\item{return_tree}{logical, if \code{TRUE} the difference tree is returned.}
 
 \item{plot}{logical.}
 
@@ -35,13 +35,13 @@ diff_stages(object1, object2)
 }
 \value{
 \itemize{
-\item \code{compare_stages}: if \code{return.tree = FALSE}, logical: \code{TRUE} if the two
+\item \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
 models are exactly equal, otherwise \code{FALSE}.
-Else If \code{return.tree = TRUE}, the differences between
+Else If \code{return_tree = TRUE}, the differences between
 the two trees, according to the selected \code{method}.
-\item \code{hamming_stages}: if \code{return.tree = FALSE}, integer, the minimum
+\item \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
 number of situations where the stage should be changed to obtain the same
-models. If \code{return.tree = TRUE} a stages-like structure showing which
+models. If \code{return_tree = TRUE} a stages-like structure showing which
 situations should be modified to obtain the same models.
 \item \code{diff_stages}: a stages-like structure marking the situations belonging
 to stages which are not the same.
@@ -67,12 +67,12 @@ must be changed to obtain the same structure.
 stages to check if the same stage structure is present in both models.
 }
 
-Setting \code{return.tree = TRUE} will return the stages
+Setting \code{return_tree = TRUE} will return the stages
 structure difference obtained with the selected method.
 
 With \code{plot = TRUE} the plot of the difference tree is obtained.
 
-If \code{return.tree = FALSE} the logical output is the same for the
+If \code{return_tree = FALSE} the logical output is the same for the
 three methods and thus the \code{naive} method should be used
 since it is computationally faster.
 

@@ -27,11 +27,11 @@
 #'
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 10)
-#' model.full <- full(DD, lambda = 1)
+#' model_full <- full(DD, lambda = 1)
 #' model <- join_unobserved(model.full)
-#' logLik(model.full)
+#' logLik(model_full)
 #' logLik(model)
-#' BIC(model.full, model)
+#' BIC(model_full, model)
 join_unobserved <-
   function(object,
            fit = TRUE,
@@ -97,7 +97,7 @@ NULL
 #' ######### full model
 #'
 #' DD <- generate_xor_dataset(4, 100)
-#' modfull <- full(DD, lambda = 1)
+#' model_full <- full(DD, lambda = 1)
 #' @export
 full <- function(data, order = NULL, 
                  join_unobserved = FALSE,

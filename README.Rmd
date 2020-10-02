@@ -273,7 +273,7 @@ compare_stages(mod1, mod2, method = "hamming", plot = TRUE,
 hamming_stages(mod1, mod2)
 
 difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
-             return.tree = TRUE)
+             return_tree = TRUE)
 
 difftree$Married
 ```
