@@ -7,7 +7,7 @@
 \method{barplot}{sevt}(
   height,
   var = variable.names(height)[1],
-  ignore = height$name.unobserved,
+  ignore = height$name_unobserved,
   beside = TRUE,
   horiz = FALSE,
   legend.text = FALSE,

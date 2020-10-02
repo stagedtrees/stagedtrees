@@ -68,7 +68,7 @@ join_unobserved <-
         message("object fitted using lambda = ", lambda)
       }
     }
-    object$name.unobserved <- name
+    object$name_unobserved <- name
     return(object)
   }
 
@@ -90,7 +90,7 @@ NULL
 #' @param order character vector, order of variables.
 #' @param join.unobserved logical, if situations with zero observations should 
 #'                           be joined.
-#' @param name.unobserved name to pass to \code{\link{join_unobserved}}.
+#' @param name_unobserved name to pass to \code{\link{join_unobserved}}.
 #' @param lambda smoothing coefficient.
 #' @examples
 #'
@@ -102,7 +102,7 @@ NULL
 full <- function(data, order = NULL, 
                  join.unobserved = FALSE,
                  lambda = 0,
-                 name.unobserved = "UNOBSERVED") {
+                 name_unobserved = "UNOBSERVED") {
   UseMethod("full", data)
 }
 
@@ -111,12 +111,12 @@ full <- function(data, order = NULL,
 full.table <- function(data, order = names(dimnames(data)), 
                        join.unobserved = FALSE,
                        lambda = 0,
-                       name.unobserved = "UNOBSERVED"){
+                       name_unobserved = "UNOBSERVED"){
   object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
   if (join.unobserved){
     join_unobserved(object, 
-              fit = TRUE, name = name.unobserved, lambda = lambda)
+              fit = TRUE, name = name_unobserved, lambda = lambda)
   }else{
     sevt_fit(object, lambda = lambda)
   }
@@ -127,12 +127,12 @@ full.table <- function(data, order = names(dimnames(data)),
 full.data.frame <- function(data, order = colnames(data),
                             join.unobserved = FALSE,
                             lambda = 0,
-                            name.unobserved = "UNOBSERVED"){
+                            name_unobserved = "UNOBSERVED"){
   object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
   if (join.unobserved){
     join_unobserved(object, 
-              fit = TRUE, name = name.unobserved, lambda = lambda)
+              fit = TRUE, name = name_unobserved, lambda = lambda)
   }else{
     sevt_fit(object, lambda = lambda)
   }
@@ -144,7 +144,7 @@ full.data.frame <- function(data, order = colnames(data),
 indep <- function(data, order = NULL,
                   join.unobserved = FALSE,
                   lambda = 0,
-                  name.unobserved = "UNOBSERVED") {
+                  name_unobserved = "UNOBSERVED") {
   UseMethod("indep", data)
 }
 
@@ -152,12 +152,12 @@ indep <- function(data, order = NULL,
 #' @export
 indep.table <- function(data, order = names(dimnames(data)),
                         join.unobserved = FALSE, lambda = 0, 
-                        name.unobserved = "UNOBSERVED") {
+                        name_unobserved = "UNOBSERVED") {
   object <- sevt(data, full = FALSE, order = order)
   object$ctables <- make_ctables(object, data)
   if (join.unobserved){
     join_unobserved(object, 
-              fit = TRUE, name = name.unobserved, lambda = lambda)
+              fit = TRUE, name = name_unobserved, lambda = lambda)
   }else{
     sevt_fit(object, lambda = lambda)
   }
@@ -173,7 +173,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
                              join.unobserved = FALSE, lambda = 0, 
-                             name.unobserved = "UNOBSERVED") {
+                             name_unobserved = "UNOBSERVED") {
   # create the staged tree object
   model <- sevt(data, full = FALSE, order = order)
   # create empty probability list
@@ -215,7 +215,7 @@ indep.data.frame <- function(data, order = colnames(data),
   # store contingency tables
   model$ctables <- make_ctables(model, data)
   if (join.unobserved){
-    join_unobserved(model, fit = TRUE, name = name.unobserved)
+    join_unobserved(model, fit = TRUE, name = name_unobserved)
   }else{
     model
   }
@@ -324,7 +324,7 @@ stages_bhc <-
            },
            max_iter = Inf,
            scope = NULL,
-           ignore = object$name.unobserved,
+           ignore = object$name_unobserved,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
@@ -414,7 +414,7 @@ stages_fbhc <-
            },
            max_iter = Inf,
            scope = NULL,
-           ignore = object$name.unobserved,
+           ignore = object$name_unobserved,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
@@ -516,7 +516,7 @@ stages_bj <-
            distance = "kl",
            thr = 0.1,
            scope = NULL,
-           ignore = object$name.unobserved,
+           ignore = object$name_unobserved,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
@@ -576,7 +576,6 @@ stages_bj <-
   }
 
 
-
 #' Hill-Climb Score optimization
 #'
 #' Hill-climbing search of staged event trees with
@@ -616,7 +615,7 @@ stages_hc <- function(object,
                     },
                     max_iter = Inf,
                     scope = NULL,
-                    ignore = object$name.unobserved,
+                    ignore = object$name_unobserved,
                     trace = 0) {
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted_sevt(object))

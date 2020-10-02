@@ -15,7 +15,7 @@ full(
   order = NULL,
   join.unobserved = FALSE,
   lambda = 0,
-  name.unobserved = "UNOBSERVED"
+  name_unobserved = "UNOBSERVED"
 )
 
 \method{full}{table}(
@@ -23,7 +23,7 @@ full(
   order = names(dimnames(data)),
   join.unobserved = FALSE,
   lambda = 0,
-  name.unobserved = "UNOBSERVED"
+  name_unobserved = "UNOBSERVED"
 )
 
 \method{full}{data.frame}(
@@ -31,7 +31,7 @@ full(
   order = colnames(data),
   join.unobserved = FALSE,
   lambda = 0,
-  name.unobserved = "UNOBSERVED"
+  name_unobserved = "UNOBSERVED"
 )
 
 indep(
@@ -39,7 +39,7 @@ indep(
   order = NULL,
   join.unobserved = FALSE,
   lambda = 0,
-  name.unobserved = "UNOBSERVED"
+  name_unobserved = "UNOBSERVED"
 )
 
 \method{indep}{table}(
@@ -47,7 +47,7 @@ indep(
   order = names(dimnames(data)),
   join.unobserved = FALSE,
   lambda = 0,
-  name.unobserved = "UNOBSERVED"
+  name_unobserved = "UNOBSERVED"
 )
 
 \method{indep}{data.frame}(
@@ -55,7 +55,7 @@ indep(
   order = colnames(data),
   join.unobserved = FALSE,
   lambda = 0,
-  name.unobserved = "UNOBSERVED"
+  name_unobserved = "UNOBSERVED"
 )
 }
 \arguments{
@@ -68,7 +68,7 @@ be joined.}
 
 \item{lambda}{smoothing coefficient.}
 
-\item{name.unobserved}{name to pass to \code{\link{join_unobserved}}.}
+\item{name_unobserved}{name to pass to \code{\link{join_unobserved}}.}
 }
 \description{
 Full and independent staged event tree

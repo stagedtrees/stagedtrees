@@ -20,7 +20,7 @@
   col = NULL,
   col.edges = "black",
   var.names = TRUE,
-  ignore = x$name.unobserved,
+  ignore = x$name_unobserved,
   ...
 )
 }

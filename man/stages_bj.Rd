@@ -9,7 +9,7 @@ stages_bj(
   distance = "kl",
   thr = 0.1,
   scope = NULL,
-  ignore = object$name.unobserved,
+  ignore = object$name_unobserved,
   trace = 0
 )
 }

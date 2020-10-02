@@ -91,7 +91,7 @@ plot.sevt <-
            col = NULL,
            col.edges = "black",
            var.names = TRUE,
-           ignore = x$name.unobserved,
+           ignore = x$name_unobserved,
            ...) {
     plot.new()
     d <- min(length(x$tree), limit) ## avoid too much plotting
@@ -355,7 +355,7 @@ text.sevt <-
 #' barplot(model, "Kids", beside = TRUE)
 #' @importFrom graphics barplot
 barplot.sevt <- function(height, var = variable.names(height)[1], 
-                           ignore = height$name.unobserved,
+                           ignore = height$name_unobserved,
                            beside = TRUE,
                            horiz = FALSE,
                            legend.text = FALSE, 

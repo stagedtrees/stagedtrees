@@ -9,7 +9,7 @@ stages_bhc(
   score = function(x) {     return(-BIC(x)) },
   max_iter = Inf,
   scope = NULL,
-  ignore = object$name.unobserved,
+  ignore = object$name_unobserved,
   trace = 0
 )
 }
