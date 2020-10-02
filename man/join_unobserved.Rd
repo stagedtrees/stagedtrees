@@ -49,7 +49,7 @@ Users can decide to join unobserved situations directly in
 \examples{
 DD <- generate_xor_dataset(n = 5, N = 10)
 model_full <- full(DD, lambda = 1)
-model <- join_unobserved(model.full)
+model <- join_unobserved(model_full)
 logLik(model_full)
 logLik(model)
 BIC(model_full, model)
