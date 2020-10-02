@@ -39,7 +39,7 @@ probability model for discrete random variables.
 ### Installation
 
 ``` r
-#stable version from CRAN
+#stable version from CRAN 
 install.packages("stagedtrees")
 
 #development version from github
@@ -83,7 +83,7 @@ mod_full
 #> 'log Lik.' -4066.97 (df=143)
 
 # Full model with not-observed situations joined in NA stages
-mod_full0 <- full(PhDArticles, join = TRUE, lambda = 1)
+mod_full0 <- full(PhDArticles, join.unobserved = TRUE, lambda = 1)
 mod_full0
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
@@ -106,7 +106,7 @@ heuristics.
 <!-- end list -->
 
 ``` r
-mod1 <- hc(mod_indep)
+mod1 <- stages_hc(mod_indep)
 mod1
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
@@ -119,7 +119,7 @@ mod1
 <!-- end list -->
 
 ``` r
-mod2 <- bhc(mod_full)
+mod2 <- stages_bhc(mod_full)
 mod2
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
@@ -132,7 +132,7 @@ mod2
 <!-- end list -->
 
 ``` r
-mod3 <- fbhc(mod_full, score = function(x) -BIC(x))
+mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
 mod3
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
@@ -146,7 +146,7 @@ mod3
 <!-- end list -->
 
 ``` r
-mod4 <- bj(mod_full)
+mod4 <- stages_bj(mod_full)
 mod4
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
@@ -164,12 +164,11 @@ mod4
 mod5 <- stages_hclust(mod_full0,
                     k = 2, 
                     distance = "totvar",
-                   method = "mcquitty", 
-                   ignore = "NA")
+                   method = "mcquitty")
 mod5
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4122.274 (df=17)
+#> 'log Lik.' -4121.866 (df=14)
 ```
 
   - **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore,
@@ -180,12 +179,11 @@ mod5
 ``` r
 mod6 <- stages_kmeans(mod_full0,
                     k = 2, 
-                   algorithm = "Hartigan-Wong", 
-                   ignore = "NA")
+                   algorithm = "Hartigan-Wong")
 mod6
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4119.247 (df=17)
+#> 'log Lik.' -4119.247 (df=14)
 ```
 
 #### Combining model selections with `%>%`
@@ -196,7 +194,7 @@ easily various model selection algorithms and to specify models easily.
 ``` r
 library(magrittr)
 model <- PhDArticles %>% full(lambda = 1) %>% 
-           stages_hclust %>% hc
+           stages_hclust %>% stages_hc
 
 ## extract a sub_tree and join two stages
 sub_model <- model %>% subtree(path = c(">2"))  %>%  
@@ -276,11 +274,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1       >2   male   no     yes    low      low
-#> 2        0   male  yes     yes    low      low
-#> 3       >2 female   no      no   high     high
-#> 4        0   male   no      no    low     high
-#> 5       >2   male  yes     yes   high      low
+#> 1      1-2 female  yes     yes    low     high
+#> 2      1-2 female   no      no   high     high
+#> 3      1-2 female   no     yes medium     high
+#> 4      1-2   male   no      no    low     high
+#> 5      1-2   male  yes     yes medium     high
 ```
 
 #### Explore the model
@@ -288,12 +286,6 @@ sample_from(mod4, 5)
 ##### Model info
 
 ``` r
-# Degrees of freedom
-df_sevt(mod_full)
-#> [1] 143
-df_sevt(mod_indep)
-#> [1] 8
-
 # variables 
 variable.names(mod1)
 #> [1] "Articles" "Gender"   "Kids"     "Married"  "Mentor"   "Prestige"
@@ -306,7 +298,7 @@ stages(mod1, "Kids")
 # summary
 summary(mod1)
 #> Call: 
-#> hc(mod_indep)
+#> stages_hc(mod_indep)
 #> lambda:  1 
 #> Stages: 
 #>   Variable:  Articles 
@@ -345,7 +337,6 @@ summary(mod1)
 ``` r
 plot(mod4, main = "Staged tree learned with bj.sevt", 
      cex.label.edges = 0.6, cex.nodes = 1.5)
-text(mod4, y = -0.03, cex = 0.7)
 ```
 
 ![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
@@ -358,8 +349,7 @@ plot(stndnaming(mod5, uniq = TRUE, ignore = "NA"),
      main = "Staged tree learned with stages_hclust 
      (structural zeroes)", 
      col = "stages",
-     cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
-text(mod5, y = -0.03, cex = 0.7)
+     cex.label.edges = 0.6, cex.nodes = 1.5)
 ```
 
 ![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
@@ -371,7 +361,7 @@ representing the different probabilities defined for the different
 stages of a variable.
 
 ``` r
-barplot_stages(mod4, "Kids", legend.text = TRUE)
+barplot(mod4, "Kids", legend.text = TRUE)
 ```
 
 ![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
@@ -428,5 +418,5 @@ BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #> mod2       19 8302.067
 #> mod3       14 8388.749
 #> mod4       22 8331.596
-#> mod5       17 8360.471
+#> mod5       14 8339.196
 ```

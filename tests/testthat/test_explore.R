@@ -7,9 +7,9 @@ sev <- full(DD, lambda = 0)
 sev.lambda <- full(DD, lambda = 1)
 sev.indep <- indep(DD, lambda = 0)
 
-test_that("sevt_stages function", {
-  expect_equal(stagedtrees:::sevt_stages(sev, "X5"), as.character(1:32))
-  expect_equal(stagedtrees:::sevt_stages(sev, "X3"), as.character(1:8))
+test_that("stages function", {
+  expect_equal(stages(sev, "X5"), as.character(1:32))
+  expect_equal(stages(sev, "X3"), as.character(1:8))
 })
 
 

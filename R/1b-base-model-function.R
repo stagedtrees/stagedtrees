@@ -212,7 +212,7 @@ join_stages <- function(object, v, s1, s2) {
   stopifnot(is(object, "sevt"))
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  if (!all(c(s1, s2) %in% sevt_stages(object, var = v))) {
+  if (!all(c(s1, s2) %in% stages(object, var = v))) {
     stop("Stages are not present")
   }
   if (s1 == s2) stop("Join the same stage")
@@ -445,8 +445,8 @@ print.sevt <- function(x, ...) {
 #'         Otherwise, If \code{var} is not specified, \code{stages}
 #'         returns a list of character vectors containing the stages associated
 #'         to each variable in the model (that is \code{object$stages}).
-#' @keywords internal
-sevt_stages <- function(object, var = NULL) {
+#' @export
+stages <- function(object, var = NULL) {
   stopifnot(is(object, "sevt"))
   if (is.null(var)) {
     object$stages

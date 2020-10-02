@@ -88,7 +88,7 @@ mod_full <- full(PhDArticles, lambda = 1)
 mod_full
 
 # Full model with not-observed situations joined in NA stages
-mod_full0 <- full(PhDArticles, join = TRUE, lambda = 1)
+mod_full0 <- full(PhDArticles, join.unobserved = TRUE, lambda = 1)
 mod_full0
 ```
 
@@ -103,18 +103,18 @@ using different heuristics.
 
 * **Hill-Climbing** `hc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
-mod1 <- hc(mod_indep)
+mod1 <- stages_hc(mod_indep)
 mod1
 ```
 * **Backward Hill-Climbing** `bhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
-mod2 <- bhc(mod_full)
+mod2 <- stages_bhc(mod_full)
 mod2
 ```
 * **Backward Fast Hill-Climbing** 
 `fbhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
-mod3 <- fbhc(mod_full, score = function(x) -BIC(x))
+mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
 mod3
 ```
 
@@ -123,7 +123,7 @@ mod3
 
 * **Backward Joining** `bj(object, distance, thr, trace, ...)`
 ```{r}
-mod4 <- bj(mod_full)
+mod4 <- stages_bj(mod_full)
 mod4
 ```
 
@@ -134,8 +134,7 @@ mod4
 mod5 <- stages_hclust(mod_full0,
                     k = 2, 
                     distance = "totvar",
-                   method = "mcquitty", 
-                   ignore = "NA")
+                   method = "mcquitty")
 mod5
 ```
 
@@ -143,8 +142,7 @@ mod5
 ```{r}
 mod6 <- stages_kmeans(mod_full0,
                     k = 2, 
-                   algorithm = "Hartigan-Wong", 
-                   ignore = "NA")
+                   algorithm = "Hartigan-Wong")
 mod6
 ```
 
@@ -156,7 +154,7 @@ easily various model selection algorithms and to specify models easily.
 ```{r}
 library(magrittr)
 model <- PhDArticles %>% full(lambda = 1) %>% 
-           stages_hclust %>% hc
+           stages_hclust %>% stages_hc
 
 ## extract a sub_tree and join two stages
 sub_model <- model %>% subtree(path = c(">2"))  %>%  
@@ -214,10 +212,6 @@ sample_from(mod4, 5)
 ##### Model info
 
 ```{r}
-# Degrees of freedom
-df_sevt(mod_full)
-df_sevt(mod_indep)
-
 # variables 
 variable.names(mod1)
 
@@ -234,7 +228,6 @@ summary(mod1)
 ```{r}
 plot(mod4, main = "Staged tree learned with bj.sevt", 
      cex.label.edges = 0.6, cex.nodes = 1.5)
-text(mod4, y = -0.03, cex = 0.7)
 ```
 
 We can also manually specify colors and avoid plotting 
@@ -244,8 +237,7 @@ plot(stndnaming(mod5, uniq = TRUE, ignore = "NA"),
      main = "Staged tree learned with stages_hclust 
      (structural zeroes)", 
      col = "stages",
-     cex.label.edges = 0.6, cex.nodes = 1.5, ignore = "NA")
-text(mod5, y = -0.03, cex = 0.7)
+     cex.label.edges = 0.6, cex.nodes = 1.5)
 ```
 
 ###### Barplot
@@ -255,7 +247,7 @@ representing the different probabilities defined for the different
 stages of a variable.
 
 ```{r}
-barplot_stages(mod4, "Kids", legend.text = TRUE)
+barplot(mod4, "Kids", legend.text = TRUE)
 ```
 
 
