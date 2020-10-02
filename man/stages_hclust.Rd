@@ -50,6 +50,6 @@ via the argument \code{k}.
 }
 \examples{
 data("Titanic")
-model <- stages_hclust(full(Titanic, join.unobserved = TRUE, lambda = 1), k = 2)
+model <- stages_hclust(full(Titanic, join_unobserved = TRUE, lambda = 1), k = 2)
 summary(model)
 }

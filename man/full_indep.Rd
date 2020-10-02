@@ -13,7 +13,7 @@
 full(
   data,
   order = NULL,
-  join.unobserved = FALSE,
+  join_unobserved = FALSE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -21,7 +21,7 @@ full(
 \method{full}{table}(
   data,
   order = names(dimnames(data)),
-  join.unobserved = FALSE,
+  join_unobserved = FALSE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -29,7 +29,7 @@ full(
 \method{full}{data.frame}(
   data,
   order = colnames(data),
-  join.unobserved = FALSE,
+  join_unobserved = FALSE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -37,7 +37,7 @@ full(
 indep(
   data,
   order = NULL,
-  join.unobserved = FALSE,
+  join_unobserved = FALSE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -45,7 +45,7 @@ indep(
 \method{indep}{table}(
   data,
   order = names(dimnames(data)),
-  join.unobserved = FALSE,
+  join_unobserved = FALSE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -53,7 +53,7 @@ indep(
 \method{indep}{data.frame}(
   data,
   order = colnames(data),
-  join.unobserved = FALSE,
+  join_unobserved = FALSE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -63,7 +63,7 @@ indep(
 
 \item{order}{character vector, order of variables.}
 
-\item{join.unobserved}{logical, if situations with zero observations should
+\item{join_unobserved}{logical, if situations with zero observations should
 be joined.}
 
 \item{lambda}{smoothing coefficient.}

@@ -83,7 +83,7 @@ mod_full
 #> 'log Lik.' -4066.97 (df=143)
 
 # Full model with not-observed situations joined in NA stages
-mod_full0 <- full(PhDArticles, join.unobserved = TRUE, lambda = 1)
+mod_full0 <- full(PhDArticles, join_unobserved = TRUE, lambda = 1)
 mod_full0
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
@@ -93,7 +93,8 @@ mod_full0
 #### Model selection
 
 `stagedtrees` implements methods to perform automatic model selection.
-All methods can be initialized from an arbitrary staged tree object.
+All methods can be initialized from an arbitrary staged event tree
+object.
 
 ##### Score methods
 
@@ -183,7 +184,7 @@ mod6 <- stages_kmeans(mod_full0,
 mod6
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4119.247 (df=14)
+#> 'log Lik.' -4119.375 (df=14)
 ```
 
 #### Combining model selections with `%>%`
@@ -274,11 +275,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2 female  yes     yes    low     high
-#> 2      1-2 female   no      no   high     high
-#> 3      1-2 female   no     yes medium     high
-#> 4      1-2   male   no      no    low     high
-#> 5      1-2   male  yes     yes medium     high
+#> 1      1-2 female   no     yes   high      low
+#> 2      1-2   male   no      no    low     high
+#> 3        0 female   no      no medium     high
+#> 4       >2   male  yes     yes    low      low
+#> 5      1-2 female   no     yes   high      low
 ```
 
 #### Explore the model
@@ -293,7 +294,6 @@ variable.names(mod1)
 # stages
 stages(mod1, "Kids")
 #> [1] "1" "2" "1" "2" "1" "2"
-
 
 # summary
 summary(mod1)
@@ -336,20 +336,20 @@ summary(mod1)
 
 ``` r
 plot(mod4, main = "Staged tree learned with bj.sevt", 
-     cex.label.edges = 0.6, cex.nodes = 1.5)
+     cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
 ![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
-We can also manually specify colors and avoid plotting some stages
-(e.g. the stages with not-observed situations).
+We can also manually specify colors and avoid plotting some stages (by
+default the stages with not-observed situations).
 
 ``` r
-plot(stndnaming(mod5, uniq = TRUE, ignore = "NA"), 
+plot(stndnaming(mod5, uniq = TRUE), 
      main = "Staged tree learned with stages_hclust 
      (structural zeroes)", 
      col = "stages",
-     cex.label.edges = 0.6, cex.nodes = 1.5)
+     cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
 ![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
@@ -374,7 +374,6 @@ object in the remaining variables.
 ``` r
 sub <- subtree(mod4, c(">2", "female"))
 plot(sub)
-text(sub, y = -0.03, cex = 0.7)
 ```
 
 ![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
@@ -388,24 +387,21 @@ compare_stages(mod1, mod2)
 #> [1] FALSE
 
 compare_stages(mod1, mod2, method = "hamming", plot = TRUE, 
-             cex.label.nodes = 0, cex.label.edges = 0)
-#> [1] FALSE
-text(mod1)
+             cex_label_nodes = 0, cex_label_edges = 0)
 ```
 
 ![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
-``` r
-
-hamming_stages(mod1, mod2)
-#> [1] 43
-
-difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
-             return.tree = TRUE)
-
-difftree$Married
-#>  [1] 0 1 0 1 0 1 0 1 0 1 0 1
-```
+    #> [1] FALSE
+    
+    hamming_stages(mod1, mod2)
+    #> [1] 43
+    
+    difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
+                 return.tree = TRUE)
+    
+    difftree$Married
+    #>  [1] 0 1 0 1 0 1 0 1 0 1 0 1
 
 Penalized log-likelihood.
 

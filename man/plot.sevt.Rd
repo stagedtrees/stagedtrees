@@ -13,13 +13,13 @@
   main = NULL,
   sub = NULL,
   asp = 1,
-  cex.label.nodes = 1,
-  cex.label.edges = 1,
-  cex.nodes = 2,
-  cex.tree.y = 0.9,
+  cex_label_nodes = 1,
+  cex_label_edges = 1,
+  cex_nodes = 2,
+  cex_tree_y = 0.9,
   col = NULL,
-  col.edges = "black",
-  var.names = TRUE,
+  col_edges = "black",
+  var_names = TRUE,
   ignore = x$name_unobserved,
   ...
 )
@@ -41,18 +41,18 @@
 
 \item{asp}{the y/x aspect ratio.}
 
-\item{cex.label.nodes}{The magnification to be used for
+\item{cex_label_nodes}{The magnification to be used for
 the node labels.
 If set to \code{0} node labels are not showed.}
 
-\item{cex.label.edges}{The magnification to be used
+\item{cex_label_edges}{The magnification to be used
 for the edge labels.
 If set to \code{0} edge labels are not showed.}
 
-\item{cex.nodes}{The magnification to be used for
+\item{cex_nodes}{The magnification to be used for
 for the nodes of the tree.}
 
-\item{cex.tree.y}{The magnification to be used for the
+\item{cex_tree_y}{The magnification to be used for the
 tree in the vertical direction.
 Default is \code{0.9} to leave some space
 for the variable names.}
@@ -64,9 +64,9 @@ if \code{col == "stages"} the stage names will be used as
 colors; otherwise if \code{col} is a function it will take
 as input a vector of stages and output the corresponding colors.}
 
-\item{col.edges}{color for the edges.}
+\item{col_edges}{color for the edges.}
 
-\item{var.names}{logical, if variable names should be added to the plot,
+\item{var_names}{logical, if variable names should be added to the plot,
 otherwise variable names can be added manually using
 \code{\link{text.sevt}}.}
 
@@ -85,16 +85,16 @@ examples).
 \examples{
 
 data("PhDArticles")
-mod <- stages_bj(full(PhDArticles, join.unobserved = TRUE))
+mod <- stages_bj(full(PhDArticles, join_unobserved = TRUE))
 
 ### simple plotting
 plot(mod)
 
 ### removing lables from nodes and edges and fill nodes
-plot(mod, cex.label.nodes = 0, cex.label.edges = 0, pch = 16)
+plot(mod, cex_label_nodes = 0, cex_label_edges = 0, pch = 16)
 
 ### reduce nodes size
-plot(mod, cex.nodes = 1)
+plot(mod, cex_nodes = 1)
 
 ### change line width and nodes style
 plot(mod, lwd = 3, pch = 5)

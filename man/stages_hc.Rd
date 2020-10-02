@@ -50,6 +50,6 @@ model <- stages_hc(full(PhDArticles[, 1:3], lambda = 1))
 summary(model)
 
 ## preserve zero stages
-start <- indep(PhDArticles[,1:5], join.unobserved = TRUE)
+start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
 model <- stages_hc(start)
 }

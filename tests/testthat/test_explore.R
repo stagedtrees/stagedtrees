@@ -54,5 +54,5 @@ test_that("summary.sevt is printed", {
 
 test_that("rename_stage", {
   expect_is(rename_stage(sev, var = "X2", 
-                         stage = "2", new.label = "NEW"), "sevt")
+                         stage = "2", new = "NEW"), "sevt")
 })

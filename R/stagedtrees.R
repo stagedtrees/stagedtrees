@@ -53,7 +53,7 @@
 #' _International Journal of Approximate Reasoning_, vol. 88, pp. 624–639, 2017.
 #' @examples
 #' data("PhDArticles")
-#' mf <- full(PhDArticles, join.unobserved = TRUE)
+#' mf <- full(PhDArticles, join_unobserved = TRUE)
 #' mod <- stages_fbhc(mf)
 #' plot(mod)
 NULL

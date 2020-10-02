@@ -44,7 +44,7 @@ If \code{fit=TRUE} the model will be then re-fitted, if user sets
 
 Users can decide to join unobserved situations directly in
 \code{\link{full}} or \code{\link{indep}}, setting
-\code{join.unobserved = TRUE}.
+\code{join_unobserved = TRUE}.
 }
 \examples{
 DD <- generate_xor_dataset(n = 5, N = 10)

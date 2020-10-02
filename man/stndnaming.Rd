@@ -29,7 +29,7 @@ Rename all stages in a staged event tree.
 }
 \examples{
 DD <- generate_xor_dataset(4, 100)
-model <- stages_fbhc(full(DD, join.unobserved = TRUE))
+model <- stages_fbhc(full(DD, join_unobserved = TRUE))
 model$stages
 model1 <- stndnaming(model)
 model1$stages

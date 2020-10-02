@@ -20,7 +20,7 @@
 #' 
 #' Users can decide to join unobserved situations directly in 
 #' \code{\link{full}} or \code{\link{indep}}, setting 
-#' \code{join.unobserved = TRUE}.
+#' \code{join_unobserved = TRUE}.
 #'
 #' @importFrom methods is
 #' @export
@@ -88,7 +88,7 @@ NULL
 #' @rdname full_indep
 #' @param data data to create the model, data.frame or table. 
 #' @param order character vector, order of variables.
-#' @param join.unobserved logical, if situations with zero observations should 
+#' @param join_unobserved logical, if situations with zero observations should 
 #'                           be joined.
 #' @param name_unobserved name to pass to \code{\link{join_unobserved}}.
 #' @param lambda smoothing coefficient.
@@ -100,7 +100,7 @@ NULL
 #' modfull <- full(DD, lambda = 1)
 #' @export
 full <- function(data, order = NULL, 
-                 join.unobserved = FALSE,
+                 join_unobserved = FALSE,
                  lambda = 0,
                  name_unobserved = "UNOBSERVED") {
   UseMethod("full", data)
@@ -109,12 +109,12 @@ full <- function(data, order = NULL,
 #' @rdname full_indep
 #' @export
 full.table <- function(data, order = names(dimnames(data)), 
-                       join.unobserved = FALSE,
+                       join_unobserved = FALSE,
                        lambda = 0,
                        name_unobserved = "UNOBSERVED"){
   object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
-  if (join.unobserved){
+  if (join_unobserved){
     join_unobserved(object, 
               fit = TRUE, name = name_unobserved, lambda = lambda)
   }else{
@@ -125,12 +125,12 @@ full.table <- function(data, order = names(dimnames(data)),
 #' @rdname full_indep
 #' @export
 full.data.frame <- function(data, order = colnames(data),
-                            join.unobserved = FALSE,
+                            join_unobserved = FALSE,
                             lambda = 0,
                             name_unobserved = "UNOBSERVED"){
   object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
-  if (join.unobserved){
+  if (join_unobserved){
     join_unobserved(object, 
               fit = TRUE, name = name_unobserved, lambda = lambda)
   }else{
@@ -142,7 +142,7 @@ full.data.frame <- function(data, order = colnames(data),
 #' @rdname full_indep
 #' @export
 indep <- function(data, order = NULL,
-                  join.unobserved = FALSE,
+                  join_unobserved = FALSE,
                   lambda = 0,
                   name_unobserved = "UNOBSERVED") {
   UseMethod("indep", data)
@@ -151,11 +151,11 @@ indep <- function(data, order = NULL,
 #' @rdname full_indep
 #' @export
 indep.table <- function(data, order = names(dimnames(data)),
-                        join.unobserved = FALSE, lambda = 0, 
+                        join_unobserved = FALSE, lambda = 0, 
                         name_unobserved = "UNOBSERVED") {
   object <- sevt(data, full = FALSE, order = order)
   object$ctables <- make_ctables(object, data)
-  if (join.unobserved){
+  if (join_unobserved){
     join_unobserved(object, 
               fit = TRUE, name = name_unobserved, lambda = lambda)
   }else{
@@ -172,7 +172,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' model
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
-                             join.unobserved = FALSE, lambda = 0, 
+                             join_unobserved = FALSE, lambda = 0, 
                              name_unobserved = "UNOBSERVED") {
   # create the staged tree object
   model <- sevt(data, full = FALSE, order = order)
@@ -214,7 +214,7 @@ indep.data.frame <- function(data, order = colnames(data),
   class(model$ll) <- "logLik"
   # store contingency tables
   model$ctables <- make_ctables(model, data)
-  if (join.unobserved){
+  if (join_unobserved){
     join_unobserved(model, fit = TRUE, name = name_unobserved)
   }else{
     model
@@ -606,7 +606,7 @@ stages_bj <-
 #' summary(model)
 #' 
 #' ## preserve zero stages
-#' start <- indep(PhDArticles[,1:5], join.unobserved = TRUE)
+#' start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
 #' model <- stages_hc(start)
 #' @export
 stages_hc <- function(object,
@@ -708,7 +708,7 @@ stages_hc <- function(object,
 #' @importFrom stats dist hclust cutree
 #' @examples 
 #' data("Titanic")
-#' model <- stages_hclust(full(Titanic, join.unobserved = TRUE, lambda = 1), k = 2)
+#' model <- stages_hclust(full(Titanic, join_unobserved = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
 stages_hclust <-
@@ -772,7 +772,7 @@ stages_hclust <-
 #' @importFrom stats kmeans
 #' @examples 
 #' data("Titanic")
-#' model <- stages_kmeans(full(Titanic, join.unobserved = TRUE, lambda = 1), k = 2)
+#' model <- stages_kmeans(full(Titanic, join_unobserved = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
 stages_kmeans <- function(object,

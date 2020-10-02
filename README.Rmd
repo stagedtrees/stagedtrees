@@ -72,7 +72,8 @@ visualize and compare different models.
 #### Creating the model
 
 A staged event tree object (`sevt` class) can be created with the function
-`staged_ev_tree`, or with the functions `indep` and `full`. In general we create a staged event tree from data 
+`staged_ev_tree`, or with the functions `indep` and `full`. 
+In general we create a staged event tree from data 
 in a `data.frame` or `table` object. 
 
 ```{r example}
@@ -88,13 +89,13 @@ mod_full <- full(PhDArticles, lambda = 1)
 mod_full
 
 # Full model with not-observed situations joined in NA stages
-mod_full0 <- full(PhDArticles, join.unobserved = TRUE, lambda = 1)
+mod_full0 <- full(PhDArticles, join_unobserved = TRUE, lambda = 1)
 mod_full0
 ```
 
 #### Model selection
 
-`stagedtrees` implements methods to perform automatic model selection. All methods can be initialized from an arbitrary staged tree object. 
+`stagedtrees` implements methods to perform automatic model selection. All methods can be initialized from an arbitrary staged event tree object. 
 
 ##### Score methods
 
@@ -218,7 +219,6 @@ variable.names(mod1)
 # stages
 stages(mod1, "Kids")
 
-
 # summary
 summary(mod1)
 ```
@@ -227,17 +227,17 @@ summary(mod1)
 
 ```{r}
 plot(mod4, main = "Staged tree learned with bj.sevt", 
-     cex.label.edges = 0.6, cex.nodes = 1.5)
+     cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
 We can also manually specify colors and avoid plotting 
-some stages (e.g. the stages with not-observed situations).
+some stages (by default the stages with not-observed situations).
 ```{r}
-plot(stndnaming(mod5, uniq = TRUE, ignore = "NA"), 
+plot(stndnaming(mod5, uniq = TRUE), 
      main = "Staged tree learned with stages_hclust 
      (structural zeroes)", 
      col = "stages",
-     cex.label.edges = 0.6, cex.nodes = 1.5)
+     cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
 ###### Barplot
@@ -259,7 +259,6 @@ in the remaining variables.
 ```{r}
 sub <- subtree(mod4, c(">2", "female"))
 plot(sub)
-text(sub, y = -0.03, cex = 0.7)
 ```
 
 #### Comparing models
@@ -269,8 +268,7 @@ Check if models are equal.
 compare_stages(mod1, mod2)
 
 compare_stages(mod1, mod2, method = "hamming", plot = TRUE, 
-             cex.label.nodes = 0, cex.label.edges = 0)
-text(mod1)
+             cex_label_nodes = 0, cex_label_edges = 0)
 
 hamming_stages(mod1, mod2)
 

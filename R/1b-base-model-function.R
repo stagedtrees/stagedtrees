@@ -603,7 +603,7 @@ subtree <- function(object, path) {
 #' consecutive integers.
 #' @examples
 #' DD <- generate_xor_dataset(4, 100)
-#' model <- stages_fbhc(full(DD, join.unobserved = TRUE))
+#' model <- stages_fbhc(full(DD, join_unobserved = TRUE))
 #' model$stages
 #' model1 <- stndnaming(model)
 #' model1$stages
@@ -1007,16 +1007,16 @@ get_path <- function(object, var, stage) {
   return(paths)
 }
 
-#' rename stage(s) in staged even tree
+#' Rename stage(s) in staged even tree
 #' 
 #' @param object An object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
 #' @param stage name of the stage to be renamed.
-#' @param new.label new name for the stage.
+#' @param new new name for the stage.
 #' @return a staged event tree object where stages \code{stage} 
-#' have been renamed to \code{new.label}.
+#' have been renamed to \code{new}.
 #' @export 
-rename_stage <- function(object, var, stage, new.label){
+rename_stage <- function(object, var, stage, new){
   stopifnot(is(object, "sevt"))
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
@@ -1025,10 +1025,10 @@ rename_stage <- function(object, var, stage, new.label){
     stop(stage, " is not a stage of variable ", var, " in the model")
   }
   # set new label
-  object$stages[[var]][object$stages[[var]] %in% stage] <- new.label
+  object$stages[[var]][object$stages[[var]] %in% stage] <- new
   # if staged tree has prob move it to the new-label
   if (has_prob(object)){
-    object$prob[[var]][[new.label]] <- object$prob[[var]][[stage]]
+    object$prob[[var]][[new]] <- object$prob[[var]][[stage]]
     object$prob[[var]][[stage]] <- NULL
   }
   return(object)

@@ -47,7 +47,7 @@ Modify models:
 }
 \examples{
 data("PhDArticles")
-mf <- full(PhDArticles, join.unobserved = TRUE)
+mf <- full(PhDArticles, join_unobserved = TRUE)
 mod <- stages_fbhc(mf)
 plot(mod)
 }

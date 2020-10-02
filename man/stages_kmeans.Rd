@@ -52,6 +52,6 @@ refer to the same arguments as \code{\link{kmeans}}.
 }
 \examples{
 data("Titanic")
-model <- stages_kmeans(full(Titanic, join.unobserved = TRUE, lambda = 1), k = 2)
+model <- stages_kmeans(full(Titanic, join_unobserved = TRUE, lambda = 1), k = 2)
 summary(model)
 }
