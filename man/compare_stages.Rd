@@ -83,9 +83,9 @@ Functions \code{\link{hamming_stages}} and \code{\link{diff_stages}}
 can also be used directly.
 }
 \examples{
-data("PhDArticles")
-mod1 <- stages_bhc(full(PhDArticles[, 1:4], lambda = 1))
-mod2 <- stages_fbhc(full(PhDArticles[, 1:4], lambda = 1))
+data("Asym")
+mod1 <- stages_bhc(full(Asym, lambda = 1))
+mod2 <- stages_fbhc(full(Asym, lambda = 1))
 compare_stages(mod1, mod2)
 
 ##########
