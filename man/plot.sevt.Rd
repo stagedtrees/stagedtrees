@@ -6,7 +6,8 @@
 \usage{
 \method{plot}{sevt}(
   x,
-  limit = 10,
+  y = 10,
+  limit = y,
   xlim = c(0, 1),
   ylim = c(0, 1),
   main = NULL,
@@ -15,14 +16,18 @@
   cex.label.nodes = 1,
   cex.label.edges = 1,
   cex.nodes = 2,
+  cex.tree.y = 0.9,
   col = NULL,
   col.edges = "black",
-  ignore = NULL,
+  var.names = TRUE,
+  ignore = x$name.unobserved,
   ...
 )
 }
 \arguments{
 \item{x}{an object of class \code{sevt}.}
+
+\item{y}{alias for \code{limit} for compatibility with \code{plot}.}
 
 \item{limit}{maximum number of variables plotted.}
 
@@ -36,13 +41,21 @@
 
 \item{asp}{the y/x aspect ratio.}
 
-\item{cex.label.nodes}{amount of scaling for the node labels.
+\item{cex.label.nodes}{The magnification to be used for
+the node labels.
 If set to \code{0} node labels are not showed.}
 
-\item{cex.label.edges}{amount of scaling for the edge labels.
+\item{cex.label.edges}{The magnification to be used
+for the edge labels.
 If set to \code{0} edge labels are not showed.}
 
-\item{cex.nodes}{amount of scaling for the nodes of the tree.}
+\item{cex.nodes}{The magnification to be used for
+for the nodes of the tree.}
+
+\item{cex.tree.y}{The magnification to be used for the
+tree in the vertical direction.
+Default is \code{0.9} to leave some space
+for the variable names.}
 
 \item{col}{color mapping for the stages, a named list with
 names equal to the variables names in the model and
@@ -52,6 +65,10 @@ colors; otherwise if \code{col} is a function it will take
 as input a vector of stages and output the corresponding colors.}
 
 \item{col.edges}{color for the edges.}
+
+\item{var.names}{logical, if variable names should be added to the plot,
+otherwise variable names can be added manually using
+\code{\link{text.sevt}}.}
 
 \item{ignore}{array of stages name that should not be plotted.}
 
@@ -68,7 +85,7 @@ examples).
 \examples{
 
 data("PhDArticles")
-mod <- bj(full(PhDArticles, join_zero = TRUE))
+mod <- stages_bj(full(PhDArticles, join.unobserved = TRUE))
 
 ### simple plotting
 plot(mod)
@@ -89,8 +106,8 @@ plot(mod, col = function(s) heat.colors(length(s)))
 palette(hcl.colors(10, "Harmonic"))
 plot(mod)
 
-### avoid plotting NA stages
-plot(mod, ignore = "NA")
+### forcing plotting of unobserved stages
+plot(mod, ignore = NULL)
 
 ### manually give stages colors
 simple <- stages_hclust(full(PhDArticles, lambda = 1), k = 2)

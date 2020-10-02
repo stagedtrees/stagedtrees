@@ -10,40 +10,52 @@
 \alias{indep.data.frame}
 \title{Full and independent staged event tree}
 \usage{
-full(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0)
+full(
+  data,
+  order = NULL,
+  join.unobserved = FALSE,
+  lambda = 0,
+  name.unobserved = "UNOBSERVED"
+)
 
 \method{full}{table}(
   data,
   order = names(dimnames(data)),
-  join_zero = FALSE,
-  name.join = "NA",
-  lambda = 0
+  join.unobserved = FALSE,
+  lambda = 0,
+  name.unobserved = "UNOBSERVED"
 )
 
 \method{full}{data.frame}(
   data,
   order = colnames(data),
-  join_zero = FALSE,
-  name.join = "NA",
-  lambda = 0
+  join.unobserved = FALSE,
+  lambda = 0,
+  name.unobserved = "UNOBSERVED"
 )
 
-indep(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0)
+indep(
+  data,
+  order = NULL,
+  join.unobserved = FALSE,
+  lambda = 0,
+  name.unobserved = "UNOBSERVED"
+)
 
 \method{indep}{table}(
   data,
   order = names(dimnames(data)),
-  join_zero = FALSE,
-  name.join = "NA",
-  lambda = 0
+  join.unobserved = FALSE,
+  lambda = 0,
+  name.unobserved = "UNOBSERVED"
 )
 
 \method{indep}{data.frame}(
   data,
   order = colnames(data),
-  join_zero = FALSE,
-  name.join = "NA",
-  lambda = 0
+  join.unobserved = FALSE,
+  lambda = 0,
+  name.unobserved = "UNOBSERVED"
 )
 }
 \arguments{
@@ -51,12 +63,12 @@ indep(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0)
 
 \item{order}{character vector, order of variables.}
 
-\item{join_zero}{logical, if situations with zero observations should
+\item{join.unobserved}{logical, if situations with zero observations should
 be joined.}
 
-\item{name.join}{name to pass to \code{\link{join_zero}}.}
-
 \item{lambda}{smoothing coefficient.}
+
+\item{name.unobserved}{name to pass to \code{\link{join_unobserved}}.}
 }
 \description{
 Full and independent staged event tree

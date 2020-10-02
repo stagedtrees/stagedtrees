@@ -7,9 +7,9 @@ sev <- full(DD, lambda = 0)
 sev.lambda <- full(DD, lambda = 1)
 sev.indep <- indep(DD, lambda = 0)
 
-test_that("stages function", {
-  expect_equal(stages(sev, "X5"), as.character(1:32))
-  expect_equal(stages(sev, "X3"), as.character(1:8))
+test_that("sevt_stages function", {
+  expect_equal(stagedtrees:::sevt_stages(sev, "X5"), as.character(1:32))
+  expect_equal(stagedtrees:::sevt_stages(sev, "X3"), as.character(1:8))
 })
 
 
@@ -34,12 +34,12 @@ test_that("summary.sevt for indep", {
 test_that("subtree", {
   expect_silent(sub <- subtree(sev, c("a", "1", "-1")))
   expect_silent(plot(sub))
-  expect_silent(fbhc(sub))
-  expect_silent(sevt.fit(sub, data = DD))
+  expect_silent(stages_fbhc(sub))
+  expect_silent(stagedtrees:::sevt_fit(sub, data = DD))
 })
 
-test_that("df_sevt", {
-  expect_equal(df_sevt(sev), 63)
+test_that("sevt_df", {
+  expect_equal(stagedtrees:::sevt_df(sev), 63)
 })
 
 

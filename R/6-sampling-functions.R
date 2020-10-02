@@ -11,7 +11,7 @@
 #' the transition probabilities (\code{object$prob}) in the model.
 #' @return A data frame containing a sample of size \code{n}
 #' @examples
-#' model <- fbhc(full(PhDArticles, lambda = 1))
+#' model <- stages_fbhc(full(PhDArticles, lambda = 1))
 #' sample_from(model, 10)
 #' @export
 sample_from <- function(object, nsim = 1, seed = NULL) {

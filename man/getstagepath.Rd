@@ -28,7 +28,7 @@ returned.}
 \code{get_stage} returns
 the name of the stage for a given path (or paths).
 
-\code{get_paths} return a
+return a
 data.frame containing the paths
 corresponding to the given stage (or stages).
 }
@@ -37,7 +37,7 @@ Utility functions to obtain stages from paths and
 paths from stages.
 }
 \examples{
-model <- fbhc(full(PhDArticles))
+model <- stages_fbhc(full(PhDArticles))
 get_stage(model, c("0", "male"))
 paths <- expand.grid(model$tree[2:1])[, 2:1]
 get_stage(model, paths)

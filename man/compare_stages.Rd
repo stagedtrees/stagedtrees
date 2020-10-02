@@ -3,7 +3,7 @@
 \name{compare_stages}
 \alias{compare_stages}
 \alias{hamming_stages}
-\alias{stagesdiff}
+\alias{diff_stages}
 \title{Compare two staged event tree}
 \usage{
 compare_stages(
@@ -17,7 +17,7 @@ compare_stages(
 
 hamming_stages(object1, object2, return.tree = FALSE)
 
-stagesdiff(object1, object2)
+diff_stages(object1, object2)
 }
 \arguments{
 \item{object1}{a staged event tree.}
@@ -43,7 +43,7 @@ the two trees, according to the selected \code{method}.
 number of situations where the stage should be changed to obtain the same
 models. If \code{return.tree = TRUE} a stages-like structure showing which
 situations should be modified to obtain the same models.
-\item \code{stagesdiff}: a stages-like structure marking the situations belonging
+\item \code{diff_stages}: a stages-like structure marking the situations belonging
 to stages which are not the same.
 }
 }
@@ -59,12 +59,11 @@ is the same.
 Three methods are available:
 \itemize{
 \item \code{naive} first applies \code{\link{stndnaming}} to both
-objects and then simply compares the resulting stages lists
-(\code{stages(object1)} and \code{stages(object2)}).
+objects and then simply compares the resulting stages.
 \item \code{hamming} uses the \code{hamming_stages} function that try to map
 stages in the different objects finding the few number of nodes that
 must be changed to obtain the same structure.
-\item \code{stages} uses the \code{stagesdiff} function that compare
+\item \code{stages} uses the \code{diff_stages} function that compare
 stages to check if the same stage structure is present in both models.
 }
 
@@ -80,18 +79,18 @@ since it is computationally faster.
 To use the \code{hamming} method, the package \code{clue}
 must be installed.
 
-Functions \code{\link{hamming_stages}} and \code{\link{stagesdiff}}
+Functions \code{\link{hamming_stages}} and \code{\link{diff_stages}}
 can also be used directly.
 }
 \examples{
 data("PhDArticles")
-mod1 <- bhc(full(PhDArticles[, 1:4], lambda = 1))
-mod2 <- fbhc(full(PhDArticles[, 1:4], lambda = 1))
+mod1 <- stages_bhc(full(PhDArticles[, 1:4], lambda = 1))
+mod2 <- stages_fbhc(full(PhDArticles[, 1:4], lambda = 1))
 compare_stages(mod1, mod2)
 
 ##########
 m0 <- full(PhDArticles[, 1:4], lambda = 0)
-m1 <- bhc(m0)
-m2 <- bj(m0, distance = "tv", thr = 0.25)
-stagesdiff(m1, m2)
+m1 <- stages_bhc(m0)
+m2 <- stages_bj(m0, distance = "tv", thr = 0.25)
+diff_stages(m1, m2)
 }

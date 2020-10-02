@@ -28,7 +28,7 @@ test_that("hamming_stages", {
 })
 
 test_that("inclusion_stages works properly", {
-  comparison <- inclusion_stages(mod1, mod2)
+  comparison <- inclusions_stages(mod1, mod2)
 
   for (i in 2:(NCOL(DD) - 1)) {
     expect_true(NROW(comparison[[i]]) > NROW(comparison[[i - 1]]))
@@ -36,8 +36,8 @@ test_that("inclusion_stages works properly", {
 })
 
 test_that("inclusion_stages works symmetrically", {
-  comparison1 <- inclusion_stages(mod1, mod2)
-  comparison2 <- inclusion_stages(mod2, mod1)
+  comparison1 <- inclusions_stages(mod1, mod2)
+  comparison2 <- inclusions_stages(mod2, mod1)
 
   for (i in 1:(NCOL(DD) - 1)) {
     expect_true(NROW(comparison1[[i]]) == NROW(comparison2[[i]]))

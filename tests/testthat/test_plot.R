@@ -1,7 +1,7 @@
 context("plot base")
 
 DD <- data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
-ev <- staged_ev_tree(x = DD, order = c("B", "A"))
+ev <- sevt(x = DD, order = c("B", "A"))
 
 
 test_that("plot staged event tree", {
@@ -17,7 +17,7 @@ context("plot staged trees")
 
 DD <- data.frame(A = as.factor(c(1, 2, 2, 1)), B = as.factor(c("a", "b", "a", "b")))
 DD <- cbind(DD, generate_random_dataset(6, 4))
-mod <- staged_ev_tree(DD, full = TRUE)
+mod <- sevt(DD, full = TRUE)
 
 test_that("plot should accept col = 'stages' ", {
   expect_silent(plot(mod, col = "stages"))
@@ -39,29 +39,29 @@ test_that("text.sevt works", {
 
 context("barplot stages")
 
-test_that("barplot_stages should exit if not fitted", {
-  expect_error(barplot_stages(mod, "B"))
+test_that("barplot.sevt should exit if not fitted", {
+  expect_error(barplot(mod, "B"))
 })
 
-mod <- sevt.fit(mod, lambda = 1, data = DD)
+mod <- sevt_fit(mod, lambda = 1, data = DD)
 
-test_that("barplot_stages should accept col = 'stages'", {
-  expect_silent(barplot_stages(mod, "B", col = "stages"))
+test_that("barplot.sevt should accept col = 'stages'", {
+  expect_silent(barplot(mod, "B", col = "stages"))
 })
 
-test_that("barplot_stages should accept col = function()", {
-  expect_silent(barplot_stages(mod, "B", col = function(s) {
+test_that("barplot.sevt should accept col = function()", {
+  expect_silent(barplot(mod, "B", col = function(s) {
     return(grDevices::hcl.colors(length(s)))
   }))
 })
 
 
-test_that("barplot_stages should accept col = LL", {
-  expect_silent(barplot_stages(mod, "B", col = NULL))
+test_that("barplot.sevt should accept col = LL", {
+  expect_silent(barplot(mod, "B", col = NULL))
 })
 
 
-test_that("barplot_stages with legend.text=TRUE", {
-  expect_silent(barplot_stages(mod, "B", legend.text = TRUE))
+test_that("barplot.sevt with legend.text=TRUE", {
+  expect_silent(barplot(mod, "B", legend.text = TRUE))
 })
 

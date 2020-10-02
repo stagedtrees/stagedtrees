@@ -15,3 +15,4 @@ logical.
 \description{
 Check if a staged event tree is fitted
 }
+\keyword{internal}

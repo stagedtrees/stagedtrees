@@ -5,17 +5,25 @@
 #' options, mainly different ways to specify colors for the stages (see
 #' examples).
 #' @param x an object of class \code{sevt}.
+#' @param y alias for \code{limit} for compatibility with \code{plot}.
 #' @param limit maximum number of variables plotted.
 #' @param xlim the x limits (x1, x2) of the plot.
 #' @param ylim the y limits of the plot.
 #' @param main an overall title for the plot.
 #' @param sub a sub title for the plot.
 #' @param asp the y/x aspect ratio.
-#' @param cex.label.nodes amount of scaling for the node labels. 
+#' @param cex.label.nodes The magnification to be used for
+#'                        the node labels. 
 #'                        If set to \code{0} node labels are not showed.
-#' @param cex.label.edges amount of scaling for the edge labels. 
+#' @param cex.label.edges The magnification to be used 
+#'                        for the edge labels. 
 #'                        If set to \code{0} edge labels are not showed.
-#' @param cex.nodes amount of scaling for the nodes of the tree.
+#' @param cex.nodes The magnification to be used for 
+#'                  for the nodes of the tree.
+#' @param cex.tree.y The magnification to be used for the 
+#'                   tree in the vertical direction.
+#'                   Default is \code{0.9} to leave some space 
+#'                   for the variable names. 
 #' @param col color mapping for the stages, a named list with
 #'        names equal to the variables names in the model and
 #'        vectors named with stages names as components; otherwise
@@ -23,6 +31,9 @@
 #'        colors; otherwise if \code{col} is a function it will take
 #'        as input a vector of stages and output the corresponding colors.
 #' @param col.edges color for the edges. 
+#' @param var.names logical, if variable names should be added to the plot,
+#'                  otherwise variable names can be added manually using 
+#'                  \code{\link{text.sevt}}.
 #' @param ignore array of stages name that should not be plotted.
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
@@ -33,7 +44,7 @@
 #' @examples
 #'
 #' data("PhDArticles")
-#' mod <- bj(full(PhDArticles, join_zero = TRUE))
+#' mod <- stages_bj(full(PhDArticles, join.unobserved = TRUE))
 #'
 #' ### simple plotting
 #' plot(mod)
@@ -54,8 +65,8 @@
 #' palette(hcl.colors(10, "Harmonic"))
 #' plot(mod)
 #' 
-#' ### avoid plotting NA stages
-#' plot(mod, ignore = "NA")
+#' ### forcing plotting of unobserved stages
+#' plot(mod, ignore = NULL)
 #'
 #' ### manually give stages colors
 #' simple <- stages_hclust(full(PhDArticles, lambda = 1), k = 2)
@@ -66,7 +77,8 @@
 #' plot(simple, col = col)
 plot.sevt <-
   function(x,
-           limit = 10,
+           y = 10,
+           limit = y,
            xlim = c(0, 1),
            ylim = c(0, 1),
            main = NULL,
@@ -75,9 +87,11 @@ plot.sevt <-
            cex.label.nodes = 1,
            cex.label.edges = 1,
            cex.nodes = 2,
+           cex.tree.y = 0.9,
            col = NULL,
            col.edges = "black",
-           ignore = NULL,
+           var.names = TRUE,
+           ignore = x$name.unobserved,
            ...) {
     plot.new()
     d <- min(length(x$tree), limit) ## avoid too much plotting
@@ -132,7 +146,7 @@ plot.sevt <-
     n <- x$tree
     p <- length(x$tree)
     Ls <- rep(0, d)
-    Ls[d] <- ylim[2] - ylim[1]
+    Ls[d] <- cex.tree.y*(ylim[2] - ylim[1])
     ns <- M
     As <- rep(0, d)
     nv <- length(x$tree[[1]])
@@ -217,6 +231,9 @@ plot.sevt <-
           }
       }
       ns <- ns * nv
+    }
+    if (var.names){
+      text.sevt(x, limit = limit, xlim = xlim, ylim = ylim)
     }
   }
 
@@ -321,22 +338,37 @@ text.sevt <-
 
 #' Barplot of stage probabilities
 #' 
-#' @param object An object of class \code{sevt}.
+#' @param height An object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
+#' @param ignore array of stages name that should not be plotted.
+#' @param beside a logical value. See \code{\link{barplot}}.
+#' @param horiz a logical value. See \code{\link{barplot}}.
 #' @param legend.text logical.
 #' @param col color mapping for the stages, see \code{col}
 #'        argument in \code{\link{plot.sevt}}.
+#' @param xlab a label for the x axis.
+#' @param ylab a label for the y axis.
 #' @param ... additional arguments passed to \code{\link{barplot}}.
 #' @export
 #' @examples 
-#' model <- fbhc(full(PhDArticles, lambda = 1))
-#' barplot_stages(model, "Kids", beside = TRUE)
+#' model <- stages_fbhc(full(PhDArticles, lambda = 1))
+#' barplot(model, "Kids", beside = TRUE)
 #' @importFrom graphics barplot
-barplot_stages <- function(object, var, legend.text = FALSE, 
-                           col = NULL, ...){
-  stopifnot(is_fitted_sevt(object))
+barplot.sevt <- function(height, var = variable.names(height)[1], 
+                           ignore = height$name.unobserved,
+                           beside = TRUE,
+                           horiz = FALSE,
+                           legend.text = FALSE, 
+                           col = NULL, 
+                           xlab = ifelse(horiz, "probability", NA),
+                           ylab = ifelse(!horiz, "probability", NA),
+                           ...){
+  stopifnot(is_fitted_sevt(height))
+  if (is.null(var)){
+    
+  }
   if (is.null(col)) {
-    col <- lapply(object$stages[var], function(stages) {
+    col <- lapply(height$stages[var], function(stages) {
       if (is.null(stages)) {
         return(list("1" = "black"))
       }
@@ -346,7 +378,7 @@ barplot_stages <- function(object, var, legend.text = FALSE,
       return(vc)
     })
   } else if (is(col, "function")) {
-    col <- lapply(object$stages[var], function(stages) {
+    col <- lapply(height$stages[var], function(stages) {
       if (is.null(stages)) {
         return(list("1" = "black"))
       }
@@ -356,7 +388,7 @@ barplot_stages <- function(object, var, legend.text = FALSE,
     })
   } else if (length(col) == 1 && col == "stages") {
     if (col == "stages") {
-      col <- lapply(object$stages[var], function(stages) {
+      col <- lapply(height$stages[var], function(stages) {
         if (is.null(stages)) {
           return(list("1" = 1))
         }
@@ -366,12 +398,16 @@ barplot_stages <- function(object, var, legend.text = FALSE,
       })
     }
   }
-  tmp <- summary(object)[["stages.info"]]
+  tmp <- summary(height)[["stages.info"]]
   if (legend.text){
     legend.text = tmp[[var]]$stage
   }
-  hei <- as.matrix(tmp[[var]][,-(1:3)])
+  hei <- as.matrix(tmp[[var]][!(tmp[[var]][["stage"]] %in% ignore),
+                              -(1:3)])
   hei[is.nan(hei)] <- 0
+  
   barplot(hei, col = col[[var]], 
-          legend.text = legend.text, ...)
+          legend.text = legend.text, beside = beside,
+          xlab = xlab, ylab = ylab,
+          horiz = horiz, ...)
 }

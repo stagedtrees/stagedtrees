@@ -21,7 +21,7 @@
 #' train <- DD[1:500, order]
 #' test <- DD[501:600, order]
 #' model <- full(train)
-#' model <- bhc(model)
+#' model <- stages_bhc(model)
 #' pr <- predict(model, newdata = test, class = "C")
 #' table(pr, test$C)
 #' # class values:

@@ -1,24 +1,24 @@
 context("info functions")
 
-test_that("test that nvar_sevt return number of var", {
+test_that("test that sevt_nvar return number of var", {
   ev <-
-    staged_ev_tree.list(x = list(
+    sevt.list(x = list(
       A = c(1, 2),
       B = c("x", "y"),
       C = c("3", "4")
     ))
-  expect_equal(nvar_sevt(ev), 3)
+  expect_equal(stagedtrees:::sevt_nvar(ev), 3)
 
-  ev <- staged_ev_tree.list(x = list(
+  ev <- sevt.list(x = list(
     A = c(1, 2)
   ))
-  expect_equal(nvar_sevt(ev), 1)
+  expect_equal(stagedtrees:::sevt_nvar(ev), 1)
 })
 
 
 test_that("get_stage", {
   ev <-
-    staged_ev_tree(list(
+    sevt(list(
       A = c(1, 2),
       B = c("x", "y"),
       C = c("3", "4")
@@ -31,7 +31,7 @@ test_that("get_stage", {
 
 test_that("get_path", {
   ev <-
-    staged_ev_tree(list(
+    sevt(list(
       A = c("1", "2"),
       B = c("x", "y"),
       C = c("3", "4")

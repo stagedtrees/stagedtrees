@@ -2,24 +2,15 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{variable.names.sevt}
 \alias{variable.names.sevt}
-\title{Variable names}
+\title{Variable Names of a Staged Event Tree}
 \usage{
 \method{variable.names}{sevt}(object, ...)
 }
 \arguments{
-\item{object}{a staged event tree.}
+\item{object}{as object of class \code{sevt}.}
 
-\item{...}{further arguments passed to or from other methods.}
-}
-\value{
-A character vector.
+\item{...}{for compatibility.}
 }
 \description{
-Utility returning variable-names in a staged event tree
-model.
-}
-\examples{
-
-mod <- full(PhDArticles)
-variable.names(mod)
+Simple utilities returning variable names.
 }

@@ -27,6 +27,6 @@ It samples \code{n} observations according to
 the transition probabilities (\code{object$prob}) in the model.
 }
 \examples{
-model <- fbhc(full(PhDArticles, lambda = 1))
+model <- stages_fbhc(full(PhDArticles, lambda = 1))
 sample_from(model, 10)
 }

@@ -1,7 +1,7 @@
 context("ceg")
 
 model <- full(PhDArticles, lambda = 1)
-model2 <- fbhc(model)
+model2 <- stages_fbhc(model)
 
 test_that("ceg function works", {
   expect_is(ceg(model), class = "ceg")

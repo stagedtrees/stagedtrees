@@ -7,11 +7,11 @@
 #' Model selection algorithms:
 #' * full model \code{\link{full}}
 #' * independence model \code{\link{indep}}
-#' * Hill-Climbing \code{\link{hc}}
-#' * Backward Hill-Climbing \code{\link{bhc}}
-#' * Fast Backward Hill-Climbing \code{\link{fbhc}}
-#' * Backward Hill-Climbing Random \code{\link{bhcr}}
-#' * Backward joining \code{\link{bj}}
+#' * Hill-Climbing \code{\link{stages_hc}}
+#' * Backward Hill-Climbing \code{\link{stages_bhc}}
+#' * Fast Backward Hill-Climbing \code{\link{stages_fbhc}}
+#' * Backward Hill-Climbing Random \code{\link{stages_bhcr}}
+#' * Backward joining \code{\link{stages_bj}}
 #' * Hierarchical Clustering \code{\link{stages_hclust}}
 #' * K-Means Clustering \code{\link{stages_kmeans}}
 #'
@@ -23,13 +23,12 @@
 #' Plot, explore and compare:
 #' * Plot \code{\link{plot.sevt}}
 #' * Compare \code{\link{compare_stages}}
-#' * Stages inclusion \code{\link{inclusion_stages}}
-#' * Stages info \code{\link{stages}}, \code{\link{summary.sevt}}
+#' * Stages inclusion \code{\link{inclusions_stages}}
+#' * Stages info \code{\link{summary.sevt}}
 #' 
 #' Modify models:
-#'  * Join and isolate unobserved situations \code{\link{join_zero}}
+#'  * Join and isolate unobserved situations \code{\link{join_unobserved}}
 #'  * Join two stages \code{\link{join_stages}}
-#'  * Automatic renaming of stages \code{\link{stndnaming}}
 #'  * Rename a stage \code{\link{rename_stage}}
 #' @docType package
 #' @name stagedtrees
@@ -54,7 +53,7 @@
 #' _International Journal of Approximate Reasoning_, vol. 88, pp. 624–639, 2017.
 #' @examples
 #' data("PhDArticles")
-#' mf <- full(PhDArticles)
-#' mod <- fbhc(mf)
+#' mf <- full(PhDArticles, join.unobserved = TRUE)
+#' mod <- stages_fbhc(mf)
 #' plot(mod)
 NULL

@@ -23,7 +23,7 @@ Returns the subtree of the staged event tree, starting from
 }
 \examples{
 DD <- generate_random_dataset(4, 100)
-model <- staged_ev_tree(DD, full = TRUE)
+model <- sevt(DD, full = TRUE)
 plot(model)
 model1 <- subtree(model, path = c("-1", "1"))
 plot(model1)

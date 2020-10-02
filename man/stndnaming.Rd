@@ -4,10 +4,15 @@
 \alias{stndnaming}
 \title{Standard renaming of stages}
 \usage{
-stndnaming(object, uniq = FALSE, prefix = FALSE, ignore = NULL)
+stndnaming(
+  object,
+  uniq = FALSE,
+  prefix = FALSE,
+  ignore = object$name.unobserved
+)
 }
 \arguments{
-\item{object}{a staged event tree.}
+\item{object}{an object of class \code{sevt}.}
 
 \item{uniq}{logical, if stage numbers should be unique over all tree.}
 
@@ -24,7 +29,7 @@ Rename all stages in a staged event tree.
 }
 \examples{
 DD <- generate_xor_dataset(4, 100)
-model <- fbhc(full(DD, join_zero = TRUE))
+model <- stages_fbhc(full(DD, join.unobserved = TRUE))
 model$stages
 model1 <- stndnaming(model)
 model1$stages
@@ -37,7 +42,7 @@ model2$stages
 model3 <- stndnaming(model, prefix = TRUE)
 model3$stages
 
-### some stage names left untouched
+### manuallty select stage names left untouched
 model4 <- stndnaming(model, ignore = c("2", "4"), prefix = TRUE)
 model4$stages
 }

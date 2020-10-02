@@ -1,13 +1,14 @@
 #' Join situations with no observations
 #'
-#' @param object a fitted staged event tree
-#' @param fit if the model's probability should be computed
-#' @param name string with a name for the new stage
-#' @param trace if \code{> 0} print information to console
-#' @param lambda smoothing parameter for the fitting
+#' @param object a fitted staged event tree.
+#' @param fit if the model's probability should be computed.
+#' @param name string with a name for the new stage.
+#' @param scope list of variable in \code{object}.
+#' @param trace if \code{> 0} print information to console.
+#' @param lambda smoothing parameter for the fitting.
 #'
 #' @return a staged event tree with situations with 0
-#' observations merged in a single stage
+#' observations merged in a single stage.
 #'
 #' @details It takes as input a (fitted) staged event tree object
 #' and looking at the \code{ctables} it joins, in the same stage, all the situations with zero
@@ -16,27 +17,34 @@
 #' pre-processing before others model selection algorithms.
 #' If \code{fit=TRUE} the model will be then re-fitted, if user sets
 #' \code{fit=FALSE} the returned model will have no probabilities.
+#' 
+#' Users can decide to join unobserved situations directly in 
+#' \code{\link{full}} or \code{\link{indep}}, setting 
+#' \code{join.unobserved = TRUE}.
 #'
 #' @importFrom methods is
 #' @export
 #'
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 10)
-#' model_full <- full(DD, lambda = 1)
-#' model <- join_zero(model_full)
-#' logLik(model_full)
+#' model.full <- full(DD, lambda = 1)
+#' model <- join_unobserved(model.full)
+#' logLik(model.full)
 #' logLik(model)
-#' BIC(model_full, model)
-join_zero <-
+#' BIC(model.full, model)
+join_unobserved <-
   function(object,
            fit = TRUE,
            trace = 0,
-           name = NULL,
+           name = 'UNOBSERVED',
+           scope = sevt_varnames(object)[-1],
            lambda = object$lambda) {
     stopifnot(is(object, "sevt"))
     stopifnot(!is.null(object$ctables))
     tot <- 0
-    for (v in names(object$tree)[-1]) {
+    ## make scope valid 
+    scope <- scope[scope %in% sevt_varnames(object)[-1]]
+    for (v in scope) {
       if (is.null(name)) {
         new <- new_label(unique(object$stages[[v]]))
       } else {
@@ -55,11 +63,12 @@ join_zero <-
     object$prob <- NULL
     object$ll <- NULL
     if (fit) {
-      object <- sevt.fit(object, lambda = lambda)
+      object <- sevt_fit(object, lambda = lambda)
       if (trace > 0) {
         message("object fitted using lambda = ", lambda)
       }
     }
+    object$name.unobserved <- name
     return(object)
   }
 
@@ -79,9 +88,9 @@ NULL
 #' @rdname full_indep
 #' @param data data to create the model, data.frame or table. 
 #' @param order character vector, order of variables.
-#' @param join_zero logical, if situations with zero observations should 
+#' @param join.unobserved logical, if situations with zero observations should 
 #'                           be joined.
-#' @param name.join name to pass to \code{\link{join_zero}}.
+#' @param name.unobserved name to pass to \code{\link{join_unobserved}}.
 #' @param lambda smoothing coefficient.
 #' @examples
 #'
@@ -90,37 +99,42 @@ NULL
 #' DD <- generate_xor_dataset(4, 100)
 #' modfull <- full(DD, lambda = 1)
 #' @export
-full <- function(data, order = NULL, join_zero = FALSE, name.join = "NA", lambda = 0) {
+full <- function(data, order = NULL, 
+                 join.unobserved = FALSE,
+                 lambda = 0,
+                 name.unobserved = "UNOBSERVED") {
   UseMethod("full", data)
 }
 
 #' @rdname full_indep
 #' @export
 full.table <- function(data, order = names(dimnames(data)), 
-                       join_zero = FALSE,
-                         name.join = "NA", lambda = 0){
-  object <- staged_ev_tree(data, full = TRUE, order = order)
+                       join.unobserved = FALSE,
+                       lambda = 0,
+                       name.unobserved = "UNOBSERVED"){
+  object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
-  if (join_zero){
-    join_zero(object, 
-              fit = TRUE, name = name.join, lambda = lambda)
+  if (join.unobserved){
+    join_unobserved(object, 
+              fit = TRUE, name = name.unobserved, lambda = lambda)
   }else{
-    sevt.fit(object, lambda = lambda)
+    sevt_fit(object, lambda = lambda)
   }
 }
 
 #' @rdname full_indep
 #' @export
 full.data.frame <- function(data, order = colnames(data),
-                            join_zero = FALSE,
-                            name.join = "NA", lambda = 0){
-  object <- staged_ev_tree(data, full = TRUE, order = order)
+                            join.unobserved = FALSE,
+                            lambda = 0,
+                            name.unobserved = "UNOBSERVED"){
+  object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
-  if (join_zero){
-    join_zero(object, 
-              fit = TRUE, name = name.join, lambda = lambda)
+  if (join.unobserved){
+    join_unobserved(object, 
+              fit = TRUE, name = name.unobserved, lambda = lambda)
   }else{
-    sevt.fit(object, lambda = lambda)
+    sevt_fit(object, lambda = lambda)
   }
 }
 
@@ -128,23 +142,24 @@ full.data.frame <- function(data, order = colnames(data),
 #' @rdname full_indep
 #' @export
 indep <- function(data, order = NULL,
-                  join_zero = FALSE, 
-                  name.join = "NA", lambda = 0) {
+                  join.unobserved = FALSE,
+                  lambda = 0,
+                  name.unobserved = "UNOBSERVED") {
   UseMethod("indep", data)
 }
 
 #' @rdname full_indep
 #' @export
 indep.table <- function(data, order = names(dimnames(data)),
-                        join_zero = FALSE, 
-                          name.join = "NA", lambda = 0) {
-  object <- staged_ev_tree(data, full = FALSE, order = order)
+                        join.unobserved = FALSE, lambda = 0, 
+                        name.unobserved = "UNOBSERVED") {
+  object <- sevt(data, full = FALSE, order = order)
   object$ctables <- make_ctables(object, data)
-  if (join_zero){
-    join_zero(object, 
-              fit = TRUE, name = name.join, lambda = lambda)
+  if (join.unobserved){
+    join_unobserved(object, 
+              fit = TRUE, name = name.unobserved, lambda = lambda)
   }else{
-    sevt.fit(object, lambda = lambda)
+    sevt_fit(object, lambda = lambda)
   }
 }
 
@@ -157,10 +172,10 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' model
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
-                             join_zero = FALSE, 
-                             name.join = "NA", lambda = 0) {
+                             join.unobserved = FALSE, lambda = 0, 
+                             name.unobserved = "UNOBSERVED") {
   # create the staged tree object
-  model <- staged_ev_tree(data, full = FALSE, order = order)
+  model <- sevt(data, full = FALSE, order = order)
   # create empty probability list
   model$prob <- list()
   # extract names of variables
@@ -199,8 +214,8 @@ indep.data.frame <- function(data, order = colnames(data),
   class(model$ll) <- "logLik"
   # store contingency tables
   model$ctables <- make_ctables(model, data)
-  if (join_zero){
-    join_zero(model, fit = TRUE, name = name.join)
+  if (join.unobserved){
+    join_unobserved(model, fit = TRUE, name = name.unobserved)
   }else{
     model
   }
@@ -229,11 +244,11 @@ indep.data.frame <- function(data, order = colnames(data),
 #' @export
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
-#' model <- bhcr(full(DD), trace = 2)
+#' model <- stages_bhcr(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
-bhcr <-
+stages_bhcr <-
   function(object,
            score = function(x) {
              return(-BIC(x))
@@ -297,27 +312,27 @@ bhcr <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
-#' model <- bhc(full(DD), trace = 2)
+#' model <- stages_bhc(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-bhc <-
+stages_bhc <-
   function(object,
            score = function(x) {
              return(-BIC(x))
            },
            max_iter = Inf,
            scope = NULL,
-           ignore = NULL,
+           ignore = object$name.unobserved,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
     now_score <- score(object)
     if (is.null(scope)){
-      scope <- variable.names(object)[-1]
+      scope <- sevt_varnames(object)[-1]
     }
-    stopifnot(all(scope %in% variable.names(object)[-1]))
+    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
     for (v in scope) {
       r <- 1
       iter <- 0
@@ -387,26 +402,26 @@ bhc <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 100)
-#' model <- fbhc(full(DD), trace = 2)
+#' model <- stages_fbhc(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
 #' @importFrom  methods is
 #' @export
-fbhc <-
+stages_fbhc <-
   function(object = NULL,
            score = function(x) {
              return(-BIC(x))
            },
            max_iter = Inf,
            scope = NULL,
-           ignore = NULL,
+           ignore = object$name.unobserved,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
     if (is.null(scope)){
-      scope <- variable.names(object)[-1]
+      scope <- sevt_varnames(object)[-1]
     }
-    stopifnot(all(scope %in% variable.names(object)[-1]))
+    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
     now_score <- score(object)
     for (v in scope) {
       iter <- 0
@@ -492,16 +507,16 @@ fbhc <-
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
-#' model <- bj(full(DD, lambda = 1), trace = 2)
+#' model <- stages_bj(full(DD, lambda = 1), trace = 2)
 #' summary(model)
 #' @importFrom  methods is
 #' @export
-bj <-
+stages_bj <-
   function(object = NULL,
            distance = "kl",
            thr = 0.1,
            scope = NULL,
-           ignore = NULL,
+           ignore = object$name.unobserved,
            trace = 0) {
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
@@ -519,9 +534,9 @@ bj <-
                        cd = probdist.cd,
                        )
     if (is.null(scope)){
-      scope <- variable.names(object)[-1]
+      scope <- sevt_varnames(object)[-1]
     }
-    stopifnot(all(scope %in% variable.names(object)[-1]))
+    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
     for (v in scope) {
       finish <- FALSE
       while (!finish) {
@@ -529,7 +544,7 @@ bj <-
         stages <- unique(object$stages[[v]])
         stages <- stages[!(stages %in% ignore)]
         if (length(stages) > 1) {
-          M <- as.matrix(distance_mat_stages(object$prob[[v]], dist_fun))
+          M <- as.matrix(distance_mat_stages(object$prob[[v]][stages], dist_fun))
           diag(M) <- Inf
           idx <- which.min(M)
           i <- ceiling(idx / dim(M)[1])
@@ -588,28 +603,28 @@ bj <-
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' model <- hc(full(PhDArticles[, 1:3], lambda = 1))
+#' model <- stages_hc(full(PhDArticles[, 1:3], lambda = 1))
 #' summary(model)
 #' 
 #' ## preserve zero stages
-#' start <- join_zero(indep(PhDArticles[,1:5]), name = "NA")
-#' model <- hc(start, ignore = "NA")
+#' start <- indep(PhDArticles[,1:5], join.unobserved = TRUE)
+#' model <- stages_hc(start)
 #' @export
-hc <- function(object,
+stages_hc <- function(object,
                     score = function(x) {
                       return(-BIC(x))
                     },
                     max_iter = Inf,
                     scope = NULL,
-                    ignore = NULL,
+                    ignore = object$name.unobserved,
                     trace = 0) {
   stopifnot(is(object, "sevt"))
   stopifnot(is_fitted_sevt(object))
   stopifnot(!is.null(object$ctables))
   if (is.null(scope)){
-    scope <- variable.names(object)[-1]
+    scope <- sevt_varnames(object)[-1]
   }
-  stopifnot(all(scope %in% variable.names(object)[-1]))
+  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
   now_score <- score(object)
   for (v in scope) {
     done <- FALSE
@@ -630,7 +645,7 @@ hc <- function(object,
           try <- object
           for (s2 in c(ustages[-j], newname)) {
             try$stages[[v]][i] <- s2
-            try <- sevt.fit(try, lambda = object$lambda)
+            try <- sevt_fit(try, lambda = object$lambda)
             try_score <- score(try)
             if (try_score > temp_score) {
               temp <- try
@@ -694,7 +709,7 @@ hc <- function(object,
 #' @importFrom stats dist hclust cutree
 #' @examples 
 #' data("Titanic")
-#' model <- stages_hclust(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' model <- stages_hclust(full(Titanic, join.unobserved = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
 stages_hclust <-
@@ -706,8 +721,8 @@ stages_hclust <-
            limit = length(object$tree),
            scope = NULL) {
     stopifnot(is_fitted_sevt(object))
-    if (is.null(scope)) scope <- variable.names(object)[2:limit]
-    stopifnot(all(scope %in% variable.names(object)[-1]))
+    if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
+    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
     if (is.null(names(k))){
       k <- rep(k, length(scope))[seq_along(scope)]
       names(k) <- scope
@@ -730,7 +745,7 @@ stages_hclust <-
       }
     }
     object$call <- sys.call()
-    return(sevt.fit(object, lambda = object$lambda))
+    return(sevt_fit(object, lambda = object$lambda))
   }
 
 #' Learn a staged tree with k-means clustering
@@ -758,7 +773,7 @@ stages_hclust <-
 #' @importFrom stats kmeans
 #' @examples 
 #' data("Titanic")
-#' model <- stages_kmeans(full(Titanic, join_zero = TRUE, lambda = 1), k = 2)
+#' model <- stages_kmeans(full(Titanic, join.unobserved = TRUE, lambda = 1), k = 2)
 #' summary(model)
 #' @export
 stages_kmeans <- function(object,
@@ -772,8 +787,8 @@ stages_kmeans <- function(object,
   stopifnot(is_fitted_sevt(object))
   stopifnot(is.function(transform) || is.null(transform))
   if (is.null(transform)) transform <- function(x) return(x)
-  if (is.null(scope)) scope <- variable.names(object)[2:limit]
-  stopifnot(all(scope %in% variable.names(object)[-1]))
+  if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
+  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
   if (is.null(names(k))){
     k <- rep(k, length(scope))[seq_along(scope)]
     names(k) <- scope
@@ -795,5 +810,5 @@ stages_kmeans <- function(object,
     }
   }
   object$call <- sys.call()
-  return(sevt.fit(object, lambda = object$lambda))
+  return(sevt_fit(object, lambda = object$lambda))
 }

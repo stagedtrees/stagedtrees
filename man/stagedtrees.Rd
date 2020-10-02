@@ -14,11 +14,11 @@ Model selection algorithms:
 \itemize{
 \item full model \code{\link{full}}
 \item independence model \code{\link{indep}}
-\item Hill-Climbing \code{\link{hc}}
-\item Backward Hill-Climbing \code{\link{bhc}}
-\item Fast Backward Hill-Climbing \code{\link{fbhc}}
-\item Backward Hill-Climbing Random \code{\link{bhcr}}
-\item Backward joining \code{\link{bj}}
+\item Hill-Climbing \code{\link{stages_hc}}
+\item Backward Hill-Climbing \code{\link{stages_bhc}}
+\item Fast Backward Hill-Climbing \code{\link{stages_fbhc}}
+\item Backward Hill-Climbing Random \code{\link{stages_bhcr}}
+\item Backward joining \code{\link{stages_bj}}
 \item Hierarchical Clustering \code{\link{stages_hclust}}
 \item K-Means Clustering \code{\link{stages_kmeans}}
 }
@@ -34,22 +34,21 @@ Plot, explore and compare:
 \itemize{
 \item Plot \code{\link{plot.sevt}}
 \item Compare \code{\link{compare_stages}}
-\item Stages inclusion \code{\link{inclusion_stages}}
-\item Stages info \code{\link{stages}}, \code{\link{summary.sevt}}
+\item Stages inclusion \code{\link{inclusions_stages}}
+\item Stages info \code{\link{summary.sevt}}
 }
 
 Modify models:
 \itemize{
-\item Join and isolate unobserved situations \code{\link{join_zero}}
+\item Join and isolate unobserved situations \code{\link{join_unobserved}}
 \item Join two stages \code{\link{join_stages}}
-\item Automatic renaming of stages \code{\link{stndnaming}}
 \item Rename a stage \code{\link{rename_stage}}
 }
 }
 \examples{
 data("PhDArticles")
-mf <- full(PhDArticles)
-mod <- fbhc(mf)
+mf <- full(PhDArticles, join.unobserved = TRUE)
+mod <- stages_fbhc(mf)
 plot(mod)
 }
 \references{

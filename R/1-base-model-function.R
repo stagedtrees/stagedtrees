@@ -19,6 +19,7 @@
 #'          for each variable, the flat contingency table of that variable
 #'          given the previous variables.
 #'          \item lambda: The smoothing parameter used to compute probabilities.
+#'          \item name.unobserved: The stage name for unobserved situations.
 #'          \item prob: The conditional probability tables for every
 #'                      variable and stage. Stored in a named list with 
 #'                      one component for each variable, a list with
@@ -43,11 +44,11 @@
 #' which both construct the staged tree object, attach the data in 
 #' \code{ctables} and compute probabilities. After, one of the 
 #' available model selection algorithm can be used, see for example 
-#' \code{\link{hc}}, \code{\link{bhc}} or 
+#' \code{\link{stages_hc}}, \code{\link{stages_bhc}} or 
 #' \code{\link{stages_hclust}}. 
 #' If, mainly for development, only the staged tree structure is needed 
 #' (without data or probabilities) the basic 
-#' \code{\link{staged_ev_tree}} constructor can 
+#' \code{\link{sevt}} constructor can 
 #' be used.
 #' @name sevt class
 NULL
@@ -65,17 +66,17 @@ NULL
 #' @return A staged event tree object, element of \code{sevt} 
 #' class.
 #' @export
-staged_ev_tree <- function(x, full = FALSE, order = NULL) {
-  UseMethod("staged_ev_tree", object = x)
+sevt <- function(x, full = FALSE, order = NULL) {
+  UseMethod("sevt", object = x)
 }
 
-#' @rdname staged_ev_tree
+#' @rdname sevt
 #' @examples 
 #' 
 #' ######### from table
-#' model.titanic <- staged_ev_tree(Titanic, full = TRUE) 
+#' model.titanic <- sevt(Titanic, full = TRUE) 
 #' @export
-staged_ev_tree.table <- function(x,
+sevt.table <- function(x,
                                  full = FALSE,
                                  order = names(dimnames(x))) {
   # extract ordered list of levels
@@ -83,18 +84,18 @@ staged_ev_tree.table <- function(x,
   # check if tree exist
   stopifnot(!is.null(tree))
   # build staged tree from list
-  staged_ev_tree.list(tree, full = full)
+  sevt.list(tree, full = full)
 }
 
-#' @rdname staged_ev_tree
+#' @rdname sevt
 #' @export
 #' @examples
 #'
 #' ######### from data frame
 #' DD <- generate_random_dataset(n = 4, 1000)
-#' indep <- staged_ev_tree(DD)
-#' full <- staged_ev_tree(DD, full = TRUE)
-staged_ev_tree.data.frame <- function(x,
+#' model.indep <- sevt(DD)
+#' model.full <- sevt(DD, full = TRUE)
+sevt.data.frame <- function(x,
                                       full = FALSE,
                                       order = colnames(x)) {
   # extract ordered list of levels
@@ -102,20 +103,20 @@ staged_ev_tree.data.frame <- function(x,
     return(levels(as.factor(v)))
   })[order]
   # build staged tree from list 
-  sevt <- staged_ev_tree.list(tree, full = full)
+  sevt <- sevt.list(tree, full = full)
   return(sevt)
 }
 
-#' @rdname staged_ev_tree
+#' @rdname sevt
 #' @export
 #' @examples
 #'
 #' ######### from list
-#' model <- staged_ev_tree(list(
+#' model <- sevt(list(
 #'   X = c("good", "bad"),
 #'   Y = c("high", "low")
 #' ))
-staged_ev_tree.list <- function(x, full = FALSE, order = names(x)) {
+sevt.list <- function(x, full = FALSE, order = names(x)) {
   if (is.null(names(x))) {
     # if there are no names of variables
     # we assign variables names V1,V2,...

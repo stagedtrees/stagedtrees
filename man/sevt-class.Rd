@@ -25,6 +25,7 @@ variable.
 for each variable, the flat contingency table of that variable
 given the previous variables.
 \item lambda: The smoothing parameter used to compute probabilities.
+\item name.unobserved: The stage name for unobserved situations.
 \item prob: The conditional probability tables for every
 variable and stage. Stored in a named list with
 one component for each variable, a list with
@@ -49,10 +50,10 @@ user can call either \code{\link{full}} or \code{\link{indep}}
 which both construct the staged tree object, attach the data in
 \code{ctables} and compute probabilities. After, one of the
 available model selection algorithm can be used, see for example
-\code{\link{hc}}, \code{\link{bhc}} or
+\code{\link{stages_hc}}, \code{\link{stages_bhc}} or
 \code{\link{stages_hclust}}.
 If, mainly for development, only the staged tree structure is needed
 (without data or probabilities) the basic
-\code{\link{staged_ev_tree}} constructor can
+\code{\link{sevt}} constructor can
 be used.
 }

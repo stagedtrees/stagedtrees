@@ -27,22 +27,4 @@ Splits randomly a given stage into two stages. More precisely,
 it assigns each situation within the given stage into a new stage with
 probability \code{p}.
 }
-\examples{
-DD <- generate_random_dataset(5, 100)
-model <- full(DD,lambda = 1)
-model <- bhc(model)
-model <- stndnaming(model)
-model$stages$X5
-
-# no split
-model1 <- split_stage_random(model, "X5", "1", p = 0)
-model1$stages$X5
-
-# all situations in the new stage
-model2 <- split_stage_random(model, "X5", "1", p = 1)
-model2$stages$X5
-
-# randomly split with probability 0.5
-model3 <- split_stage_random(model, "X5", "1", p = 0.5)
-model3$stages$X5
-}
+\keyword{internal}

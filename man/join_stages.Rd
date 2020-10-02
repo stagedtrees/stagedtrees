@@ -30,7 +30,7 @@ the object was fitted.
 }
 \examples{
 model <- full(PhDArticles, lambda = 0)
-model <- fbhc(model)
+model <- stages_fbhc(model)
 model$stages$Kids
 model <- join_stages(model, "Kids", "5", "6")
 model$stages$Kids

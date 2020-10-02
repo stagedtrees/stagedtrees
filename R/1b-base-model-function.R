@@ -6,8 +6,8 @@
 #' @details Only a method for objects of class \code{bn.fit} 
 #'          (\code{bnlearn} package) is available.
 #' @export
-as.sevt <- function(x, order = NULL){
-  UseMethod("as.sevt", x)
+as_sevt <- function(x, order = NULL){
+  UseMethod("as_sevt", x)
 } 
 
 #' Convert a bn fit to a staged event tree object
@@ -17,7 +17,7 @@ as.sevt <- function(x, order = NULL){
 #'              WARNING: the order will not be checked.
 #' @return A staged event tree object.
 #' @export
-as.sevt.bn.fit <- function(x, order = NULL) {
+as_sevt.bn.fit <- function(x, order = NULL) {
   bn <- bnlearn::bn.net(x)
   # build the ordered list of levels
   tree <- lapply(
@@ -38,7 +38,7 @@ as.sevt.bn.fit <- function(x, order = NULL) {
   # order the list of levels
   tree <- tree[order]
   # create staged tree from list
-  object <- staged_ev_tree(tree)
+  object <- sevt(tree)
   # extract parents
   parents <- lapply(bn$nodes[order], function(n) {
     if (identical(n$parents, character(0))) {
@@ -111,7 +111,7 @@ as.sevt.bn.fit <- function(x, order = NULL) {
 #' @examples
 #'
 #' #########
-#' model <- staged_ev_tree(list(
+#' model <- sevt(list(
 #'   X = c("good", "bad"),
 #'   Y = c("high", "low")
 #' ))
@@ -119,8 +119,8 @@ as.sevt.bn.fit <- function(x, order = NULL) {
 #'   X = c("good", "good", "bad"),
 #'   Y = c("high", "low", "low")
 #' )
-#' model.fit <- sevt.fit(model, data = D, lambda = 1)
-sevt.fit <- function(object,
+#' model.fit <- sevt_fit(model, data = D, lambda = 1)
+sevt_fit <- function(object,
                      data = NULL,
                      lambda = object$lambda) {
   if (is.null(data)) {
@@ -203,7 +203,7 @@ set_stage <- function(object, path, stage) {
 #'          the object was fitted.
 #' @examples
 #' model <- full(PhDArticles, lambda = 0)
-#' model <- fbhc(model)
+#' model <- stages_fbhc(model)
 #' model$stages$Kids
 #' model <- join_stages(model, "Kids", "5", "6")
 #' model$stages$Kids
@@ -212,7 +212,7 @@ join_stages <- function(object, v, s1, s2) {
   stopifnot(is(object, "sevt"))
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  if (!all(c(s1, s2) %in% stages(object, var = v))) {
+  if (!all(c(s1, s2) %in% sevt_stages(object, var = v))) {
     stop("Stages are not present")
   }
   if (s1 == s2) stop("Join the same stage")
@@ -263,28 +263,10 @@ join_stages <- function(object, v, s1, s2) {
 #' @details Splits randomly a given stage into two stages. More precisely,
 #' it assigns each situation within the given stage into a new stage with
 #' probability \code{p}.
-#' @examples
-#' DD <- generate_random_dataset(5, 100)
-#' model <- full(DD,lambda = 1)
-#' model <- bhc(model)
-#' model <- stndnaming(model)
-#' model$stages$X5
-#'
-#' # no split
-#' model1 <- split_stage_random(model, "X5", "1", p = 0)
-#' model1$stages$X5
-#'
-#' # all situations in the new stage
-#' model2 <- split_stage_random(model, "X5", "1", p = 1)
-#' model2$stages$X5
-#'
-#' # randomly split with probability 0.5
-#' model3 <- split_stage_random(model, "X5", "1", p = 0.5)
-#' model3$stages$X5
-#' @export
+#' @keywords internal
 split_stage_random <- function(object, var, stage, p = 0.5) {
   stopifnot(is(object, "sevt"))
-  # if the given stage is not presetn 
+  # if the given stage is not present 
   if (!(stage %in% object$stages[[var]])) {
     # return the same object
     return(object)
@@ -310,7 +292,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
     object$stages[[var]][ix] <- label
     if (is_fitted_sevt(object)) {
       # re-fit the model
-      object <- sevt.fit(object, lambda = object$lambda)
+      object <- sevt_fit(object, lambda = object$lambda)
     }
   }
   return(object)
@@ -321,7 +303,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 #' @param object a staged event tree object.
 #' @return logical.
 #'
-#' @export
+#' @keywords internal
 is_fitted_sevt <- function(object) {
   return(!is.null(object$prob) && !is.null(object$ctables))
 }
@@ -341,15 +323,15 @@ is_fitted_sevt <- function(object) {
 #'  inclusion/exclusion/equality/diversity between 
 #'  the stages structures of the two models.
 #' @examples
-#' mod1 <- bhc(full(PhDArticles[, 1:5], lambda = 1))
-#' mod2 <- fbhc(full(PhDArticles[, 1:5], lambda = 1))
-#' inclusion_stages(mod1, mod2)
+#' mod1 <- stages_bhc(full(PhDArticles[, 1:5], lambda = 1))
+#' mod2 <- stages_fbhc(full(PhDArticles[, 1:5], lambda = 1))
+#' inclusions_stages(mod1, mod2)
 #' @export
-inclusion_stages <- function(object1, object2) {
+inclusions_stages <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
-  stopifnot(nvar_sevt(object1) == nvar_sevt(object2))
-  stopifnot(all(variable.names(object1) == variable.names(object2)))
+  stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
+  stopifnot(all(sevt_varnames(object1) == sevt_varnames(object2)))
   out <- rep(list(c()), length(object1$stages))
   attr(out, "names") <- attr(object1$stages, "names")
   out2 <- out
@@ -463,12 +445,8 @@ print.sevt <- function(x, ...) {
 #'         Otherwise, If \code{var} is not specified, \code{stages}
 #'         returns a list of character vectors containing the stages associated
 #'         to each variable in the model (that is \code{object$stages}).
-#' @examples
-#' DD <- generate_xor_dataset(5, 100)
-#' model <- full(DD)
-#' stages(model, var = "X5")
-#' @export
-stages <- function(object, var = NULL) {
+#' @keywords internal
+sevt_stages <- function(object, var = NULL) {
   stopifnot(is(object, "sevt"))
   if (is.null(var)) {
     object$stages
@@ -489,13 +467,13 @@ stages <- function(object, var = NULL) {
 #'         for which a \code{print}
 #'         method exist.
 #' @examples
-#' model <- fbhc(full(PhDArticles, lambda = 1))
+#' model <- stages_fbhc(full(PhDArticles, lambda = 1))
 #' summary(model)
 #' @export
 summary.sevt <- function(object, ...) {
   stopifnot(is(object, "sevt"))
-  vns <- variable.names(object)
-  nv <- nvar_sevt(object)
+  vns <- sevt_varnames(object)
+  nv <- sevt_nvar(object)
   out <- list()
   out[[vns[1]]] <- data.frame(
     stage = "1",
@@ -570,7 +548,7 @@ print.summary.sevt <- function(x, max = 10, ...) {
 #' @return A staged event tree object corresponding to the subtree.
 #' @examples
 #' DD <- generate_random_dataset(4, 100)
-#' model <- staged_ev_tree(DD, full = TRUE)
+#' model <- sevt(DD, full = TRUE)
 #' plot(model)
 #' model1 <- subtree(model, path = c("-1", "1"))
 #' plot(model1)
@@ -579,11 +557,11 @@ subtree <- function(object, path) {
   m <- 1
   idx <- tree_idx(path, object$tree)
   stage <- find_stage(object, path)
-  varout <- variable.names(object)[seq_along(path)]
+  varout <- sevt_varnames(object)[seq_along(path)]
   object$tree[varout] <- NULL ## remove previous variables
   object$stages[varout] <- NULL ## remove stages info
   object$ctables[varout] <- NULL
-  var <- variable.names(object)
+  var <- sevt_varnames(object)
   object$stages[[var[1]]] <-
     c(stage) ## keep stage name for first variable
   if (is_fitted_sevt(object)) {
@@ -617,7 +595,7 @@ subtree <- function(object, path) {
 #'  Standard renaming of stages
 #'
 #' Rename all stages in a staged event tree.
-#' @param object a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @param uniq logical, if stage numbers should be unique over all tree.
 #' @param prefix logical, if stage names should be prefixed with variable name.
 #' @param ignore stages name which should be left untouched.
@@ -625,7 +603,7 @@ subtree <- function(object, path) {
 #' consecutive integers.
 #' @examples
 #' DD <- generate_xor_dataset(4, 100)
-#' model <- fbhc(full(DD, join_zero = TRUE))
+#' model <- stages_fbhc(full(DD, join.unobserved = TRUE))
 #' model$stages
 #' model1 <- stndnaming(model)
 #' model1$stages
@@ -638,12 +616,13 @@ subtree <- function(object, path) {
 #' model3 <- stndnaming(model, prefix = TRUE)
 #' model3$stages
 #' 
-#' ### some stage names left untouched
+#' ### manuallty select stage names left untouched
 #' model4 <- stndnaming(model, ignore = c("2", "4"), prefix = TRUE)
 #' model4$stages
 #' @export
 stndnaming <- function(object, uniq = FALSE, 
-                            prefix = FALSE, ignore = NULL) {
+                            prefix = FALSE, 
+                       ignore = object$name.unobserved) {
   var <- names(object$tree)
   start <- 0
   for (i in 2:length(var)) {
@@ -688,12 +667,11 @@ stndnaming <- function(object, uniq = FALSE,
 #' is the same.
 #' Three methods are available:
 #' * \code{naive} first applies \code{\link{stndnaming}} to both
-#' objects and then simply compares the resulting stages lists
-#' (\code{stages(object1)} and \code{stages(object2)}).
+#' objects and then simply compares the resulting stages.
 #' * \code{hamming} uses the \code{hamming_stages} function that try to map
 #' stages in the different objects finding the few number of nodes that
 #' must be changed to obtain the same structure.
-#' * \code{stages} uses the \code{stagesdiff} function that compare
+#' * \code{stages} uses the \code{diff_stages} function that compare
 #' stages to check if the same stage structure is present in both models.
 #'
 #' Setting \code{return.tree = TRUE} will return the stages
@@ -708,7 +686,7 @@ stndnaming <- function(object, uniq = FALSE,
 #' To use the \code{hamming} method, the package \code{clue}
 #' must be installed.
 #'
-#' Functions \code{\link{hamming_stages}} and \code{\link{stagesdiff}}
+#' Functions \code{\link{hamming_stages}} and \code{\link{diff_stages}}
 #' can also be used directly.
 #'
 #' @return 
@@ -720,14 +698,14 @@ stndnaming <- function(object, uniq = FALSE,
 #' number of situations where the stage should be changed to obtain the same 
 #' models. If \code{return.tree = TRUE} a stages-like structure showing which 
 #' situations should be modified to obtain the same models.
-#' * \code{stagesdiff}: a stages-like structure marking the situations belonging 
+#' * \code{diff_stages}: a stages-like structure marking the situations belonging 
 #' to stages which are not the same.
 #' 
 #' @export
 #' @examples
 #' data("PhDArticles")
-#' mod1 <- bhc(full(PhDArticles[, 1:4], lambda = 1))
-#' mod2 <- fbhc(full(PhDArticles[, 1:4], lambda = 1))
+#' mod1 <- stages_bhc(full(PhDArticles[, 1:4], lambda = 1))
+#' mod2 <- stages_fbhc(full(PhDArticles[, 1:4], lambda = 1))
 #' compare_stages(mod1, mod2)
 compare_stages <-
   function(object1,
@@ -739,7 +717,7 @@ compare_stages <-
     # check and rename stages
     stopifnot(is(object1, "sevt"))
     stopifnot(is(object2, "sevt"))
-    stopifnot(nvar_sevt(object1) == nvar_sevt(object2))
+    stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
     stopifnot(all(names(object1$tree) == names(object2$tree)))
     object1 <- stndnaming(object1)
     object2 <- stndnaming(object2)
@@ -756,7 +734,7 @@ compare_stages <-
         USE.NAMES = TRUE
       ),
       hamming = hamming_stages(object1, object2, return.tree = TRUE),
-      stages = stagesdiff(object1, object2),
+      stages = diff_stages(object1, object2),
       sapply(names(object1$tree)[-1],
         function(v) {
           sign(abs(
@@ -799,7 +777,7 @@ hamming_stages <- function(object1, object2, return.tree = FALSE) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
   # check if models are over the same variables, and same order
-  stopifnot(nvar_sevt(object1) == nvar_sevt(object2))
+  stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
   if (!requireNamespace("clue", quietly = TRUE)) {
     stop("Package \"clue\" needed for this function to work. Please install it.",
@@ -869,10 +847,10 @@ hamming_stages <- function(object1, object2, return.tree = FALSE) {
 #'
 #' ##########
 #' m0 <- full(PhDArticles[, 1:4], lambda = 0)
-#' m1 <- bhc(m0)
-#' m2 <- bj(m0, distance = "tv", thr = 0.25)
-#' stagesdiff(m1, m2)
-stagesdiff <- function(object1, object2) {
+#' m1 <- stages_bhc(m0)
+#' m2 <- stages_bj(m0, distance = "tv", thr = 0.25)
+#' diff_stages(m1, m2)
+diff_stages <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))
   stopifnot(is(object2, "sevt"))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
@@ -908,17 +886,21 @@ stagesdiff <- function(object1, object2) {
 #' Utility returning variable-names in a staged event tree
 #' model.
 #' @param object a staged event tree.
-#' @param ... further arguments passed to or from other methods.
 #' @return A character vector.
-#' @examples
-#'
-#' mod <- full(PhDArticles)
-#' variable.names(mod)
+#' @keywords internal
+sevt_varnames <- function(object) {
+  names(object$tree)
+}
+
+#' Variable Names of a Staged Event Tree
+#' 
+#' Simple utilities returning variable names.
+#' @param object as object of class \code{sevt}.
+#' @param ... for compatibility.
 #' @importFrom stats variable.names
 #' @export
-variable.names.sevt <- function(object, ...) {
-  stopifnot(is(object, "sevt"))
-  names(object$tree)
+variable.names.sevt <- function(object, ...){
+  return(names(object$tree))
 }
 
 #' Number of variables
@@ -927,13 +909,8 @@ variable.names.sevt <- function(object, ...) {
 #' in a staged event tree model.
 #' @param object An object of class \code{sevt}.
 #' @return integer, the number of variables.
-#' @examples
-#'
-#' mod <- indep(PhDArticles)
-#' nvar_sevt(mod)
-#' @export
-nvar_sevt <- function(object) {
-  stopifnot(is(object, "sevt"))
+#' @keywords internal
+sevt_nvar <- function(object) {
   length(names(object$tree))
 }
 
@@ -943,16 +920,8 @@ nvar_sevt <- function(object) {
 #' Return the number of parameters of the model.
 #' @param x An object of class \code{sevt}.
 #' @return integer, degrees of freedom of the staged event tree.
-#' @examples
-#'
-#' #########
-#' mod_f <- full(PhDArticles)
-#' df_sevt(mod_f)
-#'
-#' mod_i <- indep(PhDArticles)
-#' df_sevt(mod_i)
-#' @export
-df_sevt <- function(x) {
+#' @keywords internal
+sevt_df <- function(x) {
   sum(c(1, vapply(
     x$stages,
     FUN = function(x) {
@@ -983,7 +952,7 @@ NULL
 #' @return \code{get_stage} returns
 #' the name of the stage for a given path (or paths).
 #' @examples
-#' model <- fbhc(full(PhDArticles))
+#' model <- stages_fbhc(full(PhDArticles))
 #' get_stage(model, c("0", "male"))
 #' paths <- expand.grid(model$tree[2:1])[, 2:1]
 #' get_stage(model, paths)
@@ -1011,7 +980,7 @@ get_stage <- function(object, path) {
 #' @param stage character vector, the name
 #' of the stages for which the paths should be
 #' returned.
-#' @return \code{get_paths} return a
+#' @return  return a
 #'         data.frame containing the paths
 #'         corresponding to the given stage (or stages).
 #' @examples
@@ -1025,15 +994,15 @@ get_path <- function(object, var, stage) {
   }
   
   # list all paths
-  paths <- expand.grid(object$tree[(which(var == variable.names(object)) - 1):1],
+  paths <- expand.grid(object$tree[(which(var == sevt_varnames(object)) - 1):1],
     stringsAsFactors = FALSE
   )
   # extract paths for given stage
   paths <- paths[object$stages[[var]] %in% stage, ncol(paths):1]
   # format to data.frame if var is not the first
-  if (var %in% variable.names(object)[2]) {
+  if (var %in% sevt_varnames(object)[2]) {
     paths <- data.frame(paths)
-    colnames(paths) <- variable.names(object)[1]
+    colnames(paths) <- sevt_varnames(object)[1]
   }
   return(paths)
 }
