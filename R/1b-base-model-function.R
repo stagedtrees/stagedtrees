@@ -598,7 +598,9 @@ subtree <- function(object, path) {
 #' @param object an object of class \code{sevt}.
 #' @param uniq logical, if stage numbers should be unique over all tree.
 #' @param prefix logical, if stage names should be prefixed with variable name.
-#' @param ignore stages name which should be left untouched.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @return a staged event tree object with stages named with
 #' consecutive integers.
 #' @examples
@@ -622,7 +624,7 @@ subtree <- function(object, path) {
 #' @export
 stndnaming <- function(object, uniq = FALSE, 
                             prefix = FALSE, 
-                       ignore = object$name.unobserved) {
+                       ignore = object$name_unobserved) {
   var <- names(object$tree)
   start <- 0
   for (i in 2:length(var)) {

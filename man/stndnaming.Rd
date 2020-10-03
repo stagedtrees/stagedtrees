@@ -8,7 +8,7 @@ stndnaming(
   object,
   uniq = FALSE,
   prefix = FALSE,
-  ignore = object$name.unobserved
+  ignore = object$name_unobserved
 )
 }
 \arguments{

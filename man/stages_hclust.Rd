@@ -9,7 +9,7 @@ stages_hclust(
   distance = "totvar",
   k = length(object$tree[[1]]),
   method = "complete",
-  ignore = NULL,
+  ignore = object$name_unobserved,
   limit = length(object$tree),
   scope = NULL
 )
@@ -26,7 +26,9 @@ Values will be recycled if needed.}
 
 \item{method}{the agglomeration method to be used in \code{\link{hclust}}.}
 
-\item{ignore}{vector of stages which will be ignored and left untouched.}
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{object$name_unobserved}.}
 
 \item{limit}{the maximum number of variables to consider.}
 

@@ -9,7 +9,7 @@ stages_kmeans(
   k = length(object$tree[[1]]),
   algorithm = "Hartigan-Wong",
   transform = sqrt,
-  ignore = NULL,
+  ignore = object$name_unobserved,
   limit = length(object$tree),
   scope = NULL,
   nstart = 1
@@ -25,7 +25,9 @@ Values will be recycled if needed.}
 
 \item{transform}{function applied to the probabilities before clustering.}
 
-\item{ignore}{vector of stages which will be ignored.}
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{object$name_unobserved}.}
 
 \item{limit}{the maximum number of variables to consider.}
 

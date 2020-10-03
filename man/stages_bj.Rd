@@ -23,7 +23,9 @@ stages_bj(
 \item{scope}{names of variables that should be considered
 for the optimization.}
 
-\item{ignore}{stage names that should be ignored.}
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{object$name_unobserved}.}
 
 \item{trace}{if >0 increasingly amount of info.
 is printed (via \code{message})}

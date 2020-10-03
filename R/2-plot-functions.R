@@ -34,7 +34,9 @@
 #' @param var_names logical, if variable names should be added to the plot,
 #'                  otherwise variable names can be added manually using 
 #'                  \code{\link{text.sevt}}.
-#' @param ignore array of stages name that should not be plotted.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.
@@ -340,7 +342,9 @@ text.sevt <-
 #' 
 #' @param height An object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
-#' @param ignore array of stages name that should not be plotted.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param beside a logical value. See \code{\link{barplot}}.
 #' @param horiz a logical value. See \code{\link{barplot}}.
 #' @param legend.text logical.

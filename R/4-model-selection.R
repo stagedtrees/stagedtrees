@@ -299,13 +299,15 @@ stages_bhcr <-
 #' Backward Hill-climbing search of staged event trees with
 #' iterative joining of stages
 #'
-#' @param object a staged event tree model
-#' @param score the score function to be maximized
-#' @param max_iter the maximum number of iterations per variable
-#' @param scope names of variables that should be considered for the optimization
-#' @param ignore stage names that should be ignored
+#' @param object a staged event tree model.
+#' @param score the score function to be maximized.
+#' @param max_iter the maximum number of iterations per variable.
+#' @param scope names of variables that should be considered for the optimization.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param trace if >0 increasingly amount of info
-#' is printed (via \code{message})
+#' is printed (via \code{message}).
 #' @details For each variable the algorithm try to join stages
 #' and move to the best model that increase the score. When no
 #' increase is possible it moves to the next variable.
@@ -387,11 +389,13 @@ stages_bhc <-
 #' Fast backward hill-climbing search of staged event trees with
 #' iterative joining of stages.
 #'
-#' @param object a staged event tree model
-#' @param score the score function to be maximized
-#' @param max_iter the maximum number of iteration
-#' @param scope names of variables that should be considered for the optimization
-#' @param ignore stage names that should be ignored
+#' @param object a staged event tree model.
+#' @param score the score function to be maximized.
+#' @param max_iter the maximum number of iteration.
+#' @param scope names of variables that should be considered for the optimization.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param trace if >0 increasingly amount of info
 #' is printed (via \code{message})
 #' @details For each variable the algorithm try to join stages
@@ -497,7 +501,9 @@ stages_fbhc <-
 #' @param thr the threshold for joining stages
 #' @param scope names of variables that should be considered 
 #'              for the optimization.
-#' @param ignore stage names that should be ignored.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param trace if >0 increasingly amount of info.
 #' is printed (via \code{message})
 #'
@@ -581,11 +587,13 @@ stages_bj <-
 #' Hill-climbing search of staged event trees with
 #' iterative moving of nodes between stages.
 #'
-#' @param object a staged event tree object
-#' @param score a function that score staged event tree objects
-#' @param max_iter the maximum number of iterations per variable
+#' @param object a staged event tree object.
+#' @param score a function that score staged event tree objects.
+#' @param max_iter the maximum number of iterations per variable.
 #' @param scope names of variables that should be considered for the optimization
-#' @param ignore a vector of stage names which will not be changed
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param trace integer, if positive information on the progress is
 #'              printed to console
 #'
@@ -691,7 +699,9 @@ stages_hc <- function(object,
 #' @param distance string, the distance measure to be used, either 
 #'                 a possible `method` for \code{\link{dist}} or 
 #'                 one of the folowing: \code{"totvar", "hellinger"}.
-#' @param ignore vector of stages which will be ignored and left untouched.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param k integer or (named) vector: number of clusters, that is stages per variable. 
 #'        Values will be recycled if needed. 
 #' @param method the agglomeration method to be used in \code{\link{hclust}}.
@@ -716,7 +726,7 @@ stages_hclust <-
            distance = "totvar",
            k = length(object$tree[[1]]),
            method = "complete",
-           ignore = NULL,
+           ignore = object$name_unobserved,
            limit = length(object$tree),
            scope = NULL) {
     stopifnot(is_fitted_sevt(object))
@@ -752,7 +762,9 @@ stages_hclust <-
 #' Build a stage event tree with \code{k} stages for each variable
 #' by clustering (transformed) probabilities with k-means. 
 #' @param object a staged event tree object.
-#' @param ignore vector of stages which will be ignored.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `object$name_unobserved`.
 #' @param k integer or (named) vector: number of clusters, that is stages per variable. 
 #'          Values will be recycled if needed.
 #' @param algorithm character: as in \code{\link{kmeans}}.
@@ -779,7 +791,7 @@ stages_kmeans <- function(object,
                         k = length(object$tree[[1]]),
                         algorithm = "Hartigan-Wong",
                         transform = sqrt,
-                        ignore = NULL,
+                        ignore = object$name_unobserved,
                         limit = length(object$tree),
                         scope = NULL,
                         nstart = 1){

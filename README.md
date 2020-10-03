@@ -169,7 +169,7 @@ mod5 <- stages_hclust(mod_full0,
 mod5
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4121.866 (df=14)
+#> 'log Lik.' -4122.274 (df=17)
 ```
 
   - **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore,
@@ -184,7 +184,7 @@ mod6 <- stages_kmeans(mod_full0,
 mod6
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4119.247 (df=14)
+#> 'log Lik.' -4119.247 (df=17)
 ```
 
 #### Combining model selections with `%>%`
@@ -275,11 +275,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2   male   no      no    low      low
-#> 2      1-2   male   no     yes   high      low
-#> 3      1-2   male  yes     yes    low     high
-#> 4      1-2   male   no     yes    low     high
-#> 5      1-2   male   no      no medium     high
+#> 1       >2 female   no      no    low     high
+#> 2      1-2 female   no      no    low      low
+#> 3       >2 female   no      no medium      low
+#> 4      1-2 female  yes     yes   high     high
+#> 5      1-2 female  yes     yes medium      low
 ```
 
 #### Explore the model
@@ -414,5 +414,5 @@ BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #> mod2       19 8302.067
 #> mod3       14 8388.749
 #> mod4       22 8331.596
-#> mod5       14 8339.196
+#> mod5       17 8360.471
 ```

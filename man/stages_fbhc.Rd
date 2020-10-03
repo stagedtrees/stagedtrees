@@ -14,15 +14,17 @@ stages_fbhc(
 )
 }
 \arguments{
-\item{object}{a staged event tree model}
+\item{object}{a staged event tree model.}
 
-\item{score}{the score function to be maximized}
+\item{score}{the score function to be maximized.}
 
-\item{max_iter}{the maximum number of iteration}
+\item{max_iter}{the maximum number of iteration.}
 
-\item{scope}{names of variables that should be considered for the optimization}
+\item{scope}{names of variables that should be considered for the optimization.}
 
-\item{ignore}{stage names that should be ignored}
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{object$name_unobserved}.}
 
 \item{trace}{if >0 increasingly amount of info
 is printed (via \code{message})}

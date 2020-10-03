@@ -70,7 +70,9 @@ as input a vector of stages and output the corresponding colors.}
 otherwise variable names can be added manually using
 \code{\link{text.sevt}}.}
 
-\item{ignore}{array of stages name that should not be plotted.}
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{object$name_unobserved}.}
 
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},
