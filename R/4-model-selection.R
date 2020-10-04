@@ -1,9 +1,9 @@
 #' Join situations with no observations
 #'
-#' @param object a fitted staged event tree.
+#' @param object an object of class \code{sevt} with associated data.
 #' @param fit if the model's probability should be computed.
-#' @param name string with a name for the new stage.
-#' @param scope list of variable in \code{object}.
+#' @param name character, name for the new stage storing unobserved situations.
+#' @param scope character vector, list of variable in \code{object}.
 #' @param trace if \code{> 0} print information to console.
 #' @param lambda smoothing parameter for the fitting.
 #'
@@ -40,7 +40,7 @@ join_unobserved <-
            scope = sevt_varnames(object)[-1],
            lambda = object$lambda) {
     stopifnot(is(object, "sevt"))
-    stopifnot(!is.null(object$ctables))
+    stopifnot(has_ctables(object))
     tot <- 0
     ## make scope valid 
     scope <- scope[scope %in% sevt_varnames(object)[-1]]
@@ -155,6 +155,7 @@ indep.table <- function(data, order = names(dimnames(data)),
                         name_unobserved = "UNOBSERVED") {
   object <- sevt(data, full = FALSE, order = order)
   object$ctables <- make_ctables(object, data)
+  object$lambda <- lambda
   if (join_unobserved){
     join_unobserved(object, 
               fit = TRUE, name = name_unobserved, lambda = lambda)
@@ -176,12 +177,17 @@ indep.data.frame <- function(data, order = colnames(data),
                              name_unobserved = "UNOBSERVED") {
   # create the staged tree object
   model <- sevt(data, full = FALSE, order = order)
+  # store lambda value
+  model$lambda <- lambda
+  # store contingency tables
+  model$ctables <- make_ctables(model, data)
+  if (join_unobserved){
+    return(join_unobserved(model, fit = TRUE, trace = 0, name = name_unobserved))
+  }
   # create empty probability list
   model$prob <- list()
   # extract names of variables
   var <- names(model$tree)
-  # store lambda value
-  model$lambda <- lambda
   # initialize loglik to 0
   model$ll <- 0
   # iterate for each variable 
@@ -212,13 +218,7 @@ indep.data.frame <- function(data, order = colnames(data),
   attr(model$ll, "nobs") <- nrow(data)
   # set logLik class
   class(model$ll) <- "logLik"
-  # store contingency tables
-  model$ctables <- make_ctables(model, data)
-  if (join_unobserved){
-    join_unobserved(model, fit = TRUE, name = name_unobserved)
-  }else{
-    model
-  }
+  return(model)
 }
 
 
@@ -497,7 +497,7 @@ stages_fbhc <-
 #' using a distance and a threshold value.
 #'
 #' @param object the staged event tree from where to start.
-#' @param distance string, see details.
+#' @param distance character, see details.
 #' @param thr the threshold for joining stages
 #' @param scope names of variables that should be considered 
 #'              for the optimization.
@@ -510,6 +510,13 @@ stages_fbhc <-
 #' @details For each variable in the model stages are joined iteratively.
 #' At each iteration the two stages with minimum distance are selected and
 #' joined if their distance is less than \code{thr}.
+#' 
+#' Available distances are: manhattan (`l1`), euclidean (`l2`),
+#' Renyi divergence (`ry`), Kullback-Liebler (`kl`),
+#' total-variation (`tv`), squared Hellinger (`hl`),
+#' Bhattacharyya (`bh`), Chan-Darwiche (`cd`).
+#' See also \link{probdist}.
+#' 
 #' @return The final staged event tree obtained.
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
@@ -537,8 +544,7 @@ stages_bj <-
                        tv = probdist.tv,
                        hl = probdist.hl,
                        bh = probdist.bh,
-                       cd = probdist.cd,
-                       )
+                       cd = probdist.cd )
     if (is.null(scope)){
       scope <- sevt_varnames(object)[-1]
     }

@@ -16,7 +16,7 @@ stages_bj(
 \arguments{
 \item{object}{the staged event tree from where to start.}
 
-\item{distance}{string, see details.}
+\item{distance}{character, see details.}
 
 \item{thr}{the threshold for joining stages}
 
@@ -41,6 +41,12 @@ using a distance and a threshold value.
 For each variable in the model stages are joined iteratively.
 At each iteration the two stages with minimum distance are selected and
 joined if their distance is less than \code{thr}.
+
+Available distances are: manhattan (\code{l1}), euclidean (\code{l2}),
+Renyi divergence (\code{ry}), Kullback-Liebler (\code{kl}),
+total-variation (\code{tv}), squared Hellinger (\code{hl}),
+Bhattacharyya (\code{bh}), Chan-Darwiche (\code{cd}).
+See also \link{probdist}.
 }
 \examples{
 DD <- generate_xor_dataset(n = 5, N = 1000)

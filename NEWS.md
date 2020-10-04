@@ -40,6 +40,8 @@ COMPLETE CHANGELOG:
   `ignore` arguments, which control how stage names are generated and   
   if some stage names should be left untouched (default: the `name_unobserved`
   stages). 
+* in `stages_bj` (previously `bj.sevt`) distance is now passed with a 
+  character and no longer as a function.
 * two new model selection function: `stages_hclust` and 
   `stages_kmeans`, to learn stage structure using hierarchical or        k-means clustering.
 *  all model selection functions accept `scope` and `ignore`   

@@ -102,18 +102,17 @@ mod_full0
 This methods perform optimization for a given score 
 using different heuristics. 
 
-* **Hill-Climbing** `hc(object, score, max_iter, scope, ignore, trace)`
+* **Hill-Climbing** `stages_hc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
 mod1 <- stages_hc(mod_indep)
 mod1
 ```
-* **Backward Hill-Climbing** `bhc(object, score, max_iter, scope, ignore, trace)`
+* **Backward Hill-Climbing** `stages_bhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
 mod2 <- stages_bhc(mod_full)
 mod2
 ```
-* **Backward Fast Hill-Climbing** 
-`fbhc(object, score, max_iter, scope, ignore, trace)`
+* **Backward Fast Hill-Climbing** `stages_fbhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
 mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
 mod3
@@ -122,7 +121,7 @@ mod3
 
 ##### Distance methods
 
-* **Backward Joining** `bj(object, distance, thr, trace, ...)`
+* **Backward Joining** `stages_bj(object, distance, thr, scope, ignore, trace)`
 ```{r}
 mod4 <- stages_bj(mod_full)
 mod4

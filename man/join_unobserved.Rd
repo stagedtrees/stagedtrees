@@ -14,15 +14,15 @@ join_unobserved(
 )
 }
 \arguments{
-\item{object}{a fitted staged event tree.}
+\item{object}{an object of class \code{sevt} with associated data.}
 
 \item{fit}{if the model's probability should be computed.}
 
 \item{trace}{if \code{> 0} print information to console.}
 
-\item{name}{string with a name for the new stage.}
+\item{name}{character, name for the new stage storing unobserved situations.}
 
-\item{scope}{list of variable in \code{object}.}
+\item{scope}{character vector, list of variable in \code{object}.}
 
 \item{lambda}{smoothing parameter for the fitting.}
 }
