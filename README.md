@@ -275,11 +275,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2   male  yes     yes medium     high
-#> 2       >2   male  yes     yes   high     high
-#> 3       >2 female   no     yes   high      low
-#> 4       >2   male  yes     yes   high      low
-#> 5      1-2 female   no      no medium      low
+#> 1      1-2 female   no      no    low      low
+#> 2        0   male   no      no    low      low
+#> 3      1-2 female  yes     yes   high     high
+#> 4       >2   male  yes     yes   high     high
+#> 5        0   male   no     yes    low      low
 ```
 
 #### Explore the model
@@ -341,7 +341,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 
 ![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
-By defualt stages associated with the unobserved situations are not
+By default stages associated with the unobserved situations are not
 plotted, if the model has been created with `join_unobserved = TRUE`.
 
 ``` r

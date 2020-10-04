@@ -2,7 +2,7 @@
 % Please edit documentation in R/1-base-model-function.R
 \name{has_prob}
 \alias{has_prob}
-\title{Check if the stages event tree has probabilitites}
+\title{Check if the stages event tree has probabilities}
 \usage{
 has_prob(object)
 }
@@ -13,6 +13,6 @@ has_prob(object)
 logical.
 }
 \description{
-Check if the stages event tree has probabilitites
+Check if the stages event tree has probabilities
 }
 \keyword{internal}

@@ -698,7 +698,7 @@ stages_hc <- function(object,
 #' @param object a staged event tree object.
 #' @param distance string, the distance measure to be used, either 
 #'                 a possible `method` for \code{\link{dist}} or 
-#'                 one of the folowing: \code{"totvar", "hellinger"}.
+#'                 one of the following: \code{"totvar", "hellinger"}.
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.

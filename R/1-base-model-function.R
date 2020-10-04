@@ -244,7 +244,7 @@ has_ctables <- function(object){
   isFALSE(is.null(object$ctables))
 }
 
-#' Check if the stages event tree has probabilitites
+#' Check if the stages event tree has probabilities
 #' 
 #' @param object a staged event tree object.
 #' @return logical.

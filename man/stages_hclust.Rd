@@ -19,7 +19,7 @@ stages_hclust(
 
 \item{distance}{string, the distance measure to be used, either
 a possible \code{method} for \code{\link{dist}} or
-one of the folowing: \code{"totvar", "hellinger"}.}
+one of the following: \code{"totvar", "hellinger"}.}
 
 \item{k}{integer or (named) vector: number of clusters, that is stages per variable.
 Values will be recycled if needed.}

@@ -230,7 +230,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
      cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
-By defualt stages associated with the unobserved situations are not plotted, 
+By default stages associated with the unobserved situations are not plotted, 
 if the model has been created with `join_unobserved = TRUE`.
 ```{r}
 plot(stndnaming(mod5, uniq = TRUE), 

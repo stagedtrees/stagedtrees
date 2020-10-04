@@ -18,28 +18,34 @@ COMPLETE CHANGELOG:
 * documentation updated.
 * improve code comments.
 * reduced exported functions.
-* removed the `fit` parameter from `full`, `indep` and 
-  `staged_ev_tree`. Now `fit` and `indep` always fit the model while
-  `staged_ev_tree` is just the basic constructor of the `sevt` class.
-* in `full` is now possible to specify if situations should be joined
-  using `join.unobserved`, in that case probabilities will be fitted only after the empty situations are joined, improving speed.  
+* removed the `fit` parameter from `full`, `indep`. 
+   Now `full` and `indep` always fit the model while
+  `sevt` is just the basic constructor of the `sevt` class.
+* in `full` and `indep` is now possible to specify if situations should be joined
+  using `join_unobserved`, in that case probabilities will be fitted only after 
+  the unobserved situations are joined, improving speed. Moreover, the 
+  name of the unobserved stages are stored as `name_unobserved` in the 
+  staged tree object.
 * update internal function `new_label` to improve speed.
-* `plot.sevt` allows now to specify the color of the edges with 
-   `col.edges`
+* `plot.sevt` allows now to set edges color with 
+   `col_edges`.
 * In `plot.sevt` and `barplot.sevt` it
   is possible to specify stages that should be ignored
   and not plotted via the `ignore` argument, by default the 
-  `name.unobserved` stage is ignored.
-* `plot.sevt` adds variables names by default (`var.names` argument).
+  `name_unobserved` stages are ignored.
+* `plot.sevt` adds variables names by default (`var_names` argument).
 * fix in `compare_stages`: because of changes in `plot.sevt` 
   we need to specify that the root is always considered identical.
 * internal function `stndnaming` accepts now `uniq`, `prefix` and  
-  `ignore` arguments, which control how stage names are generated and   if some stage names should be left untouched. 
-* two new model selection function: `stages.hclust` and 
-  `stages.kmeans`, to learn stage structure using hierarchical or        k-means clustering.
+  `ignore` arguments, which control how stage names are generated and   
+  if some stage names should be left untouched (default: the `name_unobserved`
+  stages). 
+* two new model selection function: `stages_hclust` and 
+  `stages_kmeans`, to learn stage structure using hierarchical or        k-means clustering.
 *  all model selection functions accept `scope` and `ignore`   
    parameters that allow to specifiy among which variables
-   run the algorithm and which stages should be left untouched.
+   run the algorithm and which stages should be left untouched 
+   (defult: the `name_unobserved` stages). 
 *  replace `1:length(x)` with the suggested `seq_along` in all code.
 
 # 1.0.2
@@ -90,7 +96,7 @@ COMPLETE CHANGELOG:
 * Fix #39; `lambda = 0` does not induce errors in `logLik`, `join_stages` and thus in the model selection algorithms.  
 * Fix #41;  `nvar.sevt` bug 
 * Fix #34; order of elements in positions list of `ceg.sevt`
-* Fix #38  subtree and colours in plot bugs 
+* Fix #38  subtree and colors in plot bugs 
 * Fix #46; removed Trump dataset
 
 # 0.9.1

@@ -18,7 +18,9 @@ stndnaming(
 
 \item{prefix}{logical, if stage names should be prefixed with variable name.}
 
-\item{ignore}{stages name which should be left untouched.}
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{object$name_unobserved}.}
 }
 \value{
 a staged event tree object with stages named with
