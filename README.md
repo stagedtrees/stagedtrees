@@ -101,7 +101,7 @@ object.
 This methods perform optimization for a given score using different
 heuristics.
 
-  - **Hill-Climbing** `hc(object, score, max_iter, scope, ignore,
+  - **Hill-Climbing** `stages_hc(object, score, max_iter, scope, ignore,
     trace)`
 
 <!-- end list -->
@@ -114,8 +114,8 @@ mod1
 #> 'log Lik.' -4118.434 (df=14)
 ```
 
-  - **Backward Hill-Climbing** `bhc(object, score, max_iter, scope,
-    ignore, trace)`
+  - **Backward Hill-Climbing** `stages_bhc(object, score, max_iter,
+    scope, ignore, trace)`
 
 <!-- end list -->
 
@@ -127,8 +127,8 @@ mod2
 #> 'log Lik.' -4086.254 (df=19)
 ```
 
-  - **Backward Fast Hill-Climbing** `fbhc(object, score, max_iter,
-    scope, ignore, trace)`
+  - **Backward Fast Hill-Climbing** `stages_fbhc(object, score,
+    max_iter, scope, ignore, trace)`
 
 <!-- end list -->
 
@@ -142,7 +142,8 @@ mod3
 
 ##### Distance methods
 
-  - **Backward Joining** `bj(object, distance, thr, trace, ...)`
+  - **Backward Joining** `stages_bj(object, distance, thr, scope,
+    ignore, trace)`
 
 <!-- end list -->
 
@@ -276,10 +277,10 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
 #> 1      1-2 female   no      no    low      low
-#> 2        0   male   no      no    low      low
-#> 3      1-2 female  yes     yes   high     high
-#> 4       >2   male  yes     yes   high     high
-#> 5        0   male   no     yes    low      low
+#> 2      1-2   male   no      no medium     high
+#> 3       >2   male  yes     yes medium      low
+#> 4      1-2   male   no      no medium      low
+#> 5      1-2   male   no     yes medium      low
 ```
 
 #### Explore the model

@@ -368,46 +368,41 @@ barplot.sevt <- function(height, var = variable.names(height)[1],
                            ylab = ifelse(!horiz, "probability", NA),
                            ...){
   stopifnot(is_fitted_sevt(height))
+  stg <- stages(height, var)
+  stg <- stg[!(stg %in% ignore)]
+  ustg <- unique(stg) 
   if (is.null(col)) {
-    col <- lapply(height$stages[var], function(stages) {
-      if (is.null(stages)) {
+      if (is.null(stg)) {
         return(list("1" = "black"))
+      }else{
+        col <- seq_along(ustg)
+        names(col) <- ustg
       }
-      stages <- unique(stages)
-      vc <- seq_along(stages)
-      names(vc) <- stages
-      return(vc)
-    })
   } else if (is(col, "function")) {
-    col <- lapply(height$stages[var], function(stages) {
-      if (is.null(stages)) {
-        return(list("1" = "black"))
+      if (is.null(stg)) {
+        col <- list("1" = 1)
+      }else{
+        col <- col(ustg)
+        names(col) <- ustg
       }
-      cs <- col(unique(stages))
-      names(cs) <- unique(stages)
-      return(cs)
-    })
   } else if (length(col) == 1 && col == "stages") {
     if (col == "stages") {
-      col <- lapply(height$stages[var], function(stages) {
-        if (is.null(stages)) {
-          return(list("1" = 1))
+        if (is.null(stg)) {
+          col <- list("1" = 1)
+        }else{
+          col <- ustg
+          names(col) <- ustg
         }
-        stages <- unique(stages)
-        names(stages) <- stages
-        return(stages)
-      })
     }
   }
-  tmp <- summary(height)[["stages.info"]]
+  tmp <- summary(height)[["stages.info"]][[var]]
   if (legend.text){
-    legend.text = tmp[[var]]$stage
+    legend.text = tmp$stage[tmp$stage %in% ustg]
   }
-  hei <- as.matrix(tmp[[var]][!(tmp[[var]][["stage"]] %in% ignore),
-                              -(1:3)])
+  hei <- as.matrix(tmp[tmp$stage %in% ustg, -(1:3)])
   hei[is.nan(hei)] <- 0
   
-  barplot(hei, col = col[[var]], 
+  barplot(hei, col = col, 
           legend.text = legend.text, beside = beside,
           xlab = xlab, ylab = ylab,
           horiz = horiz, ...)
