@@ -135,7 +135,7 @@ test_that("test indep model", {
   }))
   sev1 <- stagedtrees:::sevt_fit(sevt(DD), data = DD, lambda = 1)
 
-  sev2 <- indep(DD, lambda = 1)
+  sev2 <- indep(DD, lambda = 1, join_unobserved = FALSE)
 
   expect_true(compare_stages(sev1, sev2))
 })
