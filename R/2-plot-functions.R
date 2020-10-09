@@ -254,7 +254,7 @@ plot.sevt <-
       ns <- ns * nv
     }
     if (var_names){
-      text.sevt(x, limit = limit, xlim = xlim, ylim = ylim)
+      text.sevt(x, limit = limit, xlim = xlim, ylim = ylim, adj = 0)
     }
   }
 
@@ -342,18 +342,10 @@ text.sevt <-
            ...) {
     d <- min(length(x$tree), limit) ## avoid too much plotting
     step <- (xlim[2] - xlim[1]) / d
-    xx <- xlim[1]
     yy <- y
     var <- names(x$tree)
-    for (i in 1:d) {
-      text(
-        x = xx,
-        y = yy,
-        labels = var[i],
-        ...
-      )
-      xx <- xx + step
-    }
+    text(x = seq(from = xlim[1], to = xlim[2], length.out = d + 1)[1:d], y = y, 
+         labels = var[1:d], ...)
   }
 
 
