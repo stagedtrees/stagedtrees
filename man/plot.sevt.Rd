@@ -13,7 +13,7 @@
   main = NULL,
   sub = NULL,
   asp = 1,
-  cex_label_nodes = 1,
+  cex_label_nodes = 0,
   cex_label_edges = 1,
   cex_nodes = 2,
   cex_tree_y = 0.9,
@@ -21,6 +21,9 @@
   col_edges = "black",
   var_names = TRUE,
   ignore = x$name_unobserved,
+  pch_nodes = 16,
+  lwd_nodes = 1,
+  lwd_edges = 1,
   ...
 )
 }
@@ -43,7 +46,8 @@
 
 \item{cex_label_nodes}{The magnification to be used for
 the node labels.
-If set to \code{0} node labels are not showed.}
+If set to \code{0} (as default)
+node labels are not showed.}
 
 \item{cex_label_edges}{The magnification to be used
 for the edge labels.
@@ -74,6 +78,14 @@ otherwise variable names can be added manually using
 by default the name of the unobserved stages stored in
 \code{object$name_unobserved}.}
 
+\item{pch_nodes}{Either an integer specifying a symbol or a single character
+to be used as the default in plotting nodes shapes see
+\code{\link{points}}.}
+
+\item{lwd_nodes}{The line width for edges, a positive number, defaulting to 1.}
+
+\item{lwd_edges}{The line width for nodes, a positive number, defaulting to 1.}
+
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},
 \code{text} and \code{plot.window}.}
@@ -92,14 +104,14 @@ mod <- stages_bj(full(PhDArticles, join_unobserved = TRUE))
 ### simple plotting
 plot(mod)
 
-### removing lables from nodes and edges and fill nodes
-plot(mod, cex_label_nodes = 0, cex_label_edges = 0, pch = 16)
+### labels in nodes 
+plot(mod, cex_label_nodes = 1, cex_nodes = 0)
 
 ### reduce nodes size
-plot(mod, cex_nodes = 1)
+plot(mod, cex_nodes = 0.5)
 
 ### change line width and nodes style
-plot(mod, lwd = 3, pch = 5)
+plot(mod, lwd_edges = 3, pch_nodes = 5)
 
 ### changing palette
 plot(mod, col = function(s) heat.colors(length(s)))

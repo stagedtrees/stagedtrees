@@ -14,7 +14,8 @@
 #' @param asp the y/x aspect ratio.
 #' @param cex_label_nodes The magnification to be used for
 #'                        the node labels. 
-#'                        If set to \code{0} node labels are not showed.
+#'                        If set to \code{0} (as default) 
+#'                        node labels are not showed.
 #' @param cex_label_edges The magnification to be used 
 #'                        for the edge labels. 
 #'                        If set to \code{0} edge labels are not showed.
@@ -37,6 +38,11 @@
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.
+#' @param pch_nodes Either an integer specifying a symbol or a single character 
+#'                  to be used as the default in plotting nodes shapes see 
+#'                  \code{\link{points}}.
+#' @param lwd_nodes The line width for edges, a positive number, defaulting to 1.
+#' @param lwd_edges The line width for nodes, a positive number, defaulting to 1.
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.
@@ -51,14 +57,14 @@
 #' ### simple plotting
 #' plot(mod)
 #'
-#' ### removing lables from nodes and edges and fill nodes
-#' plot(mod, cex_label_nodes = 0, cex_label_edges = 0, pch = 16)
+#' ### labels in nodes 
+#' plot(mod, cex_label_nodes = 1, cex_nodes = 0)
 #'
 #' ### reduce nodes size
-#' plot(mod, cex_nodes = 1)
+#' plot(mod, cex_nodes = 0.5)
 #'
 #' ### change line width and nodes style
-#' plot(mod, lwd = 3, pch = 5)
+#' plot(mod, lwd_edges = 3, pch_nodes = 5)
 #'
 #' ### changing palette
 #' plot(mod, col = function(s) heat.colors(length(s)))
@@ -86,7 +92,7 @@ plot.sevt <-
            main = NULL,
            sub = NULL,
            asp = 1,
-           cex_label_nodes = 1,
+           cex_label_nodes = 0,
            cex_label_edges = 1,
            cex_nodes = 2,
            cex_tree_y = 0.9,
@@ -94,6 +100,9 @@ plot.sevt <-
            col_edges = "black",
            var_names = TRUE,
            ignore = x$name_unobserved,
+           pch_nodes = 16,
+           lwd_nodes = 1,
+           lwd_edges = 1,
            ...) {
     plot.new()
     d <- min(length(x$tree), limit) ## avoid too much plotting
@@ -174,6 +183,8 @@ plot.sevt <-
       cex_label = cex_label_nodes[1],
       cex_node = cex_nodes[1],
       col = col[[nms[1]]][s1],
+      pch = pch_nodes,
+      lwd = lwd_nodes,
       ...
     ) # plot first node
     xx <- xlim[1]
@@ -209,7 +220,9 @@ plot.sevt <-
                   cex_label = cex_label_nodes[k + 1],
                   col = col[[nms[k + 1]]][x$stages[[nms[k + 1]]][lj]],
                   cex_node = cex_nodes[k + 1],
-                  ... 
+                  pch = pch_nodes,
+                  lwd = lwd_nodes,
+                  ...
                 )
                 edge(c(
                   xx - step,
@@ -217,7 +230,9 @@ plot.sevt <-
                 ), c(xx, y[j]),
                 v[j],
                 col = col_edges,
-                cex_label = cex_label_edges, ...
+                cex_label = cex_label_edges, 
+                lwd = lwd_edges,
+                ...
                 ) # plot edge with previous nodes
               }
             }else{
@@ -228,7 +243,9 @@ plot.sevt <-
                 ), c(xx, y[j]),
                 v[j],
                 col = col_edges,
-                cex_label = cex_label_edges, ...
+                cex_label = cex_label_edges, 
+                lwd = lwd_edges,
+                ...
                 ) # plot edge with previous nodes
               }
             }
@@ -375,7 +392,7 @@ barplot.sevt <- function(height, var = variable.names(height)[1],
   ustg <- unique(stg) 
   if (is.null(col)) {
       if (is.null(stg)) {
-        return(list("1" = "black"))
+        col = list("1" = "black")
       }else{
         col <- seq_along(ustg)
         names(col) <- ustg
@@ -385,7 +402,9 @@ barplot.sevt <- function(height, var = variable.names(height)[1],
         col <- list("1" = 1)
       }else{
         col <- col(ustg)
-        names(col) <- ustg
+        if (is.null(names(col))){
+          names(col) <- ustg
+        }
       }
   } else if (length(col) == 1 && col == "stages") {
     if (col == "stages") {
