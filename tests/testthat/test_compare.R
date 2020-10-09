@@ -4,8 +4,8 @@ DD <- generate_linear_dataset(5, 10)
 levels(DD$C) <- c("a", "b")
 levels(DD$X3) <- c("qqqq", "pppp")
 
-mod1 <- full(DD)
-mod2 <- indep(DD)
+mod1 <- full(DD, join_unobserved = FALSE)
+mod2 <- indep(DD, join_unobserved = FALSE)
 
 test_that("compare_stages correctly returns TRUE/FALSE", {
   if (!requireNamespace("pkg", quietly = TRUE)) {

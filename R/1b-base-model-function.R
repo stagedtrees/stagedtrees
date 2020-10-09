@@ -157,11 +157,14 @@ sevt_fit <- function(object,
         } else {
           tt <- object$ctables[[order[i]]][ix, ]
         }
+
         names(tt) <- object$tree[[order[i]]]
         n <- sum(tt) ## compute sample size
         tt <- (tt + lambda) ## smoothing
         tt <- tt / sum(tt) ## normalize
+        tt[is.nan(tt)] <- NA  ## replace NaN with NA
         attr(tt, "n") <- n ## save sample size
+        
         return(tt) # return normalized prob
       })
     names(object$prob[[order[i]]]) <- stages
@@ -225,9 +228,9 @@ join_stages <- function(object, v, s1, s2) {
     n2 <- attr(p2, "n")
     n1 <- attr(p1, "n")
     ct1 <-
-      ifelse(is.nan(p1), 0, p1) * (n1 + object$lambda * k) - object$lambda
+      ifelse(is.na(p1), 0, p1) * (n1 + object$lambda * k) - object$lambda
     ct2 <-
-      ifelse(is.nan(p2), 0, p2) * (n2 + object$lambda * k) - object$lambda
+      ifelse(is.na(p2), 0, p2) * (n2 + object$lambda * k) - object$lambda
     dll <-
       sum(ct2[ct2 > 0] * log(p2[ct2 > 0])) +
       sum(ct1[ct1 > 0] * log(p1[ct1 > 0]))
@@ -727,22 +730,16 @@ compare_stages <-
     difftree <- switch(
       method,
       naive = sapply(names(object1$tree)[-1],
-        function(v) {
-          sign(abs(
-            as.numeric(object1$stages[[v]]) -
-              as.numeric(object2$stages[[v]])
-          ))
-        },
+                     function(v) {
+                       as.numeric(object1$stages[[v]] != object2$stages[[v]])
+                     },
         USE.NAMES = TRUE
       ),
       hamming = hamming_stages(object1, object2, return_tree = TRUE),
       stages = diff_stages(object1, object2),
       sapply(names(object1$tree)[-1],
         function(v) {
-          sign(abs(
-            as.numeric(object1$stages[[v]]) -
-              as.numeric(object2$stages[[v]])
-          ))
+          as.numeric(object1$stages[[v]] != object2$stages[[v]])
         },
         USE.NAMES = TRUE
       )
@@ -753,11 +750,19 @@ compare_stages <-
     difftree <- c(tmp, difftree)
     # plot if required
     if (plot) {
-      object1$stages <- difftree
+      toplot <- list(tree = object1$tree)
+      class(toplot) <- "sevt"
+      toplot$stages <- difftree
+      for (v in names(toplot$tree)[-1]){
+        toplot$stages[[v]][object1$stages[[v]] %in% object1$name_unobserved & 
+                             object2$stages[[v]] %in% object2$name_unobserved] <- "UNOBSERVED"
+      }
+      toplot$name_unobserved <- "UNOBSERVED"
       plot(
-        object1,
+        toplot,
         col = function(x) {
-          rep("red", length(x))
+          c("1" = "red",
+          "0" = 0)
         },
         pch = 16,
         ...
@@ -827,17 +832,14 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
   }
   # build the tree of differences
   difftree <- sapply(names(object1$tree)[-1], function(v) {
-    sign(abs(
-      as.numeric(object1$stages[[v]]) -
-        as.numeric(object2$stages[[v]])
-    ))
+    as.numeric(object1$stages[[v]] != object2$stages[[v]])
   }, USE.NAMES = TRUE)
   # return tree if required or simply the hamming distance
   if (return_tree) {
     return(difftree)
   } else {
     sum(sapply(difftree, function(x) {
-      sum(as.numeric(x))
+      sum(as.numeric(x), na.rm = TRUE)
     }))
   }
 }
@@ -850,7 +852,7 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
 #' ##########
 #' m0 <- full(PhDArticles[, 1:4], lambda = 0)
 #' m1 <- stages_bhc(m0)
-#' m2 <- stages_bj(m0, distance = "tv", thr = 0.25)
+#' m2 <- stages_bj(m0, distance = "totvar", thr = 0.25)
 #' diff_stages(m1, m2)
 diff_stages <- function(object1, object2) {
   stopifnot(is(object1, "sevt"))

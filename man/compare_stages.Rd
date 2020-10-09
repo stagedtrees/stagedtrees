@@ -91,6 +91,6 @@ compare_stages(mod1, mod2)
 ##########
 m0 <- full(PhDArticles[, 1:4], lambda = 0)
 m1 <- stages_bhc(m0)
-m2 <- stages_bj(m0, distance = "tv", thr = 0.25)
+m2 <- stages_bj(m0, distance = "totvar", thr = 0.25)
 diff_stages(m1, m2)
 }

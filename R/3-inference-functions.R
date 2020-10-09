@@ -80,7 +80,7 @@ prob <- function(object, x, log = FALSE, nan0 = TRUE) {
         FUN = function(xx) {
           path_probability(object, as.character(xx), log = FALSE)
         }
-      ))
+      ), na.rm = TRUE)
     }
   )
   if (nan0) res[is.nan(res)] <- 0

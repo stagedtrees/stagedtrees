@@ -48,7 +48,7 @@ test_that("logLik after joining", {
     v <- sample(colnames(DD)[-1], size = 1)
     lambda <- sample(c(0, 1, 2), size = 1)
     sev <- full(DD, lambda = lambda)
-    stages <- sample(sev$stages[[v]], size = 2, replace = FALSE)
+    stages <- sample(unique(sev$stages[[v]]), size = 2, replace = FALSE)
     sev <- join_stages(sev, v, stages[1], stages[2])
     ll1 <- logLik(sev)
     sev$ll <- NULL
