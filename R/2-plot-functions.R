@@ -117,7 +117,9 @@ plot.sevt <-
           return(list("1" = "black"))
         }
         cs <- col(unique(stages))
-        names(cs) <- unique(stages)
+        if (is.null(names(cs))){
+          names(cs) <- unique(stages)[seq_along(cs)]
+        }
         return(cs)
       })
     } else if (length(col) == 1 && col == "stages") {
@@ -367,7 +369,7 @@ barplot.sevt <- function(height, var = variable.names(height)[1],
                            xlab = ifelse(horiz, "probability", NA),
                            ylab = ifelse(!horiz, "probability", NA),
                            ...){
-  stopifnot(is_fitted_sevt(height))
+  stopifnot(has_prob(height))
   stg <- stages(height, var)
   stg <- stg[!(stg %in% ignore)]
   ustg <- unique(stg) 
