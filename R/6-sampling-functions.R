@@ -48,13 +48,22 @@ sample_from <- function(object, nsim = 1, seed = NULL) {
   # sequentially sample the other variables
   for (i in 2:p) {
     for (j in 1:nsim) {
-      # find the corresponding stage
-      stage <- find_stage(object, S[j, 1:(i - 1)])
-      # sample from the conditional prob of the stage
-      S[j, i] <- sample(object$tree[[vars[i]]],
-        size = 1,
-        prob = object$prob[[vars[i]]][[stage]]
-      )
+      if (is.na(S[j, i-1])){
+        S[j, i] <- NA
+      }else{
+        # find the corresponding stage
+        stage <- find_stage(object, S[j, 1:(i - 1)])
+        if (stage %in% object$name_unobserved | 
+            NA %in% object$prob[[vars[i]]][[stage]]){
+          S[j, i] <- NA
+        }else{
+          # sample from the conditional prob of the stage
+          S[j, i] <- sample(object$tree[[vars[i]]],
+                            size = 1,
+                            prob = object$prob[[vars[i]]][[stage]]
+          ) 
+        }
+      }
     }
   }
   S <- as.data.frame(S)

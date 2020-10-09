@@ -1,7 +1,7 @@
 context("sampling")
 
 DD <- generate_linear_dataset(5, 100)
-mod <- indep(DD)
+mod <- indep(DD, lambda = 0)
 prob <- mod$prob
 
 test_that("sample size is correct", {
