@@ -71,10 +71,13 @@ visualize and compare different models.
 
 #### Creating the model
 
-A staged event tree object (`sevt` class) can be created with the function
-`staged_ev_tree`, or with the functions `indep` and `full`. 
-In general we create a staged event tree from data 
-in a `data.frame` or `table` object. 
+A staged event tree object (`sevt` class) 
+can be initialized as the full (saturated) or as 
+the fully independent model with, respectively, 
+the functions `indep` and `full`. 
+It is possible to build a staged event tree 
+from data stored in a `data.frame` or a 
+`table` object. 
 
 ```{r example}
 # Load the PhDArticles data

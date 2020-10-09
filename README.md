@@ -59,10 +59,10 @@ predictions, visualize and compare different models.
 
 #### Creating the model
 
-A staged event tree object (`sevt` class) can be created with the
-function `staged_ev_tree`, or with the functions `indep` and `full`. In
-general we create a staged event tree from data in a `data.frame` or
-`table` object.
+A staged event tree object (`sevt` class) can be initialized as the full
+(saturated) or as the fully independent model with, respectively, the
+functions `indep` and `full`. It is possible to build a staged event
+tree from data stored in a `data.frame` or a `table` object.
 
 ``` r
 # Load the PhDArticles data
@@ -277,10 +277,10 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
 #> 1      1-2 female   no      no    low      low
-#> 2      1-2   male   no      no medium     high
-#> 3       >2   male  yes     yes medium      low
-#> 4      1-2   male   no      no medium      low
-#> 5      1-2   male   no     yes medium      low
+#> 2      1-2 female   no      no medium      low
+#> 3        0   male  yes     yes    low     high
+#> 4       >2   male   no     yes    low      low
+#> 5       >2 female   no      no   high     high
 ```
 
 #### Explore the model
