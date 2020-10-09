@@ -100,7 +100,7 @@ NULL
 #' model_full <- full(DD, lambda = 1)
 #' @export
 full <- function(data, order = NULL, 
-                 join_unobserved = FALSE,
+                 join_unobserved = TRUE,
                  lambda = 0,
                  name_unobserved = "UNOBSERVED") {
   UseMethod("full", data)
@@ -109,7 +109,7 @@ full <- function(data, order = NULL,
 #' @rdname full_indep
 #' @export
 full.table <- function(data, order = names(dimnames(data)), 
-                       join_unobserved = FALSE,
+                       join_unobserved = TRUE,
                        lambda = 0,
                        name_unobserved = "UNOBSERVED"){
   object <- sevt(data, full = TRUE, order = order)
@@ -125,7 +125,7 @@ full.table <- function(data, order = names(dimnames(data)),
 #' @rdname full_indep
 #' @export
 full.data.frame <- function(data, order = colnames(data),
-                            join_unobserved = FALSE,
+                            join_unobserved = TRUE,
                             lambda = 0,
                             name_unobserved = "UNOBSERVED"){
   object <- sevt(data, full = TRUE, order = order)
@@ -142,7 +142,7 @@ full.data.frame <- function(data, order = colnames(data),
 #' @rdname full_indep
 #' @export
 indep <- function(data, order = NULL,
-                  join_unobserved = FALSE,
+                  join_unobserved = TRUE,
                   lambda = 0,
                   name_unobserved = "UNOBSERVED") {
   UseMethod("indep", data)
@@ -151,7 +151,7 @@ indep <- function(data, order = NULL,
 #' @rdname full_indep
 #' @export
 indep.table <- function(data, order = names(dimnames(data)),
-                        join_unobserved = FALSE, lambda = 0, 
+                        join_unobserved = TRUE, lambda = 0, 
                         name_unobserved = "UNOBSERVED") {
   object <- sevt(data, full = FALSE, order = order)
   object$ctables <- make_ctables(object, data)
@@ -173,7 +173,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' model
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
-                             join_unobserved = FALSE, lambda = 0, 
+                             join_unobserved = TRUE, lambda = 0, 
                              name_unobserved = "UNOBSERVED") {
   # create the staged tree object
   model <- sevt(data, full = FALSE, order = order)
@@ -511,10 +511,10 @@ stages_fbhc <-
 #' At each iteration the two stages with minimum distance are selected and
 #' joined if their distance is less than \code{thr}.
 #' 
-#' Available distances are: manhattan (`l1`), euclidean (`l2`),
-#' Renyi divergence (`ry`), Kullback-Liebler (`kl`),
-#' total-variation (`tv`), squared Hellinger (`hl`),
-#' Bhattacharyya (`bh`), Chan-Darwiche (`cd`).
+#' Available distances are: manhattan (`manhattan`), euclidean (`euclidean`),
+#' Renyi divergence (`reny`), Kullback-Liebler (`kullback`),
+#' total-variation (`totvar`), squared Hellinger (`hellinger`),
+#' Bhattacharyya (`bhatt`), Chan-Darwiche (`chandarw`).
 #' See also \link{probdist}.
 #' 
 #' @return The final staged event tree obtained.
@@ -526,7 +526,7 @@ stages_fbhc <-
 #' @export
 stages_bj <-
   function(object = NULL,
-           distance = "kl",
+           distance = "kullback",
            thr = 0.1,
            scope = NULL,
            ignore = object$name_unobserved,
@@ -534,17 +534,18 @@ stages_bj <-
     stopifnot(is(object, "sevt"))
     stopifnot(is_fitted_sevt(object))
     stopifnot(is(distance, "character"))
-    stopifnot(distance %in% c("l1", "l2", "ry", "kl", "tv", "hl",
-                              "bh", "cd"))
+    stopifnot(distance %in% c("manhattan", "euclidean", "reny", "kullback", 
+                              "totvar", "hellinger",
+                              "bhatt", "chandarw"))
     dist_fun <- switch(distance, 
-                       l1 = probdist.l1,
-                       l2 = probdist.l2,
-                       ry = probdist.ry,
-                       kl = probdist.kl,
-                       tv = probdist.tv,
-                       hl = probdist.hl,
-                       bh = probdist.bh,
-                       cd = probdist.cd )
+                       manhattan = probdist.l1,
+                       euclidean = probdist.l2,
+                       reny = probdist.ry,
+                       kullback = probdist.kl,
+                       totvar = probdist.tv,
+                       hellinger = probdist.hl,
+                       bhatt = probdist.bh,
+                       chandarw = probdist.cd )
     if (is.null(scope)){
       scope <- sevt_varnames(object)[-1]
     }

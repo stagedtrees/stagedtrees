@@ -13,7 +13,7 @@
 full(
   data,
   order = NULL,
-  join_unobserved = FALSE,
+  join_unobserved = TRUE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -21,7 +21,7 @@ full(
 \method{full}{table}(
   data,
   order = names(dimnames(data)),
-  join_unobserved = FALSE,
+  join_unobserved = TRUE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -29,7 +29,7 @@ full(
 \method{full}{data.frame}(
   data,
   order = colnames(data),
-  join_unobserved = FALSE,
+  join_unobserved = TRUE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -37,7 +37,7 @@ full(
 indep(
   data,
   order = NULL,
-  join_unobserved = FALSE,
+  join_unobserved = TRUE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -45,7 +45,7 @@ indep(
 \method{indep}{table}(
   data,
   order = names(dimnames(data)),
-  join_unobserved = FALSE,
+  join_unobserved = TRUE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )
@@ -53,7 +53,7 @@ indep(
 \method{indep}{data.frame}(
   data,
   order = colnames(data),
-  join_unobserved = FALSE,
+  join_unobserved = TRUE,
   lambda = 0,
   name_unobserved = "UNOBSERVED"
 )

@@ -6,7 +6,7 @@
 \usage{
 stages_bj(
   object = NULL,
-  distance = "kl",
+  distance = "kullback",
   thr = 0.1,
   scope = NULL,
   ignore = object$name_unobserved,
@@ -42,10 +42,10 @@ For each variable in the model stages are joined iteratively.
 At each iteration the two stages with minimum distance are selected and
 joined if their distance is less than \code{thr}.
 
-Available distances are: manhattan (\code{l1}), euclidean (\code{l2}),
-Renyi divergence (\code{ry}), Kullback-Liebler (\code{kl}),
-total-variation (\code{tv}), squared Hellinger (\code{hl}),
-Bhattacharyya (\code{bh}), Chan-Darwiche (\code{cd}).
+Available distances are: manhattan (\code{manhattan}), euclidean (\code{euclidean}),
+Renyi divergence (\code{reny}), Kullback-Liebler (\code{kullback}),
+total-variation (\code{totvar}), squared Hellinger (\code{hellinger}),
+Bhattacharyya (\code{bhatt}), Chan-Darwiche (\code{chandarw}).
 See also \link{probdist}.
 }
 \examples{
