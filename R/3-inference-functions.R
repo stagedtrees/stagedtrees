@@ -2,11 +2,12 @@
 #'
 #' Internal function to compute probability of a path. It does not
 #' check the validity of the path.
-#' @param object a staged event tree object
-#' @param x the path, expressed as a character vector containing the sequence of the assumed levels
-#' @param log logical, if \code{TRUE} log-probability is returned
-#' @return The probability of the given path or its logarithm if \code{log=TRUE}
-#' @details it computes the probability of following a given path (\code{x}) starting from the root.
+#' @param object An object of class \code{sevt}.
+#' @param x the path, expressed 
+#'          as a character vector containing the sequence of the value of the variables.
+#' @param log logical, if \code{TRUE} log-probability is returned.
+#' @return The probability of the given path or its logarithm if \code{log=TRUE}.
+#' @details Computes the probability of following a given path (\code{x}) starting from the root.
 #' Can be a full path from the root to a leaf or a shorter path.
 #' @keywords internal
 path_probability <-
@@ -35,17 +36,18 @@ path_probability <-
   }
 
 
-#' Compute probabilities for a staged event tree
+#' Probabilities for a staged event tree
+#' 
+#' Compute (marginal) probabilities of elementary events with respect 
+#' to the probability encoded in a staged event tree.
+#' @param object an object of class \code{sevt} with probabilities.
+#' @param x the vector or data.frame of observations.
+#' @param log logical, if \code{TRUE} log-probabilities are returned.
+#' @param na0 logical, if \code{NA} should be converted to 0.
+#' @return the probabilities to observe each observation given in \code{x}.
 #'
-#' @param object a (fitted) staged event tree object
-#' @param x the vector or data.frame of observations
-#' @param log logical, if \code{TRUE} log-probabilities are returned
-#' @param nan0 logical, if \code{NaN} should be converted to 0
-#' @return the probabilities to observe each observation given in \code{x}
-#'
-#' @details it computes probabilities related to a vector or a data.frame of observations.
-#' They can be as an \code{expand.grid} data.frame or a simple subset of the dataset on which
-#' the model is estimated.
+#' @details Computes probabilities related to a vector or a 
+#' data.frame of observations.
 #' @examples
 #' DD <- generate_random_dataset(5, 100)
 #' model <- full(DD, lambda = 1)
@@ -53,7 +55,7 @@ path_probability <-
 #' sum(pr)
 #' prob(model, DD[1:10, ])
 #' @export
-prob <- function(object, x, log = FALSE, nan0 = TRUE) {
+prob <- function(object, x, log = FALSE, na0 = TRUE) {
   stopifnot(is(object, "sevt"))
   stopifnot(has_prob(object))
   if (is.null(dim(x))) {
@@ -83,7 +85,7 @@ prob <- function(object, x, log = FALSE, nan0 = TRUE) {
       ), na.rm = TRUE)
     }
   )
-  if (nan0) res[is.nan(res)] <- 0
+  if (na0) res[is.na(res)] <- 0
   if (log) {
     return(log(res))
   } else {
@@ -95,8 +97,10 @@ prob <- function(object, x, log = FALSE, nan0 = TRUE) {
 #' Log-Likelihood of a staged event tree
 #'
 #' Compute, or extract the log-likelihood of a staged event tree.
-#' @param object the staged event tree object
-#' @param ... additional parameters
+#' @param object an object of class \code{sevt} 
+#' with fitted probabilities and associated data, as returned by \code{\link{sevt_fit}},
+#' \code{\link{full}}, \code{\link{indep}} or one of the model selection algorithms.
+#' @param ... additional parameters (compatibility).
 #' @return An object of class \code{\link{logLik}}.
 #' @importFrom stats logLik
 #' @export

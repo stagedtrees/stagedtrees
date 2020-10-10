@@ -2,29 +2,29 @@
 % Please edit documentation in R/3-inference-functions.R
 \name{prob}
 \alias{prob}
-\title{Compute probabilities for a staged event tree}
+\title{Probabilities for a staged event tree}
 \usage{
-prob(object, x, log = FALSE, nan0 = TRUE)
+prob(object, x, log = FALSE, na0 = TRUE)
 }
 \arguments{
-\item{object}{a (fitted) staged event tree object}
+\item{object}{an object of class \code{sevt} with probabilities.}
 
-\item{x}{the vector or data.frame of observations}
+\item{x}{the vector or data.frame of observations.}
 
-\item{log}{logical, if \code{TRUE} log-probabilities are returned}
+\item{log}{logical, if \code{TRUE} log-probabilities are returned.}
 
-\item{nan0}{logical, if \code{NaN} should be converted to 0}
+\item{na0}{logical, if \code{NA} should be converted to 0.}
 }
 \value{
-the probabilities to observe each observation given in \code{x}
+the probabilities to observe each observation given in \code{x}.
 }
 \description{
-Compute probabilities for a staged event tree
+Compute (marginal) probabilities of elementary events with respect
+to the probability encoded in a staged event tree.
 }
 \details{
-it computes probabilities related to a vector or a data.frame of observations.
-They can be as an \code{expand.grid} data.frame or a simple subset of the dataset on which
-the model is estimated.
+Computes probabilities related to a vector or a
+data.frame of observations.
 }
 \examples{
 DD <- generate_random_dataset(5, 100)

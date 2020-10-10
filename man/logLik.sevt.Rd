@@ -7,9 +7,11 @@
 \method{logLik}{sevt}(object, ...)
 }
 \arguments{
-\item{object}{the staged event tree object}
+\item{object}{an object of class \code{sevt}
+with fitted probabilities and associated data, as returned by \code{\link{sevt_fit}},
+\code{\link{full}}, \code{\link{indep}} or one of the model selection algorithms.}
 
-\item{...}{additional parameters}
+\item{...}{additional parameters (compatibility).}
 }
 \value{
 An object of class \code{\link{logLik}}.

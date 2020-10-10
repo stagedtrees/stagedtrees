@@ -7,17 +7,17 @@
 \method{text}{sevt}(x, y = ylim[1], limit = 10, xlim = c(0, 1), ylim = c(0, 1), ...)
 }
 \arguments{
-\item{x}{staged event tree object}
+\item{x}{An object of class \code{sevt}.}
 
-\item{y}{the position of the labels}
+\item{y}{the position of the labels.}
 
-\item{limit}{maximum number of variables plotted}
+\item{limit}{maximum number of variables plotted.}
 
-\item{xlim}{graphical parameter}
+\item{xlim}{graphical parameter.}
 
-\item{ylim}{graphical parameter}
+\item{ylim}{graphical parameter.}
 
-\item{...}{additional parameters}
+\item{...}{additional parameters passed to \code{\link{text}}.}
 }
 \description{
 Add text to a staged even tree plot

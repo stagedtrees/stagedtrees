@@ -7,21 +7,22 @@
 path_probability(object, x, log = FALSE)
 }
 \arguments{
-\item{object}{a staged event tree object}
+\item{object}{An object of class \code{sevt}.}
 
-\item{x}{the path, expressed as a character vector containing the sequence of the assumed levels}
+\item{x}{the path, expressed
+as a character vector containing the sequence of the value of the variables.}
 
-\item{log}{logical, if \code{TRUE} log-probability is returned}
+\item{log}{logical, if \code{TRUE} log-probability is returned.}
 }
 \value{
-The probability of the given path or its logarithm if \code{log=TRUE}
+The probability of the given path or its logarithm if \code{log=TRUE}.
 }
 \description{
 Internal function to compute probability of a path. It does not
 check the validity of the path.
 }
 \details{
-it computes the probability of following a given path (\code{x}) starting from the root.
+Computes the probability of following a given path (\code{x}) starting from the root.
 Can be a full path from the root to a leaf or a shorter path.
 }
 \keyword{internal}

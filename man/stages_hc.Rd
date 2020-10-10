@@ -14,7 +14,8 @@ stages_hc(
 )
 }
 \arguments{
-\item{object}{a staged event tree object.}
+\item{object}{an object of class \code{sevt} with fitted probabilities and
+data, as returned by \code{full} or \code{sevt_fit}.}
 
 \item{score}{a function that score staged event tree objects.}
 

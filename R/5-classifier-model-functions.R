@@ -1,7 +1,7 @@
 #' Predict method for staged event tree
 #'
 #' Predict class values from a staged event tree model.
-#' @param object A staged event tree
+#' @param object an object of class \code{sevt} with fitted probabilities.
 #' @param newdata The newdata to perform predictions
 #' @param class A string indicating the name of the variable to use as
 #' the class variable, otherwise the first name in \code{names(object$tree)}
@@ -48,7 +48,7 @@ predict.sevt <-
     stopifnot(is(object, "sevt"))
     vars <- names(object$tree)
     if (!has_prob(object)) {
-      stop("Provide a fitted staged event tree")
+      stop("Provide a staged event tree with probabilities")
     }
     if (is.null(newdata)) {
       newdata <- object$ctables[[vars[length(vars)]]]

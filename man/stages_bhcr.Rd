@@ -12,17 +12,17 @@ stages_bhcr(
 )
 }
 \arguments{
-\item{object}{a staged event tree model}
+\item{object}{an object of class \code{sevt}.}
 
-\item{score}{the score function to be maximized}
+\item{score}{the score function to be maximized.}
 
-\item{max_iter}{the maximum number of iteration}
+\item{max_iter}{the maximum number of iteration.}
 
 \item{trace}{if >0 increasingly amount of info
-is printed (via \code{message})}
+is printed (via \code{message}).}
 }
 \value{
-The final staged event tree object
+an object of class \code{sevt}.
 }
 \description{
 Randomly try to join stages.

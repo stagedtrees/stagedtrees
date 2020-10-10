@@ -325,12 +325,12 @@ edge <-
 
 #' Add text to a staged even tree plot
 #'
-#' @param x staged event tree object
-#' @param y the position of the labels
-#' @param limit maximum number of variables plotted
-#' @param xlim graphical parameter
-#' @param ylim graphical parameter
-#' @param ... additional parameters
+#' @param x An object of class \code{sevt}.
+#' @param y the position of the labels.
+#' @param limit maximum number of variables plotted.
+#' @param xlim graphical parameter.
+#' @param ylim graphical parameter.
+#' @param ... additional parameters passed to \code{\link{text}}.
 #' @importFrom graphics text
 #' @export
 text.sevt <-

@@ -228,11 +228,11 @@ indep.data.frame <- function(data, order = colnames(data),
 #' Randomly try to join stages. 
 #' This is a pretty-useless function, used for comparisons. 
 #'
-#' @param object a staged event tree model
-#' @param score the score function to be maximized
-#' @param max_iter the maximum number of iteration
+#' @param object an object of class \code{sevt}.
+#' @param score the score function to be maximized.
+#' @param max_iter the maximum number of iteration.
 #' @param trace if >0 increasingly amount of info
-#' is printed (via \code{message})
+#' is printed (via \code{message}).
 #'
 #' @details At each iteration a variable and
 #' two of its stages are randomly selected.
@@ -240,7 +240,7 @@ indep.data.frame <- function(data, order = colnames(data),
 #' updated. The procedure is repeated until the
 #' number of iterations reach \code{max_iter}.
 #'
-#' @return The final staged event tree object
+#' @return an object of class \code{sevt}.
 #' @export
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, N = 100)
@@ -299,7 +299,8 @@ stages_bhcr <-
 #' Backward Hill-climbing search of staged event trees with
 #' iterative joining of stages
 #'
-#' @param object a staged event tree model.
+#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param score the score function to be maximized.
 #' @param max_iter the maximum number of iterations per variable.
 #' @param scope names of variables that should be considered for the optimization.
@@ -389,7 +390,8 @@ stages_bhc <-
 #' Fast backward hill-climbing search of staged event trees with
 #' iterative joining of stages.
 #'
-#' @param object a staged event tree model.
+#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param score the score function to be maximized.
 #' @param max_iter the maximum number of iteration.
 #' @param scope names of variables that should be considered for the optimization.
@@ -496,7 +498,8 @@ stages_fbhc <-
 #' Join stages from more complex to simpler models
 #' using a distance and a threshold value.
 #'
-#' @param object the staged event tree from where to start.
+#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param distance character, see details.
 #' @param thr the threshold for joining stages
 #' @param scope names of variables that should be considered 
@@ -594,7 +597,8 @@ stages_bj <-
 #' Hill-climbing search of staged event trees with
 #' iterative moving of nodes between stages.
 #'
-#' @param object a staged event tree object.
+#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param score a function that score staged event tree objects.
 #' @param max_iter the maximum number of iterations per variable.
 #' @param scope names of variables that should be considered for the optimization
@@ -702,7 +706,8 @@ stages_hc <- function(object,
 #' 
 #' Build a stage event tree with \code{k} stages for each variable by
 #' clustering stage probabilities with hierarchical clustering.
-#' @param object a staged event tree object.
+#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param distance string, the distance measure to be used, either 
 #'                 a possible `method` for \code{\link{dist}} or 
 #'                 one of the following: \code{"totvar", "hellinger"}.
@@ -768,7 +773,8 @@ stages_hclust <-
 #' 
 #' Build a stage event tree with \code{k} stages for each variable
 #' by clustering (transformed) probabilities with k-means. 
-#' @param object a staged event tree object.
+#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.

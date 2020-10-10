@@ -7,7 +7,7 @@
 \method{predict}{sevt}(object, newdata = NULL, class = NULL, prob = FALSE, log = FALSE, ...)
 }
 \arguments{
-\item{object}{A staged event tree}
+\item{object}{an object of class \code{sevt} with fitted probabilities.}
 
 \item{newdata}{The newdata to perform predictions}
 

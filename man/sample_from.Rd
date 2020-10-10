@@ -7,16 +7,17 @@
 sample_from(object, nsim = 1, seed = NULL)
 }
 \arguments{
-\item{object}{the staged event tree object}
+\item{object}{an object of class \code{sevt} with fitted probabilities.}
 
-\item{nsim}{number of observations to sample}
+\item{nsim}{number of observations to sample.}
 
 \item{seed}{an object specifying if and how the random number generator
 should be initialized (‘seeded’). Either NULL or an integer
 that will be used in a call to set.seed.}
 }
 \value{
-A data frame containing a sample of size \code{n}
+A data frame containing \code{nsim} observations from the
+variables in \code{object}.
 }
 \description{
 Generate a random sample from the distribution encoded

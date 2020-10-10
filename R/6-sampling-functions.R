@@ -2,14 +2,15 @@
 #'
 #' Generate a random sample from the distribution encoded
 #' in a staged event tree object.
-#' @param object the staged event tree object
-#' @param nsim number of observations to sample
+#' @param object an object of class \code{sevt} with fitted probabilities.
+#' @param nsim number of observations to sample.
 #' @param seed an object specifying if and how the random number generator 
 #'             should be initialized (‘seeded’). Either NULL or an integer 
 #'             that will be used in a call to set.seed. 
 #' @details It samples \code{n} observations according to
 #' the transition probabilities (\code{object$prob}) in the model.
-#' @return A data frame containing a sample of size \code{n}
+#' @return A data frame containing \code{nsim} observations from the 
+#' variables in \code{object}.
 #' @examples
 #' model <- stages_fbhc(full(PhDArticles, lambda = 1))
 #' sample_from(model, 10)
@@ -68,5 +69,5 @@ sample_from <- function(object, nsim = 1, seed = NULL) {
   }
   S <- as.data.frame(S)
   attr(S, "seed") <- RNGstate
-  S
+  return(S)
 }

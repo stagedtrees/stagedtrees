@@ -14,7 +14,8 @@ stages_bj(
 )
 }
 \arguments{
-\item{object}{the staged event tree from where to start.}
+\item{object}{an object of class \code{sevt} with fitted probabilities and
+data, as returned by \code{full} or \code{sevt_fit}.}
 
 \item{distance}{character, see details.}
 
