@@ -10,13 +10,13 @@ same variables.}
 inclusions_stages(object1, object2)
 }
 \arguments{
-\item{object1}{first staged event tree to compare}
+\item{object1}{an object of class \code{sevt}.}
 
-\item{object2}{second staged event tree to compare}
+\item{object2}{an object of class \code{sevt}.}
 }
 \value{
 a list with inclusion relations between stage
-structures of each variable in the model
+structures of each variables in the models.
 }
 \description{
 Inclusions of stages

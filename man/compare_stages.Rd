@@ -20,11 +20,12 @@ hamming_stages(object1, object2, return_tree = FALSE)
 diff_stages(object1, object2)
 }
 \arguments{
-\item{object1}{a staged event tree.}
+\item{object1}{an object of class \code{sevt}.}
 
-\item{object2}{a staged event tree.}
+\item{object2}{an object of class \code{sevt}.}
 
-\item{method}{method to compare staged event trees. It can be: \code{"naive"},
+\item{method}{character, method to compare staged event trees.
+One of: \code{"naive"},
 \code{"hamming"} or \code{"stages"}.}
 
 \item{return_tree}{logical, if \code{TRUE} the difference tree is returned.}

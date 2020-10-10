@@ -7,16 +7,16 @@
 join_stages(object, v, s1, s2)
 }
 \arguments{
-\item{object}{staged event tree}
+\item{object}{an object of class \code{sevt}.}
 
-\item{v}{variable}
+\item{v}{variable.}
 
-\item{s1}{first stage}
+\item{s1}{first stage.}
 
-\item{s2}{second stage}
+\item{s2}{second stage.}
 }
 \value{
-the staged event tree where \code{s1} and \code{s2} are joined
+the staged event tree where \code{s1} and \code{s2} are joined.
 }
 \description{
 Join two stages in a staged event tree object, updating

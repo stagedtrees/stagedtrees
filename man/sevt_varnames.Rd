@@ -7,7 +7,7 @@
 sevt_varnames(object)
 }
 \arguments{
-\item{object}{a staged event tree.}
+\item{object}{an object of class \code{sevt}.}
 }
 \value{
 A character vector.

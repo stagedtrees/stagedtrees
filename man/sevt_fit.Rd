@@ -7,7 +7,7 @@
 sevt_fit(object, data = NULL, lambda = object$lambda)
 }
 \arguments{
-\item{object}{a staged event tree.}
+\item{object}{an object of class \code{sevt}.}
 
 \item{data}{data.frame or contingency table with observations of
 the variables in \code{object}.}

@@ -27,8 +27,7 @@ tree, by default the order of the variables
 in \code{x}.}
 }
 \value{
-A staged event tree object, element of \code{sevt}
-class.
+A staged event tree object, an element of class \code{sevt}.
 }
 \description{
 Basic constructor for staged event tree class (\code{sevt}).

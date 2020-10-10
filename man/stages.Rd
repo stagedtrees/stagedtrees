@@ -7,7 +7,7 @@
 stages(object, var = NULL)
 }
 \arguments{
-\item{object}{a staged event tree.}
+\item{object}{an object of class \code{sevt}.}
 
 \item{var}{name of one variable in \code{object}.}
 }

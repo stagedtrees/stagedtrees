@@ -7,7 +7,7 @@
 is_fitted_sevt(object)
 }
 \arguments{
-\item{object}{a staged event tree object.}
+\item{object}{an object of class \code{sevt}.}
 }
 \value{
 logical.

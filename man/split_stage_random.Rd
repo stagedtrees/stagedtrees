@@ -7,7 +7,7 @@
 split_stage_random(object, var, stage, p = 0.5)
 }
 \arguments{
-\item{object}{a staged event tree object.}
+\item{object}{an object of class \code{sevt}.}
 
 \item{var}{the variable name.}
 
@@ -17,7 +17,7 @@ split_stage_random(object, var, stage, p = 0.5)
 original stage into the new stage.}
 }
 \value{
-a staged event tree object.
+an object of class \code{sevt}.
 }
 \description{
 Randomly assign some of the paths to a new stage.

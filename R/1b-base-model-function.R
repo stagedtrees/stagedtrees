@@ -98,7 +98,7 @@ as_sevt.bn.fit <- function(x, order = NULL) {
 #' Estimate transition probabilities in a staged event tree from data.
 #' Probabilities are estimated with the relative frequencies plus,
 #' eventually, an additive (Laplace) smoothing.
-#' @param object a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @param data data.frame or contingency table with observations of 
 #'             the variables in \code{object}.
 #' @param lambda smoothing parameter.
@@ -179,9 +179,9 @@ sevt_fit <- function(object,
 
 #' Set stage to path
 #'
-#' @param object Staged event tree
-#' @param path Vector of the path
-#' @param stage stage to be assigned
+#' @param object an object of class \code{sevt}.
+#' @param path Vector of the path.
+#' @param stage stage to be assigned.
 #' @keywords internal
 set_stage <- function(object, path, stage) {
   stage <- as.character(stage)
@@ -195,11 +195,11 @@ set_stage <- function(object, path, stage) {
 #' Join two stages in a staged event tree object, updating
 #' probabilities and log-likelihood accordingly.
 #'
-#' @param object staged event tree
-#' @param v variable
-#' @param s1 first stage
-#' @param s2 second stage
-#' @return the staged event tree where \code{s1} and \code{s2} are joined
+#' @param object an object of class \code{sevt}.
+#' @param v variable.
+#' @param s1 first stage.
+#' @param s2 second stage.
+#' @return the staged event tree where \code{s1} and \code{s2} are joined.
 #' @details This function joins together two stages associated to the 
 #'          same variable, 
 #'          computing the updated probability and log-likelihood if 
@@ -256,13 +256,13 @@ join_stages <- function(object, v, s1, s2) {
 #' Split randomly a stage
 #'
 #' Randomly assign some of the paths to a new stage.
-#' @param object a staged event tree object.
+#' @param object an object of class \code{sevt}.
 #' @param var the variable name.
 #' @param stage the name of the stage.
 #' @param p probability to move a situation from the 
 #'          original stage into the new stage.
 #'
-#' @return a staged event tree object.
+#' @return an object of class \code{sevt}.
 #' @details Splits randomly a given stage into two stages. More precisely,
 #' it assigns each situation within the given stage into a new stage with
 #' probability \code{p}.
@@ -303,7 +303,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 
 #' Check if a staged event tree is fitted
 #'
-#' @param object a staged event tree object.
+#' @param object an object of class \code{sevt}.
 #' @return logical.
 #'
 #' @keywords internal
@@ -317,11 +317,11 @@ is_fitted_sevt <- function(object) {
 #'  
 #' Display the relationship between two staged tree models over the 
 #' same variables.
-#' @param object1 first staged event tree to compare
-#' @param object2 second staged event tree to compare
+#' @param object1 an object of class \code{sevt}.
+#' @param object2 an object of class \code{sevt}.
 #'
 #' @return a list with inclusion relations between stage
-#' structures of each variable in the model
+#' structures of each variables in the models.
 #' @details Computes the 
 #'  inclusion/exclusion/equality/diversity between 
 #'  the stages structures of the two models.
@@ -409,8 +409,8 @@ inclusions_stages <- function(object1, object2) {
 
 #' Print a staged event tree
 #'
-#' @param x the staged event tree object.
-#' @param ... additional parameters (compatibility)
+#' @param x an object of class \code{sevt}.
+#' @param ... additional parameters (compatibility).
 #'
 #' @return An invisible copy of \code{x}.
 #' @details The order of the variables in the stratified tree
@@ -440,7 +440,7 @@ print.sevt <- function(x, ...) {
 #' Stages of a variable
 #'
 #' Obtain the stages of a given variable in a staged event tree object.
-#' @param object a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @param var name of one variable in \code{object}.
 #' @return If \code{var} is specified, it returns a character vector with
 #'         stage names for the given variable
@@ -463,7 +463,7 @@ stages <- function(object, var = NULL) {
 #'
 #' Summary method for class \code{sevt}.
 #'
-#' @param object a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @param ... arguments for compatibility.
 #' @details Print model information and summary of stages.
 #' @return An object of class \code{summary.sevt}
@@ -544,7 +544,7 @@ print.summary.sevt <- function(x, max = 10, ...) {
 
 #' Extract subtree
 #'
-#' @param object a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @param path, the path after which extract the subtree.
 #' @details Returns the subtree of the staged event tree, starting from 
 #' \code{path}.
@@ -660,9 +660,10 @@ stndnaming <- function(object, uniq = FALSE,
 #' Compare two stages event tree, return the differences of the stages
 #' structure and plot the difference tree. Three different methods to
 #' compute the difference tree are available.
-#' @param object1 a staged event tree.
-#' @param object2 a staged event tree.
-#' @param method method to compare staged event trees. It can be: \code{"naive"}, 
+#' @param object1 an object of class \code{sevt}.
+#' @param object2 an object of class \code{sevt}.
+#' @param method character, method to compare staged event trees. 
+#' One of: \code{"naive"}, 
 #' \code{"hamming"} or \code{"stages"}.
 #' @param return_tree logical, if \code{TRUE} the difference tree is returned.
 #' @param plot logical.
@@ -889,7 +890,7 @@ diff_stages <- function(object1, object2) {
 #'
 #' Utility returning variable-names in a staged event tree
 #' model.
-#' @param object a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @return A character vector.
 #' @keywords internal
 sevt_varnames <- function(object) {
@@ -899,7 +900,7 @@ sevt_varnames <- function(object) {
 #' Variable Names of a Staged Event Tree
 #' 
 #' Simple utilities returning variable names.
-#' @param object as object of class \code{sevt}.
+#' @param object an object of class \code{sevt}.
 #' @param ... for compatibility.
 #' @importFrom stats variable.names
 #' @export

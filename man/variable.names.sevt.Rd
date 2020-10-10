@@ -7,7 +7,7 @@
 \method{variable.names}{sevt}(object, ...)
 }
 \arguments{
-\item{object}{as object of class \code{sevt}.}
+\item{object}{an object of class \code{sevt}.}
 
 \item{...}{for compatibility.}
 }

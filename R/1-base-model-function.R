@@ -63,8 +63,7 @@ NULL
 #'              order of the variables to build the 
 #'              tree, by default the order of the variables
 #'              in \code{x}.
-#' @return A staged event tree object, element of \code{sevt} 
-#' class.
+#' @return A staged event tree object, an element of class \code{sevt}.
 #' @export
 sevt <- function(x, full = FALSE, order = NULL) {
   UseMethod("sevt", object = x)

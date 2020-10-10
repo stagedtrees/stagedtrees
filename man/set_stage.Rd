@@ -7,11 +7,11 @@
 set_stage(object, path, stage)
 }
 \arguments{
-\item{object}{Staged event tree}
+\item{object}{an object of class \code{sevt}.}
 
-\item{path}{Vector of the path}
+\item{path}{Vector of the path.}
 
-\item{stage}{stage to be assigned}
+\item{stage}{stage to be assigned.}
 }
 \description{
 Set stage to path
