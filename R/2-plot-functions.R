@@ -224,6 +224,8 @@ plot.sevt <-
                   lwd = lwd_nodes,
                   ...
                 )
+              }
+              if (!(x$stages[[nms[k]]][i] %in% ignore)){
                 edge(c(
                   xx - step,
                   yyy[i]
@@ -232,8 +234,7 @@ plot.sevt <-
                 col = col_edges,
                 cex_label = cex_label_edges, 
                 lwd = lwd_edges,
-                ...
-                ) # plot edge with previous nodes
+                ...) # plot edge with previous node
               }
             }else{
               if (!(x$stages[[nms[k]]][i] %in% ignore)){
