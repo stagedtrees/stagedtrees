@@ -68,7 +68,7 @@ join_unobserved <-
         message("object fitted using lambda = ", lambda)
       }
     }
-    object$name_unobserved <- name
+    object$name_unobserved <- c(object$name_unobserved, name) #concatenate names
     return(object)
   }
 
