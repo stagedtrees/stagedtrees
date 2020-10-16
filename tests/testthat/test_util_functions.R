@@ -304,6 +304,26 @@ test_that("bh(x,y) is symmetric", {
   })
 })
 
+x <- c(0.3, 0.2, 0.5, 0)
+y <- c(0.5, 0.4, 0.1, 0)
+
+test_that("kl works for matching 0 prob", {
+  expect_gte(probdist.kl(x, y), 0 )
+})
+
+
+test_that("ry works for matching 0 prob", {
+  expect_gte(probdist.ry(x, y), 0 )
+})
+
+test_that("cd works for matching 0 prob", {
+  expect_gte(probdist.cd(x, y), 0 )
+})
+
+
+test_that("bh works for matching 0 prob", {
+  expect_gte(probdist.bh(x, y), 0 )
+})
 
 ############## 
 

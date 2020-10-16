@@ -171,6 +171,9 @@ probdist.l1 <- function(x, y) {
 #' @rdname probdist
 #' @keywords internal
 probdist.ry <- function(x, y) {
+  rmix <- (x == 0) & (y == 0)
+  x <- x[!rmix]
+  y <- y[!rmix]
   alpha <- 2
   (log(sum(x^(alpha) / y^(alpha - 1))) +
     log(sum(y^(alpha) / x^(alpha - 1)))) / (alpha - 1)
@@ -179,6 +182,9 @@ probdist.ry <- function(x, y) {
 #' @rdname probdist
 #' @keywords internal
 probdist.kl <- function(x, y) {
+  rmix <- (x == 0) & (y == 0)
+  x <- x[!rmix]
+  y <- y[!rmix]
   return(sum(x * (log(x) - log(y))) +
     sum(y * (log(y) - log(x))))
 }
@@ -204,6 +210,9 @@ probdist.bh <- function(x, y) {
 #' @rdname probdist
 #' @keywords internal
 probdist.cd <- function(x, y) {
+  rmix <- (x == 0) & (y == 0)
+  x <- x[!rmix]
+  y <- y[!rmix]
   log(max(x / y)) - log(min(x / y))
 }
 
