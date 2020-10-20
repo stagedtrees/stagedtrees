@@ -45,7 +45,7 @@ predict.sevt <-
            prob = FALSE,
            log = FALSE,
            ...) {
-    stopifnot(is(object, "sevt"))
+    check_sevt_prob(object)
     vars <- names(object$tree)
     if (!has_prob(object)) {
       stop("Provide a staged event tree with probabilities")

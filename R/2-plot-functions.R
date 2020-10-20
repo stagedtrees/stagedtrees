@@ -104,6 +104,7 @@ plot.sevt <-
            lwd_nodes = 1,
            lwd_edges = 1,
            ...) {
+    check_sevt(x)
     plot.new()
     d <- min(length(x$tree), limit) ## avoid too much plotting
     nms <- names(x$tree) ## name of variable
@@ -120,7 +121,7 @@ plot.sevt <-
         names(vc) <- stages
         return(vc)
       })
-    } else if (is(col, "function")) {
+    } else if (is.function(col)) {
       col <- lapply(x$stages[nms[1:d]], function(stages) {
         if (is.null(stages)) {
           return(list("1" = "black"))
@@ -341,6 +342,7 @@ text.sevt <-
            xlim = c(0, 1),
            ylim = c(0, 1),
            ...) {
+    check_sevt(x)
     d <- min(length(x$tree), limit) ## avoid too much plotting
     step <- (xlim[2] - xlim[1]) / d
     yy <- y
@@ -379,7 +381,7 @@ barplot.sevt <- function(height, var = variable.names(height)[1],
                            xlab = ifelse(horiz, "probability", NA),
                            ylab = ifelse(!horiz, "probability", NA),
                            ...){
-  stopifnot(has_prob(height))
+  check_sevt_prob(height)
   stg <- stages(height, var)
   stg <- stg[!(stg %in% ignore)]
   ustg <- unique(stg) 
@@ -390,7 +392,7 @@ barplot.sevt <- function(height, var = variable.names(height)[1],
         col <- seq_along(ustg)
         names(col) <- ustg
       }
-  } else if (is(col, "function")) {
+  } else if (is.function(col)) {
       if (is.null(stg)) {
         col <- list("1" = 1)
       }else{

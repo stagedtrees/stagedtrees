@@ -12,7 +12,7 @@
 #' @keywords internal
 path_probability <-
   function(object, x, log = FALSE) {
-    stopifnot(is(object, "sevt"))
+    check_sevt_prob(object)
     if (!is.null(names(x))) {
       # if it's a named vector just order it
       x <- x[names(object$tree)]
@@ -56,8 +56,7 @@ path_probability <-
 #' prob(model, DD[1:10, ])
 #' @export
 prob <- function(object, x, log = FALSE, na0 = TRUE) {
-  stopifnot(is(object, "sevt"))
-  stopifnot(has_prob(object))
+  check_sevt_prob(object)
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
   }
@@ -112,9 +111,7 @@ logLik.sevt <- function(object, ...) {
   if (!is.null(object$ll)) {
     return(object$ll)
   }
-  stopifnot(is(object, "sevt"))
-  stopifnot(has_prob(object))
-  stopifnot(!is.null(object$ctables))
+  check_sevt_fit(object)
   vars <- names(object$tree)
   prob <- expand_prob(object)
   ll <- sum(vapply(

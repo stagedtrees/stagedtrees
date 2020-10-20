@@ -22,7 +22,6 @@
 #' \code{\link{full}} or \code{\link{indep}}, setting 
 #' \code{join_unobserved = TRUE}.
 #'
-#' @importFrom methods is
 #' @export
 #'
 #' @examples
@@ -39,8 +38,7 @@ join_unobserved <-
            name = 'UNOBSERVED',
            scope = sevt_varnames(object)[-1],
            lambda = object$lambda) {
-    stopifnot(is(object, "sevt"))
-    stopifnot(has_ctables(object))
+    check_sevt_ctables(object)
     tot <- 0
     ## make scope valid 
     scope <- scope[scope %in% sevt_varnames(object)[-1]]
@@ -247,7 +245,6 @@ indep.data.frame <- function(data, order = colnames(data),
 #' model <- stages_bhcr(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
-#' @importFrom  methods is
 stages_bhcr <-
   function(object,
            score = function(x) {
@@ -255,8 +252,7 @@ stages_bhcr <-
            },
            max_iter = 100,
            trace = 0) {
-    stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted_sevt(object))
+    check_sevt_fit(object)
     now_score <- score(object)
     r <- 1
     iter <- 0
@@ -318,7 +314,6 @@ stages_bhcr <-
 #' model <- stages_bhc(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
-#' @importFrom  methods is
 #' @export
 stages_bhc <-
   function(object,
@@ -329,8 +324,7 @@ stages_bhc <-
            scope = NULL,
            ignore = object$name_unobserved,
            trace = 0) {
-    stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted_sevt(object))
+    check_sevt_fit(object)
     now_score <- score(object)
     if (is.null(scope)){
       scope <- sevt_varnames(object)[-1]
@@ -411,7 +405,6 @@ stages_bhc <-
 #' model <- stages_fbhc(full(DD), trace = 2)
 #' summary(model)
 #' @importFrom stats  BIC
-#' @importFrom  methods is
 #' @export
 stages_fbhc <-
   function(object = NULL,
@@ -422,8 +415,7 @@ stages_fbhc <-
            scope = NULL,
            ignore = object$name_unobserved,
            trace = 0) {
-    stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted_sevt(object))
+    check_sevt_fit(object)
     if (is.null(scope)){
       scope <- sevt_varnames(object)[-1]
     }
@@ -525,7 +517,6 @@ stages_fbhc <-
 #' DD <- generate_xor_dataset(n = 5, N = 1000)
 #' model <- stages_bj(full(DD, lambda = 1), trace = 2)
 #' summary(model)
-#' @importFrom  methods is
 #' @export
 stages_bj <-
   function(object = NULL,
@@ -534,9 +525,8 @@ stages_bj <-
            scope = NULL,
            ignore = object$name_unobserved,
            trace = 0) {
-    stopifnot(is(object, "sevt"))
-    stopifnot(is_fitted_sevt(object))
-    stopifnot(is(distance, "character"))
+    check_sevt_fit(object)
+    stopifnot(is.character(distance))
     stopifnot(distance %in% c("manhattan", "euclidean", "reny", "kullback", 
                               "totvar", "hellinger",
                               "bhatt", "chandarw"))
@@ -636,9 +626,7 @@ stages_hc <- function(object,
                     scope = NULL,
                     ignore = object$name_unobserved,
                     trace = 0) {
-  stopifnot(is(object, "sevt"))
-  stopifnot(is_fitted_sevt(object))
-  stopifnot(!is.null(object$ctables))
+  check_sevt_fit(object)
   if (is.null(scope)){
     scope <- sevt_varnames(object)[-1]
   }
@@ -741,7 +729,8 @@ stages_hclust <-
            ignore = object$name_unobserved,
            limit = length(object$tree),
            scope = NULL) {
-    stopifnot(is_fitted_sevt(object))
+    check_sevt_fit(object)
+    stopifnot(is.character(distance))
     if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
     stopifnot(all(scope %in% sevt_varnames(object)[-1]))
     if (is.null(names(k))){
@@ -808,7 +797,7 @@ stages_kmeans <- function(object,
                         limit = length(object$tree),
                         scope = NULL,
                         nstart = 1){
-  stopifnot(is_fitted_sevt(object))
+  check_sevt_fit(object)
   stopifnot(is.function(transform) || is.null(transform))
   if (is.null(transform)) transform <- function(x) return(x)
   if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]

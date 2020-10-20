@@ -35,8 +35,7 @@ Roxygen: list(markdown = TRUE)
 URL: https://github.com/gherardovarando/stagedtrees
 BugReports: https://github.com/gherardovarando/stagedtrees/issues
 Imports: stats,
-         graphics,
-         methods
+         graphics
 Suggests: 
     testthat,
     bnlearn,

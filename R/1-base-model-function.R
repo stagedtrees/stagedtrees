@@ -168,7 +168,7 @@ sevt.list <- function(x, full = FALSE, order = names(x)) {
 #' @return probability tables.
 #' @keywords internal
 expand_prob <- function(object) {
-  stopifnot(is_fitted_sevt(object))
+  check_sevt_prob(object)
   prob <- list()
   vars <- names(object$tree)
   dims <- vapply(object$tree, length, FUN.VALUE = 1)
@@ -250,4 +250,58 @@ has_ctables <- function(object){
 #' @keywords internal
 has_prob <- function(object){
   isFALSE(is.null(object$prob))
+}
+
+#' Check if the stages event tree is fitted
+#' 
+#' @param object a staged event tree object.
+#' @return logical.
+#' @keywords internal
+is_fitted_sevt <- function(object){
+  check_sevt(object)
+  has_prob(object) && has_ctables(object)
+}
+
+
+#' check sevt object
+#' @param object an object of class sevt
+#' @keywords internal
+check_sevt <- function(object) {
+  stopifnot(is.object(object))
+  if (!inherits(object, "sevt")){
+    stop('object is not of class sevt, check ?"sevt class"')
+  }
+  if (is.null(object$tree)){
+    stop('object is missing the required tree component, check ?"sevt class"')
+  }
+  if (is.null(object$stages)){
+    stop('object is missing the required stages component, check ?"sevt class"')
+  }
+}
+
+#' check 
+#' @param object an object of class sevt
+#' @keywords internal
+check_sevt_prob <- function(object) {
+  check_sevt(object)
+  if (!has_prob(object)){
+    stop("The provided sevt object has no probabilities", call. = TRUE)
+  }
+}
+
+
+#' @rdname check_sevt
+#' @keywords internal
+check_sevt_ctables <- function(object) {
+  check_sevt(object)
+  if (!has_ctables(object)){
+    stop("The provided sevt object has no data (ctables)", call. = TRUE)
+  }
+}
+
+#' @rdname check_sevt
+#' @keywords internal
+check_sevt_fit <- function(object) {
+ check_sevt_ctables(object)
+ check_sevt_prob(object)
 }

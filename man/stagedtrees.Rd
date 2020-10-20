@@ -10,6 +10,14 @@ Functions to compute probabilities, make predictions from the fitted
 models and to plot, analyze and manipulate staged event trees.
 }
 \details{
+A staged event tree is a representation of a particular
+factorization of a joint probability over a product space.
+In particular, given a vector of categorical random variables
+\eqn{X1, X2, \ldots}, a staged event tree represents the factorization
+\eqn{P(X1, X2, \ldots) = P(X1)P(X2 | X1) P(X3 | X1, X2) \ldots }.
+Additionally, the stages structure indicate which conditional probabilities
+are equal.
+
 Model selection algorithms:
 \itemize{
 \item full model \code{\link{full}}

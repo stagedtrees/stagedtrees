@@ -212,7 +212,7 @@ set_stage <- function(object, path, stage) {
 #' model$stages$Kids
 #' @export
 join_stages <- function(object, v, s1, s2) {
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   s1 <- as.character(s1)
   s2 <- as.character(s2)
   if (!all(c(s1, s2) %in% stages(object, var = v))) {
@@ -268,7 +268,7 @@ join_stages <- function(object, v, s1, s2) {
 #' probability \code{p}.
 #' @keywords internal
 split_stage_random <- function(object, var, stage, p = 0.5) {
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   # if the given stage is not present 
   if (!(stage %in% object$stages[[var]])) {
     # return the same object
@@ -301,15 +301,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
   return(object)
 }
 
-#' Check if a staged event tree is fitted
-#'
-#' @param object an object of class \code{sevt}.
-#' @return logical.
-#'
-#' @keywords internal
-is_fitted_sevt <- function(object) {
-  return(!is.null(object$prob) && !is.null(object$ctables))
-}
+
 
 
 
@@ -331,8 +323,8 @@ is_fitted_sevt <- function(object) {
 #' inclusions_stages(mod1, mod2)
 #' @export
 inclusions_stages <- function(object1, object2) {
-  stopifnot(is(object1, "sevt"))
-  stopifnot(is(object2, "sevt"))
+  check_sevt(object1)
+  check_sevt(object2)
   stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
   stopifnot(all(sevt_varnames(object1) == sevt_varnames(object2)))
   out <- rep(list(c()), length(object1$stages))
@@ -450,7 +442,7 @@ print.sevt <- function(x, ...) {
 #'         to each variable in the model (that is \code{object$stages}).
 #' @export
 stages <- function(object, var = NULL) {
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   if (is.null(var)) {
     object$stages
   } else {
@@ -474,7 +466,7 @@ stages <- function(object, var = NULL) {
 #' summary(model)
 #' @export
 summary.sevt <- function(object, ...) {
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   vns <- sevt_varnames(object)
   nv <- sevt_nvar(object)
   out <- list()
@@ -721,8 +713,8 @@ compare_stages <-
            plot = FALSE,
            ...) {
     # check and rename stages
-    stopifnot(is(object1, "sevt"))
-    stopifnot(is(object2, "sevt"))
+    check_sevt(object1)
+    check_sevt(object2)
     stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
     stopifnot(all(names(object1$tree) == names(object2$tree)))
     object1 <- stndnaming(object1)
@@ -782,8 +774,8 @@ compare_stages <-
 #' @rdname compare_stages
 #' @export
 hamming_stages <- function(object1, object2, return_tree = FALSE) {
-  stopifnot(is(object1, "sevt"))
-  stopifnot(is(object2, "sevt"))
+  check_sevt(object1)
+  check_sevt(object2)
   # check if models are over the same variables, and same order
   stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
   stopifnot(all(names(object1$tree) == names(object2$tree)))
@@ -856,8 +848,8 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
 #' m2 <- stages_bj(m0, distance = "totvar", thr = 0.25)
 #' diff_stages(m1, m2)
 diff_stages <- function(object1, object2) {
-  stopifnot(is(object1, "sevt"))
-  stopifnot(is(object2, "sevt"))
+  check_sevt(object1)
+  check_sevt(object2)
   stopifnot(all(names(object1$tree) == names(object2$tree)))
   out <- rep(list(c()), length(object1$stages))
   attr(out, "names") <- attr(object1$stages, "names")
@@ -963,7 +955,7 @@ NULL
 #' get_stage(model, paths)
 #' @export
 get_stage <- function(object, path) {
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   if (is.null(object$stages)) {
     stop("object is not a staged tree (no stages found)")
   }
@@ -1022,7 +1014,7 @@ get_path <- function(object, var, stage) {
 #' have been renamed to \code{new}.
 #' @export 
 rename_stage <- function(object, var, stage, new){
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
   }

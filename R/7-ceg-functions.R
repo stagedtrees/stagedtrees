@@ -11,7 +11,7 @@
 #' model.ceg$positions
 #' @export
 ceg <- function(object) {
-  stopifnot(is(object, "sevt"))
+  check_sevt(object)
   positions <- object$stages
   ls <- length(object$stages)
   us <- unique(object$stages[[ls]])

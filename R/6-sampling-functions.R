@@ -17,8 +17,7 @@
 #' @export
 sample_from <- function(object, nsim = 1, seed = NULL) {
   stopifnot(nsim > 0)
-  stopifnot(is(object, "sevt"))
-  stopifnot(has_prob(object))
+  check_sevt_prob(object)
   if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
     runif(1)
   if (is.null(seed)) 
