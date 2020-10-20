@@ -267,7 +267,9 @@ is_fitted_sevt <- function(object){
 #' @param object an object of class sevt
 #' @keywords internal
 check_sevt <- function(object) {
-  stopifnot(is.object(object))
+  if (!is.object(object)){
+    stop('object is not of class sevt, check ?"sevt class"')
+  }
   if (!inherits(object, "sevt")){
     stop('object is not of class sevt, check ?"sevt class"')
   }
@@ -285,7 +287,10 @@ check_sevt <- function(object) {
 check_sevt_prob <- function(object) {
   check_sevt(object)
   if (!has_prob(object)){
-    stop("The provided sevt object has no probabilities", call. = TRUE)
+    stop("The provided sevt object has no probabilitites (prob), \n",
+         "use sevt_fit to associate data and compute probabilities for an object of class sevt \n",
+         "or check ?full or ?indep for utilities to build fitted staged event trees.",
+         call.  = FALSE)
   }
 }
 
@@ -295,7 +300,10 @@ check_sevt_prob <- function(object) {
 check_sevt_ctables <- function(object) {
   check_sevt(object)
   if (!has_ctables(object)){
-    stop("The provided sevt object has no data (ctables)", call. = TRUE)
+    stop("The provided sevt object has no data (ctables), \n",
+         "use sevt_fit to associate data and compute probabilities for an object of class sevt \n",
+         "or check ?full or ?indep for utilities to build fitted staged event trees.",
+         call. = FALSE)
   }
 }
 
