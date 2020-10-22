@@ -48,10 +48,10 @@ COMPLETE CHANGELOG:
 *  all model selection functions accept `scope` and `ignore`   
    parameters that allow to specifiy among which variables
    run the algorithm and which stages should be left untouched 
-   (defult: the `name_unobserved` stages). 
+   (default: the `name_unobserved` stages). 
 *  replace `1:length(x)` with the suggested `seq_along` in all code.
 * distance names in `stages_bj` and `stages_hclust` are compatibles.
-* fixed bug in some probability distance functions when 0 probabilites. 
+* fixed bug in some probability distance functions when 0 probabilities. 
 * Conversion generic function `as.sevt`, only implemented one method 
 for `bn.fit` class from bnlearn package
 * fix `inclusions_stages` and provide better output. 
