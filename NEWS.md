@@ -21,8 +21,8 @@ COMPLETE CHANGELOG:
 * removed the `fit` parameter from `full`, `indep`. 
    Now `full` and `indep` always fit the model while
   `sevt` is just the basic constructor of the `sevt` class.
-* in `full` and `indep` is now possible to specify if situations should be joined
-  using `join_unobserved`, in that case probabilities will be fitted only after 
+* in `full` and `indep` by default unobserved situations are joined
+  using `join_unobserved`, and probabilities are fitted only after 
   the unobserved situations are joined, improving speed. Moreover, the 
   name of the unobserved stages are stored as `name_unobserved` in the 
   staged tree object.
