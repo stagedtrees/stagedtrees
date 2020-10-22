@@ -26,7 +26,7 @@
 #'
 #' @examples
 #' DD <- generate_xor_dataset(n = 5, N = 10)
-#' model_full <- full(DD, lambda = 1)
+#' model_full <- full(DD, lambda = 1, join_unobserved = FALSE)
 #' model <- join_unobserved(model_full)
 #' logLik(model_full)
 #' logLik(model)
@@ -79,8 +79,8 @@ join_unobserved <-
 #'           The full (or saturated) staged tree is the model where every 
 #'           situation is in a different stage, and thus the model has the 
 #'           maximum number of parameters. 
-#'           Conversely, the independent staged tree (`indep`) assign
-#'           all the situation related to the same variable to the same 
+#'           Conversely, the independent staged tree (`indep`) assigns
+#'           all the situations related to the same variable to the same 
 #'           stage, thus it is equivalent to the independence factorization
 #'           \eqn{P(X1, X2, X3, ...) = P(X1)P(X2)P(X3)...} .
 NULL
@@ -89,9 +89,9 @@ NULL
 #' @param data data to create the model, data.frame or table. 
 #' @param order character vector, order of variables.
 #' @param join_unobserved logical, if situations with zero observations should 
-#'                           be joined.
+#'                           be joined (default TRUE).
 #' @param name_unobserved name to pass to \code{\link{join_unobserved}}.
-#' @param lambda smoothing coefficient.
+#' @param lambda smoothing coefficient (default 0).
 #' @examples
 #'
 #' ## full model
@@ -168,7 +168,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #'
 #' ## independence model (data.frame)
 #' DD <- generate_xor_dataset(4, 100)
-#' system.time(model <- indep(DD, lambda = 1))
+#' model <- indep(DD, lambda = 1)
 #' model
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
@@ -222,7 +222,7 @@ indep.data.frame <- function(data, order = colnames(data),
 
 
 
-#' Backward Random Hill-Climbing
+#' Backward random hill-climbing
 #'
 #' Randomly try to join stages. 
 #' This is a pretty-useless function, used for comparisons. 
@@ -235,9 +235,9 @@ indep.data.frame <- function(data, order = colnames(data),
 #'
 #' @details At each iteration a variable and
 #' two of its stages are randomly selected.
-#' If joining the stages increase the score, the model is
+#' If joining the stages increases the score, the model is
 #' updated. The procedure is repeated until the
-#' number of iterations reach \code{max_iter}.
+#' number of iterations reaches \code{max_iter}.
 #'
 #' @return an object of class \code{sevt}.
 #' @export
@@ -293,8 +293,8 @@ stages_bhcr <-
 
 #' Backward hill-climbing
 #'
-#' Backward Hill-climbing search of staged event trees with
-#' iterative joining of stages
+#' Greedy search of staged event trees with
+#' iterative joining of stages.
 #'
 #' @param object an object of class \code{sevt} with fitted probabilities and 
 #' data, as returned by \code{full} or \code{sevt_fit}.
@@ -306,8 +306,8 @@ stages_bhcr <-
 #'               `object$name_unobserved`.
 #' @param trace if >0 increasingly amount of info
 #' is printed (via \code{message}).
-#' @details For each variable the algorithm try to join stages
-#' and move to the best model that increase the score. When no
+#' @details For each variable the algorithm tries to join stages
+#' and moves to the best model that increases the score. When no
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree obtained.
 #' @examples
@@ -382,7 +382,7 @@ stages_bhc <-
 
 #' Fast backward hill-climbing
 #'
-#' Fast backward hill-climbing search of staged event trees with
+#' Greedy search of staged event trees with
 #' iterative joining of stages.
 #'
 #' @param object an object of class \code{sevt} with fitted probabilities and 
@@ -394,9 +394,9 @@ stages_bhc <-
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.
 #' @param trace if >0 increasingly amount of info
-#' is printed (via \code{message})
-#' @details For each variable the algorithm try to join stages
-#' and move to the first model that increase the score. When no
+#' is printed (via \code{message}).
+#' @details For each variable the algorithm tries to join stages
+#' and moves to the first model that increases the score. When no
 #' increase is possible it moves to the next variable.
 #' 
 #' 
@@ -500,8 +500,8 @@ stages_fbhc <-
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.
-#' @param trace if >0 increasingly amount of info.
-#' is printed (via \code{message})
+#' @param trace if >0 increasingly amount of info
+#' is printed (via \code{message}).
 #'
 #' @details For each variable in the model stages are joined iteratively.
 #' At each iteration the two stages with minimum distance are selected and
@@ -583,23 +583,23 @@ stages_bj <-
   }
 
 
-#' Hill-Climb Score optimization
+#' Hill-climbing
 #'
-#' Hill-climbing search of staged event trees with
+#' Greedy search of staged event trees with
 #' iterative moving of nodes between stages.
 #'
 #' @param object an object of class \code{sevt} with fitted probabilities and 
 #' data, as returned by \code{full} or \code{sevt_fit}.
-#' @param score a function that score staged event tree objects.
+#' @param score the score function to be maximized.
 #' @param max_iter the maximum number of iterations per variable.
 #' @param scope names of variables that should be considered for the optimization
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.
-#' @param trace integer, if positive information on the progress is
-#'              printed to console
+#' @param trace if >0 increasingly amount of info
+#' is printed (via \code{message}).
 #'
-#' @details For each variable node-moves that best increase the
+#' @details For each variable node-moves that best increases the
 #' score are performed until no increase is possible. 
 #' A node-move is either changing the stage
 #' associate to a node or move the node to a new stage.
@@ -612,10 +612,6 @@ stages_bj <-
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' model <- stages_hc(full(PhDArticles[, 1:3], lambda = 1))
-#' summary(model)
-#' 
-#' ## preserve zero stages
 #' start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
 #' model <- stages_hc(start)
 #' @export
@@ -697,7 +693,7 @@ stages_hc <- function(object,
 #' clustering stage probabilities with hierarchical clustering.
 #' @param object an object of class \code{sevt} with fitted probabilities and 
 #' data, as returned by \code{full} or \code{sevt_fit}.
-#' @param distance string, the distance measure to be used, either 
+#' @param distance character, the distance measure to be used, either 
 #'                 a possible `method` for \code{\link{dist}} or 
 #'                 one of the following: \code{"totvar", "hellinger"}.
 #' @param ignore vector of stages which will be ignored and left untouched,

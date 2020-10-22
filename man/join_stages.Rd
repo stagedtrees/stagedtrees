@@ -25,7 +25,7 @@ probabilities and log-likelihood accordingly.
 \details{
 This function joins together two stages associated to the
 same variable,
-computing the updated probability and log-likelihood if
+updating probabilities and log-likelihood if
 the object was fitted.
 }
 \examples{

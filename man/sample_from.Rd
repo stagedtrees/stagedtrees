@@ -24,7 +24,7 @@ Generate a random sample from the distribution encoded
 in a staged event tree object.
 }
 \details{
-It samples \code{n} observations according to
+It samples \code{nsim} observations according to
 the transition probabilities (\code{object$prob}) in the model.
 }
 \examples{

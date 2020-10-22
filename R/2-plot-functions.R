@@ -37,7 +37,7 @@
 #'                  \code{\link{text.sevt}}.
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
-#'               `object$name_unobserved`.
+#'               `x$name_unobserved`.
 #' @param pch_nodes Either an integer specifying a symbol or a single character 
 #'                  to be used as the default in plotting nodes shapes see 
 #'                  \code{\link{points}}.
@@ -325,7 +325,7 @@ edge <-
   }
 
 
-#' Add text to a staged even tree plot
+#' Add text to a staged event tree plot
 #'
 #' @param x An object of class \code{sevt}.
 #' @param y the position of the labels.

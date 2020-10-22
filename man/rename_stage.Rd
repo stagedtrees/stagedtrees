@@ -2,7 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{rename_stage}
 \alias{rename_stage}
-\title{Rename stage(s) in staged even tree}
+\title{Rename stage(s) in staged event tree}
 \usage{
 rename_stage(object, var, stage, new)
 }
@@ -20,5 +20,5 @@ a staged event tree object where stages \code{stage}
 have been renamed to \code{new}.
 }
 \description{
-Rename stage(s) in staged even tree
+Utility function to change the name of a stage in a staged event tree.
 }

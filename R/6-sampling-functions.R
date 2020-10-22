@@ -7,7 +7,7 @@
 #' @param seed an object specifying if and how the random number generator 
 #'             should be initialized (‘seeded’). Either NULL or an integer 
 #'             that will be used in a call to set.seed. 
-#' @details It samples \code{n} observations according to
+#' @details It samples \code{nsim} observations according to
 #' the transition probabilities (\code{object$prob}) in the model.
 #' @return A data frame containing \code{nsim} observations from the 
 #' variables in \code{object}.

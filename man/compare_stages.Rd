@@ -35,18 +35,18 @@ One of: \code{"naive"},
 \item{...}{additional parameters to be passed to \code{\link{plot.sevt}}.}
 }
 \value{
-\itemize{
-\item \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
+\code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
 models are exactly equal, otherwise \code{FALSE}.
-Else If \code{return_tree = TRUE}, the differences between
+Else if \code{return_tree = TRUE}, the differences between
 the two trees, according to the selected \code{method}.
-\item \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
+
+\code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
 number of situations where the stage should be changed to obtain the same
 models. If \code{return_tree = TRUE} a stages-like structure showing which
 situations should be modified to obtain the same models.
-\item \code{diff_stages}: a stages-like structure marking the situations belonging
-to stages which are not the same.
-}
+
+\code{diff_stages}: a stages-like structure marking the situations belonging
+to stages which are not the exactly equal.
 }
 \description{
 Compare two stages event tree, return the differences of the stages
@@ -61,8 +61,8 @@ Three methods are available:
 \itemize{
 \item \code{naive} first applies \code{\link{stndnaming}} to both
 objects and then simply compares the resulting stages.
-\item \code{hamming} uses the \code{hamming_stages} function that try to map
-stages in the different objects finding the few number of nodes that
+\item \code{hamming} uses the \code{hamming_stages} function that find
+a smallest subset of nodes that
 must be changed to obtain the same structure.
 \item \code{stages} uses the \code{diff_stages} function that compare
 stages to check if the same stage structure is present in both models.
@@ -71,17 +71,19 @@ stages to check if the same stage structure is present in both models.
 Setting \code{return_tree = TRUE} will return the stages
 structure difference obtained with the selected method.
 
-With \code{plot = TRUE} the plot of the difference tree is obtained.
+With \code{plot = TRUE} the plot of the difference tree is displayed.
 
-If \code{return_tree = FALSE} the logical output is the same for the
+If \code{return_tree = FALSE} and \code{plot = FALSE}
+the logical output is the same for the
 three methods and thus the \code{naive} method should be used
 since it is computationally faster.
 
-To use the \code{hamming} method, the package \code{clue}
-must be installed.
-
-Functions \code{\link{hamming_stages}} and \code{\link{diff_stages}}
-can also be used directly.
+\code{hamming_stages} finds a minimal set of nodes for which the associated stages
+should be changed to obtain equivalent structures. To do that, a maximum-weight bipartite
+matching problem between the stages of the two staged trees is solved using the
+Hungarian method implemented in the \code{solve_LSAP} function of the \code{clue}
+package.
+\code{hamming_stages} requires the package \code{clue}.
 }
 \examples{
 data("Asym")

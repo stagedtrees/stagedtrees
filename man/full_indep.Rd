@@ -64,9 +64,9 @@ indep(
 \item{order}{character vector, order of variables.}
 
 \item{join_unobserved}{logical, if situations with zero observations should
-be joined.}
+be joined (default TRUE).}
 
-\item{lambda}{smoothing coefficient.}
+\item{lambda}{smoothing coefficient (default 0).}
 
 \item{name_unobserved}{name to pass to \code{\link{join_unobserved}}.}
 }
@@ -79,8 +79,8 @@ data.
 The full (or saturated) staged tree is the model where every
 situation is in a different stage, and thus the model has the
 maximum number of parameters.
-Conversely, the independent staged tree (\code{indep}) assign
-all the situation related to the same variable to the same
+Conversely, the independent staged tree (\code{indep}) assigns
+all the situations related to the same variable to the same
 stage, thus it is equivalent to the independence factorization
 \eqn{P(X1, X2, X3, ...) = P(X1)P(X2)P(X3)...} .
 }
@@ -92,6 +92,6 @@ model_full <- full(DD, lambda = 1)
 
 ## independence model (data.frame)
 DD <- generate_xor_dataset(4, 100)
-system.time(model <- indep(DD, lambda = 1))
+model <- indep(DD, lambda = 1)
 model
 }

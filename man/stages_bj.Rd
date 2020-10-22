@@ -28,8 +28,8 @@ for the optimization.}
 by default the name of the unobserved stages stored in
 \code{object$name_unobserved}.}
 
-\item{trace}{if >0 increasingly amount of info.
-is printed (via \code{message})}
+\item{trace}{if >0 increasingly amount of info
+is printed (via \code{message}).}
 }
 \value{
 The final staged event tree obtained.

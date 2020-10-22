@@ -9,7 +9,7 @@ subtree(object, path)
 \arguments{
 \item{object}{an object of class \code{sevt}.}
 
-\item{path, }{the path after which extract the subtree.}
+\item{path}{the path from root after which extract the subtree.}
 }
 \value{
 A staged event tree object corresponding to the subtree.

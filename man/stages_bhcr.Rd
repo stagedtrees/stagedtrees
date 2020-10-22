@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{stages_bhcr}
 \alias{stages_bhcr}
-\title{Backward Random Hill-Climbing}
+\title{Backward random hill-climbing}
 \usage{
 stages_bhcr(
   object,
@@ -31,9 +31,9 @@ This is a pretty-useless function, used for comparisons.
 \details{
 At each iteration a variable and
 two of its stages are randomly selected.
-If joining the stages increase the score, the model is
+If joining the stages increases the score, the model is
 updated. The procedure is repeated until the
-number of iterations reach \code{max_iter}.
+number of iterations reaches \code{max_iter}.
 }
 \examples{
 DD <- generate_xor_dataset(n = 4, N = 100)

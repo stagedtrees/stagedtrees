@@ -18,7 +18,7 @@ stages_hclust(
 \item{object}{an object of class \code{sevt} with fitted probabilities and
 data, as returned by \code{full} or \code{sevt_fit}.}
 
-\item{distance}{string, the distance measure to be used, either
+\item{distance}{character, the distance measure to be used, either
 a possible \code{method} for \code{\link{dist}} or
 one of the following: \code{"totvar", "hellinger"}.}
 

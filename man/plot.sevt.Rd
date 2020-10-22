@@ -76,7 +76,7 @@ otherwise variable names can be added manually using
 
 \item{ignore}{vector of stages which will be ignored and left untouched,
 by default the name of the unobserved stages stored in
-\code{object$name_unobserved}.}
+\code{x$name_unobserved}.}
 
 \item{pch_nodes}{Either an integer specifying a symbol or a single character
 to be used as the default in plotting nodes shapes see

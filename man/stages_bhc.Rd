@@ -34,12 +34,12 @@ is printed (via \code{message}).}
 The final staged event tree obtained.
 }
 \description{
-Backward Hill-climbing search of staged event trees with
-iterative joining of stages
+Greedy search of staged event trees with
+iterative joining of stages.
 }
 \details{
-For each variable the algorithm try to join stages
-and move to the best model that increase the score. When no
+For each variable the algorithm tries to join stages
+and moves to the best model that increases the score. When no
 increase is possible it moves to the next variable.
 }
 \examples{

@@ -206,7 +206,7 @@ set_stage <- function(object, path, stage) {
 #' @return the staged event tree where \code{s1} and \code{s2} are joined.
 #' @details This function joins together two stages associated to the 
 #'          same variable, 
-#'          computing the updated probability and log-likelihood if 
+#'          updating probabilities and log-likelihood if 
 #'          the object was fitted.
 #' @examples
 #' model <- full(PhDArticles, lambda = 0)
@@ -354,47 +354,43 @@ inclusions_stages <- function(object1, object2) {
     }
 
     out[[k]] <- ifelse((out_a + out_b) == 2, 0, 1)
-    out2[[k]] <- character(length(out[[k]]))
+    out2[[k]] <- data.frame("A" = rep(NA, length(out[[k]])),
+                            "B" =  rep(NA, length(out[[k]])),
+                            "C" = rep(NA, length(out[[k]])))
 
     ord1 <- ord2 <- c()
 
     for (i in seq_along(out[[k]])) {
+      out2[[k]][i, 1] <- object1$stages[[k]][i]
+      out2[[k]][i, 3] <- object2$stages[[k]][i]
       if (out[[k]][i] == 0) {
-        out2[[k]][i] <- paste(object1$stages[[k]][i], "  =  ", object2$stages[[k]][i])
+        out2[[k]][i, 2] <- "="
         ord1 <- c(ord1, object1$stages[[k]][i])
         ord2 <- c(ord2, object2$stages[[k]][i])
       }
       else if (out[[k]][i] == 1) {
         if (out_a[i] == 1 & out_b[i] == 0) {
-          out2[[k]][i] <- paste(object1$stages[[k]][i], "  <  ", object2$stages[[k]][i])
+          out2[[k]][i, 2] <- "<"
           ord1 <- c(ord1, object1$stages[[k]][i])
           ord2 <- c(ord2, object2$stages[[k]][i])
         }
         if (out_a[i] == 0 & out_b[i] == 1) {
-          out2[[k]][i] <- paste(object1$stages[[k]][i], "  >  ", object2$stages[[k]][i])
+          out2[[k]][i, 2] <- ">"
           ord1 <- c(ord1, object1$stages[[k]][i])
           ord2 <- c(ord2, object2$stages[[k]][i])
         }
         if (out_a[i] == 0 & out_b[i] == 0) {
-          out2[[k]][i] <- paste(object1$stages[[k]][i], "  !=  ", object2$stages[[k]][i])
+          out2[[k]][i, 2] <- "!="
           ord1 <- c(ord1, object1$stages[[k]][i])
           ord2 <- c(ord2, object2$stages[[k]][i])
         }
       }
     }
-    ord1 <- as.numeric(ord1)
-    ord2 <- as.numeric(ord2)
-    ordering <- data.frame(ord1, ord2)
-    ordering <- unique(ordering[order(ordering$ord1, ordering$ord2), ])
 
     # nice print
-    out2[[k]] <- data.frame(noquote(out2[[k]]))
-    colnames(out2[[k]]) <- paste(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
-    name.width <- max(sapply(colnames(out2[[k]]), nchar))
-    out2[[k]] <- format(out2[[k]], width = name.width, justify = "centre")
-    out2[[k]] <- out2[[k]][noquote(rownames(ordering)), ]
-    out2[[k]] <- data.frame(noquote(out2[[k]]))
-    colnames(out2[[k]]) <- paste(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
+    out2[[k]] <- unique(noquote(out2[[k]]))
+    colnames(out2[[k]]) <- c(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
+    out2[[k]] <- format(out2[[k]], justify = "centre")
   }
   return(out2)
 }
@@ -408,7 +404,7 @@ inclusions_stages <- function(object1, object2) {
 #' @param ... additional parameters (compatibility).
 #'
 #' @return An invisible copy of \code{x}.
-#' @details The order of the variables in the stratified tree
+#' @details The order of the variables in the staged tree
 #'  is printed (from root). In addition the number of levels of each
 #'  variable is shown in square brackets.
 #'  If available the log-likelihood of the model is printed.
@@ -540,7 +536,7 @@ print.summary.sevt <- function(x, max = 10, ...) {
 #' Extract subtree
 #'
 #' @param object an object of class \code{sevt}.
-#' @param path, the path after which extract the subtree.
+#' @param path the path from root after which extract the subtree.
 #' @details Returns the subtree of the staged event tree, starting from 
 #' \code{path}.
 #' @return A staged event tree object corresponding to the subtree.
@@ -668,8 +664,8 @@ stndnaming <- function(object, uniq = FALSE,
 #' Three methods are available:
 #' * \code{naive} first applies \code{\link{stndnaming}} to both
 #' objects and then simply compares the resulting stages.
-#' * \code{hamming} uses the \code{hamming_stages} function that try to map
-#' stages in the different objects finding the few number of nodes that
+#' * \code{hamming} uses the \code{hamming_stages} function that find
+#' a smallest subset of nodes that
 #' must be changed to obtain the same structure.
 #' * \code{stages} uses the \code{diff_stages} function that compare
 #' stages to check if the same stage structure is present in both models.
@@ -677,30 +673,17 @@ stndnaming <- function(object, uniq = FALSE,
 #' Setting \code{return_tree = TRUE} will return the stages
 #' structure difference obtained with the selected method.
 #'
-#' With \code{plot = TRUE} the plot of the difference tree is obtained.
+#' With \code{plot = TRUE} the plot of the difference tree is displayed.
 #'
-#' If \code{return_tree = FALSE} the logical output is the same for the
+#' If \code{return_tree = FALSE} and \code{plot = FALSE} 
+#' the logical output is the same for the
 #' three methods and thus the \code{naive} method should be used
 #' since it is computationally faster.
-#'
-#' To use the \code{hamming} method, the package \code{clue}
-#' must be installed.
-#'
-#' Functions \code{\link{hamming_stages}} and \code{\link{diff_stages}}
-#' can also be used directly.
-#'
 #' @return 
-#' * \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
+#' \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
 #' models are exactly equal, otherwise \code{FALSE}.
-#' Else If \code{return_tree = TRUE}, the differences between
+#' Else if \code{return_tree = TRUE}, the differences between
 #' the two trees, according to the selected \code{method}.
-#' * \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
-#' number of situations where the stage should be changed to obtain the same 
-#' models. If \code{return_tree = TRUE} a stages-like structure showing which 
-#' situations should be modified to obtain the same models.
-#' * \code{diff_stages}: a stages-like structure marking the situations belonging 
-#' to stages which are not the same.
-#' 
 #' @export
 #' @examples
 #' data("Asym")
@@ -774,6 +757,17 @@ compare_stages <-
 
 
 #' @rdname compare_stages
+#' @details 
+#' \code{hamming_stages} finds a minimal set of nodes for which the associated stages
+#' should be changed to obtain equivalent structures. To do that, a maximum-weight bipartite 
+#' matching problem between the stages of the two staged trees is solved using the 
+#' Hungarian method implemented in the \code{solve_LSAP} function of the \code{clue}
+#' package. 
+#' \code{hamming_stages} requires the package \code{clue}.
+#' @return \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
+#' number of situations where the stage should be changed to obtain the same 
+#' models. If \code{return_tree = TRUE} a stages-like structure showing which 
+#' situations should be modified to obtain the same models.
 #' @export
 hamming_stages <- function(object1, object2, return_tree = FALSE) {
   check_sevt(object1)
@@ -841,6 +835,8 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
 
 
 #' @rdname compare_stages
+#' @return \code{diff_stages}: a stages-like structure marking the situations belonging 
+#' to stages which are not the exactly equal.
 #' @export
 #' @examples
 #'
@@ -873,7 +869,6 @@ diff_stages <- function(object1, object2) {
         out_b[which(b == unique_b[i])] <- 0
       )
     }
-
     # stages exactly equal have sign(out_a) + sign(out_b) == 2.
     out[[k]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 0, 1)
   }
@@ -995,8 +990,9 @@ get_path <- function(object, var, stage) {
   return(paths)
 }
 
-#' Rename stage(s) in staged even tree
+#' Rename stage(s) in staged event tree
 #' 
+#' Utility function to change the name of a stage in a staged event tree.
 #' @param object An object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
 #' @param stage name of the stage to be renamed.

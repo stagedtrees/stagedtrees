@@ -2,7 +2,7 @@
 % Please edit documentation in R/4-model-selection.R
 \name{stages_hc}
 \alias{stages_hc}
-\title{Hill-Climb Score optimization}
+\title{Hill-climbing}
 \usage{
 stages_hc(
   object,
@@ -17,7 +17,7 @@ stages_hc(
 \item{object}{an object of class \code{sevt} with fitted probabilities and
 data, as returned by \code{full} or \code{sevt_fit}.}
 
-\item{score}{a function that score staged event tree objects.}
+\item{score}{the score function to be maximized.}
 
 \item{max_iter}{the maximum number of iterations per variable.}
 
@@ -27,18 +27,18 @@ data, as returned by \code{full} or \code{sevt_fit}.}
 by default the name of the unobserved stages stored in
 \code{object$name_unobserved}.}
 
-\item{trace}{integer, if positive information on the progress is
-printed to console}
+\item{trace}{if >0 increasingly amount of info
+is printed (via \code{message}).}
 }
 \value{
 The final staged event tree obtained.
 }
 \description{
-Hill-climbing search of staged event trees with
+Greedy search of staged event trees with
 iterative moving of nodes between stages.
 }
 \details{
-For each variable node-moves that best increase the
+For each variable node-moves that best increases the
 score are performed until no increase is possible.
 A node-move is either changing the stage
 associate to a node or move the node to a new stage.
@@ -49,10 +49,6 @@ This is usefull for preserving structural zeroes and to speed-up
 computations.
 }
 \examples{
-model <- stages_hc(full(PhDArticles[, 1:3], lambda = 1))
-summary(model)
-
-## preserve zero stages
 start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
 model <- stages_hc(start)
 }

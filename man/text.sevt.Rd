@@ -2,7 +2,7 @@
 % Please edit documentation in R/2-plot-functions.R
 \name{text.sevt}
 \alias{text.sevt}
-\title{Add text to a staged even tree plot}
+\title{Add text to a staged event tree plot}
 \usage{
 \method{text}{sevt}(x, y = ylim[1], limit = 10, xlim = c(0, 1), ylim = c(0, 1), ...)
 }
@@ -20,5 +20,5 @@
 \item{...}{additional parameters passed to \code{\link{text}}.}
 }
 \description{
-Add text to a staged even tree plot
+Add text to a staged event tree plot
 }

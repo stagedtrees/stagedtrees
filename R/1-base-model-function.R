@@ -6,9 +6,9 @@
 #' \itemize{
 #'          \item tree (required): A named list with one component
 #'                      for each variable in the model,
-#'                      a character vector withe the names of
+#'                      a character vector with the names of
 #'                      the levels for that variable.
-#'                      The order of the variable is the
+#'                      The order of the variables in \code{tree} is the
 #'                      order of the event tree.
 #'          \item stages (required): A named list with one component
 #'                        for each variable but the first, 
@@ -23,7 +23,7 @@
 #'          \item prob: The conditional probability tables for every
 #'                      variable and stage. Stored in a named list with 
 #'                      one component for each variable, a list with
-#'                      one component for each stage,
+#'                      one component for each stage.
 #'          \item ll: The log-likelihood of the \code{estimated} model.
 #'                    If present, \code{\link{logLik.sevt}} will 
 #'                    return this value instead of computing the log-likelihood.
@@ -35,7 +35,7 @@
 #'        internal node at a depth related to a variable \code{v} 
 #'        has a number of children equal to the cardinality of
 #'        the levels of \code{v}.
-#'        The stages informations is instead stored as a list of
+#'        The stages information is instead stored as a list of
 #'        vectors, where each vector is indexed as the internal nodes
 #'        of the tree at a given depth. 
 #'        

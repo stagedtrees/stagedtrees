@@ -18,7 +18,7 @@ An invisible copy of \code{x}.
 Print a staged event tree
 }
 \details{
-The order of the variables in the stratified tree
+The order of the variables in the staged tree
 is printed (from root). In addition the number of levels of each
 variable is shown in square brackets.
 If available the log-likelihood of the model is printed.
