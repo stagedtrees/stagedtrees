@@ -1,23 +1,27 @@
-#' Convert to sevt class
+#' Coerce to sevt
+#' 
+#' Convert an R object to an equivalent object of class \code{\link{sevt}}.
 #' 
 #' @param x     an R object to be coerced.
-#' @param order order of the variables. 
-#' @return the equivalent sevt object.
+#' @param ... additional parmaeters to be used by specific methods.
+#' @return the equivalent object of class \code{\link{sevt}}.
 #' @details Only a method for objects of class \code{bn.fit} 
 #'          (\code{bnlearn} package) is available.
 #' @export
-as_sevt <- function(x, order = NULL){
+as_sevt <- function(x, order = NULL, ...){
   UseMethod("as_sevt", x)
 } 
 
-#' Convert a bn fit to a staged event tree object
-#' 
+#' @rdname as_sevt
 #' @param x a \code{bn.fit} object.
-#' @param order a topological order of the variables, 
-#'              WARNING: the order will not be checked.
-#' @return A staged event tree object.
+#' @param order order of the variables.
+#' @details In \code{as_sevt.bn.fit} the \code{order} 
+#' argument, if provided, must be a topological order of the 
+#' bn.fit object (no check is performed). If the order is not provided 
+#' a topological order will be used (the one returned by 
+#' \code{bnlearn::node.ordering}).
 #' @export
-as_sevt.bn.fit <- function(x, order = NULL) {
+as_sevt.bn.fit <- function(x, order = NULL, ...) {
   bn <- bnlearn::bn.net(x)
   # build the ordered list of levels
   tree <- lapply(
@@ -307,13 +311,12 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 
 #' Inclusions of stages
 #'  
-#' Display the relationship between two staged tree models over the 
+#' @description Display the relationship between two staged tree models over the 
 #' same variables.
 #' @param object1 an object of class \code{sevt}.
 #' @param object2 an object of class \code{sevt}.
-#'
 #' @return a list with inclusion relations between stage
-#' structures of each variables in the models.
+#' structures for each variables in the models.
 #' @details Computes the 
 #'  inclusion/exclusion/equality/diversity between 
 #'  the stages structures of the two models.
@@ -599,8 +602,7 @@ subtree <- function(object, path) {
 #' @return a staged event tree object with stages named with
 #' consecutive integers.
 #' @examples
-#' DD <- generate_xor_dataset(4, 100)
-#' model <- stages_fbhc(full(DD, join_unobserved = TRUE))
+#' model <- stages_fbhc(full(PhDArticles, join_unobserved = TRUE))
 #' model$stages
 #' model1 <- stndnaming(model)
 #' model1$stages
@@ -614,7 +616,7 @@ subtree <- function(object, path) {
 #' model3$stages
 #' 
 #' ### manuallty select stage names left untouched
-#' model4 <- stndnaming(model, ignore = c("2", "4"), prefix = TRUE)
+#' model4 <- stndnaming(model, ignore = c("2", "6"), prefix = TRUE)
 #' model4$stages
 #' @export
 stndnaming <- function(object, uniq = FALSE, 
@@ -889,16 +891,6 @@ sevt_varnames <- function(object) {
   names(object$tree)
 }
 
-#' Variable Names of a Staged Event Tree
-#' 
-#' Simple utilities returning variable names.
-#' @param object an object of class \code{sevt}.
-#' @param ... for compatibility.
-#' @importFrom stats variable.names
-#' @export
-variable.names.sevt <- function(object, ...){
-  return(names(object$tree))
-}
 
 #' Number of variables
 #'
@@ -947,7 +939,7 @@ NULL
 #' a two dimensional array where each row is a path
 #' from root.
 #' @return \code{get_stage} returns
-#' the name of the stage for a given path (or paths).
+#' the stage name(s)  for given path(s).
 #' @examples
 #' model <- stages_fbhc(full(PhDArticles))
 #' get_stage(model, c("0", "male"))
@@ -972,16 +964,16 @@ get_stage <- function(object, path) {
 
 #' @rdname getstagepath
 #'
-#' @param var string, one of the variable in
+#' @param var character, one of the variable in
 #'            the staged tree.
 #' @param stage character vector, the name
 #' of the stages for which the paths should be
 #' returned.
-#' @return  return a
+#' @return  \code{get_path} returns a
 #'         data.frame containing the paths
-#'         corresponding to the given stage (or stages).
+#'         corresponding to the given stage(s).
 #' @examples
-#' get_path(model, "Kids", "11")
+#' get_path(model, "Kids", "5")
 #' get_path(model, "Gender", "2")
 #' get_path(model, "Kids", c("5", "6"))
 #' @export

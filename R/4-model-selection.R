@@ -72,8 +72,10 @@ join_unobserved <-
 
 #' Full and independent staged event tree
 #' 
+#' Utilities to build fitted staged event tree from data.
 #' @name full_indep
-#' @details  Functions to create full or independent staged tree models.
+#' @details  Functions to create full or independent staged tree models from 
+#'           data.
 #'           The full (or saturated) staged tree is the model where every 
 #'           situation is in a different stage, and thus the model has the 
 #'           maximum number of parameters. 
@@ -92,8 +94,7 @@ NULL
 #' @param lambda smoothing coefficient.
 #' @examples
 #'
-#' ######### full model
-#'
+#' ## full model
 #' DD <- generate_xor_dataset(4, 100)
 #' model_full <- full(DD, lambda = 1)
 #' @export
@@ -165,7 +166,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' @rdname full_indep
 #' @examples
 #'
-#' ######### independence model (data.frame)
+#' ## independence model (data.frame)
 #' DD <- generate_xor_dataset(4, 100)
 #' system.time(model <- indep(DD, lambda = 1))
 #' model

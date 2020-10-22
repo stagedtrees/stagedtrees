@@ -71,10 +71,11 @@ be joined.}
 \item{name_unobserved}{name to pass to \code{\link{join_unobserved}}.}
 }
 \description{
-Full and independent staged event tree
+Utilities to build fitted staged event tree from data.
 }
 \details{
-Functions to create full or independent staged tree models.
+Functions to create full or independent staged tree models from
+data.
 The full (or saturated) staged tree is the model where every
 situation is in a different stage, and thus the model has the
 maximum number of parameters.
@@ -85,12 +86,11 @@ stage, thus it is equivalent to the independence factorization
 }
 \examples{
 
-######### full model
-
+## full model
 DD <- generate_xor_dataset(4, 100)
 model_full <- full(DD, lambda = 1)
 
-######### independence model (data.frame)
+## independence model (data.frame)
 DD <- generate_xor_dataset(4, 100)
 system.time(model <- indep(DD, lambda = 1))
 model

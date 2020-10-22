@@ -372,7 +372,7 @@ text.sevt <-
 #' model <- stages_fbhc(full(PhDArticles, lambda = 1))
 #' barplot(model, "Kids", beside = TRUE)
 #' @importFrom graphics barplot
-barplot.sevt <- function(height, var = variable.names(height)[1], 
+barplot.sevt <- function(height, var, 
                            ignore = height$name_unobserved,
                            beside = TRUE,
                            horiz = FALSE,

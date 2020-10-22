@@ -2,10 +2,7 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{inclusions_stages}
 \alias{inclusions_stages}
-\title{Inclusions of stages
-
-Display the relationship between two staged tree models over the
-same variables.}
+\title{Inclusions of stages}
 \usage{
 inclusions_stages(object1, object2)
 }
@@ -16,11 +13,9 @@ inclusions_stages(object1, object2)
 }
 \value{
 a list with inclusion relations between stage
-structures of each variables in the models.
+structures for each variables in the models.
 }
 \description{
-Inclusions of stages
-
 Display the relationship between two staged tree models over the
 same variables.
 }

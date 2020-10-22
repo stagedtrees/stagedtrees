@@ -2,22 +2,33 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{as_sevt}
 \alias{as_sevt}
-\title{Convert to sevt class}
+\alias{as_sevt.bn.fit}
+\title{Coerce to sevt}
 \usage{
-as_sevt(x, order = NULL)
+as_sevt(x, order = NULL, ...)
+
+\method{as_sevt}{bn.fit}(x, order = NULL, ...)
 }
 \arguments{
-\item{x}{an R object to be coerced.}
+\item{x}{a \code{bn.fit} object.}
 
 \item{order}{order of the variables.}
+
+\item{...}{additional parmaeters to be used by specific methods.}
 }
 \value{
-the equivalent sevt object.
+the equivalent object of class \code{\link{sevt}}.
 }
 \description{
-Convert to sevt class
+Convert an R object to an equivalent object of class \code{\link{sevt}}.
 }
 \details{
 Only a method for objects of class \code{bn.fit}
 (\code{bnlearn} package) is available.
+
+In \code{as_sevt.bn.fit} the \code{order}
+argument, if provided, must be a topological order of the
+bn.fit object (no check is performed). If the order is not provided
+a topological order will be used (the one returned by
+\code{bnlearn::node.ordering}).
 }

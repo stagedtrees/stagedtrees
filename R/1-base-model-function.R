@@ -19,7 +19,7 @@
 #'          for each variable, the flat contingency table of that variable
 #'          given the previous variables.
 #'          \item lambda: The smoothing parameter used to compute probabilities.
-#'          \item name.unobserved: The stage name for unobserved situations.
+#'          \item name_unobserved: The stage name for unobserved situations.
 #'          \item prob: The conditional probability tables for every
 #'                      variable and stage. Stored in a named list with 
 #'                      one component for each variable, a list with
@@ -28,7 +28,7 @@
 #'                    If present, \code{\link{logLik.sevt}} will 
 #'                    return this value instead of computing the log-likelihood.
 #'        }
-#'        The tree structure is never defined explicitly, but instead 
+#'        The tree structure is never defined explicitly, instead it
 #'        is implicitly defined by the list \code{tree} containing the order
 #'        of the variables and the names of their levels. This is 
 #'        sufficient to define a complete symmetric tree where an 
@@ -50,12 +50,10 @@
 #' (without data or probabilities) the basic 
 #' \code{\link{sevt}} constructor can 
 #' be used.
-#' @name sevt class
+#' @name sevt
 NULL
 
-#' Build a staged event tree
-#' 
-#' Basic constructor for staged event tree class (\code{sevt}).
+#' @rdname sevt
 #' @param x a list, a data frame or table object.
 #' @param full logical, if TRUE the full model is created 
 #'              otherwise the independence model.
@@ -63,7 +61,8 @@ NULL
 #'              order of the variables to build the 
 #'              tree, by default the order of the variables
 #'              in \code{x}.
-#' @return A staged event tree object, an element of class \code{sevt}.
+#' @return A staged event tree object, an object of class \code{sevt}.
+#' 
 #' @export
 sevt <- function(x, full = FALSE, order = NULL) {
   UseMethod("sevt", object = x)
@@ -268,16 +267,16 @@ is_fitted_sevt <- function(object){
 #' @keywords internal
 check_sevt <- function(object) {
   if (!is.object(object)){
-    stop('object is not of class sevt, check ?"sevt class"')
+    stop('object is not of class sevt, check ?"sevt"')
   }
   if (!inherits(object, "sevt")){
-    stop('object is not of class sevt, check ?"sevt class"')
+    stop('object is not of class sevt, check ?"sevt"')
   }
   if (is.null(object$tree)){
-    stop('object is missing the required tree component, check ?"sevt class"')
+    stop('object is missing the required tree component, check ?"sevt"')
   }
   if (is.null(object$stages)){
-    stop('object is missing the required stages component, check ?"sevt class"')
+    stop('object is missing the required stages component, check ?"sevt"')
   }
 }
 

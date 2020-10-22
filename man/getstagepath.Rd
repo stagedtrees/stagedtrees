@@ -17,7 +17,7 @@ get_path(object, var, stage)
 a two dimensional array where each row is a path
 from root.}
 
-\item{var}{string, one of the variable in
+\item{var}{character, one of the variable in
 the staged tree.}
 
 \item{stage}{character vector, the name
@@ -26,11 +26,11 @@ returned.}
 }
 \value{
 \code{get_stage} returns
-the name of the stage for a given path (or paths).
+the stage name(s)  for given path(s).
 
-return a
+\code{get_path} returns a
 data.frame containing the paths
-corresponding to the given stage (or stages).
+corresponding to the given stage(s).
 }
 \description{
 Utility functions to obtain stages from paths and
@@ -41,7 +41,7 @@ model <- stages_fbhc(full(PhDArticles))
 get_stage(model, c("0", "male"))
 paths <- expand.grid(model$tree[2:1])[, 2:1]
 get_stage(model, paths)
-get_path(model, "Kids", "11")
+get_path(model, "Kids", "5")
 get_path(model, "Gender", "2")
 get_path(model, "Kids", c("5", "6"))
 }

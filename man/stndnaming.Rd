@@ -30,8 +30,7 @@ consecutive integers.
 Rename all stages in a staged event tree.
 }
 \examples{
-DD <- generate_xor_dataset(4, 100)
-model <- stages_fbhc(full(DD, join_unobserved = TRUE))
+model <- stages_fbhc(full(PhDArticles, join_unobserved = TRUE))
 model$stages
 model1 <- stndnaming(model)
 model1$stages
@@ -45,6 +44,6 @@ model3 <- stndnaming(model, prefix = TRUE)
 model3$stages
 
 ### manuallty select stage names left untouched
-model4 <- stndnaming(model, ignore = c("2", "4"), prefix = TRUE)
+model4 <- stndnaming(model, ignore = c("2", "6"), prefix = TRUE)
 model4$stages
 }

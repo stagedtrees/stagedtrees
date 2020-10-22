@@ -6,7 +6,7 @@
 \usage{
 \method{barplot}{sevt}(
   height,
-  var = variable.names(height)[1],
+  var,
   ignore = height$name_unobserved,
   beside = TRUE,
   horiz = FALSE,

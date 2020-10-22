@@ -5,7 +5,7 @@
 \alias{sevt.table}
 \alias{sevt.data.frame}
 \alias{sevt.list}
-\title{Build a staged event tree}
+\title{Staged event tree (sevt) class}
 \usage{
 sevt(x, full = FALSE, order = NULL)
 
@@ -27,10 +27,61 @@ tree, by default the order of the variables
 in \code{x}.}
 }
 \value{
-A staged event tree object, an element of class \code{sevt}.
+A staged event tree object, an object of class \code{sevt}.
 }
 \description{
-Basic constructor for staged event tree class (\code{sevt}).
+Structure and usage of S3 class \code{sevt},
+used to store a staged event tree.
+}
+\details{
+A staged event tree object is a list with components:
+\itemize{
+\item tree (required): A named list with one component
+for each variable in the model,
+a character vector withe the names of
+the levels for that variable.
+The order of the variable is the
+order of the event tree.
+\item stages (required): A named list with one component
+for each variable but the first,
+a character vector storing the stages for
+the situations related to path ending in that
+variable.
+\item ctables: A named list with one component
+for each variable, the flat contingency table of that variable
+given the previous variables.
+\item lambda: The smoothing parameter used to compute probabilities.
+\item name_unobserved: The stage name for unobserved situations.
+\item prob: The conditional probability tables for every
+variable and stage. Stored in a named list with
+one component for each variable, a list with
+one component for each stage,
+\item ll: The log-likelihood of the \code{estimated} model.
+If present, \code{\link{logLik.sevt}} will
+return this value instead of computing the log-likelihood.
+}
+The tree structure is never defined explicitly, instead it
+is implicitly defined by the list \code{tree} containing the order
+of the variables and the names of their levels. This is
+sufficient to define a complete symmetric tree where an
+internal node at a depth related to a variable \code{v}
+has a number of children equal to the cardinality of
+the levels of \code{v}.
+The stages informations is instead stored as a list of
+vectors, where each vector is indexed as the internal nodes
+of the tree at a given depth.
+
+To define a staged tree from data (data frame or table) the
+user can call either \code{\link{full}} or \code{\link{indep}}
+which both construct the staged tree object, attach the data in
+\code{ctables} and compute probabilities. After, one of the
+available model selection algorithm can be used, see for example
+\code{\link{stages_hc}}, \code{\link{stages_bhc}} or
+\code{\link{stages_hclust}}.
+If, mainly for development, only the staged tree structure is needed
+(without data or probabilities) the basic
+\code{\link{sevt}} constructor can
+be used.
 }
 \examples{
 

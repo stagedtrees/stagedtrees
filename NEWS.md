@@ -43,12 +43,17 @@ COMPLETE CHANGELOG:
 * in `stages_bj` (previously `bj.sevt`) distance is now passed with a 
   character and no longer as a function.
 * two new model selection function: `stages_hclust` and 
-  `stages_kmeans`, to learn stage structure using hierarchical or        k-means clustering.
+  `stages_kmeans`, to learn stage structure using hierarchical or        
+  k-means clustering.
 *  all model selection functions accept `scope` and `ignore`   
    parameters that allow to specifiy among which variables
    run the algorithm and which stages should be left untouched 
    (defult: the `name_unobserved` stages). 
 *  replace `1:length(x)` with the suggested `seq_along` in all code.
+* distance names in `stages_bj` and `stages_hclust` are compatibles.
+* fixed bug in some probability distance functions when 0 probabilites. 
+* Conversion generic function `as.sevt`, only implemented one method 
+for `bn.fit` class from bnlearn package. 
 
 # 1.0.2
 
