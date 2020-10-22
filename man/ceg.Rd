@@ -2,21 +2,21 @@
 % Please edit documentation in R/7-ceg-functions.R
 \name{ceg}
 \alias{ceg}
-\title{Creates the CEG starting from a staged tree}
+\title{Chain event graph (CEG)}
 \usage{
 ceg(object)
 }
 \arguments{
-\item{object}{a staged event tree}
+\item{object}{an object of class \code{sevt}.}
 }
 \value{
-a ceg object
+an object of class \code{ceg}.
 }
 \description{
-Creates the CEG starting from a staged tree
+Build the CEG representation from an object of class \code{\link{sevt}}.
 }
 \details{
-A ceg object is a staged event tree object with
+A ceg object is simply a staged event tree object with
 additional information on the positions.
 }
 \examples{

@@ -924,16 +924,14 @@ sevt_df <- function(x) {
     ) - 1))
 }
 
-#' Retrieve stage or path
+
+
+
+#' Get stage or path
 #'
 #' Utility functions to obtain stages from paths and
 #' paths from stages.
 #'
-#' @name getstagepath
-NULL
-
-
-#' @rdname getstagepath
 #' @param object An object of class \code{sevt}.
 #' @param path character vector, the path from root or
 #' a two dimensional array where each row is a path
@@ -962,7 +960,7 @@ get_stage <- function(object, path) {
 }
 
 
-#' @rdname getstagepath
+#' @rdname get_stage
 #'
 #' @param var character, one of the variable in
 #'            the staged tree.
@@ -978,6 +976,7 @@ get_stage <- function(object, path) {
 #' get_path(model, "Kids", c("5", "6"))
 #' @export
 get_path <- function(object, var, stage) {
+  check_sevt(object)
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
   }

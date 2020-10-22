@@ -1,15 +1,15 @@
-## stagedtrees 1.0.2.9999
+## stagedtrees 2.0.0
 
-Some changes to improve computational speed.
+Major changes in functions naming and package capabilities.
 
 ## Test environments
 
-* Ubuntu 18.04.2      (64-bit)  R 4.0.1 (local) 
+* Ubuntu 18.04.2      (64-bit)  R 4.0.2 (local) 
 * macOS darwin15.6.0  (64-bit)  R 3.6.1 (local)
 * Ubuntu 16.04.6      (64-bit)  R 4.0.0 (on travis-ci) 
-* Windows Server 2008 (64-bit)  R 4.0.0 (win-builder, r-release)
+* Windows Server 2008 (64-bit)  R 4.0.2 (win-builder, r-release)
 * Windows Server 2008 (64-bit)  R 3.6.3 (win-builder, r-oldrelease)
-* Windows Server 2008 (64-bit)  R devel (win-builder, r-devel)
+* Windows Server 2008 (64-bit)  R 4.1.0 (win-builder, r-devel)
 * R-hub debian-gcc-devel-nold (r-devel)
 * R-hub windows-x86_64-devel (r-devel)
 * R-hub ubuntu-gcc-release (r-release)

@@ -1,9 +1,10 @@
-#' Creates the CEG starting from a staged tree
+#' Chain event graph (CEG)
 #'
-#' @param object a staged event tree
-#' @details A ceg object is a staged event tree object with
+#' Build the CEG representation from an object of class \code{\link{sevt}}.
+#' @param object an object of class \code{sevt}.
+#' @details A ceg object is simply a staged event tree object with
 #'          additional information on the positions.
-#' @return a ceg object
+#' @return an object of class \code{ceg}.
 #' @examples
 #' DD <- generate_xor_dataset(3, 100)
 #' model <- stages_bhc(full(DD))
@@ -52,13 +53,13 @@ ceg <- function(object) {
 
 #' Ceg to adjmat of graph
 #'
-#' @param x the ceg object
-#' @details it is used to prepare the plot of the ceg.
-#' It transforms the ceg object into an adjacency matrix.
+#' Utility to obtain the adjacency matrix corresponding to a CEG.
+#' @param x an object of class \code{\link{ceg}}.
 #' @return the adj matrix
+#' @details This utility function can be used to prepare the adjacency 
+#' matrix to plot the CEG using a graph package (e.g. \code{igraph}).
 #' @examples
-#' DD <- generate_xor_dataset(3, 100)
-#' model <- stages_bhc(full(DD))
+#' model <- stages_fbhc(full(PhDArticles))
 #' model.ceg <- ceg(model)
 #' ceg2adjmat(model.ceg)
 #' @export

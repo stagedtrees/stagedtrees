@@ -7,21 +7,20 @@
 ceg2adjmat(x)
 }
 \arguments{
-\item{x}{the ceg object}
+\item{x}{an object of class \code{\link{ceg}}.}
 }
 \value{
 the adj matrix
 }
 \description{
-Ceg to adjmat of graph
+Utility to obtain the adjacency matrix corresponding to a CEG.
 }
 \details{
-it is used to prepare the plot of the ceg.
-It transforms the ceg object into an adjacency matrix.
+This utility function can be used to prepare the adjacency
+matrix to plot the CEG using a graph package (e.g. \code{igraph}).
 }
 \examples{
-DD <- generate_xor_dataset(3, 100)
-model <- stages_bhc(full(DD))
+model <- stages_fbhc(full(PhDArticles))
 model.ceg <- ceg(model)
 ceg2adjmat(model.ceg)
 }
