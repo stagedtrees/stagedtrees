@@ -12,16 +12,16 @@
 #' @param main an overall title for the plot.
 #' @param sub a sub title for the plot.
 #' @param asp the y/x aspect ratio.
-#' @param cex_label_nodes The magnification to be used for
+#' @param cex_label_nodes the magnification to be used for
 #'                        the node labels. 
 #'                        If set to \code{0} (as default) 
 #'                        node labels are not showed.
-#' @param cex_label_edges The magnification to be used 
+#' @param cex_label_edges the magnification to be used 
 #'                        for the edge labels. 
 #'                        If set to \code{0} edge labels are not showed.
-#' @param cex_nodes The magnification to be used for 
+#' @param cex_nodes the magnification to be used for 
 #'                  for the nodes of the tree.
-#' @param cex_tree_y The magnification to be used for the 
+#' @param cex_tree_y the magnification to be used for the 
 #'                   tree in the vertical direction.
 #'                   Default is \code{0.9} to leave some space 
 #'                   for the variable names. 
@@ -356,7 +356,7 @@ text.sevt <-
 #' 
 #' Create a bar plot visualizing probabilities associated to the 
 #' different stages of a variable in a staged event tree. 
-#' @param height An object of class \code{sevt}.
+#' @param height an object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in

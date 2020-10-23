@@ -5,8 +5,6 @@
 #' @param x   an R object.
 #' @param ... additional parmaeters to be used by specific methods.
 #' @return the equivalent object of class \code{\link{sevt}}.
-#' @details Only a method for objects of class \code{bn.fit} 
-#'          (\code{bnlearn} package) is available.
 #' @export
 as_sevt <- function(x, order = NULL, ...){
   UseMethod("as_sevt", x)
@@ -16,9 +14,11 @@ as_sevt <- function(x, order = NULL, ...){
 #' @param order order of the variables.
 #' @details In \code{as_sevt.bn.fit} the \code{order} 
 #' argument, if provided, must be a topological order of the 
-#' bn.fit object (no check is performed). If the order is not provided 
+#' \code{bn.fit} object (no check is performed). If the order is not provided 
 #' a topological order will be used (the one returned by 
 #' \code{bnlearn::node.ordering}).
+#' @details A method for objects of class \code{bn.fit} 
+#'          (\code{bnlearn} package).
 #' @export
 as_sevt.bn.fit <- function(x, order = NULL, ...) {
   bn <- bnlearn::bn.net(x)
@@ -104,7 +104,7 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
 #' @param object an object of class \code{sevt}.
 #' @param data data.frame or contingency table with observations of 
 #'             the variables in \code{object}.
-#' @param lambda smoothing parameter.
+#' @param lambda smoothing parameter or pseudocount.
 #' @return A fitted staged event tree, that is an object of class `sevt`
 #'         with `ctables`, `prob` and `ll` components.
 #' @details The data in form of contingency tables and the 

@@ -18,7 +18,7 @@
 )
 }
 \arguments{
-\item{height}{An object of class \code{sevt}.}
+\item{height}{an object of class \code{sevt}.}
 
 \item{var}{name of a variable in \code{object}.}
 

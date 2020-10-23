@@ -44,19 +44,19 @@
 
 \item{asp}{the y/x aspect ratio.}
 
-\item{cex_label_nodes}{The magnification to be used for
+\item{cex_label_nodes}{the magnification to be used for
 the node labels.
 If set to \code{0} (as default)
 node labels are not showed.}
 
-\item{cex_label_edges}{The magnification to be used
+\item{cex_label_edges}{the magnification to be used
 for the edge labels.
 If set to \code{0} edge labels are not showed.}
 
-\item{cex_nodes}{The magnification to be used for
+\item{cex_nodes}{the magnification to be used for
 for the nodes of the tree.}
 
-\item{cex_tree_y}{The magnification to be used for the
+\item{cex_tree_y}{the magnification to be used for the
 tree in the vertical direction.
 Default is \code{0.9} to leave some space
 for the variable names.}

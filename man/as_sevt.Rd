@@ -23,12 +23,12 @@ the equivalent object of class \code{\link{sevt}}.
 Convert to an equivalent object of class \code{\link{sevt}}.
 }
 \details{
-Only a method for objects of class \code{bn.fit}
-(\code{bnlearn} package) is available.
-
 In \code{as_sevt.bn.fit} the \code{order}
 argument, if provided, must be a topological order of the
-bn.fit object (no check is performed). If the order is not provided
+\code{bn.fit} object (no check is performed). If the order is not provided
 a topological order will be used (the one returned by
 \code{bnlearn::node.ordering}).
+
+A method for objects of class \code{bn.fit}
+(\code{bnlearn} package).
 }

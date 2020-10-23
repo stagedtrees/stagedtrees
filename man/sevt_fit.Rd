@@ -12,7 +12,7 @@ sevt_fit(object, data = NULL, lambda = object$lambda)
 \item{data}{data.frame or contingency table with observations of
 the variables in \code{object}.}
 
-\item{lambda}{smoothing parameter.}
+\item{lambda}{smoothing parameter or pseudocount.}
 }
 \value{
 A fitted staged event tree, that is an object of class \code{sevt}
