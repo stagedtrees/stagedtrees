@@ -2,8 +2,7 @@
 #'
 #' \code{plot.sevt} is the plot method for staged event tree
 #' objects. It allows easy plotting of staged event tree with some
-#' options, mainly different ways to specify colors for the stages (see
-#' examples).
+#' options (see Examples).
 #' @param x an object of class \code{sevt}.
 #' @param y alias for \code{limit} for compatibility with \code{plot}.
 #' @param limit maximum number of variables plotted.
@@ -38,11 +37,11 @@
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in
 #'               `x$name_unobserved`.
-#' @param pch_nodes Either an integer specifying a symbol or a single character 
+#' @param pch_nodes either an integer specifying a symbol or a single character 
 #'                  to be used as the default in plotting nodes shapes see 
 #'                  \code{\link{points}}.
-#' @param lwd_nodes The line width for edges, a positive number, defaulting to 1.
-#' @param lwd_edges The line width for nodes, a positive number, defaulting to 1.
+#' @param lwd_nodes the line width for edges, a positive number, defaulting to 1.
+#' @param lwd_edges the line width for nodes, a positive number, defaulting to 1.
 #' @param ... additional graphical parameters to be passed to
 #'         \code{points}, \code{lines}, \code{title},
 #'         \code{text} and \code{plot.window}.

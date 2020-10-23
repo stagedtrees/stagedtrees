@@ -78,13 +78,13 @@ otherwise variable names can be added manually using
 by default the name of the unobserved stages stored in
 \code{x$name_unobserved}.}
 
-\item{pch_nodes}{Either an integer specifying a symbol or a single character
+\item{pch_nodes}{either an integer specifying a symbol or a single character
 to be used as the default in plotting nodes shapes see
 \code{\link{points}}.}
 
-\item{lwd_nodes}{The line width for edges, a positive number, defaulting to 1.}
+\item{lwd_nodes}{the line width for edges, a positive number, defaulting to 1.}
 
-\item{lwd_edges}{The line width for nodes, a positive number, defaulting to 1.}
+\item{lwd_edges}{the line width for nodes, a positive number, defaulting to 1.}
 
 \item{...}{additional graphical parameters to be passed to
 \code{points}, \code{lines}, \code{title},
@@ -93,8 +93,7 @@ to be used as the default in plotting nodes shapes see
 \description{
 \code{plot.sevt} is the plot method for staged event tree
 objects. It allows easy plotting of staged event tree with some
-options, mainly different ways to specify colors for the stages (see
-examples).
+options (see Examples).
 }
 \examples{
 
