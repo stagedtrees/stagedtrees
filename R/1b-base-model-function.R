@@ -1,8 +1,8 @@
 #' Coerce to sevt
 #' 
-#' Convert an R object to an equivalent object of class \code{\link{sevt}}.
+#' Convert to an equivalent object of class \code{\link{sevt}}.
 #' 
-#' @param x     an R object to be coerced.
+#' @param x   an R object.
 #' @param ... additional parmaeters to be used by specific methods.
 #' @return the equivalent object of class \code{\link{sevt}}.
 #' @details Only a method for objects of class \code{bn.fit} 
@@ -13,7 +13,6 @@ as_sevt <- function(x, order = NULL, ...){
 } 
 
 #' @rdname as_sevt
-#' @param x a \code{bn.fit} object.
 #' @param order order of the variables.
 #' @details In \code{as_sevt.bn.fit} the \code{order} 
 #' argument, if provided, must be a topological order of the 
@@ -647,9 +646,9 @@ stndnaming <- function(object, uniq = FALSE,
 
 #' Compare two staged event tree
 #'
-#' Compare two stages event tree, return the differences of the stages
+#' Compare two staged event trees, return the differences of the stages
 #' structure and plot the difference tree. Three different methods to
-#' compute the difference tree are available.
+#' compute the difference tree are available (see Details).
 #' @param object1 an object of class \code{sevt}.
 #' @param object2 an object of class \code{sevt}.
 #' @param method character, method to compare staged event trees. 
@@ -663,15 +662,20 @@ stndnaming <- function(object, uniq = FALSE,
 #' is the same.
 #' Three methods are available:
 #' * \code{naive} first applies \code{\link{stndnaming}} to both
-#' objects and then simply compares the resulting stages.
+#' objects and then simply compares the resulting stage names.
 #' * \code{hamming} uses the \code{hamming_stages} function that find
-#' a smallest subset of nodes that
+#' a minimal subset of nodes of which stages 
 #' must be changed to obtain the same structure.
 #' * \code{stages} uses the \code{diff_stages} function that compare
-#' stages to check if the same stage structure is present in both models.
+#' stages to check if the same stage structures are present in both models.
 #'
 #' Setting \code{return_tree = TRUE} will return the stages
-#' structure difference obtained with the selected method.
+#' difference obtained with the selected method.
+#' The stages difference is a list of numerical vectors with same 
+#' lengths and structure as \code{stages(object1)} or \code{stages(object2)}, 
+#' where values are 1 if the corresponding node has different 
+#' (with respect to the selected \code{method}) associated stage, and
+#' 0 otherwise. 
 #'
 #' With \code{plot = TRUE} the plot of the difference tree is displayed.
 #'
@@ -927,8 +931,8 @@ sevt_df <- function(x) {
 #' Utility functions to obtain stages from paths and
 #' paths from stages.
 #'
-#' @param object An object of class \code{sevt}.
-#' @param path character vector, the path from root or
+#' @param object an object of class \code{sevt}.
+#' @param path character vector, the path fromroot or
 #' a two dimensional array where each row is a path
 #' from root.
 #' @return \code{get_stage} returns

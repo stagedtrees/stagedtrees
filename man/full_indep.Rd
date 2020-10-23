@@ -71,7 +71,7 @@ be joined (default TRUE).}
 \item{name_unobserved}{name to pass to \code{\link{join_unobserved}}.}
 }
 \description{
-Utilities to build fitted staged event tree from data.
+Build fitted staged event tree from data.
 }
 \details{
 Functions to create full or independent staged tree models from
@@ -81,8 +81,7 @@ situation is in a different stage, and thus the model has the
 maximum number of parameters.
 Conversely, the independent staged tree (\code{indep}) assigns
 all the situations related to the same variable to the same
-stage, thus it is equivalent to the independence factorization
-\eqn{P(X1, X2, X3, ...) = P(X1)P(X2)P(X3)...} .
+stage, thus it is equivalent to the independence factorization.
 }
 \examples{
 

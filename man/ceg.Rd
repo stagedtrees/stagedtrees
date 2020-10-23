@@ -16,7 +16,7 @@ an object of class \code{ceg}.
 Build the CEG representation from an object of class \code{\link{sevt}}.
 }
 \details{
-A ceg object is simply a staged event tree object with
+An object of class \code{ceg} is a staged event tree object with
 additional information on the positions.
 }
 \examples{

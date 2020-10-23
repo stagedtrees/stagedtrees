@@ -352,8 +352,10 @@ text.sevt <-
   }
 
 
-#' Barplot of stage probabilities
+#' Bar plots of stage probabilities
 #' 
+#' Create a bar plot visualizing probabilities associated to the 
+#' different stages of a variable in a staged event tree. 
 #' @param height An object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
 #' @param ignore vector of stages which will be ignored and left untouched,
@@ -367,6 +369,10 @@ text.sevt <-
 #' @param xlab a label for the x axis.
 #' @param ylab a label for the y axis.
 #' @param ... additional arguments passed to \code{\link{barplot}}.
+#' @return As \code{\link{barplot}}: 
+#'         A numeric vector (or matrix, when beside = TRUE), 
+#'         giving the coordinates of all the bar midpoints drawn, useful 
+#'         for adding to the graph.
 #' @export
 #' @examples 
 #' model <- stages_fbhc(full(PhDArticles, lambda = 1))

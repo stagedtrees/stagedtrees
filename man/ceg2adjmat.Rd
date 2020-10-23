@@ -13,7 +13,7 @@ ceg2adjmat(x)
 the adj matrix
 }
 \description{
-Utility to obtain the adjacency matrix corresponding to a CEG.
+Obtain the adjacency matrix corresponding to a CEG.
 }
 \details{
 This utility function can be used to prepare the adjacency

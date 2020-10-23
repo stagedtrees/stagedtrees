@@ -10,9 +10,9 @@ get_stage(object, path)
 get_path(object, var, stage)
 }
 \arguments{
-\item{object}{An object of class \code{sevt}.}
+\item{object}{an object of class \code{sevt}.}
 
-\item{path}{character vector, the path from root or
+\item{path}{character vector, the path fromroot or
 a two dimensional array where each row is a path
 from root.}
 

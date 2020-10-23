@@ -10,7 +10,7 @@ as_sevt(x, order = NULL, ...)
 \method{as_sevt}{bn.fit}(x, order = NULL, ...)
 }
 \arguments{
-\item{x}{a \code{bn.fit} object.}
+\item{x}{an R object.}
 
 \item{order}{order of the variables.}
 
@@ -20,7 +20,7 @@ as_sevt(x, order = NULL, ...)
 the equivalent object of class \code{\link{sevt}}.
 }
 \description{
-Convert an R object to an equivalent object of class \code{\link{sevt}}.
+Convert to an equivalent object of class \code{\link{sevt}}.
 }
 \details{
 Only a method for objects of class \code{bn.fit}

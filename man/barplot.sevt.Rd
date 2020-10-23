@@ -2,7 +2,7 @@
 % Please edit documentation in R/2-plot-functions.R
 \name{barplot.sevt}
 \alias{barplot.sevt}
-\title{Barplot of stage probabilities}
+\title{Bar plots of stage probabilities}
 \usage{
 \method{barplot}{sevt}(
   height,
@@ -41,8 +41,15 @@ argument in \code{\link{plot.sevt}}.}
 
 \item{...}{additional arguments passed to \code{\link{barplot}}.}
 }
+\value{
+As \code{\link{barplot}}:
+A numeric vector (or matrix, when beside = TRUE),
+giving the coordinates of all the bar midpoints drawn, useful
+for adding to the graph.
+}
 \description{
-Barplot of stage probabilities
+Create a bar plot visualizing probabilities associated to the
+different stages of a variable in a staged event tree.
 }
 \examples{
 model <- stages_fbhc(full(PhDArticles, lambda = 1))

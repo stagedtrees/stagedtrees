@@ -2,7 +2,7 @@
 #'
 #' Build the CEG representation from an object of class \code{\link{sevt}}.
 #' @param object an object of class \code{sevt}.
-#' @details A ceg object is simply a staged event tree object with
+#' @details An object of class \code{ceg} is a staged event tree object with
 #'          additional information on the positions.
 #' @return an object of class \code{ceg}.
 #' @examples
@@ -53,7 +53,7 @@ ceg <- function(object) {
 
 #' Ceg to adjmat of graph
 #'
-#' Utility to obtain the adjacency matrix corresponding to a CEG.
+#' Obtain the adjacency matrix corresponding to a CEG.
 #' @param x an object of class \code{\link{ceg}}.
 #' @return the adj matrix
 #' @details This utility function can be used to prepare the adjacency 

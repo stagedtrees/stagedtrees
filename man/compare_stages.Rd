@@ -49,9 +49,9 @@ situations should be modified to obtain the same models.
 to stages which are not the exactly equal.
 }
 \description{
-Compare two stages event tree, return the differences of the stages
+Compare two staged event trees, return the differences of the stages
 structure and plot the difference tree. Three different methods to
-compute the difference tree are available.
+compute the difference tree are available (see Details).
 }
 \details{
 \code{compare_stages} tests if the stage structure of two \code{sevt}
@@ -60,16 +60,21 @@ is the same.
 Three methods are available:
 \itemize{
 \item \code{naive} first applies \code{\link{stndnaming}} to both
-objects and then simply compares the resulting stages.
+objects and then simply compares the resulting stage names.
 \item \code{hamming} uses the \code{hamming_stages} function that find
-a smallest subset of nodes that
+a minimal subset of nodes of which stages
 must be changed to obtain the same structure.
 \item \code{stages} uses the \code{diff_stages} function that compare
-stages to check if the same stage structure is present in both models.
+stages to check if the same stage structures are present in both models.
 }
 
 Setting \code{return_tree = TRUE} will return the stages
-structure difference obtained with the selected method.
+difference obtained with the selected method.
+The stages difference is a list of numerical vectors with same
+lengths and structure as \code{stages(object1)} or \code{stages(object2)},
+where values are 1 if the corresponding node has different
+(with respect to the selected \code{method}) associated stage, and
+0 otherwise.
 
 With \code{plot = TRUE} the plot of the difference tree is displayed.
 
