@@ -1,25 +1,27 @@
 #' Join situations with no observations
 #'
 #' @param object an object of class \code{sevt} with associated data.
-#' @param fit if the model's probability should be computed.
+#' @param fit if TRUE update model's probabilities.
 #' @param name character, name for the new stage storing unobserved situations.
-#' @param scope character vector, list of variable in \code{object}.
+#' @param scope character vector, list of variables in \code{object}.
 #' @param trace if \code{> 0} print information to console.
 #' @param lambda smoothing parameter for the fitting.
 #'
-#' @return a staged event tree with situations with 0
-#' observations merged in a single stage.
+#' @return a staged event tree with at most one stage per variable with 
+#' no observations.
+#' If, as default, \code{fit=TRUE} the model will be re-fitted, if 
+#' \code{fit=FALSE} probabilities in the output model are not estimated.
 #'
 #' @details It takes as input a (fitted) staged event tree object
-#' and looking at the \code{ctables} it joins, in the same stage, all the situations with zero
-#' recorded observations. Since such joining does not change
+#' and  it joins, 
+#' in the same stage, all the situations with zero
+#' recorded observations.  
+#' Since such joining does not change
 #' the log-likelihood of the model, it is a useful (time-wise)
-#' pre-processing before others model selection algorithms.
-#' If \code{fit=TRUE} the model will be then re-fitted, if user sets
-#' \code{fit=FALSE} the returned model will have no probabilities.
+#' pre-processing prior to others model selection algorithms.
 #' 
-#' Users can decide to join unobserved situations directly in 
-#' \code{\link{full}} or \code{\link{indep}}, setting 
+#' Unobserved situations can be joined directly in 
+#' \code{\link{full}} or \code{\link{indep}}, by setting 
 #' \code{join_unobserved = TRUE}.
 #'
 #' @export

@@ -61,11 +61,11 @@ Three methods are available:
 \itemize{
 \item \code{naive} first applies \code{\link{stndnaming}} to both
 objects and then simply compares the resulting stage names.
-\item \code{hamming} uses the \code{hamming_stages} function that find
-a minimal subset of nodes of which stages
+\item \code{hamming} uses the \code{hamming_stages} function that finds
+a minimal subset of nodes which stages
 must be changed to obtain the same structure.
-\item \code{stages} uses the \code{diff_stages} function that compare
-stages to check if the same stage structures are present in both models.
+\item \code{stages} uses the \code{diff_stages} function that compares
+stages to check whether the same stage structure is present in both models.
 }
 
 Setting \code{return_tree = TRUE} will return the stages

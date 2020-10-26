@@ -203,7 +203,7 @@ set_stage <- function(object, path, stage) {
 #' @param s1 first stage.
 #' @param s2 second stage.
 #' @return the staged event tree where \code{s1} and \code{s2} are joined.
-#' @details This function joins together two stages associated to the 
+#' @details This function joins two stages associated to the 
 #'          same variable, 
 #'          updating probabilities and log-likelihood if 
 #'          the object was fitted.
@@ -230,6 +230,11 @@ join_stages <- function(object, v, s1, s2) {
     p2 <- object$prob[[v]][[s2]]
     n2 <- attr(p2, "n")
     n1 <- attr(p1, "n")
+    if (is.null(n1)) n1 <- 1
+    if (is.null(n2)) n2 <- 1
+    if (is.null(object$lambda)){
+      object$lambda <- 0
+    }
     ct1 <-
       ifelse(is.na(p1), 0, p1) * (n1 + object$lambda * k) - object$lambda
     ct2 <-
@@ -663,11 +668,11 @@ stndnaming <- function(object, uniq = FALSE,
 #' Three methods are available:
 #' * \code{naive} first applies \code{\link{stndnaming}} to both
 #' objects and then simply compares the resulting stage names.
-#' * \code{hamming} uses the \code{hamming_stages} function that find
-#' a minimal subset of nodes of which stages 
+#' * \code{hamming} uses the \code{hamming_stages} function that finds
+#' a minimal subset of nodes which stages 
 #' must be changed to obtain the same structure.
-#' * \code{stages} uses the \code{diff_stages} function that compare
-#' stages to check if the same stage structures are present in both models.
+#' * \code{stages} uses the \code{diff_stages} function that compares
+#' stages to check whether the same stage structure is present in both models.
 #'
 #' Setting \code{return_tree = TRUE} will return the stages
 #' difference obtained with the selected method.
@@ -996,16 +1001,29 @@ get_path <- function(object, var, stage) {
 
 #' Rename stage(s) in staged event tree
 #' 
-#' Utility function to change the name of a stage in a staged event tree.
-#' @param object An object of class \code{sevt}.
+#' Change the name of a stage in a staged event tree.
+#' @param object an object of class \code{sevt}.
 #' @param var name of a variable in \code{object}.
 #' @param stage name of the stage to be renamed.
 #' @param new new name for the stage.
+#' @details No internal checks are performed and as side effect 
+#' stages can be joined, if e.g. \code{new} is equal to the name
+#' of a stage for variable \code{var}. 
+#' 
 #' @return a staged event tree object where stages \code{stage} 
 #' have been renamed to \code{new}.
 #' @export 
 rename_stage <- function(object, var, stage, new){
   check_sevt(object)
+  if (length(var) > 1){
+    stop("var argument has length > 1")
+  }
+  if (length(stage) > 1){
+    stop("stage argument has length > 1")
+  }
+  if (length(new) > 1){
+    stop("new argument has length > 1")
+  }
   if (!var %in% names(object$tree)) {
     stop(var, " is not a variable in the model")
   }

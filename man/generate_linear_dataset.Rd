@@ -2,7 +2,7 @@
 % Please edit documentation in R/0-util-functions.R
 \name{generate_linear_dataset}
 \alias{generate_linear_dataset}
-\title{generate a random binary dataset for classification}
+\title{Generate a random binary dataset for classification}
 \usage{
 generate_linear_dataset(
   n = 2,

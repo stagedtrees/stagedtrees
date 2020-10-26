@@ -23,7 +23,7 @@ Join two stages in a staged event tree object, updating
 probabilities and log-likelihood accordingly.
 }
 \details{
-This function joins together two stages associated to the
+This function joins two stages associated to the
 same variable,
 updating probabilities and log-likelihood if
 the object was fitted.

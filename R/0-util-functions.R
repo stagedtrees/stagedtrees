@@ -230,7 +230,7 @@ noisy_xor <- function(x, eps = 0) {
   )))
 }
 
-#' generate a xor dataset
+#' Generate a xor dataset
 #'
 #' @param n number of variables.
 #' @param N number of observations.
@@ -269,7 +269,7 @@ generate_xor_dataset <- function(n = 2,
 }
 
 
-#' generate a random binary dataset for classification
+#' Generate a random binary dataset for classification
 #'
 #' Randomly generate a simple classification problem.
 #' @param n number of variables.

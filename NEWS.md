@@ -46,7 +46,7 @@ COMPLETE CHANGELOG:
   `stages_kmeans`, to learn stage structure using hierarchical or        
   k-means clustering.
 *  all model selection functions accept `scope` and `ignore`   
-   parameters that allow to specifiy among which variables
+   parameters that allow to specify among which variables
    run the algorithm and which stages should be left untouched 
    (default: the `name_unobserved` stages). 
 *  replace `1:length(x)` with the suggested `seq_along` in all code.

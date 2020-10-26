@@ -28,7 +28,7 @@ PhDArticles
 }
 \description{
 Number of publications of 915 PhD biochemistry students
-during the 1950’s and 1960’s
+during the 1950’s and 1960’s.
 }
 \references{
 Long, J. S. (1990). The origins of sex differences in science.

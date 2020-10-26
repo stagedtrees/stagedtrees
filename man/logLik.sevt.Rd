@@ -7,9 +7,7 @@
 \method{logLik}{sevt}(object, ...)
 }
 \arguments{
-\item{object}{an object of class \code{sevt}
-with fitted probabilities and associated data, as returned by \code{\link{sevt_fit}},
-\code{\link{full}}, \code{\link{indep}} or one of the model selection algorithms.}
+\item{object}{an fitted object of class \code{sevt}.}
 
 \item{...}{additional parameters (compatibility).}
 }

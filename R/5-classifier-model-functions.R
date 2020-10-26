@@ -2,9 +2,9 @@
 #'
 #' Predict class values from a staged event tree model.
 #' @param object an object of class \code{sevt} with fitted probabilities.
-#' @param newdata The newdata to perform predictions
-#' @param class A string indicating the name of the variable to use as
-#' the class variable, otherwise the first name in \code{names(object$tree)}
+#' @param newdata the newdata to perform predictions
+#' @param class character, the name of the variable to use as
+#' the class variable, if NULL  the first element \code{names(object$tree)}
 #' will be used.
 #' @param prob logical, if \code{TRUE} the probabilities of class are
 #'                      returned
@@ -14,7 +14,7 @@
 #'  given all the other variables in the model. Ties are broken at random and
 #'  if, for a given vector of predictor variables, all conditional probabilities
 #'  are 0, NA is returned.
-#' @return A vector of predictions or the corresponding probabilities
+#' @return A vector of predictions or the corresponding matrix of probabilities.
 #' @examples
 #' DD <- generate_xor_dataset(n = 4, 600)
 #' order <- c("C", "X1", "X2", "X3", "X4")

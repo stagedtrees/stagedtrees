@@ -20,5 +20,14 @@ a staged event tree object where stages \code{stage}
 have been renamed to \code{new}.
 }
 \description{
-Utility function to change the name of a stage in a staged event tree.
+Change the name of a stage in a staged event tree.
+}
+\details{
+No internal checks are performed and as side effect
+stages can be joined if e.g. \code{new} is equal to the name
+of a stage for variable \code{var}. Similarly, if \code{stage}
+is a character vector of stage names, all the stages in \code{stage}
+will be renamed to \code{new} thus joining them.
+Pairwise joining of stages is more efficently performed by
+\code{\link{join_stages}}.
 }

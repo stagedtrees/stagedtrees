@@ -9,10 +9,10 @@
 \arguments{
 \item{object}{an object of class \code{sevt} with fitted probabilities.}
 
-\item{newdata}{The newdata to perform predictions}
+\item{newdata}{the newdata to perform predictions}
 
-\item{class}{A string indicating the name of the variable to use as
-the class variable, otherwise the first name in \code{names(object$tree)}
+\item{class}{character, the name of the variable to use as
+the class variable, if NULL  the first element \code{names(object$tree)}
 will be used.}
 
 \item{prob}{logical, if \code{TRUE} the probabilities of class are
@@ -23,7 +23,7 @@ returned}
 \item{...}{additional parameters, see details}
 }
 \value{
-A vector of predictions or the corresponding probabilities
+A vector of predictions or the corresponding matrix of probabilities.
 }
 \description{
 Predict class values from a staged event tree model.

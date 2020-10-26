@@ -26,7 +26,7 @@
 #' PhD Students Publications
 #'
 #' Number of publications of 915 PhD biochemistry students
-#' during the 1950’s and 1960’s
+#' during the 1950’s and 1960’s.
 #'
 #'
 #' @format A data frame with 915 rows and 6 variables:

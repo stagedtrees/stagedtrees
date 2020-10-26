@@ -2,7 +2,7 @@
 % Please edit documentation in R/0-util-functions.R
 \name{generate_xor_dataset}
 \alias{generate_xor_dataset}
-\title{generate a xor dataset}
+\title{Generate a xor dataset}
 \usage{
 generate_xor_dataset(n = 2, N = 100, eps = 1.2)
 }
@@ -18,7 +18,7 @@ The xor dataset with \code{n} + 1 variables, where the first one is
 the class variable \code{C} computed as a noisy xor.
 }
 \description{
-generate a xor dataset
+Generate a xor dataset
 }
 \examples{
 DD <- generate_xor_dataset(n = 5, N = 1000, eps = 1.2)

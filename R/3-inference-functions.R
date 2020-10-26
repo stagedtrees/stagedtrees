@@ -96,9 +96,7 @@ prob <- function(object, x, log = FALSE, na0 = TRUE) {
 #' Log-Likelihood of a staged event tree
 #'
 #' Compute, or extract the log-likelihood of a staged event tree.
-#' @param object an object of class \code{sevt} 
-#' with fitted probabilities and associated data, as returned by \code{\link{sevt_fit}},
-#' \code{\link{full}}, \code{\link{indep}} or one of the model selection algorithms.
+#' @param object an fitted object of class \code{sevt}.
 #' @param ... additional parameters (compatibility).
 #' @return An object of class \code{\link{logLik}}.
 #' @importFrom stats logLik

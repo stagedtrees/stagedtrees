@@ -1,7 +1,7 @@
 #' Plot method for staged event trees
 #'
-#' \code{plot.sevt} is the plot method for staged event tree
-#' objects. It allows easy plotting of staged event tree with some
+#' Plot method for staged event tree
+#' objects. It allows easy plotting of staged event trees with some
 #' options (see Examples).
 #' @param x an object of class \code{sevt}.
 #' @param y alias for \code{limit} for compatibility with \code{plot}.
@@ -15,21 +15,25 @@
 #'                        the node labels. 
 #'                        If set to \code{0} (as default) 
 #'                        node labels are not showed.
-#' @param cex_label_edges the magnification to be used 
+#' @param cex_label_edges the magnification 
 #'                        for the edge labels. 
-#'                        If set to \code{0} edge labels are not showed.
-#' @param cex_nodes the magnification to be used for 
-#'                  for the nodes of the tree.
-#' @param cex_tree_y the magnification to be used for the 
+#'                        If set to \code{0} edge labels are not displayed.
+#' @param cex_nodes the magnification  for 
+#'                  the nodes of the tree.
+#' @param cex_tree_y the magnification for the 
 #'                   tree in the vertical direction.
 #'                   Default is \code{0.9} to leave some space 
 #'                   for the variable names. 
-#' @param col color mapping for the stages, a named list with
-#'        names equal to the variables names in the model and
-#'        vectors named with stages names as components; otherwise
-#'        if \code{col == "stages"} the stage names will be used as
-#'        colors; otherwise if \code{col} is a function it will take
+#' @param col 
+#'        color mapping for stages, one of the following: 
+#'        NULL (color will be assigned based on the current palette);
+#'        a named (variables) list of named (stages)
+#'        vectors of colors;
+#'        the character \code{"stages"}, in which case the stage names will be used as
+#'        colors; 
+#'        a function that takes
 #'        as input a vector of stages and output the corresponding colors.
+#'        Check the provided examples.
 #' @param col_edges color for the edges. 
 #' @param var_names logical, if variable names should be added to the plot,
 #'                  otherwise variable names can be added manually using 
@@ -71,17 +75,28 @@
 #' ### or changing global palette
 #' palette(hcl.colors(10, "Harmonic"))
 #' plot(mod)
+#' palette("default") ##
 #' 
 #' ### forcing plotting of unobserved stages
 #' plot(mod, ignore = NULL)
+#' 
+#' ### use function to specify colors 
+#' plot(mod, col = function(stages){
+#'     palette.colors(n = length(stages), palette = "Set 1")
+#' })
 #'
 #' ### manually give stages colors
-#' simple <- stages_hclust(full(PhDArticles, lambda = 1), k = 2)
-#' #### simple has 2 stages per variable "1" and "2"
-#' col <- lapply(simple$stages, function(s) {
-#'   c("1" = "purple", "2" = "cyan")
-#' })
-#' plot(simple, col = col)
+#' ### as an example we will assign colors only to the stages of two variables
+#' ### Gender (one stage named "1") and Mentor (six stages)
+#' col <- list(Gender = c("1" = "blue"), 
+#'             Mentor = c("UNOBSERVED" = "grey",
+#'                         "2" = "red", 
+#'                         "3" = "purple",
+#'                         "10" = "pink",
+#'                         "18" = "green",
+#'                         "22" = "brown"))
+#' ### by setting ignore = NULL we will plot also the UNOBSERVED stage for Mentor
+#' plot(mod, col = col, ignore = NULL)
 plot.sevt <-
   function(x,
            y = 10,
@@ -142,7 +157,7 @@ plot.sevt <-
           return(stages)
         })
       }
-    }
+    } 
     if (is.null(col_edges)){
       col_edges <- "black"
     }
