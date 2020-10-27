@@ -1,4 +1,4 @@
-# devel
+# 2.0.0
 
 This version introduces major changes, in functions capabilities
 and in functions naming. 
@@ -53,7 +53,7 @@ COMPLETE CHANGELOG:
 * distance names in `stages_bj` and `stages_hclust` are compatibles.
 * fixed bug in some probability distance functions when 0 probabilities. 
 * Conversion generic function `as.sevt`, only implemented one method 
-for `bn.fit` class from bnlearn package
+  for `bn.fit` class from bnlearn package
 * fix `inclusions_stages` and provide better output. 
 
 # 1.0.2

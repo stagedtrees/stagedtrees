@@ -12,7 +12,7 @@ get_path(object, var, stage)
 \arguments{
 \item{object}{an object of class \code{sevt}.}
 
-\item{path}{character vector, the path fromroot or
+\item{path}{character vector, the path from root or
 a two dimensional array where each row is a path
 from root.}
 

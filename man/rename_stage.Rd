@@ -7,7 +7,7 @@
 rename_stage(object, var, stage, new)
 }
 \arguments{
-\item{object}{An object of class \code{sevt}.}
+\item{object}{an object of class \code{sevt}.}
 
 \item{var}{name of a variable in \code{object}.}
 
@@ -24,10 +24,6 @@ Change the name of a stage in a staged event tree.
 }
 \details{
 No internal checks are performed and as side effect
-stages can be joined if e.g. \code{new} is equal to the name
-of a stage for variable \code{var}. Similarly, if \code{stage}
-is a character vector of stage names, all the stages in \code{stage}
-will be renamed to \code{new} thus joining them.
-Pairwise joining of stages is more efficently performed by
-\code{\link{join_stages}}.
+stages can be joined, if e.g. \code{new} is equal to the name
+of a stage for variable \code{var}.
 }

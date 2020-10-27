@@ -82,7 +82,7 @@
 #' 
 #' ### use function to specify colors 
 #' plot(mod, col = function(stages){
-#'     palette.colors(n = length(stages), palette = "Set 1")
+#'     hcl.colors(n = length(stages))
 #' })
 #'
 #' ### manually give stages colors

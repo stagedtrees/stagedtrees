@@ -937,7 +937,7 @@ sevt_df <- function(x) {
 #' paths from stages.
 #'
 #' @param object an object of class \code{sevt}.
-#' @param path character vector, the path fromroot or
+#' @param path character vector, the path from root or
 #' a two dimensional array where each row is a path
 #' from root.
 #' @return \code{get_stage} returns
