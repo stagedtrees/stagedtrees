@@ -13,7 +13,8 @@ Authors@R: c(
 	)
 Description: Creates and fits staged event tree probability models, 
              which are probabilistic graphical models capable of representing 
-             asymmetric conditional independences for categorical variables. 
+             asymmetric conditional independence statements 
+             for categorical variables. 
              Includes functions to create, plot and fit staged 
              event trees from data, as well as many efficient structure 
              learning algorithms.
