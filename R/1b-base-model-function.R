@@ -320,10 +320,18 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 #' @param object1 an object of class \code{sevt}.
 #' @param object2 an object of class \code{sevt}.
 #' @return a list with inclusion relations between stage
-#' structures for each variables in the models.
+#' structures for each variable in the models.
 #' @details Computes the 
-#'  inclusion/exclusion/equality/diversity between 
+#'  relations between 
 #'  the stages structures of the two models.
+#'  
+#'  The relations between stages of the same variable 
+#'  are stored in a data frame with three columns 
+#'  where each row represent  
+#'  a relation between a stage of the first model (\code{s1}) and 
+#'  a stage of the second model (\code{s2}). 
+#'  The relation can be one of the following: inclusion (\code{s1 < s2} 
+#'  or \code{s1 > s2}; equal (\code{s1 = s2}); not-equal (\code{s1 != s2}).  
 #' @examples
 #' mod1 <- stages_bhc(full(PhDArticles[, 1:5], lambda = 1))
 #' mod2 <- stages_fbhc(full(PhDArticles[, 1:5], lambda = 1))
@@ -393,8 +401,7 @@ inclusions_stages <- function(object1, object2) {
 
     # nice print
     out2[[k]] <- unique(noquote(out2[[k]]))
-    colnames(out2[[k]]) <- c(deparse(substitute(object1)), " - ", deparse(substitute(object2)))
-    out2[[k]] <- format(out2[[k]], justify = "centre")
+    colnames(out2[[k]]) <- c(deparse(substitute(object1)), "  ", deparse(substitute(object2)))
   }
   return(out2)
 }
