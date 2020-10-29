@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
  [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
  [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
  
-##### (almost) v2.0.0
+##### v2.0.0
 
-The current version of `stagedtrees` available on github is a 
+The current version of `stagedtrees` available on CRAN is a 
 major update over the previous version (1.0.2). The update will 
 almost surely break any code written with v1.0.2. 
 Functions naming and functions parameters have been updated to

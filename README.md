@@ -5,18 +5,18 @@
 
 [![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 [![Build
-Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=master)](https://travis-ci.com/gherardovarando/stagedtrees)
+Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://travis-ci.com/gherardovarando/stagedtrees)
 [![Coverage
-status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=master)
+status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
 [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
-##### (almost) v2.0.0
+##### v2.0.0
 
-The current version of `stagedtrees` available on github is a major
-update over the previous version (1.0.2). The update will almost surely
-break any code written with v1.0.2. Functions naming and functions
-parameters have been updated to simplify user experience. Check the
-[complete changelog](NEWS.md) for details.
+The current version of `stagedtrees` available on CRAN is a major update
+over the previous version (1.0.2). The update will almost surely break
+any code written with v1.0.2. Functions naming and functions parameters
+have been updated to simplify user experience. Check the [complete
+changelog](NEWS.md) for details.
 
 ##### Preprint
 
@@ -73,14 +73,14 @@ mod_indep <- indep(PhDArticles, lambda = 1)
 mod_indep
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4407.498 (df=8)
+#> 'log Lik.' -4407.498 (df=11)
 
 # Full (saturated) model
 mod_full <- full(PhDArticles, lambda = 1) 
 mod_full
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4066.97 (df=143)
+#> 'log Lik.' -4066.97 (df=116)
 
 # Full model with not-observed situations joined in NA stages
 mod_full0 <- full(PhDArticles, join_unobserved = TRUE, lambda = 1)
@@ -111,7 +111,7 @@ mod1 <- stages_hc(mod_indep)
 mod1
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4118.434 (df=14)
+#> 'log Lik.' -4118.434 (df=17)
 ```
 
   - **Backward Hill-Climbing** `stages_bhc(object, score, max_iter,
@@ -124,7 +124,7 @@ mod2 <- stages_bhc(mod_full)
 mod2
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4086.254 (df=19)
+#> 'log Lik.' -4086.254 (df=22)
 ```
 
   - **Backward Fast Hill-Climbing** `stages_fbhc(object, score,
@@ -137,7 +137,7 @@ mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
 mod3
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4146.642 (df=14)
+#> 'log Lik.' -4146.642 (df=17)
 ```
 
 ##### Distance methods
@@ -152,7 +152,7 @@ mod4 <- stages_bj(mod_full)
 mod4
 #> Staged event tree (fitted) 
 #> Articles[3] -> Gender[2] -> Kids[2] -> Married[2] -> Mentor[3] -> Prestige[2]  
-#> 'log Lik.' -4090.79 (df=22)
+#> 'log Lik.' -4090.79 (df=25)
 ```
 
 ##### Clustering methods
@@ -225,16 +225,16 @@ obs <- expand.grid(mod_full$tree[c(2,3,5)])
 p <- prob(mod2, obs)
 cbind(obs, P = p)
 #>    Gender Kids Mentor          P
-#> 1    male  yes    low 0.07208877
-#> 2  female  yes    low 0.03176117
+#> 1    male  yes    low 0.07222511
+#> 2  female  yes    low 0.03176136
 #> 3    male   no    low 0.09832136
 #> 4  female   no    low 0.11463987
-#> 5    male  yes medium 0.09915181
-#> 6  female  yes medium 0.03452265
+#> 5    male  yes medium 0.09912549
+#> 6  female  yes medium 0.03451126
 #> 7    male   no medium 0.10643086
 #> 8  female   no medium 0.14830958
-#> 9    male  yes   high 0.08660225
-#> 10 female  yes   high 0.02187397
+#> 9    male  yes   high 0.08649223
+#> 10 female  yes   high 0.02188517
 #> 11   male   no   high 0.07702539
 #> 12 female   no   high 0.10927233
 ```
@@ -276,11 +276,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Articles Gender Kids Married Mentor Prestige
-#> 1      1-2 female   no      no    low      low
+#> 1      1-2   male  yes     yes medium      low
 #> 2      1-2 female   no      no medium      low
-#> 3        0   male  yes     yes    low     high
-#> 4       >2   male   no     yes    low      low
-#> 5       >2 female   no      no   high     high
+#> 3        0   male  yes     yes    low      low
+#> 4        0 female   no      no    low     high
+#> 5       >2 female  yes     yes    low     high
 ```
 
 #### Explore the model
@@ -290,11 +290,11 @@ sample_from(mod4, 5)
 ``` r
 # variables 
 variable.names(mod1)
-#> [1] "Articles" "Gender"   "Kids"     "Married"  "Mentor"   "Prestige"
+#> NULL
 
 # stages
 stages(mod1, "Kids")
-#> [1] "1" "2" "1" "2" "1" "2"
+#> [1] "1" "3" "1" "3" "1" "3"
 
 # summary
 summary(mod1)
@@ -309,27 +309,29 @@ summary(mod1)
 #>   Variable:  Gender 
 #>  stage npaths sample.size      male    female
 #>      1      2         699 0.5121255 0.4878745
-#>      2      1         216 0.6284404 0.3715596
+#>      3      1         216 0.6284404 0.3715596
 #>   ------------ 
 #>   Variable:  Kids 
 #>  stage npaths sample.size       yes        no
 #>      1      3         494 0.4778226 0.5221774
-#>      2      3         421 0.1914894 0.8085106
+#>      3      3         421 0.1914894 0.8085106
 #>   ------------ 
 #>   Variable:  Married 
 #>  stage npaths sample.size          no       yes
-#>      2      6         316 0.003144654 0.9968553
+#>      3      6         316 0.003144654 0.9968553
 #>      1      6         599 0.515806988 0.4841930
 #>   ------------ 
 #>   Variable:  Mentor 
-#>  stage npaths sample.size       low    medium      high
-#>      1     17         625 0.3917197 0.3773885 0.2308917
-#>      2      7         290 0.1604096 0.4129693 0.4266212
+#>       stage npaths sample.size       low    medium      high
+#>  UNOBSERVED      6           0 0.3333333 0.3333333 0.3333333
+#>           1     11         625 0.3917197 0.3773885 0.2308917
+#>           4      7         290 0.1604096 0.4129693 0.4266212
 #>   ------------ 
 #>   Variable:  Prestige 
-#>  stage npaths sample.size       low      high
-#>      1     48         540 0.6236162 0.3763838
-#>      2     24         375 0.3262599 0.6737401
+#>       stage npaths sample.size       low      high
+#>  UNOBSERVED     18           0 0.5000000 0.5000000
+#>           1     30         540 0.6236162 0.3763838
+#>           4     24         375 0.3262599 0.6737401
 #>   ------------
 ```
 
@@ -396,7 +398,7 @@ compare_stages(mod1, mod2, method = "hamming", plot = TRUE,
     #> [1] FALSE
     
     hamming_stages(mod1, mod2)
-    #> [1] 43
+    #> [1] 29
     
     difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
                  return_tree = TRUE)
@@ -409,11 +411,11 @@ Penalized log-likelihood.
 ``` r
 BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #>            df      BIC
-#> mod_indep   8 8869.548
-#> mod_full  143 9109.046
-#> mod1       14 8332.333
-#> mod2       19 8302.067
-#> mod3       14 8388.749
-#> mod4       22 8331.596
+#> mod_indep  11 8890.005
+#> mod_full  116 8924.936
+#> mod1       17 8352.790
+#> mod2       22 8322.524
+#> mod3       17 8409.206
+#> mod4       25 8352.053
 #> mod5       17 8360.471
 ```
