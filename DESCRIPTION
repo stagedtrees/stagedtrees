@@ -1,7 +1,7 @@
 Package: stagedtrees
 Type: Package
 Title: Staged Event Trees 
-Version: 2.0.0
+Version: 2.0.0.999
 Authors@R: c(
   person(given = "Gherardo", family = "Varando", role = c("aut", "cre"),
   email = "gherardo.varando@gmail.com", 

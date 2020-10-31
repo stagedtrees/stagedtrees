@@ -131,6 +131,7 @@ plot.sevt <-
           return(list("1" = "black"))
         }
         stages <- unique(stages)
+        stages <- stages[!(stages %in% ignore)]
         vc <- seq_along(stages)
         names(vc) <- stages
         return(vc)
@@ -140,6 +141,8 @@ plot.sevt <-
         if (is.null(stages)) {
           return(list("1" = "black"))
         }
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% ignore)]
         cs <- col(unique(stages))
         if (is.null(names(cs))){
           names(cs) <- unique(stages)[seq_along(cs)]
@@ -153,6 +156,7 @@ plot.sevt <-
             return(list("1" = 1))
           }
           stages <- unique(stages)
+          stages <- stages[!(stages %in% ignore)]
           names(stages) <- stages
           return(stages)
         })
