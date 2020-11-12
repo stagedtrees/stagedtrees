@@ -1,8 +1,6 @@
-## stagedtrees 2.0.0
+## stagedtrees 2.0.1
 
-Major changes in functions naming and package capabilities (see NEWS.md).
-Update documentation and tests accordingly. 
-Removed methods dependency. 
+fix color assignment consistency between `plot.sevt` and `barplot.sevt`.
 
 ## Test environments
 
