@@ -1,6 +1,6 @@
 ## stagedtrees 2.0.1
 
-fix color assignment consistency between `plot.sevt` and `barplot.sevt`.
+fix colour assignment consistency between `plot.sevt` and `barplot.sevt`.
 
 ## Test environments
 
@@ -11,6 +11,8 @@ fix color assignment consistency between `plot.sevt` and `barplot.sevt`.
 * Windows Server 2008 (64-bit)  R 3.6.3 (win-builder, r-oldrelease)
 * Windows Server 2008 (64-bit)  R 4.1.0 (win-builder, r-devel)
 * R-hub debian-gcc-devel-nold (r-devel)
+* R-hub debian-gcc-devel (r-devel)
+* R-hub debian-gcc-release (r-release)
 * R-hub windows-x86_64-devel (r-devel)
 * R-hub ubuntu-gcc-release (r-release)
 * R-hub fedora-clang-devel (r-devel)
@@ -41,11 +43,8 @@ Duration: 26.1s
 
 ### win-builder
 
-Status: 1 NOTE 
+Status: OK
 
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Gherardo Varando <gherardo.varando@gmail.com>'
-
-### r-hub (check_for_cran)
+### r-hub (check_for_cran + debian-gcc-(devel|release)(-nold) )
 
 0 errors | 0 warnings | 0 notes
