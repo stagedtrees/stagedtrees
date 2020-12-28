@@ -1,3 +1,7 @@
+## devel 
+
+* improve implementation of `as_sevt.bn.fit`. 
+
 ## stagedtrees 2.0.1
 
 fix colour assignment consistency between `plot.sevt` and `barplot.sevt`.

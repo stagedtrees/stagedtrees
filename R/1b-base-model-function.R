@@ -53,45 +53,19 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
   # build stages info respecting conditional 
   # independences depicted in the bayesian network
   for (i in 2:length(order)) {
-    if (i <= 2) {
-      if (order[i - 1] %in% parents[[i]]) {
-        object$stages[[i - 1]] <- seq_along(tree[[i - 1]])
+    # initialize stages for ith variable 
+    stgs <- "1"
+    # build stages by ``
+    for (j in seq(i-1)){
+      if (order[j] %in% parents[[i]]){
+        stgs <- as.vector(sapply(stgs, function(x) paste0(x, tree[[j]])  ))
+      }else{
+        stgs <- as.vector(sapply(stgs, function(x) rep(x,length(tree[[j]]))))
       }
-    } else {
-      grid <- expand.grid(tree[(i - 1):1])[, (i - 1):1]
-      grid$stages <- 1:nrow(grid)
-      if (length(parents[[i]]) > 0) {
-        ind <- match(parents[[i]], colnames(grid))
-        grid <- data.frame(grid[, c(ind, ncol(grid))])
-        colnames(grid) <- c(parents[[i]], "stages")
-        for (j in 1:(nrow(grid) - 1))
-        {
-          for (k in (j + 1):(nrow(grid)))
-          {
-            if (sum(grid[j, -ncol(grid)] == grid[k, -ncol(grid)]) ==
-              length(grid[j, -ncol(grid)])) {
-              grid$stages[k] <- grid$stages[j]
-            }
-          }
-        }
-        values <- unique(grid$stages)
-        unique_values <- seq_along(values)
-        for (l in seq_along(values))
-        {
-          for (m in seq_along(grid$stages))
-          {
-            if (grid$stages[m] == values[l]) {
-              grid$stages[m] <- unique_values[l]
-            }
-          }
-        }
-      } else if (length(parents[[i]]) == 0) {
-        grid$stages <- rep(1, nrow(grid))
-      }
-      object$stages[[i - 1]] <- grid$stages
     }
+    object$stages[[i-1]] <- stgs
   }
-  object$stages <- lapply(object$stages, as.character)
+  object <- stndnaming(object)
   return(object)
 }
 
