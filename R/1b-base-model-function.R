@@ -55,11 +55,14 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
   for (i in 2:length(order)) {
     # initialize stages for ith variable 
     stgs <- "1"
-    # build stages by ``
+    # build stages by iteratively expanding stages along tree 
     for (j in seq(i-1)){
       if (order[j] %in% parents[[i]]){
+        ## if  jth variable is a parent of ith expand different 
+        ## stages for each value 
         stgs <- as.vector(sapply(stgs, function(x) paste0(x, tree[[j]])  ))
       }else{
+        ## otherwise replicate the same stages, since ith does not depend on jth
         stgs <- as.vector(sapply(stgs, function(x) rep(x,length(tree[[j]]))))
       }
     }
