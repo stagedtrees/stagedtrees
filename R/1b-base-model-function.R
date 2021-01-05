@@ -72,6 +72,50 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
   return(object)
 }
 
+#' Obtain the equivalent DAG list of parents
+#' 
+#' Compute, for each variable in the staged tree, 
+#' the parent set in the equivalent DAG. 
+#' @param x an object of class \code{sevt}
+#' @return A list where the parents of each variable are
+#' listed 
+#' @export
+as_parentslist <- function(x){
+  check_sevt(x)
+  Ms <- sapply(x$tree, length)
+  Vs <- names(x$tree)
+  prnt_list <- list()
+  prnt_list[[Vs[1]]] <- NA
+  for (i in seq_along(x$stages)) {
+    prn <- NULL
+    stgs <- x$stages[[i]]
+    for (j in rev(seq(i))){
+      splitd <- matrix(nrow = Ms[j], stgs)
+      cnts <- apply(splitd, MARGIN = 2, 
+                    FUN = function(x) length(unique(x)))
+      if (all(cnts == 1)){
+        ### it is not a parent      
+        stgs <- splitd[1,] ## just take the first
+      }else{ ### it is a parent
+        if (all(cnts == Ms[j])){ ### why this works? prove correctness
+          stgs <- splitd[1,] ## just take the first
+        }else{
+          warning("Asymmetric structure detected, the input staged tree is 
+                  not equivalent to a bn, 
+                  an approximated super-model is returned (no correctness yet...)")
+          stgs <- splitd[which.max(cnts),] ## take one with more differences 
+        }
+        prn <- c(prn, Vs[j])
+      }
+    }
+    if (is.null(prn)){
+      prn <- NA
+    }
+    prnt_list[[Vs[i+1]]] <- prn
+  }
+  prnt_list
+}
+
 
 #' Fit a staged event tree
 #'

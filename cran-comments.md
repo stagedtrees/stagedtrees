@@ -1,6 +1,7 @@
 ## devel 
 
 * improve implementation of `as_sevt.bn.fit`. 
+* implement `as_parentslist`. 
 
 ## stagedtrees 2.0.1
 
