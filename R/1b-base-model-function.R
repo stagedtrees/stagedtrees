@@ -78,10 +78,14 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
 #' the parent set in the equivalent DAG. 
 #' @param x an object of class \code{sevt}
 #' @return A list where the parents of each variable are
-#' listed 
+#' listed, NAs are reported if a variable has no parents. 
 #' @export
 as_parentslist <- function(x){
   check_sevt(x)
+  wrnCross <- FALSE
+  wrnAsym <- FALSE
+  whereCross <- c()
+  whereAsym  <- c()
   Ms <- sapply(x$tree, length)
   Vs <- names(x$tree)
   prnt_list <- list()
@@ -92,18 +96,18 @@ as_parentslist <- function(x){
     for (j in rev(seq(i))){
       splitd <- matrix(nrow = Ms[j], stgs)
       cnts <- apply(splitd, MARGIN = 2, 
-                    FUN = function(x) length(unique(x)))
+                    FUN = function(xx) length(unique(xx)))
       if (all(cnts == 1)){
         ### it is not a parent      
-        stgs <- splitd[1,] ## just take the first
+        stgs <- splitd[1,] ## just take the first since they are all the same
       }else{ ### it is a parent
-        if (all(cnts == Ms[j])){ ### why this works? prove correctness
-          stgs <- splitd[1,] ## just take the first
+        if (all(cnts == Ms[j])){
+          stgs <- c(t(splitd)) ## take all rows
         }else{
           warning("Asymmetric structure detected, the input staged tree is 
                   not equivalent to a bn, 
                   an approximated super-model is returned (no correctness yet...)")
-          stgs <- splitd[which.max(cnts),] ## take one with more differences 
+          stgs <- c(t(splitd)) 
         }
         prn <- c(prn, Vs[j])
       }

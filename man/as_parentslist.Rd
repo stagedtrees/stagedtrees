@@ -11,7 +11,7 @@ as_parentslist(x)
 }
 \value{
 A list where the parents of each variable are
-listed
+listed, NAs are reported if a variable has no parents.
 }
 \description{
 Compute, for each variable in the staged tree,
