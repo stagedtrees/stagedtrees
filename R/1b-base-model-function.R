@@ -82,10 +82,10 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
 #' @export
 as_parentslist <- function(x){
   check_sevt(x)
-  wrnCross <- FALSE
-  wrnAsym <- FALSE
-  whereCross <- c()
-  whereAsym  <- c()
+  wrnLocal <- FALSE
+  wrnCntxt <- FALSE
+  whereLocal <- c()
+  whereCntxt  <- c()
   Ms <- sapply(x$tree, length)
   Vs <- names(x$tree)
   prnt_list <- list()
@@ -102,13 +102,17 @@ as_parentslist <- function(x){
         stgs <- splitd[1,] ## just take the first since they are all the same
       }else{ ### it is a parent
         if (all(cnts == Ms[j])){
-          stgs <- c(t(splitd)) ## take all rows
+          ## check for local partial indep.
+          sR <- sum(apply(splitd, MARGIN = 1, 
+                          FUN = function(xx) length(unique(xx))))
+          if (sR != length(unique(c(splitd)))){
+            wrnLocal <- TRUE 
+          }
         }else{
-          warning("Asymmetric structure detected, the input staged tree is 
-                  not equivalent to a bn, 
-                  an approximated super-model is returned (no correctness yet...)")
-          stgs <- c(t(splitd)) 
+          ## we have a context indep.
+          wrnCntxt <- TRUE
         }
+        stgs <- c(t(splitd)) ## take all rows
         prn <- c(prn, Vs[j])
       }
     }
@@ -116,6 +120,17 @@ as_parentslist <- function(x){
       prn <- NA
     }
     prnt_list[[Vs[i+1]]] <- prn
+  }
+  if (wrnCntxt){
+    message("Context specific independences detected.")
+  }
+  if (wrnLocal){
+    message("Local partial independences detected.")
+  }
+  if (wrnCntxt | wrnLocal){
+    message("The input staged tree is 
+             not equivalent to a bn, 
+            an approximated super-model is returned")
   }
   prnt_list
 }
