@@ -10,10 +10,30 @@ as_parentslist(x)
 \item{x}{an object of class \code{sevt}}
 }
 \value{
-A list where the parents of each variable are
-listed, NAs are reported if a variable has no parents.
+An object of class \code{parentslist} for which a
+print method exists.
+Basically a list with
+one entries for each variable with fields:
+\itemize{
+\item \code{parents} The parents of the variable,
+NAs are reported if a variable has no parents.
+\item \code{local}   where local partial independences are found.
+\item \code{context} where context specific independecnes are found.
+}
 }
 \description{
 Compute, for each variable in the staged tree,
 the parent set in the equivalent DAG.
+Additional information about context specifi and local partial
+independences is also obtained.
+}
+\details{
+The output of this function is an object of class
+\code{parentslist} which is one of the possible encoding for
+a directed graph. Moreover, information about context specific
+and local partial independences is stored alongside the parents for
+each variable.
+}
+\seealso{
+\code{\link{print.parentslist}}.
 }

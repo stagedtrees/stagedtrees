@@ -18,7 +18,7 @@ as_sevt <- function(x, order = NULL, ...){
 #' a topological order will be used (the one returned by 
 #' \code{bnlearn::node.ordering}).
 #' @details A method for objects of class \code{bn.fit} 
-#'          (\code{bnlearn} package).
+#'          (\pkg{bnlearn} package).
 #' @export
 as_sevt.bn.fit <- function(x, order = NULL, ...) {
   bn <- bnlearn::bn.net(x)
@@ -76,22 +76,36 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
 #' 
 #' Compute, for each variable in the staged tree, 
 #' the parent set in the equivalent DAG. 
+#' Additional information about context specifi and local partial 
+#' independences is also obtained.
 #' @param x an object of class \code{sevt}
-#' @return A list where the parents of each variable are
-#' listed, NAs are reported if a variable has no parents. 
+#' @details The output of this function is an object of class 
+#' \code{parentslist} which is one of the possible encoding for
+#' a directed graph. Moreover, information about context specific 
+#' and local partial independences is stored alongside the parents for 
+#' each variable. 
+#' @return An object of class \code{parentslist} for which a 
+#' print method exists.
+#' Basically a list with 
+#' one entries for each variable with fields: 
+#' * \code{parents} The parents of the variable, 
+#'                  NAs are reported if a variable has no parents.
+#' * \code{local}   where local partial independences are found. 
+#' * \code{context} where context specific independecnes are found.   
+#' @seealso \code{\link{print.parentslist}}.
 #' @export
 as_parentslist <- function(x){
   check_sevt(x)
-  wrnLocal <- FALSE
-  wrnCntxt <- FALSE
-  whereLocal <- c()
-  whereCntxt  <- c()
+  wrn_lcl <- FALSE
+  wrn_cntx <- FALSE
   Ms <- sapply(x$tree, length)
   Vs <- names(x$tree)
   prnt_list <- list()
-  prnt_list[[Vs[1]]] <- NA
+  prnt_list[[Vs[1]]] <- list(parents = NULL, local = NULL, context = NULL)
   for (i in seq_along(x$stages)) {
     prn <- NULL
+    lcl <- NULL
+    cntx <- NULL
     stgs <- x$stages[[i]]
     for (j in rev(seq(i))){
       splitd <- matrix(nrow = Ms[j], stgs)
@@ -106,35 +120,77 @@ as_parentslist <- function(x){
           sR <- sum(apply(splitd, MARGIN = 1, 
                           FUN = function(xx) length(unique(xx))))
           if (sR != length(unique(c(splitd)))){
-            wrnLocal <- TRUE 
+            wrn_lcl <- TRUE
+            lcl <- c(lcl, Vs[j])
           }
         }else{
           ## we have a context indep.
-          wrnCntxt <- TRUE
+          wrn_cntx <- TRUE
+          cntx <- c(cntx, Vs[j])
+          ## check for local partial indep.
+          sR <- sum(apply(splitd, MARGIN = 1, 
+                          FUN = function(xx) length(unique(xx))))
+          if (sR != length(unique(c(splitd))) + sum(Ms[j] - cnts)){
+            wrn_lcl <- TRUE
+            lcl <- c(lcl, Vs[j])
+          }
         }
         stgs <- c(t(splitd)) ## take all rows
         prn <- c(prn, Vs[j])
       }
     }
-    if (is.null(prn)){
-      prn <- NA
-    }
-    prnt_list[[Vs[i+1]]] <- prn
+    prnt_list[[Vs[i+1]]] <- list(parents = prn, 
+                                 local = lcl,
+                                 context = cntx)
   }
-  if (wrnCntxt){
+  if (wrn_cntx){
     message("Context specific independences detected.")
   }
-  if (wrnLocal){
+  if (wrn_lcl){
     message("Local partial independences detected.")
   }
-  if (wrnCntxt | wrnLocal){
+  if (wrn_cntx | wrn_lcl){
     message("The input staged tree is 
              not equivalent to a bn, 
             an approximated super-model is returned")
   }
+  class(prnt_list) <- "parentslist"
   prnt_list
 }
 
+#' @rdname print.parentslist
+#' @param x an object of class \code{parentslist}.
+#' @param ... additional arguments for compatibility.
+#' @return \code{as.character.parentslist} returns a string 
+#'         encoding the associated directed graph and eventually
+#'         the context specific and local-partial independence.
+#'         The encoding is similar to the one returned by 
+#'         \code{\link{modelstring}} in package \pkg{bnlearn} 
+#'         and package \pkg{deal}.
+#' @export
+as.character.parentslist <- function(x, ...){
+  paste(sapply(seq_along(x), function(i) {
+    paste("[", names(x)[i], ifelse(!is.null(x[[i]]$parents), "|", ""), 
+          paste(ifelse(x[[i]]$parents %in% x[[i]]$context, "(", ""),
+                ifelse(x[[i]]$parents %in% x[[i]]$local, "{", ""),
+                x[[i]]$parents, 
+                ifelse(x[[i]]$parents %in% x[[i]]$local, "}", ""),
+                ifelse(x[[i]]$parents %in% x[[i]]$context, ")", ""),
+                sep = "", 
+                collapse = ":"), "]", sep = "")
+  }), collapse = "")    
+}
+
+#' Print a parentslist object
+#' 
+#' Nice print of a parentslist object
+#' @param x an object of class \code{parentslist}.
+#' @param ... additional arguments for compatibility.
+#' @export
+print.parentslist <- function(x, ...){
+  cat(" ", as.character.parentslist(x))
+  invisible(x)
+}
 
 #' Fit a staged event tree
 #'
