@@ -17,7 +17,7 @@ Obtain the adjacency matrix corresponding to a CEG.
 }
 \details{
 This utility function can be used to prepare the adjacency
-matrix to plot the CEG using a graph package (e.g. \code{igraph}).
+matrix to plot the CEG using a graph package (e.g. \pkg{igraph}).
 }
 \examples{
 model <- stages_fbhc(full(PhDArticles))

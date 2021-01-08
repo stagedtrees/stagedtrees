@@ -57,7 +57,7 @@ ceg <- function(object) {
 #' @param x an object of class \code{\link{ceg}}.
 #' @return the adj matrix
 #' @details This utility function can be used to prepare the adjacency 
-#' matrix to plot the CEG using a graph package (e.g. \code{igraph}).
+#' matrix to plot the CEG using a graph package (e.g. \pkg{igraph}).
 #' @examples
 #' model <- stages_fbhc(full(PhDArticles))
 #' model.ceg <- ceg(model)

@@ -30,5 +30,5 @@ a topological order will be used (the one returned by
 \code{bnlearn::node.ordering}).
 
 A method for objects of class \code{bn.fit}
-(\code{bnlearn} package).
+(\pkg{bnlearn} package).
 }
