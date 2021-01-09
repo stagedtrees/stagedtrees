@@ -17,8 +17,6 @@ as_sevt <- function(x, order = NULL, ...){
 #' \code{bn.fit} object (no check is performed). If the order is not provided 
 #' a topological order will be used (the one returned by 
 #' \code{bnlearn::node.ordering}).
-#' @details A method for objects of class \code{bn.fit} 
-#'          (\pkg{bnlearn} package).
 #' @export
 as_sevt.bn.fit <- function(x, order = NULL, ...) {
   bn <- bnlearn::bn.net(x)
@@ -72,39 +70,66 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
   return(object)
 }
 
+
+#' @rdname as_sevt
+#' @export
+as_sevt.parentslist <- function(x, ...){
+  order <- names(x)
+  tree <- lapply(x, function(vv) vv$values)
+  # create staged tree from list
+  object <- sevt(tree)
+  # extract parents
+  parents <- lapply(x, function(n) {
+    n$parents
+  })
+  # build stages info respecting conditional 
+  # independences depicted in the bayesian network
+  for (i in 2:length(order)) {
+    # initialize stages for ith variable 
+    stgs <- "1"
+    # build stages by iteratively expanding stages along tree 
+    for (j in seq(i-1)){
+      if (order[j] %in% parents[[i]]){
+        ## if  jth variable is a parent of ith expand different 
+        ## stages for each value 
+        stgs <- as.vector(sapply(stgs, function(x) paste0(x, tree[[j]])  ))
+      }else{
+        ## otherwise replicate the same stages, since ith does not depend on jth
+        stgs <- as.vector(sapply(stgs, function(x) rep(x,length(tree[[j]]))))
+      }
+    }
+    object$stages[[i-1]] <- stgs
+  }
+  object <- stndnaming(object)
+  object
+}
+
 #' Obtain the equivalent DAG list of parents
 #' 
 #' Compute, for each variable in the staged tree, 
-#' the parent set in the equivalent DAG. 
-#' Additional information about context specifi and local partial 
-#' independences is also obtained.
+#' the parent set in the equivalent DAG.
 #' @param x an object of class \code{sevt}
 #' @details The output of this function is an object of class 
 #' \code{parentslist} which is one of the possible encoding for
-#' a directed graph. Moreover, information about context specific 
-#' and local partial independences is stored alongside the parents for 
-#' each variable. 
+#' a directed graph.
+#' If a context-specific or a local-partial independence is detected
+#' a message is printed and the minimal super-model is returned.
 #' @return An object of class \code{parentslist} for which a 
 #' print method exists.
 #' Basically a list with 
 #' one entries for each variable with fields: 
 #' * \code{parents} The parents of the variable, 
-#'                  NAs are reported if a variable has no parents.
-#' * \code{local}   where local partial independences are found. 
-#' * \code{context} where context specific independecnes are found.   
 #' @seealso \code{\link{print.parentslist}}.
 #' @export
 as_parentslist <- function(x){
   check_sevt(x)
-  wrn_lcl <- FALSE
-  wrn_cntx <- FALSE
+  wrn <- FALSE
   Ms <- sapply(x$tree, length)
   Vs <- names(x$tree)
   prnt_list <- list()
-  prnt_list[[Vs[1]]] <- list(parents = NULL, local = NULL, context = NULL)
+  prnt_list[[Vs[1]]] <- list(values = x$tree[[1]], parents = NULL)
   for (i in seq_along(x$stages)) {
     prn <- NULL
-    lcl <- NULL
     cntx <- NULL
     stgs <- x$stages[[i]]
     for (j in rev(seq(i))){
@@ -116,42 +141,27 @@ as_parentslist <- function(x){
         stgs <- splitd[1,] ## just take the first since they are all the same
       }else{ ### it is a parent
         if (all(cnts == Ms[j])){
-          ## check for local partial indep.
+          ### check for local partial independence 
           sR <- sum(apply(splitd, MARGIN = 1, 
                           FUN = function(xx) length(unique(xx))))
           if (sR != length(unique(c(splitd)))){
-            wrn_lcl <- TRUE
-            lcl <- c(lcl, Vs[j])
+            wrn <- TRUE
           }
         }else{
           ## we have a context indep.
-          wrn_cntx <- TRUE
-          cntx <- c(cntx, Vs[j])
-          ## check for local partial indep.
-          sR <- sum(apply(splitd, MARGIN = 1, 
-                          FUN = function(xx) length(unique(xx))))
-          if (sR != length(unique(c(splitd))) + sum(Ms[j] - cnts)){
-            wrn_lcl <- TRUE
-            lcl <- c(lcl, Vs[j])
-          }
+          wrn <- TRUE
         }
-        stgs <- c(t(splitd)) ## take all rows
+        ## take all rows
+        stgs <- c(t(splitd))
         prn <- c(prn, Vs[j])
       }
     }
-    prnt_list[[Vs[i+1]]] <- list(parents = prn, 
-                                 local = lcl,
-                                 context = cntx)
+    prnt_list[[Vs[i+1]]] <- list(values = x$tree[[i+1]], parents = prn)
   }
-  if (wrn_cntx){
-    message("Context specific independences detected.")
-  }
-  if (wrn_lcl){
-    message("Local partial independences detected.")
-  }
-  if (wrn_cntx | wrn_lcl){
+  if (wrn){
+    message("Context specific or local partial independences detected.")
     message("The input staged tree is 
-             not equivalent to a bn, 
+             not equivalent to a BN, 
             an approximated super-model is returned")
   }
   class(prnt_list) <- "parentslist"
@@ -163,19 +173,15 @@ as_parentslist <- function(x){
 #' @param ... additional arguments for compatibility.
 #' @return \code{as.character.parentslist} returns a string 
 #'         encoding the associated directed graph and eventually
-#'         the context specific and local-partial independence.
+#'         the context specific independences.
 #'         The encoding is similar to the one returned by 
-#'         \code{\link{modelstring}} in package \pkg{bnlearn} 
+#'         \code{modelstring} in package \pkg{bnlearn} 
 #'         and package \pkg{deal}.
 #' @export
 as.character.parentslist <- function(x, ...){
   paste(sapply(seq_along(x), function(i) {
     paste("[", names(x)[i], ifelse(!is.null(x[[i]]$parents), "|", ""), 
-          paste(ifelse(x[[i]]$parents %in% x[[i]]$context, "(", ""),
-                ifelse(x[[i]]$parents %in% x[[i]]$local, "{", ""),
-                x[[i]]$parents, 
-                ifelse(x[[i]]$parents %in% x[[i]]$local, "}", ""),
-                ifelse(x[[i]]$parents %in% x[[i]]$context, ")", ""),
+          paste(x[[i]]$parents, 
                 sep = "", 
                 collapse = ":"), "]", sep = "")
   }), collapse = "")    

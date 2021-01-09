@@ -2,6 +2,7 @@
 
 S3method(as.character,parentslist)
 S3method(as_sevt,bn.fit)
+S3method(as_sevt,parentslist)
 S3method(barplot,sevt)
 S3method(full,data.frame)
 S3method(full,table)

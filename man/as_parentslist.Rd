@@ -16,23 +16,18 @@ Basically a list with
 one entries for each variable with fields:
 \itemize{
 \item \code{parents} The parents of the variable,
-NAs are reported if a variable has no parents.
-\item \code{local}   where local partial independences are found.
-\item \code{context} where context specific independecnes are found.
 }
 }
 \description{
 Compute, for each variable in the staged tree,
 the parent set in the equivalent DAG.
-Additional information about context specifi and local partial
-independences is also obtained.
 }
 \details{
 The output of this function is an object of class
 \code{parentslist} which is one of the possible encoding for
-a directed graph. Moreover, information about context specific
-and local partial independences is stored alongside the parents for
-each variable.
+a directed graph.
+If a context-specific or a local-partial independence is detected
+a message is printed and the minimal super-model is returned.
 }
 \seealso{
 \code{\link{print.parentslist}}.

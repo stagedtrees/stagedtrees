@@ -17,9 +17,9 @@
 \value{
 \code{as.character.parentslist} returns a string
 encoding the associated directed graph and eventually
-the context specific and local-partial independence.
+the context specific independences.
 The encoding is similar to the one returned by
-\code{\link{modelstring}} in package \pkg{bnlearn}
+\code{modelstring} in package \pkg{bnlearn}
 and package \pkg{deal}.
 }
 \description{
