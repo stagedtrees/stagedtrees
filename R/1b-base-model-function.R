@@ -118,6 +118,7 @@ as_sevt.parentslist <- function(x, ...){
 #' print method exists.
 #' Basically a list with 
 #' one entries for each variable with fields: 
+#' * \code{values} the sample space for the variable.
 #' * \code{parents} The parents of the variable, 
 #' @seealso \code{\link{print.parentslist}}.
 #' @export

@@ -15,6 +15,7 @@ print method exists.
 Basically a list with
 one entries for each variable with fields:
 \itemize{
+\item \code{values} the sample space for the variable.
 \item \code{parents} The parents of the variable,
 }
 }
