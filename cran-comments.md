@@ -3,6 +3,7 @@
 * improve implementation of `as_sevt.bn.fit`. 
 * implement `as_parentslist`. 
 * use \pkg instead of \code for package names in documentation.
+* fix `find_stage` 
 
 ## stagedtrees 2.0.1
 

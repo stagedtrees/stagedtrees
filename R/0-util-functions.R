@@ -74,9 +74,9 @@ tree_idx <- function(path, tree, complete = FALSE) {
 find_stage <- function(object, path) {
   k <- length(path)
   ix <- tree_idx(path = path, tree = object$tree)
-  l <- length(object$stages[[k]])
+  l <- length(object$stages[[sevt_varnames(object)[k + 1]]])
   ### stages can be defined in a reduced vector
-  return(object$stages[[k]][(ix - 1) %% l + 1])
+  return(object$stages[[sevt_varnames(object)[k + 1]]][(ix - 1) %% l + 1])
 }
 
 
