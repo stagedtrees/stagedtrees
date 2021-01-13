@@ -19,19 +19,7 @@ as_sevt <- function(x, ...){
 #' \code{bnlearn::node.ordering}).
 #' @export
 as_sevt.bn.fit <- function(x, order = NULL, ...) {
-  # build the list of levels
-  values <- lapply(
-    x,
-    function(tt) {
-      if (length(tt$parents) == 0) {
-        names(tt$prob)
-      } else {
-        rownames(tt$prob)
-      }
-    }
-  )
-  as_sevt.bn.fit(as_parentslist.bn.fit(x, order = order), 
-                      values = values, ...)
+  as_sevt.parentslist(as_parentslist.bn.fit(x, order = order))
 }
 
 
@@ -140,7 +128,14 @@ as_parentslist.bn <- function(x, order = NULL, ...){
 #' @rdname as_parentslist
 #' @export
 as_parentslist.bn.fit <- function(x, order = NULL,  ...){
- as_parentslist(bnlearn::as.bn(x), order = order, ...)
+  # if no order is provided from the user
+  # then a topological order is used
+  if (is.null(order)){
+    order <- bnlearn::node.ordering(x)
+  }
+  plist <- lapply(x[order], function(n) list(parents = n$parents, values = dimnames(n$prob)[[1]]))
+  class(plist) <- "parentslist"
+  plist
 }
 
 
