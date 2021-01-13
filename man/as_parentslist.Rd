@@ -26,7 +26,7 @@ as_parentslist(x, ...)
 An object of class \code{parentslist} for which a
 print method exists.
 Basically a list with
-one entries for each variable with field:
+one entries for each variable with fields:
 \itemize{
 \item \code{parents} The parents of the variable.
 \item \code{values} values for the variable.
@@ -38,7 +38,10 @@ Convert to the equivalent representation as list of parents.
 \details{
 The output of this function is an object of class
 \code{parentslist} which is one of the possible encoding for
-a directed graph.
+a directed graph. This is mainly an internal class and its
+specification can be changed in the future.
+For example now it also includes information on the
+sample space of the variables.
 
 In \code{as_parentslist.sevt}, if a context-specific or a local-partial independence is detected
 a message is printed and the minimal super-model is returned.

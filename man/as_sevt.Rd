@@ -7,22 +7,22 @@
 \alias{as_sevt.parentslist}
 \title{Coerce to sevt}
 \usage{
-as_sevt(x, order = NULL, ...)
+as_sevt(x, ...)
 
 \method{as_sevt}{bn.fit}(x, order = NULL, ...)
 
-\method{as_sevt}{bn}(x, order = NULL, tree = NULL, ...)
+\method{as_sevt}{bn}(x, order = NULL, values = NULL, ...)
 
-\method{as_sevt}{parentslist}(x, order = NULL, tree = NULL, ...)
+\method{as_sevt}{parentslist}(x, order = NULL, values = NULL, ...)
 }
 \arguments{
 \item{x}{an R object.}
 
+\item{...}{additional parameters to be used by specific methods.}
+
 \item{order}{order of the variables.}
 
-\item{...}{additional parmaeters to be used by specific methods.}
-
-\item{tree}{values for variables.}
+\item{values}{the values for each variable, the sample space.}
 }
 \value{
 the equivalent object of class \code{\link{sevt}}.
@@ -42,4 +42,10 @@ argument, if provided, must be a topological order of the
 corresponding DAG (no check is performed).
 If the order is not provided
 \code{names(x)} is used.
+
+The \code{values} parameter is used to specify the sample space
+of each variable. For a \code{parentslist} object created with
+\code{\link{as_parentslist}} from an object of class \code{sevt},
+it is, usually, not needed to specify the \code{values} parameter,
+since the sample space is saved in the \code{parentslist} object.``
 }

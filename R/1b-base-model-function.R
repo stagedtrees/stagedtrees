@@ -3,10 +3,10 @@
 #' Convert to an equivalent object of class \code{\link{sevt}}.
 #' 
 #' @param x   an R object.
-#' @param ... additional parmaeters to be used by specific methods.
+#' @param ... additional parameters to be used by specific methods.
 #' @return the equivalent object of class \code{\link{sevt}}.
 #' @export
-as_sevt <- function(x, order = NULL, ...){
+as_sevt <- function(x, ...){
   UseMethod("as_sevt", x)
 } 
 
@@ -19,8 +19,8 @@ as_sevt <- function(x, order = NULL, ...){
 #' \code{bnlearn::node.ordering}).
 #' @export
 as_sevt.bn.fit <- function(x, order = NULL, ...) {
-  # build the ordered list of levels
-  tree <- lapply(
+  # build the list of levels
+  values <- lapply(
     x,
     function(tt) {
       if (length(tt$parents) == 0) {
@@ -31,37 +31,49 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
     }
   )
   as_sevt.bn.fit(as_parentslist.bn.fit(x, order = order), 
-                      tree = tree, ...)
+                      values = values, ...)
 }
 
 
 #' @rdname as_sevt
 #' @export
-as_sevt.bn <- function(x, order = NULL, tree = NULL, ...){
-  as_sevt.parentslist(as_parentslist(x, order = order), tree = tree, ...)
+as_sevt.bn <- function(x, order = NULL, values = NULL, ...){
+  as_sevt.parentslist(as_parentslist(x, order = order), values = values, ...)
 }
 
 
 #' @rdname as_sevt
-#' @param tree values for variables.
+#' @param values the values for each variable, the sample space.
 #' @details In \code{as_sevt.parentslist} the \code{order} 
 #' argument, if provided, must be a topological order of the 
 #' corresponding DAG (no check is performed). 
 #' If the order is not provided 
 #' \code{names(x)} is used.
+#' 
+#' The \code{values} parameter is used to specify the sample space 
+#' of each variable. For a \code{parentslist} object created with 
+#' \code{\link{as_parentslist}} from an object of class \code{sevt},
+#' it is, usually, not needed to specify the \code{values} parameter,
+#' since the sample space is saved in the \code{parentslist} object.``
 #' @export
-as_sevt.parentslist <- function(x, order = NULL, tree = NULL, ...){
+as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...){
   if (is.null(order)){
     order <- names(x)    
   }
-  if (is.null(tree)){
-    tree <- lapply(x, function(vv) 
-    if (is.null(vv$values)){c(0,1)} else { 
-      warning("Missing values for a variable (0,1) are used")
-      vv$values} )
+  if (is.null(values)){
+    values <- lapply(x, function(vv) {
+      if (is.null(vv$values)){
+        warning("Missing values for a variable, a binary variable is used", call. = FALSE)
+        c(0,1)
+      } else {
+        vv$values
+      } 
+    })
   }
+  # reorder the list
+  values <- values[order]
   # create staged tree from list
-  object <- sevt(tree, order = order)
+  object <- sevt(values, order = order)
   # extract parents
   parents <- lapply(x, function(n) {
     n$parents
@@ -76,10 +88,10 @@ as_sevt.parentslist <- function(x, order = NULL, tree = NULL, ...){
       if (order[j] %in% parents[[i]]){
         ## if  jth variable is a parent of ith expand different 
         ## stages for each value 
-        stgs <- as.vector(sapply(stgs, function(x) paste0(x, tree[[j]])  ))
+        stgs <- as.vector(sapply(stgs, function(x) paste0(x, values[[j]])  ))
       }else{
         ## otherwise replicate the same stages, since ith does not depend on jth
-        stgs <- as.vector(sapply(stgs, function(x) rep(x,length(tree[[j]]))))
+        stgs <- as.vector(sapply(stgs, function(x) rep(x,length(values[[j]]))))
       }
     }
     object$stages[[order[i]]] <- stgs
@@ -95,11 +107,14 @@ as_sevt.parentslist <- function(x, order = NULL, tree = NULL, ...){
 #' @param ... additional parameters. 
 #' @details The output of this function is an object of class 
 #' \code{parentslist} which is one of the possible encoding for
-#' a directed graph.
+#' a directed graph. This is mainly an internal class and its
+#' specification can be changed in the future. 
+#' For example now it also includes information on the 
+#' sample space of the variables.
 #' @return An object of class \code{parentslist} for which a 
 #' print method exists.
 #' Basically a list with 
-#' one entries for each variable with field: 
+#' one entries for each variable with fields: 
 #' * \code{parents} The parents of the variable.
 #' * \code{values} values for the variable.
 #' @seealso \code{\link{print.parentslist}}.
@@ -209,6 +224,30 @@ print.parentslist <- function(x, ...){
   cat(" ", as.character.parentslist(x))
   invisible(x)
 }
+
+#' Convert to a \pkg{bnlearn} object
+#' 
+#' Convert a staged tree object into an object of class \code{bn}
+#' from the \pkg{bnlearn} package.
+#' @param x an R object of class \code{sevt} or \code{parentslist}.
+#' @return an object of class \code{bn} from package \pkg{bnlearn}.
+#' @export
+as_bn <- function(x){
+  UseMethod("as_bn", x)
+}
+
+#' @rdname as_bn
+#' @export
+as_bn.parentslist <- function(x){
+  bnlearn::model2network(as.character(x))
+}
+
+#' @rdname as_bn
+#' @export
+as_bn.sevt <- function(x){
+  as_bn.parentslist(as_parentslist.sevt(x))
+}
+
 
 #' Fit a staged event tree
 #'
