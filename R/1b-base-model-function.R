@@ -163,7 +163,7 @@ as_parentslist <- function(x){
     message("Context specific or local partial independences detected.")
     message("The input staged tree is 
              not equivalent to a BN, 
-            an approximated super-model is returned")
+            a super-model is returned")
   }
   class(prnt_list) <- "parentslist"
   prnt_list
@@ -179,7 +179,7 @@ as_parentslist <- function(x){
 #'         \code{modelstring} in package \pkg{bnlearn} 
 #'         and package \pkg{deal}.
 #' @export
-as.character.parentslist <- function(x, ...){
+as_character.parentslist <- function(x, ...){
   paste(sapply(seq_along(x), function(i) {
     paste("[", names(x)[i], ifelse(!is.null(x[[i]]$parents), "|", ""), 
           paste(x[[i]]$parents, 
@@ -195,7 +195,7 @@ as.character.parentslist <- function(x, ...){
 #' @param ... additional arguments for compatibility.
 #' @export
 print.parentslist <- function(x, ...){
-  cat(" ", as.character.parentslist(x))
+  cat(" ", as_character.parentslist(x))
   invisible(x)
 }
 
