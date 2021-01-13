@@ -2,32 +2,47 @@
 % Please edit documentation in R/1b-base-model-function.R
 \name{as_parentslist}
 \alias{as_parentslist}
-\title{Obtain the equivalent DAG list of parents}
+\alias{as_parentslist.bn}
+\alias{as_parentslist.bn.fit}
+\alias{as_parentslist.sevt}
+\title{Obtain the equivalent DAG as list of parents}
 \usage{
-as_parentslist(x)
+as_parentslist(x, ...)
+
+\method{as_parentslist}{bn}(x, order = NULL, ...)
+
+\method{as_parentslist}{bn.fit}(x, order = NULL, ...)
+
+\method{as_parentslist}{sevt}(x, ...)
 }
 \arguments{
-\item{x}{an object of class \code{sevt}}
+\item{x}{an R object.}
+
+\item{...}{additional parameters.}
+
+\item{order}{order of the variables, usually a topological order.}
+
+\item{values}{named list with the sample space of each variable.}
 }
 \value{
 An object of class \code{parentslist} for which a
 print method exists.
 Basically a list with
-one entries for each variable with fields:
+one entries for each variable with field:
 \itemize{
-\item \code{values} the sample space for the variable.
-\item \code{parents} The parents of the variable,
+\item \code{parents} The parents of the variable.
+\item \code{values} values for the variable.
 }
 }
 \description{
-Compute, for each variable in the staged tree,
-the parent set in the equivalent DAG.
+Convert to the equivalent representation as list of parents.
 }
 \details{
 The output of this function is an object of class
 \code{parentslist} which is one of the possible encoding for
 a directed graph.
-If a context-specific or a local-partial independence is detected
+
+In \code{as_parentslist.sevt}, if a context-specific or a local-partial independence is detected
 a message is printed and the minimal super-model is returned.
 }
 \seealso{

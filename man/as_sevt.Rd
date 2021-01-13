@@ -3,6 +3,7 @@
 \name{as_sevt}
 \alias{as_sevt}
 \alias{as_sevt.bn.fit}
+\alias{as_sevt.bn}
 \alias{as_sevt.parentslist}
 \title{Coerce to sevt}
 \usage{
@@ -10,7 +11,9 @@ as_sevt(x, order = NULL, ...)
 
 \method{as_sevt}{bn.fit}(x, order = NULL, ...)
 
-\method{as_sevt}{parentslist}(x, ...)
+\method{as_sevt}{bn}(x, order = NULL, tree = NULL, ...)
+
+\method{as_sevt}{parentslist}(x, tree = NULL, ...)
 }
 \arguments{
 \item{x}{an R object.}
@@ -18,6 +21,8 @@ as_sevt(x, order = NULL, ...)
 \item{order}{order of the variables.}
 
 \item{...}{additional parmaeters to be used by specific methods.}
+
+\item{tree}{values for variables.}
 }
 \value{
 the equivalent object of class \code{\link{sevt}}.
@@ -31,4 +36,6 @@ argument, if provided, must be a topological order of the
 \code{bn.fit} object (no check is performed). If the order is not provided
 a topological order will be used (the one returned by
 \code{bnlearn::node.ordering}).
+
+In \code{as_sevt.parentslist}
 }

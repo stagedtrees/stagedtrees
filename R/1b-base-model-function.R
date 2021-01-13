@@ -19,7 +19,6 @@ as_sevt <- function(x, order = NULL, ...){
 #' \code{bnlearn::node.ordering}).
 #' @export
 as_sevt.bn.fit <- function(x, order = NULL, ...) {
-  bn <- bnlearn::bn.net(x)
   # build the ordered list of levels
   tree <- lapply(
     x,
@@ -31,59 +30,38 @@ as_sevt.bn.fit <- function(x, order = NULL, ...) {
       }
     }
   )
-  # if no order is provided from the user
-  # then a topological order is used
-  if (is.null(order)){
-    order <- bnlearn::node.ordering(bn)
-  }
-  # order the list of levels
-  tree <- tree[order]
-  # create staged tree from list
-  object <- sevt(tree)
-  # extract parents
-  parents <- lapply(bn$nodes[order], function(n) {
-    if (identical(n$parents, character(0))) {
-      return(NULL)
-    } else {
-      return(n$parents)
-    }
-  })
-  # build stages info respecting conditional 
-  # independences depicted in the bayesian network
-  for (i in 2:length(order)) {
-    # initialize stages for ith variable 
-    stgs <- "1"
-    # build stages by iteratively expanding stages along tree 
-    for (j in seq(i-1)){
-      if (order[j] %in% parents[[i]]){
-        ## if  jth variable is a parent of ith expand different 
-        ## stages for each value 
-        stgs <- as.vector(sapply(stgs, function(x) paste0(x, tree[[j]])  ))
-      }else{
-        ## otherwise replicate the same stages, since ith does not depend on jth
-        stgs <- as.vector(sapply(stgs, function(x) rep(x,length(tree[[j]]))))
-      }
-    }
-    object$stages[[i-1]] <- stgs
-  }
-  object <- stndnaming(object)
-  return(object)
+  as_sevt.bn.fit(as_parentslist.bn.fit(x, order = order), 
+                      tree = tree, ...)
 }
 
 
 #' @rdname as_sevt
 #' @export
-as_sevt.parentslist <- function(x, ...){
+as_sevt.bn <- function(x, order = NULL, tree = NULL, ...){
+  as_sevt.parentslist(as_parentslist(x, order = order), tree = tree, ...)
+}
+
+
+#' @rdname as_sevt
+#' @param tree values for variables.
+#' @details In `as_sevt.parentslist`
+#' @export
+as_sevt.parentslist <- function(x, tree = NULL, ...){
   order <- names(x)
-  tree <- lapply(x, function(vv) vv$values)
+  if (is.null(tree)){
+    tree <- lapply(x, function(vv) 
+    if (is.null(vv$values)){c(0,1)} else { 
+      warning("Missing values for a variable (0,1) are used")
+      vv$values} )
+  }
   # create staged tree from list
-  object <- sevt(tree)
+  object <- sevt(tree, order = order)
   # extract parents
   parents <- lapply(x, function(n) {
     n$parents
   })
   # build stages info respecting conditional 
-  # independences depicted in the bayesian network
+  # independences depicted in the Bayesian network
   for (i in 2:length(order)) {
     # initialize stages for ith variable 
     stgs <- "1"
@@ -98,39 +76,67 @@ as_sevt.parentslist <- function(x, ...){
         stgs <- as.vector(sapply(stgs, function(x) rep(x,length(tree[[j]]))))
       }
     }
-    object$stages[[i-1]] <- stgs
+    object$stages[[order[i]]] <- stgs
   }
   object <- stndnaming(object)
   object
 }
 
-#' Obtain the equivalent DAG list of parents
+#' Obtain the equivalent DAG as list of parents
 #' 
-#' Compute, for each variable in the staged tree, 
-#' the parent set in the equivalent DAG.
-#' @param x an object of class \code{sevt}
+#' Convert to the equivalent representation as list of parents.
+#' @param x an R object.
+#' @param ... additional parameters. 
 #' @details The output of this function is an object of class 
 #' \code{parentslist} which is one of the possible encoding for
 #' a directed graph.
-#' If a context-specific or a local-partial independence is detected
-#' a message is printed and the minimal super-model is returned.
 #' @return An object of class \code{parentslist} for which a 
 #' print method exists.
 #' Basically a list with 
-#' one entries for each variable with fields: 
-#' * \code{values} the sample space for the variable.
-#' * \code{parents} The parents of the variable, 
+#' one entries for each variable with field: 
+#' * \code{parents} The parents of the variable.
+#' * \code{values} values for the variable.
 #' @seealso \code{\link{print.parentslist}}.
 #' @export
-as_parentslist <- function(x){
+as_parentslist <- function(x, ...){
+  UseMethod("as_parentslist", x)
+}
+
+#' @rdname as_parentslist
+#' @param order order of the variables, usually a topological order.
+#' @param values named list with the sample space of each variable.
+#' @export
+as_parentslist.bn <- function(x, order = NULL, ...){
+  # if no order is provided from the user
+  # then a topological order is used
+  if (is.null(order)){
+    order <- bnlearn::node.ordering(bn)
+  }
+  plist <- lapply(x$nodes[order], function(n) list(parents = n$parents))
+  class(plist) <- "parentslist"
+  plist
+}
+
+#' @rdname as_parentslist
+#' @export
+as_parentslist.bn.fit <- function(x, order = NULL,  ...){
+ as_parentslist(bnlearn::as.bn(x), order = order, ...)
+}
+
+
+#' @rdname as_parentslist
+#' @details In `as_parentslist.sevt`, if a context-specific or a local-partial independence is detected
+#' a message is printed and the minimal super-model is returned.
+#' @export
+as_parentslist.sevt <- function(x, ...){
   check_sevt(x)
   wrn <- FALSE
   Ms <- sapply(x$tree, length)
   Vs <- names(x$tree)
   prnt_list <- list()
-  prnt_list[[Vs[1]]] <- list(values = x$tree[[1]], parents = NULL)
+  prnt_list[[Vs[1]]] <- list(parents = NULL, values = x$tree[[Vs[1]]])
   for (i in seq_along(x$stages)) {
-    prn <- NULL
+    prn <- character(0)
     cntx <- NULL
     stgs <- x$stages[[i]]
     for (j in rev(seq(i))){
@@ -157,7 +163,7 @@ as_parentslist <- function(x){
         prn <- c(prn, Vs[j])
       }
     }
-    prnt_list[[Vs[i+1]]] <- list(values = x$tree[[i+1]], parents = prn)
+    prnt_list[[Vs[i + 1]]] <- list(parents = prn, values = x$tree[[Vs[i + 1]]])
   }
   if (wrn){
     message("Context specific or local partial independences detected.")
@@ -179,9 +185,9 @@ as_parentslist <- function(x){
 #'         \code{modelstring} in package \pkg{bnlearn} 
 #'         and package \pkg{deal}.
 #' @export
-as_character.parentslist <- function(x, ...){
+as.character.parentslist <- function(x, ...){
   paste(sapply(seq_along(x), function(i) {
-    paste("[", names(x)[i], ifelse(!is.null(x[[i]]$parents), "|", ""), 
+    paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""), 
           paste(x[[i]]$parents, 
                 sep = "", 
                 collapse = ":"), "]", sep = "")
@@ -195,7 +201,7 @@ as_character.parentslist <- function(x, ...){
 #' @param ... additional arguments for compatibility.
 #' @export
 print.parentslist <- function(x, ...){
-  cat(" ", as_character.parentslist(x))
+  cat(" ", as.character.parentslist(x))
   invisible(x)
 }
 
