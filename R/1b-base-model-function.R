@@ -152,7 +152,9 @@ as_parentslist.sevt <- function(x, ...){
   prnt_list[[Vs[1]]] <- list(parents = NULL, values = x$tree[[Vs[1]]])
   for (i in seq_along(x$stages)) {
     prn <- character(0)
-    cntx <- NULL
+    cntx <- character(0)
+    prtl <- character(0)
+    lcl <- character(0)
     stgs <- x$stages[[i]]
     for (j in rev(seq(i))){
       splitd <- matrix(nrow = Ms[j], stgs)
@@ -168,9 +170,16 @@ as_parentslist.sevt <- function(x, ...){
                           FUN = function(xx) length(unique(xx))))
           if (sR != length(unique(c(splitd)))){
             wrn <- TRUE
+            lcl <- c(lcl, Vs[j])
           }
         }else{
-          ## we have a context indep.
+          if (any(cnts == 1)){
+            ## we at least one pure context indep.
+            cntx <- c(cntx, Vs[j])
+          }
+          if (any(cnts < Ms[j] & cnts > 1)){
+            prtl <- c(prtl, Vs[j])
+          }
           wrn <- TRUE
         }
         ## take all rows
@@ -178,13 +187,15 @@ as_parentslist.sevt <- function(x, ...){
         prn <- c(prn, Vs[j])
       }
     }
-    prnt_list[[Vs[i + 1]]] <- list(parents = prn, values = x$tree[[Vs[i + 1]]])
+    prnt_list[[Vs[i + 1]]] <- list(parents = prn, context = cntx, 
+                                   partial = prtl, local = lcl, 
+                                   values = x$tree[[Vs[i + 1]]])
   }
   if (wrn){
-    message("Context specific or local partial independences detected.")
+    message("Context specific and/or local partial independences detected.")
     message("The input staged tree is 
              not equivalent to a BN, 
-            a super-model is returned")
+            the minimal super-model is returned.")
   }
   class(prnt_list) <- "parentslist"
   prnt_list
