@@ -86,7 +86,7 @@ since it is computationally faster.
 \code{hamming_stages} finds a minimal set of nodes for which the associated stages
 should be changed to obtain equivalent structures. To do that, a maximum-weight bipartite
 matching problem between the stages of the two staged trees is solved using the
-Hungarian method implemented in the \code{solve_LSAP} function of the \code{clue}
+Hungarian method implemented in the \code{solve_LSAP} function of the \pkg{clue}
 package.
 \code{hamming_stages} requires the package \code{clue}.
 }
