@@ -21,8 +21,6 @@ as_parentslist(x, ...)
 \item{...}{additional parameters.}
 
 \item{order}{order of the variables, usually a topological order.}
-
-\item{values}{named list with the sample space of each variable.}
 }
 \value{
 An object of class \code{parentslist} for which a

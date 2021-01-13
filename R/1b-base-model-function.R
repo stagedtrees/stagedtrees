@@ -44,10 +44,16 @@ as_sevt.bn <- function(x, order = NULL, tree = NULL, ...){
 
 #' @rdname as_sevt
 #' @param tree values for variables.
-#' @details In `as_sevt.parentslist`
+#' @details In \code{as_sevt.parentslist} the \code{order} 
+#' argument, if provided, must be a topological order of the 
+#' corresponding DAG (no check is performed). 
+#' If the order is not provided 
+#' \code{names(x)} is used.
 #' @export
-as_sevt.parentslist <- function(x, tree = NULL, ...){
-  order <- names(x)
+as_sevt.parentslist <- function(x, order = NULL, tree = NULL, ...){
+  if (is.null(order)){
+    order <- names(x)    
+  }
   if (is.null(tree)){
     tree <- lapply(x, function(vv) 
     if (is.null(vv$values)){c(0,1)} else { 
@@ -104,13 +110,12 @@ as_parentslist <- function(x, ...){
 
 #' @rdname as_parentslist
 #' @param order order of the variables, usually a topological order.
-#' @param values named list with the sample space of each variable.
 #' @export
 as_parentslist.bn <- function(x, order = NULL, ...){
   # if no order is provided from the user
   # then a topological order is used
   if (is.null(order)){
-    order <- bnlearn::node.ordering(bn)
+    order <- bnlearn::node.ordering(x)
   }
   plist <- lapply(x$nodes[order], function(n) list(parents = n$parents))
   class(plist) <- "parentslist"

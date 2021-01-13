@@ -13,7 +13,7 @@ as_sevt(x, order = NULL, ...)
 
 \method{as_sevt}{bn}(x, order = NULL, tree = NULL, ...)
 
-\method{as_sevt}{parentslist}(x, tree = NULL, ...)
+\method{as_sevt}{parentslist}(x, order = NULL, tree = NULL, ...)
 }
 \arguments{
 \item{x}{an R object.}
@@ -37,5 +37,9 @@ argument, if provided, must be a topological order of the
 a topological order will be used (the one returned by
 \code{bnlearn::node.ordering}).
 
-In \code{as_sevt.parentslist}
+In \code{as_sevt.parentslist} the \code{order}
+argument, if provided, must be a topological order of the
+corresponding DAG (no check is performed).
+If the order is not provided
+\code{names(x)} is used.
 }
