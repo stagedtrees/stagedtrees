@@ -1,3 +1,12 @@
+# devel 
+
+* implemented various conversion algorithms between `sevt` 
+  and DAG representations.
+* improve implementation of `as_sevt.bn.fit`.
+* implement `as_parentslist`. 
+* use \pkg instead of \code for package names in documentation.
+* fix `find_stage`.
+
 # 2.0.1
 
 fix color assignment consistency between `plot.sevt` and `barplot.sevt`
