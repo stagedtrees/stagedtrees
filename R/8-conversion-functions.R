@@ -105,15 +105,23 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...){
 #' \code{parentslist} which is one of the possible encoding for
 #' a directed graph. This is mainly an internal class and its
 #' specification can be changed in the future. 
-#' For example now it also includes information on the 
-#' sample space of the variables.
+#' For example, now it may also include information on the 
+#' sample space of the variables and the context/partial/local 
+#' independences.
+#' 
 #' @return An object of class \code{parentslist} for which a 
 #' print method exists.
 #' Basically a list with 
 #' one entries for each variable with fields: 
 #' * \code{parents} The parents of the variable.
+#' * \code{context} Where context independences are detected. 
+#' * \code{partial} Where partial independences are detected.
+#' * \code{local} Where no context/partial independences are detected, 
+#'                but local independences are present.
 #' * \code{values} values for the variable.
-#' @seealso \code{\link{print.parentslist}}.
+#' @seealso \code{\link{print.parentslist}} and 
+#' \code{\link{as.character.parentslist}} for the parenthesis-encoding of the 
+#' DAG structure and the asymmetric independences.
 #' @export
 as_parentslist <- function(x, ...){
   UseMethod("as_parentslist", x)
@@ -223,16 +231,17 @@ as_parentslist.sevt <- function(x, ...){
 #'         The encoding is similar to the one returned by 
 #'         \code{modelstring} in package \pkg{bnlearn} 
 #'         and package \pkg{deal}. 
-#'         In particular, parents of a variable are enclosed in:
-#'         * \code{( )} if a partial (conditional) independence is present. 
-#'         * \code{{ }} if a context specific independence is present. 
-#'         * \code{< >} if no context specific and partial (conditional) 
+#'         In particular, parents of a variable can be enclosed in:
+#' * \code{( )} if a partial (conditional) independence is present. 
+#' * \code{{ }} if a context specific independence is present. 
+#' * \code{< >} if no context specific and partial (conditional) 
 #'                      independences are present, but at least a 
 #'                      local independence is detected. 
-#'         If a parent is not enclosed in parenthesis the dependence is 
-#'         full. 
-#'         If \code{only_parents = TRUE}, the simple DAG encoding as in \pkg{bnlearn}
-#'         is returned. 
+#'                      
+#' If a parent is not enclosed in parenthesis the dependence is full. 
+#'         
+#' If \code{only_parents = TRUE}, the simple DAG encoding as in \pkg{bnlearn}
+#' is returned. 
 #' @examples 
 #' model <- stages_hclust(full(Titanic), k = 2)
 #' pl <- as_parentslist(model)

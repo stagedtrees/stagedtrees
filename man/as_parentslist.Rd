@@ -29,6 +29,10 @@ Basically a list with
 one entries for each variable with fields:
 \itemize{
 \item \code{parents} The parents of the variable.
+\item \code{context} Where context independences are detected.
+\item \code{partial} Where partial independences are detected.
+\item \code{local} Where no context/partial independences are detected,
+but local independences are present.
 \item \code{values} values for the variable.
 }
 }
@@ -40,8 +44,9 @@ The output of this function is an object of class
 \code{parentslist} which is one of the possible encoding for
 a directed graph. This is mainly an internal class and its
 specification can be changed in the future.
-For example now it also includes information on the
-sample space of the variables.
+For example, now it may also include information on the
+sample space of the variables and the context/partial/local
+independences.
 
 In \code{as_parentslist.sevt}, if a context-specific or a local-partial independence is detected
 a message is printed and the minimal super-model is returned.
@@ -52,5 +57,7 @@ pl <- as_parentslist(model)
 pl$Age 
 }
 \seealso{
-\code{\link{print.parentslist}}.
+\code{\link{print.parentslist}} and
+\code{\link{as.character.parentslist}} for the parenthesis-encoding of the
+DAG structure and the asymmetric independences.
 }

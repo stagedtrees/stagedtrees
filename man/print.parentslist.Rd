@@ -23,14 +23,17 @@ the context specific independences.
 The encoding is similar to the one returned by
 \code{modelstring} in package \pkg{bnlearn}
 and package \pkg{deal}.
-In particular, parents of a variable are enclosed in:
-* \code{( )} if a partial (conditional) independence is present.
-* \code{{ }} if a context specific independence is present.
-* \code{< >} if no context specific and partial (conditional)
+In particular, parents of a variable can be enclosed in:
+\itemize{
+\item \code{( )} if a partial (conditional) independence is present.
+\item \code{{ }} if a context specific independence is present.
+\item \code{< >} if no context specific and partial (conditional)
 independences are present, but at least a
 local independence is detected.
-If a parent is not enclosed in parenthesis the dependence is
-full.
+}
+
+If a parent is not enclosed in parenthesis the dependence is full.
+
 If \code{only_parents = TRUE}, the simple DAG encoding as in \pkg{bnlearn}
 is returned.
 }
