@@ -304,3 +304,26 @@ as_bn.parentslist <- function(x){
 as_bn.sevt <- function(x){
   as_bn.parentslist(as_parentslist.sevt(x))
 }
+
+
+#' Convert to an adjacency matrix
+#' @param x an R object
+#' @return the equivalent adjacency matrix
+#' @export
+as_adj_matrix <- function(x){
+  UseMethod("as_adj_matrix", x)
+}
+
+
+#' @rdname as_adj_matrix 
+#' @export
+as_adj_matrix.parentslist <- function(x){
+  n <- length(x)
+  adj <- matrix(nrow = n, ncol = n, 
+                dimnames = list(names(x), names(x)), 
+                data = 0)
+  for (i in seq_along(x)){
+    adj[x[[i]]$parents, i] <- 1
+  }
+  adj
+}
