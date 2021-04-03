@@ -825,7 +825,7 @@ stages_kmeans <- function(object,
 }
 
 
-join_all <- function(object, v, stages, ignore = NULL) {
+join_all <- function(object, v, stages, ignore) {
   stages <- unique(stages)
   stages <- stages[!(stages %in% ignore)]
   if (length(stages) <= 1)
@@ -896,7 +896,7 @@ stages_csbhc <- function(object,
             ## for each row
             for (j in seq(nrow(mats[[i]]))) {
               ## join together all stages in row j of mat i
-              try <- join_all(object, v, mats[[i]][j,]) 
+              try <- join_all(object, v, mats[[i]][j,], ignore = ignore) 
               try_score <- score(try)
               if (try_score > temp_score) {
                 temp <- try
@@ -909,7 +909,7 @@ stages_csbhc <- function(object,
           if (nrow(mats[[i]]) > 1) {
             for (j in seq(ncol(mats[[i]]))) {
               ## join together stages in column j of mat i
-              try <- join_all(object, v, mats[[i]][, j], ignore) 
+              try <- join_all(object, v, mats[[i]][, j], ignore = ignore) 
               try_score <- score(try)
               if (try_score > temp_score) {
                 temp <- try
