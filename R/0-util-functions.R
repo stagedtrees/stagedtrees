@@ -364,3 +364,32 @@ which_class <- function(x, levels) {
   }
   factor(levels[ix], levels = levels)
 }
+
+
+
+#' Context-specific stages matrices
+#' 
+#' Generate the sequence of all the context-specific 
+#' stages matrices for a given variable in the model.
+#' @param object an object of class sevt
+#' @param v string, the name of one of the variables in \code{object}
+#' @return A list with \code{i-1} matrices, where \code{i} is the depth 
+#' of variable \code{v} in the tree.
+#' @keywords internal
+cs_matrices <- function(object, v) {
+  vars <- names(object$tree)
+  i <- which(vars == v)
+  out <- list()
+  out[[vars[i - 1]]] <-
+    matrix(object$stages, nrow = length(object$tree[[vars[i - 1]]]))
+  if (i <= 2) {
+    return(out)
+  }
+  else{
+    for (j in (i - 2):1) {
+      out[[vars[j]]] <-
+        matrix(c(t(out[[vars[j + 1]]])), nrow = length(object$tree[[vars[j]]]))
+    }
+  }
+  out
+}
