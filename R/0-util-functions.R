@@ -381,7 +381,7 @@ cs_matrices <- function(object, v) {
   i <- which(vars == v)
   out <- list()
   out[[vars[i - 1]]] <-
-    matrix(object$stages, nrow = length(object$tree[[vars[i - 1]]]))
+    matrix(object$stages[[v]], nrow = length(object$tree[[vars[i - 1]]]))
   if (i <= 2) {
     return(out)
   }

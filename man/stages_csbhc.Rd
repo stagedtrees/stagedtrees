@@ -43,6 +43,6 @@ and moves to the best model that increases the score. When no
 increase is possible it moves to the next variable.
 }
 \examples{
-model <- stages_csbhc(full(Titanic, join_unobserved = FALSE), trace = 2)
+model <- stages_csbhc(full(Titanic))
 plot(model)
 }

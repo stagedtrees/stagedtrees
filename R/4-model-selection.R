@@ -857,7 +857,7 @@ join_all <- function(object, v, stages, ignore) {
 #' increase is possible it moves to the next variable.
 #' @return The final staged event tree obtained.
 #' @examples
-#' model <- stages_csbhc(full(Titanic, join_unobserved = FALSE), trace = 2)
+#' model <- stages_csbhc(full(Titanic))
 #' plot(model)
 #' @importFrom stats  BIC
 #' @export
@@ -885,12 +885,10 @@ stages_csbhc <- function(object,
       temp_score <- now_score
       done <- TRUE
       stages <- unique(object$stages[[v]])
-      stages <- stages[! (stages %in% ignore)]
+      stages <- stages[!(stages %in% ignore)]
       if (length(stages) > 1) {
         mats <- cs_matrices(object, v)
         ## try all matrices
-        print(mats)
-        print("fff")
         for (i in 1:length(mats)) {
           if (ncol(mats[[i]]) > 1) {
             ## for each row
