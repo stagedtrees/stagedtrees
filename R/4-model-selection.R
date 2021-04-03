@@ -825,15 +825,12 @@ stages_kmeans <- function(object,
 }
 
 
-join_all <- function(object, v, stages, ignore) {
+join_all <- function(object, v, stages, ignore = NULL) {
   stages <- unique(stages)
   stages <- stages[!(stages %in% ignore)]
   if (length(stages) <= 1)
     return(object)
-  model <- join_stages(object, v, stages[1], stages[2])
-  if (length(stages) == 2)
-    return(model)
-  for (i in seq_along(stages)[-c(1, 2)]) {
+  for (i in seq_along(stages)[-1]) {
     object <- join_stages(object, v, stages[1], stages[i])
   }
   return(object)
@@ -875,7 +872,7 @@ stages_csbhc <- function(object,
   check_sevt_fit(object)
   now_score <- score(object)
   if (is.null(scope)) {
-    sevt_varnames(object)[-1]
+    scope <- sevt_varnames(object)[-1]
   }
   stopifnot(all(scope %in% sevt_varnames(object)[-1]))
   for (v in scope) {
@@ -887,9 +884,13 @@ stages_csbhc <- function(object,
       temp <- object # clone the object
       temp_score <- now_score
       done <- TRUE
+      stages <- unique(object$stages[[v]])
+      stages <- stages[! (stages %in% ignore)]
       if (length(stages) > 1) {
         mats <- cs_matrices(object, v)
         ## try all matrices
+        print(mats)
+        print("fff")
         for (i in 1:length(mats)) {
           if (ncol(mats[[i]]) > 1) {
             ## for each row
