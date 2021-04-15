@@ -52,6 +52,7 @@ sevt_fit <- function(object,
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
   object$prob[[order[1]]] <- list("1" = pp)
+  if (length(object$tree)>1){
   for (i in 2:length(order)) {
     stages <- unique(object$stages[[order[i]]])
     object$prob[[order[i]]] <-
@@ -73,6 +74,7 @@ sevt_fit <- function(object,
         return(tt) # return normalized prob
       })
     names(object$prob[[order[i]]]) <- stages
+  }
   }
   object$ll <- NULL ## force recompute log-likelihood
   object$ll <- logLik(object)

@@ -178,6 +178,7 @@ expand_prob <- function(object) {
       warning("Incorrect number of stages in first variable (should be one)")
     }
     prob[[vars[1]]] <- object$prob[[vars[1]]][[1]]
+    if (length(object$tree)>1){
     for (i in 2:length(object$tree)) {
       # let's take care of the other variables
       ## we will create manually the ftable
@@ -192,6 +193,7 @@ expand_prob <- function(object) {
       attr(ft, "col.vars") <- object$tree[vars[i]]
       class(ft) <- "ftable"
       prob[[vars[i]]] <- ft
+    }
     }
   }
   return(prob)
