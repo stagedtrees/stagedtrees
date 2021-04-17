@@ -138,21 +138,26 @@ sevt.list <- function(x, full = FALSE, order = names(x)) {
   evt <- list()
   # store tree (ordered list of levels)
   evt$tree <- x
-  # if a full staged tree is required 
-  # build vector of different stages
-  if (full) {
-    evt$stages <- lapply(2:length(x), function(i) {
-      as.character(1:prod(dims[1:(i - 1)]))
-    })
-  } else {
-    # otherwise the independence model is built
-    # using the same stage "1"
-    evt$stages <- lapply(2:length(x), function(i) {
-      rep("1", prod(dims[1:(i - 1)]))
-    })
+  # if only one variable do not build stages
+  if (length(evt$tree) > 1){
+    # if a full staged tree is required 
+    # build vector of different stages
+    if (full) {
+      evt$stages <- lapply(2:length(x), function(i) {
+        as.character(1:prod(dims[1:(i - 1)]))
+      })
+    } else {
+      # otherwise the independence model is built
+      # using the same stage "1"
+      evt$stages <- lapply(2:length(x), function(i) {
+        rep("1", prod(dims[1:(i - 1)]))
+      })
+    }
+    # stages should be a named list
+    names(evt$stages) <- names(x)[-1]
+  }else{
+    evt$stages <- list()
   }
-  # stages should be a named list
-  names(evt$stages) <- names(x)[-1]
   # assign class name 
   class(evt) <- "sevt"
   # return staged tree object
@@ -220,7 +225,7 @@ expand_prob <- function(object) {
 make_ctables <- function(object, data) {
   order <- names(object$tree)
   if (is.data.frame(data)) {
-    data <- table(data[, order])
+    data <- table(data[, order], dnn = order)
   }
   stopifnot(is.table(data))
   ctables <- lapply(seq_along(order), function(i) {
