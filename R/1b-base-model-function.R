@@ -407,7 +407,8 @@ summary.sevt <- function(object, ...) {
     }, FUN.VALUE = 1)
     if (has_prob(object)) {
       D[["sample.size"]] <- vapply(D$stage, function(s) {
-        attr(object$prob[[v]][[s]], "n")
+        ifelse(is.null(attr(object$prob[[v]][[s]], "n")), 
+               NA, attr(object$prob[[v]][[s]], "n")) 
       }, FUN.VALUE = 1)
       if (nrow(D) <= 1){
         D <- cbind(D, t(as.data.frame(object$prob[[v]])))
