@@ -405,7 +405,7 @@ summary.sevt <- function(object, ...) {
     D$npaths <- vapply(D$stage, function(s) {
       sum(object$stages[[v]] == s)
     }, FUN.VALUE = 1)
-    if (is_fitted_sevt(object)) {
+    if (has_prob(object)) {
       D[["sample.size"]] <- vapply(D$stage, function(s) {
         attr(object$prob[[v]][[s]], "n")
       }, FUN.VALUE = 1)
