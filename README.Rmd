@@ -18,15 +18,6 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://travis-ci.com/gherardovarando/stagedtrees)
  [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
  [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
- 
-##### v2.0.0
-
-The current version of `stagedtrees` available on CRAN is a 
-major update over the previous version (1.0.2). The update will 
-almost surely break any code written with v1.0.2. 
-Functions naming and functions parameters have been updated to
-simplify user experience. 
-Check the [complete changelog](NEWS.md) for details.
 
 ##### Preprint
 
@@ -83,17 +74,44 @@ from data stored in a `data.frame` or a
 # Load the PhDArticles data
 data("PhDArticles")
 
+# define order of variables
+order <- c("Gender", "Kids",  "Married", "Articles")
+
 # Independence model 
-mod_indep <- indep(PhDArticles, lambda = 1)
+mod_indep <- indep(PhDArticles, order)
 mod_indep
 
 # Full (saturated) model
-mod_full <- full(PhDArticles, lambda = 1) 
+mod_full <- full(PhDArticles, order) 
 mod_full
+```
 
-# Full model with not-observed situations joined in NA stages
-mod_full0 <- full(PhDArticles, join_unobserved = TRUE, lambda = 1)
-mod_full0
+##### Structural zeros and unobserved situations
+
+By default staged trees object are defined assuming structural zeros 
+in the contingency tables. This is implemented by joining all 
+unobserved situations in particular stages (named by default `"UNOBSERVED"`) 
+which are, by default, 
+ignored by other methods and functions (see the `ignore` argument in 
+`?stages_bhc` or `?plot.sevt`).
+
+```{r}
+## there are no observations for Gender=male (female), Kids = yes, Married = no
+get_stage(mod_full, c("male", "yes", "no"))
+
+## and obviously 
+prob(mod_full, c(Kids = "yes", Married = "no"))
+```
+
+###### Initialize a model without structural zeros 
+
+It is possible to initialize a staged tree without structural zeros 
+by setting the argument `join_unobserved=FALSE`. 
+In that case, it can be useful to set `lambda > 0` to avoid problems 
+with probabilities on unobserved situations. 
+
+```{r}
+mod_full0 <- full(PhDArticles, join_unobserved = FALSE, lambda = 1)
 ```
 
 #### Model selection
@@ -115,14 +133,14 @@ mod1
 mod2 <- stages_bhc(mod_full)
 mod2
 ```
+
 * **Backward Fast Hill-Climbing** `stages_fbhc(object, score, max_iter, scope, ignore, trace)`
 ```{r}
 mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
 mod3
 ```
 
-
-##### Distance methods
+##### Clustering methods
 
 * **Backward Joining** `stages_bj(object, distance, thr, scope, ignore, trace)`
 ```{r}
@@ -130,11 +148,9 @@ mod4 <- stages_bj(mod_full)
 mod4
 ```
 
-##### Clustering methods
-
 * **Hierarchical Clustering** `stages_hclust(object, distance, k, method, ignore, limit, scope)`
 ```{r}
-mod5 <- stages_hclust(mod_full0,
+mod5 <- stages_hclust(mod_full,
                     k = 2, 
                     distance = "totvar",
                    method = "mcquitty")
@@ -143,7 +159,7 @@ mod5
 
 * **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore, limit, scope, nstart)`
 ```{r}
-mod6 <- stages_kmeans(mod_full0,
+mod6 <- stages_kmeans(mod_full,
                     k = 2, 
                    algorithm = "Hartigan-Wong")
 mod6
@@ -180,7 +196,7 @@ prob(mod3, c(Gender = "male", Married = "yes"))
 Or for a  `data.frame` of observations:
 
 ```{r}
-obs <- expand.grid(mod_full$tree[c(2,3,5)])
+obs <- expand.grid(mod_full$tree)
 p <- prob(mod2, obs)
 cbind(obs, P = p)
 ```
@@ -194,14 +210,14 @@ first variable (root) in the tree will be used.
 ```{r}
 ## check accuracy over the PhDArticles data
 predicted <- predict(mod3, newdata = PhDArticles)
-table(predicted, PhDArticles$Articles)
+table(predicted, PhDArticles$Gender)
 ```
 
 Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
 
 ```{r}
 ## obtain estimated conditional probabilities in mod3 for first 5 obs
-## P(Articles|Gender, Kids, Married, Mentor, Prestige)
+## P(Articles|Gender, Kids, Married)
 predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ```
 
@@ -210,6 +226,7 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ```{r}
 sample_from(mod4, 5)
 ```
+
 #### Explore the model
 
 ##### Model info
@@ -233,12 +250,14 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
 ```
 
 By default stages associated with the unobserved situations are not plotted, 
-if the model has been created with `join_unobserved = TRUE`.
+if the model has been created with `join_unobserved = TRUE`. 
+But we can plot also the unobserved stages in a specific color.
 ```{r}
 plot(stndnaming(mod5, uniq = TRUE), 
      main = "Staged tree learned with stages_hclust 
-     (structural zeroes)", 
-     col = "stages",
+     (unobserved in grey)",  
+     ignore = FALSE, ## do not ignore stages
+     col = function(stages) ifelse(stages=="UNOBSERVED", "grey", stages),
      cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
@@ -259,7 +278,7 @@ A subtree can be extracted, the result is another staged event tree object
 in the remaining variables.
 
 ```{r}
-sub <- subtree(mod4, c(">2", "female"))
+sub <- subtree(mod4, c("female"))
 plot(sub)
 ```
 
@@ -267,14 +286,14 @@ plot(sub)
 
 Check if models are equal.
 ```{r}
-compare_stages(mod1, mod2)
+compare_stages(mod1, mod4)
 
-compare_stages(mod1, mod2, method = "hamming", plot = TRUE, 
+compare_stages(mod1, mod4, method = "hamming", plot = TRUE, 
              cex_label_nodes = 0, cex_label_edges = 0)
 
-hamming_stages(mod1, mod2)
+hamming_stages(mod1, mod4)
 
-difftree <- compare_stages(mod1, mod2, method = "stages", plot = FALSE, 
+difftree <- compare_stages(mod1, mod4, method = "stages", plot = FALSE, 
              return_tree = TRUE)
 
 difftree$Married

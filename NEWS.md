@@ -6,7 +6,8 @@
 * implement `as_parentslist`. 
 * use \pkg instead of \code for package names in documentation.
 * fix `find_stage`.
-* fix problem with single-variable staged trees.
+* fix problems with single-variable staged trees.
+* fix `summary.sevt` for objects without `ctables`.  
 
 # 2.0.1
 
