@@ -13,18 +13,19 @@
 path_probability <-
   function(object, x, log = FALSE) {
     check_sevt_prob(object)
+    vs <- sevt_varnames(object)
     if (!is.null(names(x))) {
       # if it's a named vector just order it
-      x <- x[names(object$tree)]
+      x <- x[vs]
     }
     # start computing the log probability with first variable
-    l <- log(object$prob[[1]][[1]][x[1]])
+    l <- log(object$prob[[vs[1]]][[1]][x[1]])
     if (length(x) > 1) {
       for (i in 2:length(x)) {
         # get corresponding stage
         s <- find_stage(object, x[1:(i - 1)])
         # and add log-prob
-        l <- l + log(object$prob[[i]][[s]][x[i]])
+        l <- l + log(object$prob[[vs[i]]][[s]][x[i]])
       }
     }
     # return log prob or prob as requested
