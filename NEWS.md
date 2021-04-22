@@ -1,4 +1,4 @@
-# devel 
+# 2.1.0 
 
 * implemented various conversion algorithms between `sevt` 
   and DAG representations.
