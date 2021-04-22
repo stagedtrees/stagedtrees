@@ -42,7 +42,7 @@ as_sevt.bn <- function(x, order = NULL, values = NULL, ...){
 #' of each variable. For a \code{parentslist} object created with 
 #' \code{\link{as_parentslist}} from an object of class \code{sevt},
 #' it is, usually, not needed to specify the \code{values} parameter,
-#' since the sample space is saved in the \code{parentslist} object.``
+#' since the sample space is saved in the \code{parentslist} object.
 #' @examples 
 #' model <- stages_hclust(full(Titanic), k = 2)
 #' plot(model)
@@ -65,7 +65,21 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...){
         vv$values
       } 
     })
+  }else{ ##combine values with info in the parentslist object
+    values <- sapply(names(x), function(nn){
+      if (is.null(values[[nn]])){
+        if (is.null(x[[nn]]$values)){
+          warning("Missing values for a variable, a binary variable is used", call. = FALSE)
+          c(0,1)
+        } else {
+          x[[nn]]$values
+        }
+      } else {
+        values[[nn]]
+      }
+    }, simplify = FALSE, USE.NAMES = TRUE)
   }
+  
   # reorder the list
   values <- values[order]
   # create staged tree from list
@@ -213,8 +227,7 @@ as_parentslist.sevt <- function(x, ...){
   }
   if (wrn){
     message("Context specific and/or local partial independences detected.")
-    message("The input staged tree is 
-             not equivalent to a BN, 
+    message("The input staged tree is not equivalent to a BN, 
             the minimal super-model is returned.")
   }
   class(prnt_list) <- "parentslist"
