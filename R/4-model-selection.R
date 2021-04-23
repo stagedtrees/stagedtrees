@@ -607,7 +607,7 @@ stages_bj <-
 #' 
 #' The `ignore` argument can be used to specify stages that should not 
 #' be affected during the search, that is left untouched. 
-#' This is usefull for preserving structural zeroes and to speed-up 
+#' This is useful for preserving structural zeroes and to speed-up 
 #' computations. 
 #'
 #' @return The final staged event tree obtained.

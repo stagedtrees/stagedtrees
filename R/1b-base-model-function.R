@@ -52,6 +52,7 @@ sevt_fit <- function(object,
   pp <- pp / sum(pp)
   attr(pp, "n") <- n
   object$prob[[order[1]]] <- list("1" = pp)
+  if (length(object$tree)>1){
   for (i in 2:length(order)) {
     stages <- unique(object$stages[[order[i]]])
     object$prob[[order[i]]] <-
@@ -73,6 +74,7 @@ sevt_fit <- function(object,
         return(tt) # return normalized prob
       })
     names(object$prob[[order[i]]]) <- stages
+  }
   }
   object$ll <- NULL ## force recompute log-likelihood
   object$ll <- logLik(object)
@@ -403,9 +405,10 @@ summary.sevt <- function(object, ...) {
     D$npaths <- vapply(D$stage, function(s) {
       sum(object$stages[[v]] == s)
     }, FUN.VALUE = 1)
-    if (is_fitted_sevt(object)) {
+    if (has_prob(object)) {
       D[["sample.size"]] <- vapply(D$stage, function(s) {
-        attr(object$prob[[v]][[s]], "n")
+        ifelse(is.null(attr(object$prob[[v]][[s]], "n")), 
+               NA, attr(object$prob[[v]][[s]], "n")) 
       }, FUN.VALUE = 1)
       if (nrow(D) <= 1){
         D <- cbind(D, t(as.data.frame(object$prob[[v]])))

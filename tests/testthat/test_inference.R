@@ -36,8 +36,32 @@ test_that("probabilities sum to 1", {
   expect_true(all(abs(sum(pr) - 1) < 1e-10))
 })
 
+test_that("probability for object with wrong order in $prob", {
+  DD <- generate_linear_dataset(5, 100)
+  sev <- full(DD, lambda = 1) 
+  pr <- prob(sev, c(X4 = "-1"))
+  sev$prob <- lapply(sev$prob, function(pp) pp[sample(seq_along(pp))])
+  sev$prob <- sev$prob[sample(seq_along(sev$prob))]
+  expect_equal(pr, prob(sev, c(X4 = "-1")))
+})
+
+test_that("probability for object with wrong order in $stages", {
+  DD <- generate_linear_dataset(5, 100)
+  sev <- full(DD, lambda = 1) 
+  pr <- prob(sev, c(X4 = "-1"))
+  sev$stages <- sev$stages[sample(seq_along(sev$stages))]
+  expect_equal(pr, prob(sev, c(X4 = "-1")))
+})
+
 
 context("logLik.sevt")
+
+test_that("logLik for 1 var model", {
+  sev <- full(data.frame(x = c("A", "B", "A", "A")))
+  ll <- sev$ll
+  sev$ll <- NULL
+  expect_equal(logLik(sev), ll)
+})
 
 test_that("logLik after joining", {
   DD <- generate_linear_dataset(5, 10)
