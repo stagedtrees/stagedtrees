@@ -67,6 +67,9 @@ sample_from <- function(object, nsim = 1, seed = NULL) {
     }
   }
   S <- as.data.frame(S)
+  for (i in 1:p){
+    S[,i] <- factor(S[,i], levels = object$tree[[i]])
+  }
   attr(S, "seed") <- RNGstate
   return(S)
 }
