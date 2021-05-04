@@ -1,25 +1,23 @@
-## stagedtrees 2.0.1
+## stagedtrees 2.1.0
 
-fix colour assignment consistency between `plot.sevt` and `barplot.sevt`.
+MINOR version.  
+
+* new conversion methods: `as_sevt`, `as_parentslist`, `as_bn`. 
+* improved implementation of `as_sevt.bn.fit`.
+* various fixes and improved documentation. 
 
 ## Test environments
 
-* Ubuntu 18.04.2      (64-bit)  R 4.0.2 (local) 
-* macOS darwin15.6.0  (64-bit)  R 3.6.1 (local)
-* Ubuntu 16.04.6      (64-bit)  R 4.0.0 (on travis-ci) 
-* Windows Server 2008 (64-bit)  R 4.0.3 (win-builder, r-release)
+* Ubuntu 20.04.2          (64-bit)  R 4.0.5 (local) 
+* macOS Catalina 10.15.7  (64-bit)  R 3.6.1 (local)
+* Ubuntu 16.04.6      (64-bit)  R 4.0.2 (on travis-ci) 
+* Windows Server 2008 (64-bit)  R 4.0.5 (win-builder, r-release)
 * Windows Server 2008 (64-bit)  R 3.6.3 (win-builder, r-oldrelease)
-* Windows Server 2008 (64-bit)  R 4.1.0 (win-builder, r-devel)
-* R-hub debian-gcc-devel-nold (r-devel)
-* R-hub debian-gcc-devel (r-devel)
-* R-hub debian-gcc-release (r-release)
-* R-hub windows-x86_64-devel (r-devel)
-* R-hub ubuntu-gcc-release (r-release)
-* R-hub fedora-clang-devel (r-devel)
+* Windows Server 2008 (64-bit)  devel (unstable) (win-builder, r-devel)
 
 ## R CMD Check results
 
-### Ubuntu 18.04.2 R 3.6.2 (local) 
+### Ubuntu 20.04.2 R 4.0.5 (local) 
 
 #### devtools::check()
 
@@ -31,9 +29,6 @@ Duration: 24.6s
 
 Status: OK
 
-### Ubuntu 16.04.6 R 3.6.1 (on travis-ci)
-
-Status: OK
 
 ### OS X R 3.6.1 (local)
 
@@ -41,10 +36,11 @@ Duration: 26.1s
 
 0 errors | 0 warnings | 0 notes
 
+### Ubuntu 16.04.6 R 3.6.1 (on travis-ci)
+
+Status: OK
+
 ### win-builder
 
 Status: OK
 
-### r-hub (check_for_cran + debian-gcc-(devel|release)(-nold) )
-
-0 errors | 0 warnings | 0 notes

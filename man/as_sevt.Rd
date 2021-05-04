@@ -47,7 +47,7 @@ The \code{values} parameter is used to specify the sample space
 of each variable. For a \code{parentslist} object created with
 \code{\link{as_parentslist}} from an object of class \code{sevt},
 it is, usually, not needed to specify the \code{values} parameter,
-since the sample space is saved in the \code{parentslist} object.``
+since the sample space is saved in the \code{parentslist} object.
 }
 \examples{
 model <- stages_hclust(full(Titanic), k = 2)
