@@ -237,6 +237,10 @@ confint.sevt <- function (object, parm, level = 0.95,
       p <- object$prob[[v]][[s]]
       n <- attr(p, "n")
       n_stage <- p * (n + k * lambda) - lambda
+      # true values with lambda included.
+      n_stage <- n_stage + lambda
+      n <- sum(n_stage)
+      
       if (method == "goodman") {
         q.chi <- qchisq(level, k - 1)
         lci <- (q.chi + 2 * n_stage  - sqrt(q.chi * (q.chi + 4 * n_stage * 
