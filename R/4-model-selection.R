@@ -788,18 +788,18 @@ stages_hclust <-
 #' summary(model)
 #' @export
 stages_kmeans <- function(object,
-                        k = length(object$tree[[1]]),
-                        algorithm = "Hartigan-Wong",
-                        transform = sqrt,
-                        ignore = object$name_unobserved,
-                        limit = length(object$tree),
-                        scope = NULL,
-                        nstart = 1){
-  check_sevt_fit(object)
+                          k = length(object$tree[[1]]),
+                          algorithm = "Hartigan-Wong",
+                          transform = sqrt,
+                          ignore = object$name_unobserved,
+                          limit = length(object$tree),
+                          scope = NULL,
+                          nstart = 1){
+  stagedtrees:::check_sevt_fit(object)
   stopifnot(is.function(transform) || is.null(transform))
   if (is.null(transform)) transform <- function(x) return(x)
-  if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
-  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+  if (is.null(scope)) scope <- stagedtrees:::sevt_varnames(object)[2:limit]
+  stopifnot(all(scope %in% stagedtrees:::sevt_varnames(object)[-1]))
   if (is.null(names(k))){
     k <- rep(k, length(scope))[seq_along(scope)]
     names(k) <- scope
@@ -809,8 +809,49 @@ stages_kmeans <- function(object,
     wch <- wch[!(wch %in% ignore)]
     pp <- transform(t(as.matrix(as.data.frame(object$prob[[v]][wch]))))
     rownames(pp) <- wch
-    if (nrow(pp) > k[v]){
-      groups <- kmeans(pp, centers = min(k[v], nrow(pp) - 1), 
+    if(nrow(unique(pp)) <= k[v]) {
+      if(nrow(unique(pp)) == 1) {
+        groups <- rep(1, nrow(pp)) 
+        names(groups) <- attr(pp, "dimnames")[[1]]
+        
+        ### remove probabilitites and assign stages
+        object$prob[[v]] <- list()
+        old <- object$stages[[v]]
+        for (s in 1:k[v]) {
+          object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
+        }
+      }
+      
+      if(nrow(unique(pp)) > 1) {
+        
+        pp_unique <- attr(unique(pp), "dimnames")[[1]]
+        group <- rep(list(c()), length(pp_unique))
+        attr(group, "names") <- 1:length(group)
+        
+        for(i in 1:length(pp_unique)) {
+          pp_equal <- apply((apply(pp[attr(pp, "dimnames")[[1]], ], 1, 
+                                   function(x) x == pp[pp_unique[i], ])), 2, sum) == NCOL(pp)
+          group[[i]] <- attr(pp_equal[pp_equal == TRUE], "names")
+        }
+        groups <- c()
+        for(i in attr(pp, "dimnames")[[1]]) {
+          for(j in 1:length(group)) {
+            if(i %in% unlist(group[[j]]))
+              groups[i] <- j
+          }
+        }  
+        
+        ### remove probabilitites and assign stages
+        object$prob[[v]] <- list()
+        old <- object$stages[[v]]
+        for (s in 1:nrow(unique(pp))) {
+          object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
+        }
+      }
+      
+    }
+    if (nrow(unique(pp)) > k[v]){
+      groups <- kmeans(pp, centers = k[v], 
                        algorithm = algorithm, nstart = nstart)$cluster
       ### remove probabilitites and assign stages
       object$prob[[v]] <- list()
