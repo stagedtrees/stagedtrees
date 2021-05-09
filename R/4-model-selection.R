@@ -795,11 +795,11 @@ stages_kmeans <- function(object,
                           limit = length(object$tree),
                           scope = NULL,
                           nstart = 1){
-  stagedtrees:::check_sevt_fit(object)
+  check_sevt_fit(object)
   stopifnot(is.function(transform) || is.null(transform))
   if (is.null(transform)) transform <- function(x) return(x)
-  if (is.null(scope)) scope <- stagedtrees:::sevt_varnames(object)[2:limit]
-  stopifnot(all(scope %in% stagedtrees:::sevt_varnames(object)[-1]))
+  if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
+  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
   if (is.null(names(k))){
     k <- rep(k, length(scope))[seq_along(scope)]
     names(k) <- scope
