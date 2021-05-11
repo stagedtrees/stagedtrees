@@ -172,7 +172,7 @@ logLik.sevt <- function(object, ...) {
 #'         implemented by Andri Signorelli and Pablo J. Villacorta Iglesias.  
 #' @examples
 #' m1 <- stages_bj(full(PhDArticles), distance = "kullback", thr = 0.01)
-#' confint(m1, "Prestige", level = 0.90, sides = "left")
+#' confint(m1, "Prestige", level = 0.90)
 #' confint(m1, "Married")
 #' confint(m1, c("Married", "Kids"))
 #' @importFrom stats confint
@@ -229,7 +229,8 @@ confint.sevt <- function (object, parm, level = 0.95,
       if (lambda > 0) p <- n_stage / n  #unbiased prob estimate
       if (method == "goodman") {
         ## Goodman (1965), page 248 (JSTOR version)
-        q.chi <- qchisq(level / k, 1)
+        ## upper quantile!  
+        q.chi <- qchisq(level / k, 1, lower.tail = FALSE)
         lci <- (q.chi + 2 * n_stage  - sqrt(q.chi * (q.chi + 4 * n_stage * 
                                                (n - n_stage)/n)))/(2 * (n + q.chi))
         uci <- (q.chi + 2 * n_stage + sqrt(q.chi * (q.chi + 4 * n_stage * 

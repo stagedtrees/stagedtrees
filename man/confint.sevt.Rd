@@ -42,7 +42,7 @@ Currently four methods are available.
 }
 \examples{
 m1 <- stages_bj(full(PhDArticles), distance = "kullback", thr = 0.01)
-confint(m1, "Prestige", level = 0.90, sides = "left")
+confint(m1, "Prestige", level = 0.90)
 confint(m1, "Married")
 confint(m1, c("Married", "Kids"))
 }
