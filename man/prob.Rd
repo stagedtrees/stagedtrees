@@ -4,22 +4,26 @@
 \alias{prob}
 \title{Probabilities for a staged event tree}
 \usage{
-prob(object, x, log = FALSE, na0 = TRUE)
+prob(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE)
 }
 \arguments{
 \item{object}{an object of class \code{sevt} with probabilities.}
 
 \item{x}{the vector or data.frame of observations.}
 
+\item{conditional_on}{named vector, the conditioning event.}
+
 \item{log}{logical, if \code{TRUE} log-probabilities are returned.}
 
 \item{na0}{logical, if \code{NA} should be converted to 0.}
 }
 \value{
-the probabilities to observe each observation given in \code{x}.
+the probabilities to observe each observation in \code{x}
+conditional on the event in \code{conditional_on}.
 }
 \description{
-Compute (marginal) probabilities of elementary events with respect
+Compute (marginal and/or conditional) probabilities of elementary
+events with respect
 to the probability encoded in a staged event tree.
 }
 \details{
@@ -27,9 +31,18 @@ Computes probabilities related to a vector or a
 data.frame of observations.
 }
 \examples{
-DD <- generate_random_dataset(5, 100)
-model <- full(DD, lambda = 1)
-pr <- prob(model, expand.grid(model$tree[c(2, 3, 4)]))
+data(Titanic)
+model <- full(Titanic, lambda = 1)
+samples <- expand.grid(model$tree[c(1, 4)])
+pr <- prob(model, samples)
+## probabilities sum up to one 
 sum(pr)
-prob(model, DD[1:10, ])
+## print observations with probabilities
+print(cbind(samples, probability = pr))
+
+## compute one probability
+prob(model, c(Class = "1st", Survived = "Yes"))
+
+ ## compute conditional probability 
+prob(model, c(Survived = "Yes"), conditional_on = c(Class = "1st"))
 }

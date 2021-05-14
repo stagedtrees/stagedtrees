@@ -39,27 +39,52 @@ path_probability <-
 
 #' Probabilities for a staged event tree
 #' 
-#' Compute (marginal) probabilities of elementary events with respect 
+#' Compute (marginal and/or conditional) probabilities of elementary 
+#' events with respect 
 #' to the probability encoded in a staged event tree.
 #' @param object an object of class \code{sevt} with probabilities.
 #' @param x the vector or data.frame of observations.
+#' @param conditional_on named vector, the conditioning event. 
 #' @param log logical, if \code{TRUE} log-probabilities are returned.
 #' @param na0 logical, if \code{NA} should be converted to 0.
-#' @return the probabilities to observe each observation given in \code{x}.
+#' @return the probabilities to observe each observation in \code{x}
+#' conditional on the event in \code{conditional_on}.
 #'
 #' @details Computes probabilities related to a vector or a 
 #' data.frame of observations.
 #' @examples
-#' DD <- generate_random_dataset(5, 100)
-#' model <- full(DD, lambda = 1)
-#' pr <- prob(model, expand.grid(model$tree[c(2, 3, 4)]))
+#' data(Titanic)
+#' model <- full(Titanic, lambda = 1)
+#' samples <- expand.grid(model$tree[c(1, 4)])
+#' pr <- prob(model, samples)
+#' ## probabilities sum up to one 
 #' sum(pr)
-#' prob(model, DD[1:10, ])
+#' ## print observations with probabilities
+#' print(cbind(samples, probability = pr))
+#' 
+#' ## compute one probability
+#' prob(model, c(Class = "1st", Survived = "Yes"))
+#' 
+#'  ## compute conditional probability 
+#' prob(model, c(Survived = "Yes"), conditional_on = c(Class = "1st"))
 #' @export
-prob <- function(object, x, log = FALSE, na0 = TRUE) {
+prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   check_sevt_prob(object)
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
+  }
+  p1 <- 1
+  if (!is.null(conditional_on)){
+    if (is.vector(conditional_on) && !is.null(names(conditional_on))){
+      ## check if same names
+      if (any(names(x) %in% names(conditional_on))){
+        stop("invalid argument, x and conditional_on names should be disjoint")
+      }
+      x <- cbind(x, as.data.frame(t(conditional_on)))
+      p1 <- prob(object, x = conditional_on, log = FALSE, na0 = na0)
+    }else{
+      stop("invalida argument, conditional_on must be NULL or a named vector")
+    }
   }
   # get dimensions and variables
   n <- nrow(x)
@@ -85,6 +110,7 @@ prob <- function(object, x, log = FALSE, na0 = TRUE) {
       ), na.rm = TRUE)
     }
   )
+  res <- res / p1
   if (na0) res[is.na(res)] <- 0
   if (log) {
     return(log(res))
