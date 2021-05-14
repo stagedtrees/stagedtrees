@@ -8,7 +8,6 @@
   object,
   parm,
   level = 0.95,
-  sides = c("two.sided", "left", "right"),
   method = c("goodman", "wald", "waldcc", "wilson"),
   ignore = object$name_unobserved,
   ...
@@ -22,9 +21,6 @@ confidence intervals, either a vector of numbers
 or a vector of names. If missing, all parameters are considered.}
 
 \item{level}{the confidence level required.}
-
-\item{sides}{a character string specifying the side of the confidence interval, must be one of "two.sided"
-(default), "left" or "right".}
 
 \item{method}{a character string specifing which method to use: "goodman", "wald", "waldcc" or "wilson".}
 
@@ -41,13 +37,12 @@ An object of class \code{confint.sevt} containing the desired confidence interva
 Confint method for class \code{sevt}.
 }
 \details{
-Compute confidence intervals for staged event trees. By default,
-it computes two-sided confidence intervals at 95\% level for the
-whole tree given in \code{object} with the wald method.
+Compute confidence intervals for staged event trees.
+Currently four methods are available.
 }
 \examples{
 m1 <- stages_bj(full(PhDArticles), distance = "kullback", thr = 0.01)
-confint(m1, "Prestige", level = 0.90, sides = "left")
+confint(m1, "Prestige", level = 0.90)
 confint(m1, "Married")
 confint(m1, c("Married", "Kids"))
 }
