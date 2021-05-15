@@ -160,13 +160,24 @@ logLik.sevt <- function(object, ...) {
 #' @param ignore vector of stages which will be ignored, 
 #'               by default the name of the unobserved stages stored in 
 #'               \code{object$name_unobserved}.
-#' @param ... additional argument(s) for methods.
+#' @param ... additional argument(s) for compatibility 
+#'            with \code{confint} methods.
 #' @details Compute confidence intervals for staged event trees. 
 #'          Currently four methods are available. 
-#' @return An object of class \code{confint.sevt} containing the desired confidence intervals.
-#' @references Goodman, L. A. (1965) On Simultaneous Confidence Intervals for Multinomial Proportions Technometrics, 7, 247-254.
-#' @references Wald, A. Tests of statistical hypotheses concerning several parameters when the number of observations is large, Trans. Am. Math. Soc. 54 (1943) 426-482.
-#' @references Wilson, E. B. Probable inference, the law of succession and statistical inference, J.Am. Stat. Assoc. 22 (1927) 209-212.
+#' @return A matrix with columns giving lower and upper confidence 
+#'         limits for each parameter. These will be labelled as 
+#'         \code{(1-level)/2} and \code{1 - (1-level)/2} in % 
+#'         (by default 2.5% and 97.5%).
+#' @references Goodman, L. A. (1965) On Simultaneous Confidence Intervals for 
+#'             Multinomial Proportions Technometrics, 7, 247-254.
+#' @references Wald, A. Tests of statistical hypotheses concerning several 
+#'             parameters when the number of observations is large, Trans. 
+#'             Am. Math. Soc. 54 (1943) 426-482.
+#' @references Wilson, E. B. Probable inference, the law of succession and 
+#'             statistical inference, J.Am. Stat. Assoc. 22 (1927) 209-212.
+#' @references Quesenberry, C., & Hurst, D. (1964). Large Sample Simultaneous 
+#'             Confidence Intervals for Multinomial Proportions. 
+#'             Technometrics, 6(2), 191-195
 #' @author The function is partially inspired by code in the 
 #'         \code{MultinomCI} function from the \pkg{DescTools} package, 
 #'         implemented by Andri Signorelli and Pablo J. Villacorta Iglesias.  
@@ -207,7 +218,6 @@ confint.sevt <- function (object, parm, level = 0.95,
     method <- "wald"
   }
   
-  
   lambda <- object$lambda
   method <- match.arg(arg = method, choices = c("goodman", "wald", "waldcc", "wilson"))
   
@@ -227,36 +237,39 @@ confint.sevt <- function (object, parm, level = 0.95,
       n <- attr(p, "n")
       n_stage <- p * (n + k * lambda) - lambda
       if (lambda > 0) p <- n_stage / n  #unbiased prob estimate
-      if (method == "goodman") {
-        ## Goodman (1965), page 248 (JSTOR version)
-        ## upper quantile!  
-        q.chi <- qchisq(level / k, 1, lower.tail = FALSE)
-        lci <- (q.chi + 2 * n_stage  - sqrt(q.chi * (q.chi + 4 * n_stage * 
-                                               (n - n_stage)/n)))/(2 * (n + q.chi))
-        uci <- (q.chi + 2 * n_stage + sqrt(q.chi * (q.chi + 4 * n_stage * 
-                                                      (n - n_stage)/n)))/(2 * (n + q.chi))
-      }
-      else if (method == "wald") {
+      if (method == "wald") {
         q.chi <- qchisq(level, 1)
         lci <- p - sqrt(q.chi * p * (1 - p)/n)
         uci <- p + sqrt(q.chi * p * (1 - p)/n)
-      }
-      else if (method == "waldcc") {
+      }else if (method == "waldcc") {
         ## wald test with continuity correction
         q.chi <- qchisq(level, 1)
         lci <- p - sqrt(q.chi * p * (1 - p)/n) - 1/(2 * n)
         uci <- p + sqrt(q.chi * p * (1 - p)/n) + 1/(2 * n)
-      }
-      else if (method == "wilson") {
+      }else if (method == "wilson") {
         ## Wilson (1927), page 210 (or 76) (JSTOR version)
         q.chi <- qchisq(level, 1)
-        lci <- (q.chi + 2 * n_stage - sqrt(q.chi^2 + 4 * n_stage * q.chi * 
-                                             (1 - p)))/(2 * (q.chi + n))
-        uci <- (q.chi + 2 * n_stage + sqrt(q.chi^2 + 4 * n_stage * q.chi * 
-                                             (1 - p)))/(2 * (q.chi + n))
+        tmp <- sqrt(q.chi^2 + 4 * n_stage * q.chi * (1 - p))
+        lci <- (q.chi + 2 * n_stage - tmp)/(2 * (n + q.chi))
+        uci <- (q.chi + 2 * n_stage + tmp)/(2 * (n + q.chi))
+      }else if (method == "quesenberry-hurst") {
+        ## Goodman (1965), page 247 (JSTOR version)
+        ## Quesenberry, C., & Hurst, D (1964)
+        q.chi <- qchisq(1 - level, k - 1, lower.tail = FALSE)
+        tmp <- sqrt(q.chi^2 + 4 * n_stage * q.chi * (1 - p))
+        lci <- (q.chi + 2 * n_stage - tmp)/(2 * (n + q.chi))
+        uci <- (q.chi + 2 * n_stage + tmp)/(2 * (n + q.chi))
+      }else if (method == "goodman") {
+        ## Goodman (1965), page 248 (JSTOR version)
+        ## upper quantile  
+        q.chi <- qchisq( (1 - level) / k, 1, lower.tail = FALSE)
+        tmp <- sqrt(q.chi^2 + 4 * n_stage * q.chi * (1 - p))
+        lci <- (q.chi + 2 * n_stage - tmp)/(2 * (n + q.chi))
+        uci <- (q.chi + 2 * n_stage + tmp)/(2 * (n + q.chi))
       }
+      
       if (lambda > 0){ 
-        ## correct ci for biased estimator, as E.Riccomagno noted
+        ## correct ci for biased estimator, as E. Riccomagno notes
         lci <- (n * lci + lambda) / (n + k * lambda)
         uci <- (n * uci + lambda) / (n + k * lambda)
       }
