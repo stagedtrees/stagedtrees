@@ -82,8 +82,16 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
       }
       x <- cbind(x, as.data.frame(t(conditional_on)))
       p1 <- prob(object, x = conditional_on, log = FALSE, na0 = na0)
-    }else{
-      stop("invalida argument, conditional_on must be NULL or a named vector")
+    }else if (is.data.frame(conditional_on)){
+      ## check if same names
+      if (any(names(x) %in% names(conditional_on))){
+        stop("invalid argument, x and conditional_on names should be disjoint")
+      }
+      x <- cbind(x, conditional_on)
+      p1 <- prob(object, x = conditional_on, log = FALSE, na0 = na0)
+      }else{
+      stop("invalida argument, conditional_on must be NULL,
+           a named vector or a data.frame")
     }
   }
   # get dimensions and variables
