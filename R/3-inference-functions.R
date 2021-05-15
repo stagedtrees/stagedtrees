@@ -156,14 +156,17 @@ logLik.sevt <- function(object, ...) {
 #'              confidence intervals, either a vector of numbers 
 #'              or a vector of names. If missing, all parameters are considered.
 #' @param level the confidence level required.
-#' @param method a character string specifing which method to use: "goodman", "wald", "waldcc" or "wilson".
+#' @param method a character string specifing which method to use: 
+#'              wald", "waldcc", "goodman", "quesenberry-hurst" or "wilson".
 #' @param ignore vector of stages which will be ignored, 
 #'               by default the name of the unobserved stages stored in 
 #'               \code{object$name_unobserved}.
 #' @param ... additional argument(s) for compatibility 
 #'            with \code{confint} methods.
 #' @details Compute confidence intervals for staged event trees. 
-#'          Currently four methods are available. 
+#' Currently five methods are available:
+#' * \code{wald}, \code{waldcc}: Wald method and with continuity correction.
+#' * \code{wilson}, \code{quesenberry-hurst} and \code{goodman}.
 #' @return A matrix with columns giving lower and upper confidence 
 #'         limits for each parameter. These will be labelled as 
 #'         \code{(1-level)/2} and \code{1 - (1-level)/2} in % 
@@ -184,13 +187,14 @@ logLik.sevt <- function(object, ...) {
 #' @examples
 #' m1 <- stages_bj(full(PhDArticles), distance = "kullback", thr = 0.01)
 #' confint(m1, "Prestige", level = 0.90)
-#' confint(m1, "Married")
+#' confint(m1, "Married", method = "goodman")
 #' confint(m1, c("Married", "Kids"))
 #' @importFrom stats confint
 #' @importFrom stats qchisq
 #' @export
 confint.sevt <- function (object, parm, level = 0.95,
-                          method = c("goodman", "wald", "waldcc", "wilson"),
+                          method = c( "wald", "waldcc", "wilson", "goodman", 
+                                      "quesenberry-hurst"),
                           ignore = object$name_unobserved,
                           ...) {
 
@@ -219,7 +223,8 @@ confint.sevt <- function (object, parm, level = 0.95,
   }
   
   lambda <- object$lambda
-  method <- match.arg(arg = method, choices = c("goodman", "wald", "waldcc", "wilson"))
+  method <- match.arg(arg = method, choices = c("wald", "waldcc", "goodman",
+                                                "wilson", "quesenberry-hurst"))
   
   a <- (1 - level)/2
   a <- c(a, 1 - a)

@@ -1,6 +1,6 @@
 context("confidence intervals function")
 
-methods <- c("goodman", "wald", "waldcc", "wilson")
+methods <- c("goodman", "wald", "waldcc", "wilson", "quesenberry-hurst")
 level <- c(0, 0.2, 0.9, 1)
 check_ci <- function(ci){
   expect_type(ci, "double")

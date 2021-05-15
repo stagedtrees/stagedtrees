@@ -8,7 +8,7 @@
   object,
   parm,
   level = 0.95,
-  method = c("goodman", "wald", "waldcc", "wilson"),
+  method = c("wald", "waldcc", "wilson", "goodman", "quesenberry-hurst"),
   ignore = object$name_unobserved,
   ...
 )
@@ -22,7 +22,8 @@ or a vector of names. If missing, all parameters are considered.}
 
 \item{level}{the confidence level required.}
 
-\item{method}{a character string specifing which method to use: "goodman", "wald", "waldcc" or "wilson".}
+\item{method}{a character string specifing which method to use:
+wald", "waldcc", "goodman", "quesenberry-hurst" or "wilson".}
 
 \item{ignore}{vector of stages which will be ignored,
 by default the name of the unobserved stages stored in
@@ -42,12 +43,16 @@ Confint method for class \code{sevt}.
 }
 \details{
 Compute confidence intervals for staged event trees.
-Currently four methods are available.
+Currently five methods are available:
+\itemize{
+\item \code{wald}, \code{waldcc}: Wald method and with continuity correction.
+\item \code{wilson}, \code{quesenberry-hurst} and \code{goodman}.
+}
 }
 \examples{
 m1 <- stages_bj(full(PhDArticles), distance = "kullback", thr = 0.01)
 confint(m1, "Prestige", level = 0.90)
-confint(m1, "Married")
+confint(m1, "Married", method = "goodman")
 confint(m1, c("Married", "Kids"))
 }
 \references{
