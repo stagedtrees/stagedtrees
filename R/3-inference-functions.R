@@ -234,7 +234,7 @@ confint.sevt <- function (object, parm, level = 0.95,
       if (method == "goodman") {
         ## Goodman (1965), page 248 (JSTOR version)
         ## upper quantile!  
-        q.chi <- qchisq(level / k, 1, lower.tail = FALSE)
+        q.chi <- qchisq((1 - level) / k, 1, lower.tail = FALSE)
         lci <- (q.chi + 2 * n_stage  - sqrt(q.chi * (q.chi + 4 * n_stage * 
                                                (n - n_stage)/n)))/(2 * (n + q.chi))
         uci <- (q.chi + 2 * n_stage + sqrt(q.chi * (q.chi + 4 * n_stage * 
