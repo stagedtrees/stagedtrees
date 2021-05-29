@@ -125,7 +125,7 @@ plot.sevt <-
     if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
       x$stages[[nms[1]]] <- c("1")
     }
-    col <- make_colors(x, col, ignore, d) 
+    col <- make_stages_col(x, col, ignore,limit =  d) 
     if (is.null(col_edges)){
       col_edges <- "black"
     }
@@ -271,8 +271,12 @@ node <- function(x,
   }
 }
 
-make_colors <- function(x, col, ignore, d = NULL){
-  d <- min(length(x$tree), d)
+#' @rdname plot.sevt
+#' @export
+make_stages_col <- function(x, col = NULL, 
+                            ignore = x$name_unobserved, 
+                            limit = NULL){
+  d <- min(length(x$tree), limit)
   nms <- names(x$tree)
   if (is.null(col)) {
     col <- lapply(x$stages[nms[1:d]], function(stages) {
@@ -499,7 +503,7 @@ plot.ceg <- function(x, col = NULL,
   }
   A <- ceg2adjmat(x)
   ### get colors as in plot.sevt
-  col <- make_colors(x, col, ignore)
+  col <- make_stages_col(x, col, ignore)
   g <- igraph::graph_from_adjacency_matrix(A)
   col.pos <- lapply(seq_along(x$positions), function(i){
     upos <- unique(x$positions[[nms[i]]])
