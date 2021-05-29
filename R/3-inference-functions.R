@@ -47,11 +47,20 @@ path_probability <-
 #' @param conditional_on named vector, the conditioning event. 
 #' @param log logical, if \code{TRUE} log-probabilities are returned.
 #' @param na0 logical, if \code{NA} should be converted to 0.
-#' @return the probabilities to observe each observation in \code{x}
-#' conditional on the event in \code{conditional_on}.
+#' @return the probabilities to observe each observation in \code{x}, possibly
+#' conditional on the event(s) in \code{conditional_on}.
 #'
 #' @details Computes probabilities related to a vector or a 
 #' data.frame of observations.
+#' 
+#' Optionally, conditional probabilities can be obtained by specifying 
+#' the conditioning event in \code{conditional_on}. This can be done either
+#' with a single named vector or with a data.frame object with the 
+#' same number of rows of \code{x}. In the former, the same conditioning 
+#' is used for all the computed probabilities (if \code{x} has multiple rows); 
+#' while with the latter different conditioning events (but on the same variables)
+#' can be specified for each row of \code{x}. 
+#' 
 #' @examples
 #' data(Titanic)
 #' model <- full(Titanic, lambda = 1)
@@ -65,8 +74,14 @@ path_probability <-
 #' ## compute one probability
 #' prob(model, c(Class = "1st", Survived = "Yes"))
 #' 
-#'  ## compute conditional probability 
+#' ## compute conditional probability 
 #' prob(model, c(Survived = "Yes"), conditional_on = c(Class = "1st"))
+#' 
+#' ## compute conditional probabilities with different conditioning set
+#' prob(model, data.frame(Age = rep("Adult", 8)), 
+#'      conditional_on = expand.grid(model$tree[2:1])) 
+#' ## the above should be the same as 
+#' summary(model)$stages.info$Age
 #' @export
 prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   check_sevt_prob(object)
