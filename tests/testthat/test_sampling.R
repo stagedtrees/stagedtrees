@@ -9,6 +9,14 @@ test_that("sample size is correct", {
   expect_equal(nrow(D), 27)
 })
 
+test_that("sample_from should return a data.frame with factors", {
+  D <- sample_from(mod, 27)
+  expect_is(D, "data.frame")
+  expect_is(D$C, "factor")
+  expect_is(D$X3, "factor")
+  expect_is(D$X5, "factor")
+})
+
 
 test_that("variables number and names are correct", {
   D <- sample_from(mod, 35)
