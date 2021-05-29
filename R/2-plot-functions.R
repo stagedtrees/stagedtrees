@@ -447,3 +447,104 @@ barplot.sevt <- function(height, var,
           xlab = xlab, ylab = ylab,
           horiz = horiz, ...)
 }
+
+#' igraph's plotting for CEG 
+#' 
+#' @param x an object of class \code{\link{ceg}}. 
+#' @param col colors specification see \code{\link{plot.sevt}}.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `x$name_unobserved`.
+#' @param layout an igraph layout.
+#' @param ... additional arguments passed to \code{plot.igraph}.
+#' @details This function is a simple wrapper around 
+#'  \pkg{igraph}'s \code{plot.igraph}.
+#'  The ceg object is converted to an igraph object 
+#'  by firstly obtaining the adjacency matrix representation
+#'  with \code{\link{ceg2adjmat}}. 
+#'  If not specified, the default \code{layout} used is 
+#'  a rotated \code{layout.reingold.tilford}.
+#'  
+#'  We use \code{palette()} as palette for
+#'  the \pkg{igraph} plotting, while \code{plot.igraph} use 
+#'  as default a different palette. This is to allow mathcing 
+#'  stages coulors between \code{plot.ceg} 
+#'  and \code{\link{plot.sevt}}.
+#' @examples 
+#' \dontrun{
+#'  model <- stages_bhc(full(Titanic))
+#'  model.ceg <- ceg(model)
+#'  plot(model.ceg, edge.arrow.size = 0.1, vertex.label.dist = -2)
+#'  }
+#' @importFrom grDevices palette
+#' @export
+plot.ceg <- function(x, col = NULL,
+                     ignore = x$name_unobserved, 
+                     layout = NULL,
+                      ...){
+  if (!requireNamespace("igraph", quietly = TRUE)) {
+    stop("Package \"igraph\" is needed to plot ceg.",
+         call. = FALSE
+    )
+  }
+  nms <- names(x$tree)
+  if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
+    x$stages[[nms[1]]] <- c("1")
+  }
+  A <- ceg2adjmat(x)
+  ### get colors as in plot.sevt
+  if (is.null(col)) {
+    col <- lapply(x$stages[nms], function(stages) {
+      if (is.null(stages)) {
+        return(list("1" = "black"))
+      }
+      stages <- unique(stages)
+      stages <- stages[!(stages %in% ignore)]
+      vc <- seq_along(stages)
+      names(vc) <- stages
+      return(vc)
+    })
+  } else if (is.function(col)) {
+    col <- lapply(x$stages[nms], function(stages) {
+      if (is.null(stages)) {
+        return(list("1" = "black"))
+      }
+      stages <- unique(stages)
+      stages <- stages[!(stages %in% ignore)]
+      cs <- col(unique(stages))
+      if (is.null(names(cs))){
+        names(cs) <- unique(stages)[seq_along(cs)]
+      }
+      return(cs)
+    })
+  } else if (length(col) == 1 && col == "stages") {
+    if (col == "stages") {
+      col <- lapply(x$stages[nms], function(stages) {
+        if (is.null(stages)) {
+          return(list("1" = 1))
+        }
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% ignore)]
+        names(stages) <- stages
+        return(stages)
+      })
+    }
+  }
+  g <- igraph::graph_from_adjacency_matrix(A)
+  col.pos <- lapply(seq_along(x$positions), function(i){
+    upos <- unique(x$positions[[nms[i]]])
+    ustag <- x$stages[[nms[i]]][sapply(upos, function(pp) which.max(x$positions[[nms[i]]] == pp))]
+    cc <- col[[nms[i]]][ustag]
+    if (is.null(cc)) cc <- NA
+    names(cc) <- paste0(nms[i], ":", upos)
+    return(cc)
+  })
+  igraph::V(g)$color <- c(unlist(col.pos), 1)
+  if (is.null(layout)){
+    layout = igraph::layout.reingold.tilford(g)
+    layout = layout[,2:1]
+    layout[,1] <- -layout[,1]
+  }
+  igraph::plot.igraph(g, layout = layout, 
+                      palette = palette(), ...)
+}
