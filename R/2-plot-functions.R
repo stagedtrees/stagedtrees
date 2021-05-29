@@ -125,43 +125,7 @@ plot.sevt <-
     if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
       x$stages[[nms[1]]] <- c("1")
     }
-    if (is.null(col)) {
-      col <- lapply(x$stages[nms[1:d]], function(stages) {
-        if (is.null(stages)) {
-          return(list("1" = "black"))
-        }
-        stages <- unique(stages)
-        stages <- stages[!(stages %in% ignore)]
-        vc <- seq_along(stages)
-        names(vc) <- stages
-        return(vc)
-      })
-    } else if (is.function(col)) {
-      col <- lapply(x$stages[nms[1:d]], function(stages) {
-        if (is.null(stages)) {
-          return(list("1" = "black"))
-        }
-        stages <- unique(stages)
-        stages <- stages[!(stages %in% ignore)]
-        cs <- col(unique(stages))
-        if (is.null(names(cs))){
-          names(cs) <- unique(stages)[seq_along(cs)]
-        }
-        return(cs)
-      })
-    } else if (length(col) == 1 && col == "stages") {
-      if (col == "stages") {
-        col <- lapply(x$stages[nms[1:d]], function(stages) {
-          if (is.null(stages)) {
-            return(list("1" = 1))
-          }
-          stages <- unique(stages)
-          stages <- stages[!(stages %in% ignore)]
-          names(stages) <- stages
-          return(stages)
-        })
-      }
-    } 
+    col <- make_colors(x, col, ignore, d) 
     if (is.null(col_edges)){
       col_edges <- "black"
     }
@@ -307,6 +271,48 @@ node <- function(x,
   }
 }
 
+make_colors <- function(x, col, ignore, d = NULL){
+  d <- min(length(x$tree), d)
+  nms <- names(x$tree)
+  if (is.null(col)) {
+    col <- lapply(x$stages[nms[1:d]], function(stages) {
+      if (is.null(stages)) {
+        return(list("1" = "black"))
+      }
+      stages <- unique(stages)
+      stages <- stages[!(stages %in% ignore)]
+      vc <- seq_along(stages)
+      names(vc) <- stages
+      return(vc)
+    })
+  } else if (is.function(col)) {
+    col <- lapply(x$stages[nms[1:d]], function(stages) {
+      if (is.null(stages)) {
+        return(list("1" = "black"))
+      }
+      stages <- unique(stages)
+      stages <- stages[!(stages %in% ignore)]
+      cs <- col(unique(stages))
+      if (is.null(names(cs))){
+        names(cs) <- unique(stages)[seq_along(cs)]
+      }
+      return(cs)
+    })
+  } else if (length(col) == 1 && col == "stages") {
+    if (col == "stages") {
+      col <- lapply(x$stages[nms[1:d]], function(stages) {
+        if (is.null(stages)) {
+          return(list("1" = 1))
+        }
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% ignore)]
+        names(stages) <- stages
+        return(stages)
+      })
+    }
+  }
+  return(col)
+}
 
 #' Plot an edge
 #'
@@ -493,43 +499,7 @@ plot.ceg <- function(x, col = NULL,
   }
   A <- ceg2adjmat(x)
   ### get colors as in plot.sevt
-  if (is.null(col)) {
-    col <- lapply(x$stages[nms], function(stages) {
-      if (is.null(stages)) {
-        return(list("1" = "black"))
-      }
-      stages <- unique(stages)
-      stages <- stages[!(stages %in% ignore)]
-      vc <- seq_along(stages)
-      names(vc) <- stages
-      return(vc)
-    })
-  } else if (is.function(col)) {
-    col <- lapply(x$stages[nms], function(stages) {
-      if (is.null(stages)) {
-        return(list("1" = "black"))
-      }
-      stages <- unique(stages)
-      stages <- stages[!(stages %in% ignore)]
-      cs <- col(unique(stages))
-      if (is.null(names(cs))){
-        names(cs) <- unique(stages)[seq_along(cs)]
-      }
-      return(cs)
-    })
-  } else if (length(col) == 1 && col == "stages") {
-    if (col == "stages") {
-      col <- lapply(x$stages[nms], function(stages) {
-        if (is.null(stages)) {
-          return(list("1" = 1))
-        }
-        stages <- unique(stages)
-        stages <- stages[!(stages %in% ignore)]
-        names(stages) <- stages
-        return(stages)
-      })
-    }
-  }
+  col <- make_colors(x, col, ignore)
   g <- igraph::graph_from_adjacency_matrix(A)
   col.pos <- lapply(seq_along(x$positions), function(i){
     upos <- unique(x$positions[[nms[i]]])
