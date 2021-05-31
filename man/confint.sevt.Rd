@@ -8,7 +8,7 @@
   object,
   parm,
   level = 0.95,
-  method = c("goodman", "wald", "waldcc", "wilson"),
+  method = c("wald", "waldcc", "wilson", "goodman", "quesenberry-hurst"),
   ignore = object$name_unobserved,
   ...
 )
@@ -22,36 +22,53 @@ or a vector of names. If missing, all parameters are considered.}
 
 \item{level}{the confidence level required.}
 
-\item{method}{a character string specifing which method to use: "goodman", "wald", "waldcc" or "wilson".}
+\item{method}{a character string specifing which method to use:
+wald", "waldcc", "goodman", "quesenberry-hurst" or "wilson".}
 
 \item{ignore}{vector of stages which will be ignored,
 by default the name of the unobserved stages stored in
 \code{object$name_unobserved}.}
 
-\item{...}{additional argument(s) for methods.}
+\item{...}{additional argument(s) for compatibility
+with \code{confint} methods.}
 }
 \value{
-An object of class \code{confint.sevt} containing the desired confidence intervals.
+A matrix with columns giving lower and upper confidence
+limits for each parameter. These will be labelled as
+\code{(1-level)/2} and \code{1 - (1-level)/2} in \%
+(by default 2.5\% and 97.5\%).
 }
 \description{
 Confint method for class \code{sevt}.
 }
 \details{
 Compute confidence intervals for staged event trees.
-Currently four methods are available.
+Currently five methods are available:
+\itemize{
+\item \code{wald}, \code{waldcc}: Wald method and with continuity correction.
+\item \code{wilson}, \code{quesenberry-hurst} and \code{goodman}.
+}
 }
 \examples{
 m1 <- stages_bj(full(PhDArticles), distance = "kullback", thr = 0.01)
 confint(m1, "Prestige", level = 0.90)
-confint(m1, "Married")
+confint(m1, "Married", method = "goodman")
 confint(m1, c("Married", "Kids"))
 }
 \references{
-Goodman, L. A. (1965) On Simultaneous Confidence Intervals for Multinomial Proportions Technometrics, 7, 247-254.
+Goodman, L. A. (1965) On Simultaneous Confidence Intervals for
+Multinomial Proportions Technometrics, 7, 247-254.
 
-Wald, A. Tests of statistical hypotheses concerning several parameters when the number of observations is large, Trans. Am. Math. Soc. 54 (1943) 426-482.
+Wald, A. Tests of statistical hypotheses concerning several
+parameters when the number of observations is large, Trans.
+Am. Math. Soc. 54 (1943) 426-482.
 
-Wilson, E. B. Probable inference, the law of succession and statistical inference, J.Am. Stat. Assoc. 22 (1927) 209-212.
+Wilson, E. B. Probable inference, the law of succession and
+statistical inference, J.Am. Stat. Assoc. 22 (1927) 209-212.
+
+Quesenberry, C., & Hurst, D. (1964). Large Sample Simultaneous
+Confidence Intervals for Multinomial Proportions.
+Technometrics, 6(2), 191-195
 }
 \author{
 The function is partially inspired by code in the

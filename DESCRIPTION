@@ -41,4 +41,9 @@ Suggests:
     testthat,
     bnlearn,
     covr,
+<<<<<<< HEAD
     clue
+=======
+    clue,
+    igraph
+>>>>>>> 13391869334ea7cde78bc03293aaccdaa287b2da

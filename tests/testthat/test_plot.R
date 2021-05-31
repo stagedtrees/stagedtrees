@@ -65,3 +65,13 @@ test_that("barplot.sevt with legend.text=TRUE", {
   expect_silent(barplot(mod, "B", legend.text = TRUE))
 })
 
+context("plot ceg")
+
+test_that("plot.ceg", {
+  expect_silent(plot(ceg(mod)))
+})
+
+test_that("plot.ceg", {
+  expect_silent(plot(ceg(mod), col = "stages"))
+})
+
