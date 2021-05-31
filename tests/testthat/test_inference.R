@@ -48,7 +48,6 @@ test_that("conditional probabilities sum to 1", {
 })
 
 test_that("probability for object with wrong order in $prob", {
-  sev <- full(DD, lambda = 1) 
   pr <- prob(sev, c(X4 = "-1"))
   sev$prob <- lapply(sev$prob, function(pp) pp[sample(seq_along(pp))])
   sev$prob <- sev$prob[sample(seq_along(sev$prob))]
@@ -56,11 +55,20 @@ test_that("probability for object with wrong order in $prob", {
 })
 
 test_that("probability for object with wrong order in $stages", {
-  sev <- full(DD, lambda = 1) 
   pr <- prob(sev, c(X4 = "-1"))
   sev$stages <- sev$stages[sample(seq_along(sev$stages))]
   expect_equal(pr, prob(sev, c(X4 = "-1")))
 })
+
+test_that("prob should raise error if x and conditional_on has same names", {
+  ### this first check is just to check that an error is not from something else
+  expect_length(prob(sev, c(X4 = "-1"), conditional_on = c(X1 = "1")), 1)
+  expect_length(prob(sev, c(X4 = "-1")), 1)
+  ## now we test what we want
+  expect_error(prob(sev, c(X4 = "-1"), conditional_on = c(X1 = "1", X4 = "1")))
+  expect_error(prob(sev, data.frame(X4 = c("-1", "1")), conditional_on = c(X1 = "1", X4 = "1")))
+})
+
 
 
 context("logLik.sevt")
