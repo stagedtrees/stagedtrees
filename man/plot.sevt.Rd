@@ -2,6 +2,7 @@
 % Please edit documentation in R/2-plot-functions.R
 \name{plot.sevt}
 \alias{plot.sevt}
+\alias{make_stages_col}
 \title{Plot method for staged event trees}
 \usage{
 \method{plot}{sevt}(
@@ -26,6 +27,8 @@
   lwd_edges = 1,
   ...
 )
+
+make_stages_col(x, col = NULL, ignore = x$name_unobserved, limit = NULL)
 }
 \arguments{
 \item{x}{an object of class \code{sevt}.}
