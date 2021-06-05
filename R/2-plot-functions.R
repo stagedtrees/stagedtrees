@@ -29,11 +29,14 @@
 #'        NULL (color will be assigned based on the current palette);
 #'        a named (variables) list of named (stages)
 #'        vectors of colors;
-#'        the character \code{"stages"}, in which case the stage names will be used as
-#'        colors; 
+#'        the character \code{"stages"}, in which case the stage names 
+#'        will be used as colors; 
 #'        a function that takes
 #'        as input a vector of stages and output the corresponding colors.
-#'        Check the provided examples.
+#'        Check the provided examples. 
+#'        The function \code{make_stages_col} is used internally
+#'        and \code{make_stages_col(x, NULL)} or \code{make_stages_col(x, "stages")} 
+#'        can be used as a starting point for colors tweaking.
 #' @param col_edges color for the edges. 
 #' @param var_names logical, if variable names should be added to the plot,
 #'                  otherwise variable names can be added manually using 
@@ -476,9 +479,9 @@ barplot.sevt <- function(height, var,
 #'  a rotated \code{layout.reingold.tilford}.
 #'  
 #'  We use \code{palette()} as palette for
-#'  the \pkg{igraph} plotting, while \code{plot.igraph} use 
-#'  as default a different palette. This is to allow mathcing 
-#'  stages coulors between \code{plot.ceg} 
+#'  the \pkg{igraph} plotting, while \code{plot.igraph} uses 
+#'  as default a different palette. This is to allow matching 
+#'  stages colors between \code{plot.ceg} 
 #'  and \code{\link{plot.sevt}}.
 #' @examples 
 #' \dontrun{
