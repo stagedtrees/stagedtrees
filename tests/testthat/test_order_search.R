@@ -23,14 +23,17 @@ test_that("logLik is correct after sevt_add",{
   expect_equal(logLik(sev1), logLik(sev1a))
 })
 
+test_that("sevt_add throw error for wrong data class",{
+  expect_error(sevt_add(sev, "X3", data = NULL))
+  expect_error(sevt_add(sev, "X3", data = NA))
+  expect_error(sevt_add(sev, "X3", data = c(1:100)))
+})
 
 ## not testing with stages_hc because slow
 algs <- list(
   stages_bhc,
   stages_bj,
-  stages_fbhc,
-  stages_hclust,
-  stages_kmeans
+  stages_fbhc
 )
 
 context("search_greedy")
@@ -51,10 +54,10 @@ test_that("search greedy for table", {
 context("search_best")
 
 test_that("search_best for data.frames", {
-  expect_is(search_best(data = DD, alg = stages_kmeans), class = "sevt")
+  expect_is(search_best(data = DD, alg = stages_fbhc), class = "sevt")
 })
 
 DD.t <- table(DD)
 test_that("search_best for table", {
-  expect_is(search_best(data = DD.t, alg = stages_kmeans), class = "sevt")
+  expect_is(search_best(data = DD.t, alg = stages_fbhc), class = "sevt")
 })

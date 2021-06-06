@@ -22,6 +22,9 @@ sevt_add <- function(object, var, data, join_unobserved = TRUE){
   if (is.data.frame(data)) {
     data <- table(data[, c(names(object$tree), var)])
   }
+  if (!is.table(data)){
+    stop("Invalid data argument. Data must be a data.frame or a table obejct.")
+  }
   path <- names(object$tree)
   tt <- apply(data, MARGIN = c(path, var), sum)
   ctable <- ftable(tt, col.vars = var, row.vars = path)
@@ -68,6 +71,9 @@ sevt_add <- function(object, var, data, join_unobserved = TRUE){
 #' @param join_unobserved logical, passed to \code{\link{full}}.
 #' @param ... additional arguments, passed to \code{alg}.
 #' @return The estimated staged event tree model.
+#' @details The greedy approach implemented in this function 
+#'          iteratively adds variables to the staged tree that 
+#'          better imporve the \code{search_score}.
 #' @examples 
 #' model <- search_greedy(Titanic, alg = stages_fbhc)
 #' print(model)
@@ -76,9 +82,10 @@ search_greedy <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0
                           join_unobserved = TRUE, ...){
   if (is.data.frame(data)){
     vs <- colnames(data)
-  }
-  if (is.table(data)){
+  }else if (is.table(data)){
     vs <- names(dimnames(data))
+  }else{
+    stop("Invalid data argument. Data must be a data.frame or a table obejct.")
   }
   ## initialize best
   best <- full(data, order = vs[1], lambda = lambda, join_unobserved = join_unobserved)
@@ -137,7 +144,11 @@ bls <- function(data, left, new, alg, search_score = BIC, lambda, join_unobserve
 #' @param ... additional arguments, passed to \code{alg}.
 #' @return The estimated staged event tree model.
 #' @details This function is an implementation of the 
-#'          dynamic programming approach of Silander. 
+#'          dynamic programming approach 
+#'          of Silander and Leong (2013). 
+#'          If the \code{search_score} is decomposable
+#'          the returned model attains the best value 
+#'          among all possible orders.  
 #' @references 
 #' Silander T., Leong TY.
 #' A Dynamic Programming Algorithm for Learning Chain Event Graphs. 
@@ -161,9 +172,10 @@ search_best <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0,
                            join_unobserved = TRUE, ...){
   if (is.data.frame(data)){
     vs <- colnames(data)
-  }
-  if (is.table(data)){
+  }else if (is.table(data)){
     vs <- names(dimnames(data))
+  }else{
+    stop("Invalid data argument. Data must be a data.frame or a table obejct.")
   }
   ## initialize scores with 1 variables
   scores <- sapply(vs, FUN = function(vv){

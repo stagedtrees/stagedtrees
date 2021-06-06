@@ -38,7 +38,11 @@ with a dynamic programming approach.
 }
 \details{
 This function is an implementation of the
-dynamic programming approach of Silander.
+dynamic programming approach
+of Silander and Leong (2013).
+If the \code{search_score} is decomposable
+the returned model attains the best value
+among all possible orders.
 }
 \examples{
 ## default search using BIC score

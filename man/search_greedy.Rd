@@ -36,6 +36,11 @@ The estimated staged event tree model.
 Search the optimal staged event tree with different orders
 with a greedy heuristic.
 }
+\details{
+The greedy approach implemented in this function
+iteratively adds variables to the staged tree that
+better imporve the \code{search_score}.
+}
 \examples{
 model <- search_greedy(Titanic, alg = stages_fbhc)
 print(model)
