@@ -32,7 +32,7 @@ If not specified, the default \code{layout} used is
 a rotated \code{layout.reingold.tilford}.
 
 We use \code{palette()} as palette for
-the \pkg{igraph} plotting, while \code{plot.igraph} use
+the \pkg{igraph} plotting, while \code{plot.igraph} uses
 as default a different palette. This is to allow matching
 stages colors between \code{plot.ceg}
 and \code{\link{plot.sevt}}.
