@@ -58,24 +58,24 @@ tree from data stored in a `data.frame` or a `table` object.
 
 ``` r
 # Load the PhDArticles data
-data("PhDArticles")
+data("Titanic")
 
 # define order of variables
-order <- c("Gender", "Kids",  "Married", "Articles")
+order <- c("Sex", "Age",  "Class", "Survived")
 
 # Independence model 
-mod_indep <- indep(PhDArticles, order)
+mod_indep <- indep(Titanic, order)
 mod_indep
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2774.754 (df=7)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5773.349 (df=7)
 
 # Full (saturated) model
-mod_full <- full(PhDArticles, order) 
+mod_full <- full(Titanic, order) 
 mod_full
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2546.796 (df=21)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5151.517 (df=30)
 ```
 
 ##### Structural zeros and unobserved situations
@@ -87,12 +87,12 @@ are, by default, ignored by other methods and functions (see the
 `ignore` argument in `?stages_bhc` or `?plot.sevt`).
 
 ``` r
-## there are no observations for Gender=male (female), Kids = yes, Married = no
-get_stage(mod_full, c("male", "yes", "no"))
+## there are no observations for Sex=Male (Female), Age = Child, Class = Crew
+get_stage(mod_full, c("Male", "Child", "Crew"))
 #> [1] "UNOBSERVED"
 
 ## and obviously 
-prob(mod_full, c(Kids = "yes", Married = "no"))
+prob(mod_full, c(Age = "CHild", CLass = "Crew"))
 #> [1] 0
 ```
 
@@ -104,7 +104,7 @@ useful to set `lambda > 0` to avoid problems with probabilities on
 unobserved situations.
 
 ``` r
-mod_full0 <- full(PhDArticles, join_unobserved = FALSE, lambda = 1)
+mod_full0 <- full(Titanic, join_unobserved = FALSE, lambda = 1)
 ```
 
 #### Model selection
@@ -118,64 +118,54 @@ object.
 This methods perform optimization for a given score using different
 heuristics.
 
-  - **Hill-Climbing** `stages_hc(object, score, max_iter, scope, ignore,
-    trace)`
-
-<!-- end list -->
+-   **Hill-Climbing**
+    `stages_hc(object, score, max_iter, scope, ignore, trace)`
 
 ``` r
 mod1 <- stages_hc(mod_indep)
 mod1
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2555.887 (df=10)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5161.242 (df=18)
 ```
 
-  - **Backward Hill-Climbing** `stages_bhc(object, score, max_iter,
-    scope, ignore, trace)`
-
-<!-- end list -->
+-   **Backward Hill-Climbing**
+    `stages_bhc(object, score, max_iter, scope, ignore, trace)`
 
 ``` r
 mod2 <- stages_bhc(mod_full)
 mod2
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2555.887 (df=10)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5157.759 (df=19)
 ```
 
-  - **Backward Fast Hill-Climbing** `stages_fbhc(object, score,
-    max_iter, scope, ignore, trace)`
-
-<!-- end list -->
+-   **Backward Fast Hill-Climbing**
+    `stages_fbhc(object, score, max_iter, scope, ignore, trace)`
 
 ``` r
 mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
 mod3
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2555.887 (df=10)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5164.708 (df=18)
 ```
 
 ##### Clustering methods
 
-  - **Backward Joining** `stages_bj(object, distance, thr, scope,
-    ignore, trace)`
-
-<!-- end list -->
+-   **Backward Joining**
+    `stages_bj(object, distance, thr, scope, ignore, trace)`
 
 ``` r
 mod4 <- stages_bj(mod_full)
 mod4
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2561.404 (df=9)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5170.769 (df=21)
 ```
 
-  - **Hierarchical Clustering** `stages_hclust(object, distance, k,
-    method, ignore, limit, scope)`
-
-<!-- end list -->
+-   **Hierarchical Clustering**
+    `stages_hclust(object, distance, k, method, ignore, limit, scope)`
 
 ``` r
 mod5 <- stages_hclust(mod_full,
@@ -184,14 +174,12 @@ mod5 <- stages_hclust(mod_full,
                    method = "mcquitty")
 mod5
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2554.904 (df=11)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5241.629 (df=12)
 ```
 
-  - **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore,
-    limit, scope, nstart)`
-
-<!-- end list -->
+-   **K-Means Clustering**
+    `stages_kmeans(object, k, algorithm, ignore, limit, scope, nstart)`
 
 ``` r
 mod6 <- stages_kmeans(mod_full,
@@ -199,71 +187,63 @@ mod6 <- stages_kmeans(mod_full,
                    algorithm = "Hartigan-Wong")
 mod6
 #> Staged event tree (fitted) 
-#> Gender[2] -> Kids[2] -> Married[2] -> Articles[3]  
-#> 'log Lik.' -2554.904 (df=11)
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2]  
+#> 'log Lik.' -5241.629 (df=12)
 ```
 
-#### Combining model selections with `%>%`
+#### Combining model selections with `|>` (or `%>%`)
 
-The pipe operator from the `magrittr` package can be used to combine
-easily various model selection algorithms and to specify models easily.
+The new native pipe operator `|>` (or the one from the `magrittr`
+package) can be used to combine various model selection algorithms.
 
 ``` r
-library(magrittr)
-model <- PhDArticles %>% full(lambda = 1) %>% 
-           stages_hclust %>% stages_hc
+model <- Titanic |> full(lambda = 1) |> stages_hclust() |> stages_hc()
 
 ## extract a sub_tree and join two stages
-sub_model <- model %>% subtree(path = c(">2"))  %>%  
-              join_stages("Mentor", "1", "2")
+small_model <- model |> subtree(path = c("Crew"))  |>
+              join_stages("Survived", "3", "7")
 ```
 
 #### Probabilities, predictions and sampling
 
 ##### Marginal probabilities
 
-Obtain marginal probabilities with the `prob` function.
+Obtain marginal (or conditionals) probabilities with the `prob`
+function.
 
 ``` r
-# estimated probability of c(Gender = "male", Married = "yes")
+# estimated probability of c(Sex = "Male", Class = "1st")
 # using different models
-prob(mod_indep, c(Gender = "male", Married = "yes")) 
-#> [1] 0.357567
-prob(mod3, c(Gender = "male", Married = "yes"))
-#> [1] 0.4163934
+prob(mod_indep, c(Sex = "Male", Class = "1st")) 
+#> [1] 0.1161289
+prob(mod3, c(Sex = "Male", Class = "1st"))
+#> [1] 0.08110992
 ```
 
 Or for a `data.frame` of observations:
 
 ``` r
-obs <- expand.grid(mod_full$tree)
+obs <- expand.grid(mod_full$tree[c(1,3)])
 p <- prob(mod2, obs)
 cbind(obs, P = p)
-#>    Gender Kids Married Articles          P
-#> 1    male  yes      no        0 0.00000000
-#> 2  female  yes      no        0 0.00000000
-#> 3    male   no      no        0 0.03711667
-#> 4  female   no      no        0 0.06437935
-#> 5    male  yes     yes        0 0.07751799
-#> 6  female  yes     yes        0 0.02627729
-#> 7    male   no     yes        0 0.04762758
-#> 8  female   no     yes        0 0.04762758
-#> 9    male  yes      no      1-2 0.00000000
-#> 10 female  yes      no      1-2 0.00000000
-#> 11   male   no      no      1-2 0.05722715
-#> 12 female   no      no      1-2 0.09926125
-#> 13   male  yes     yes      1-2 0.11951865
-#> 14 female  yes     yes      1-2 0.04051480
-#> 15   male   no     yes      1-2 0.07343307
-#> 16 female   no     yes      1-2 0.07343307
-#> 17   male  yes      no       >2 0.00000000
-#> 18 female  yes      no       >2 0.00000000
-#> 19   male   no      no       >2 0.02915345
-#> 20 female   no      no       >2 0.05056705
-#> 21   male  yes     yes       >2 0.06088686
-#> 22 female  yes     yes       >2 0.02063961
-#> 23   male   no     yes       >2 0.03740930
-#> 24 female   no     yes       >2 0.03740930
+#>      Sex Class          P
+#> 1   Male   1st 0.08110992
+#> 2 Female   1st 0.06655023
+#> 3   Male   2nd 0.08273137
+#> 4 Female   2nd 0.04675523
+#> 5   Male   3rd 0.23097925
+#> 6 Female   3rd 0.08978404
+#> 7   Male  Crew 0.39164016
+#> 8 Female  Crew 0.01044980
+```
+
+Conditional probabilities can be obtained via the `conditional_on`
+argument.
+
+``` r
+prob(mod3, c(Sex = "Male", Class = "1st"),       
+     conditional_on = c(Survived = "Yes"))
+#> [1] 0.09876727
 ```
 
 ##### Predictions
@@ -273,40 +253,38 @@ A staged event tree object can be used to make predictions with the
 first variable (root) in the tree will be used.
 
 ``` r
-## check accuracy over the PhDArticles data
-predicted <- predict(mod3, newdata = PhDArticles)
-table(predicted, PhDArticles$Gender)
+## check accuracy over the Titanic data
+titanic_df <- as.data.frame(Titanic)
+predicted <- predict(mod3, class = "Survived", newdata = titanic_df)
+table(predicted, titanic_df$Survived)
 #>          
-#> predicted male female
-#>    male    311    145
-#>    female  183    276
+#> predicted No Yes
+#>       No   7   7
+#>       Yes  7   7
 ```
 
-Conditional probabilities (or log-) can be obtained setting `prob =
-TRUE`:
+Conditional probabilities (or log-) can be obtained setting
+`prob = TRUE`:
 
 ``` r
-## obtain estimated conditional probabilities in mod3 for first 5 obs
-## P(Articles|Gender, Kids, Married)
-predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
-#>        male    female
-#> 1 0.5000000 0.5000000
-#> 2 0.3656958 0.6343042
-#> 3 0.3656958 0.6343042
-#> 4 0.7468354 0.2531646
-#> 5 0.3656958 0.6343042
+## obtain estimated conditional probabilities in mod3 
+predict(mod3, newdata = titanic_df[1:3,], prob = TRUE)
+#>       Male   Female
+#> 1 0.587156 0.412844
+#> 2 0.587156 0.412844
+#> 3 0.587156 0.412844
 ```
 
 ##### Sampling
 
 ``` r
 sample_from(mod4, 5)
-#>   Gender Kids Married Articles
-#> 1   male   no     yes       >2
-#> 2   male   no     yes      1-2
-#> 3   male  yes     yes      1-2
-#> 4   male   no      no      1-2
-#> 5 female  yes     yes        0
+#>    Sex   Age Class Survived
+#> 1 Male Adult  Crew       No
+#> 2 Male Adult  Crew       No
+#> 3 Male Adult  Crew       No
+#> 4 Male Adult  Crew       No
+#> 5 Male Adult   3rd       No
 ```
 
 #### Explore the model
@@ -314,12 +292,8 @@ sample_from(mod4, 5)
 ##### Model info
 
 ``` r
-# variables 
-variable.names(mod1)
-#> NULL
-
 # stages
-stages(mod1, "Kids")
+stages(mod1, "Age")
 #> [1] "3" "1"
 
 # summary
@@ -328,26 +302,38 @@ summary(mod1)
 #> stages_hc(mod_indep)
 #> lambda:  0 
 #> Stages: 
-#>   Variable:  Gender 
-#>  stage npaths sample.size      male    female
-#>      1      0         915 0.5398907 0.4601093
+#>   Variable:  Sex 
+#>  stage npaths sample.size      Male    Female
+#>      1      0        2201 0.7864607 0.2135393
 #>   ------------ 
-#>   Variable:  Kids 
-#>  stage npaths sample.size       yes        no
-#>      3      1         494 0.4777328 0.5222672
-#>      1      1         421 0.1900238 0.8099762
+#>   Variable:  Age 
+#>  stage npaths sample.size      Child     Adult
+#>      3      1        1731 0.03697285 0.9630272
+#>      1      1         470 0.09574468 0.9042553
 #>   ------------ 
-#>   Variable:  Married 
-#>  stage npaths sample.size        no       yes
-#>      3      2         316 0.0000000 1.0000000
-#>      4      1         258 0.4379845 0.5620155
-#>      1      1         341 0.5747801 0.4252199
+#>   Variable:  Class 
+#>  stage npaths sample.size        1st       2nd       3rd       Crew
+#>      1      2         109 0.05504587 0.2201835 0.7247706 0.00000000
+#>      3      1        1667 0.10497900 0.1007798 0.2771446 0.51709658
+#>      4      1         425 0.33882353 0.2188235 0.3882353 0.05411765
 #>   ------------ 
-#>   Variable:  Articles 
-#>       stage npaths sample.size         0      1-2        >2
-#>  UNOBSERVED      2           0        NA       NA        NA
-#>           1      6         915 0.3005464 0.463388 0.2360656
+#>   Variable:  Survived 
+#>       stage npaths sample.size         No       Yes
+#>           4      5         174 0.02298851 0.9770115
+#>           1      2         910 0.77472527 0.2252747
+#>  UNOBSERVED      2           0         NA        NA
+#>           6      3         371 0.60377358 0.3962264
+#>           7      2         630 0.85873016 0.1412698
+#>           5      2         116 0.13793103 0.8620690
 #>   ------------
+
+# confidence intervals
+confint(mod1, parm = "Age")
+#>                  2.5 %    97.5 %
+#> Age=Child|3 0.02808370 0.0458620
+#> Age=Adult|3 0.95413800 0.9719163
+#> Age=Child|1 0.06914343 0.1223459
+#> Age=Adult|1 0.87765407 0.9308566
 ```
 
 ##### Plot
@@ -357,7 +343,7 @@ plot(mod4, main = "Staged tree learned with bj.sevt",
      cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
-![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 By default stages associated with the unobserved situations are not
 plotted, if the model has been created with `join_unobserved = TRUE`.
@@ -372,7 +358,7 @@ plot(stndnaming(mod5, uniq = TRUE),
      cex_label_edges = 0.6, cex_nodes = 1.5)
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ###### Barplot
 
@@ -381,10 +367,20 @@ representing the different probabilities defined for the different
 stages of a variable.
 
 ``` r
-barplot(mod4, "Kids", legend.text = TRUE)
+barplot(mod4, "Class", legend.text = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+
+###### CEG plots
+
+Plotting CEG requires the `igraph` package.
+
+``` r
+plot(ceg(mod5))
+```
+
+![](man/figures/README-unnamed-chunk-23-1.png)<!-- -->
 
 ##### Subtrees
 
@@ -392,11 +388,11 @@ A subtree can be extracted, the result is another staged event tree
 object in the remaining variables.
 
 ``` r
-sub <- subtree(mod4, c("female"))
+sub <- subtree(mod4, c("Female"))
 plot(sub)
 ```
 
-![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
 
 #### Comparing models
 
@@ -410,29 +406,29 @@ compare_stages(mod1, mod4, method = "hamming", plot = TRUE,
              cex_label_nodes = 0, cex_label_edges = 0)
 ```
 
-![](man/figures/README-unnamed-chunk-23-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-25-1.png)<!-- -->
 
     #> [1] FALSE
-    
+
     hamming_stages(mod1, mod4)
-    #> [1] 1
-    
+    #> [1] 4
+
     difftree <- compare_stages(mod1, mod4, method = "stages", plot = FALSE, 
                  return_tree = TRUE)
-    
+
     difftree$Married
-    #> [1] 0 1 0 1
+    #> NULL
 
 Penalized log-likelihood.
 
 ``` r
 BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #>           df      BIC
-#> mod_indep  7 5597.240
-#> mod_full  21 5236.789
-#> mod1      10 5179.964
-#> mod2      10 5179.964
-#> mod3      10 5179.964
-#> mod4       9 5184.178
-#> mod5      11 5184.816
+#> mod_indep  7 11600.57
+#> mod_full  30 10533.93
+#> mod1      18 10461.02
+#> mod2      19 10461.76
+#> mod3      18 10467.96
+#> mod4      21 10503.17
+#> mod5      12 10575.62
 ```
