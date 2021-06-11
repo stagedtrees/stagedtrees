@@ -1,3 +1,15 @@
+# 2.2.0
+
+* `plot.ceg` new plotting functions using `igraph` plotting.
+* new util function `make_stages_col` which help computing 
+  stages colors for `sevt` and `ceg` plotting.
+* `sample_from` now returns a data.frame of factors. 
+* `prob` earns a new argument `conditional_on`, that 
+   makes easier to compute conditional probabilities. 
+* `confint.sevt`, implemented the confidence interval method
+   for the parameters of a model of class `sevt`. 
+* more and better testing and documentation.
+
 # 2.1.0 
 
 * implemented various conversion algorithms between `sevt` 

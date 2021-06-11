@@ -68,11 +68,14 @@ for the variable names.}
 NULL (color will be assigned based on the current palette);
 a named (variables) list of named (stages)
 vectors of colors;
-the character \code{"stages"}, in which case the stage names will be used as
-colors;
+the character \code{"stages"}, in which case the stage names
+will be used as colors;
 a function that takes
 as input a vector of stages and output the corresponding colors.
-Check the provided examples.}
+Check the provided examples.
+The function \code{make_stages_col} is used internally
+and \code{make_stages_col(x, NULL)} or \code{make_stages_col(x, "stages")}
+can be used as a starting point for colors tweaking.}
 
 \item{col_edges}{color for the edges.}
 
