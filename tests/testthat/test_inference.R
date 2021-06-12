@@ -98,6 +98,9 @@ test_that("logLik after joining", {
   }))
 })
 
+
+context("LR_test")
+
 test_that("LR_test does not work with not nested models 1", {
   mod1 <- stages_bhc(full(Titanic))
   mod2 <- stages_bj(full(Titanic), thr = 0.2)
@@ -113,5 +116,5 @@ test_that("LR_test does not work with not nested models 2", {
 test_that("LR_test works with nested models", {
   mod1 <- stages_bj(full(Titanic), thr = 1)
   mod2 <- stages_bj(full(Titanic), thr = 0.1)
-  expect_output(LR_test(phd.mod1, phd.mod2))
+  expect_output(LR_test(mod1, mod2))
 })

@@ -23,7 +23,9 @@ It computes the likelihood ratio test for two nested staged trees models.
 The function checks automatically if the models are nested, returning an error if they are not.
 }
 \examples{
-phd.mod1 <- stndnaming(stages_hc(indep(PhDArticles, order = order)))
-phd.mod2 <- stndnaming(stages_hc(full(PhDArticles, order = order)))
+data(PhDArticles)
+order <- c("Gender", "Kids", "Married", "Articles")
+phd.mod1 <- stages_hc(indep(PhDArticles, order))
+phd.mod2 <- stages_hc(full(PhDArticles, order))
 LR_test(phd.mod1, phd.mod2)
 }

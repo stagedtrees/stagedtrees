@@ -345,9 +345,12 @@ confint.sevt <- function (object, parm, level = 0.95,
 #' The function checks automatically if the models are nested, returning an error if they are not.
 #' @return It returns the corresponding p-value.
 #' @examples 
-#' phd.mod1 <- stndnaming(stages_hc(indep(PhDArticles, order = order)))
-#' phd.mod2 <- stndnaming(stages_hc(full(PhDArticles, order = order)))
+#' data(PhDArticles)
+#' order <- c("Gender", "Kids", "Married", "Articles")
+#' phd.mod1 <- stages_hc(indep(PhDArticles, order))
+#' phd.mod2 <- stages_hc(full(PhDArticles, order))
 #' LR_test(phd.mod1, phd.mod2)
+#' @importFrom stats pchisq
 #' @export
   LR_test <- function(mod1, mod2) {
     check_sevt(mod1)
@@ -358,7 +361,9 @@ confint.sevt <- function (object, parm, level = 0.95,
     # check nested models
     incl_st <- inclusions_stages(mod1, mod2)
     for(i in 1:length(incl_st)) {
-      if(any(incl_st[[i]][, 2] %in% c("!=", "<"))) stop(paste(c("mod1 and mod2 are not nested models. Check stages structures for ", names(incl_st)[i])))
+      if(any(incl_st[[i]][, 2] %in% c("!=", "<"))){
+        stop(paste(c("mod1 and mod2 are not nested models. Check stages structures for ", names(incl_st)[i])))
+      }
     }
     
     L1 <- logLik(mod1)
