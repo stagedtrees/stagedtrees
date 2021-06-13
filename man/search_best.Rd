@@ -7,7 +7,7 @@
 search_best(
   data,
   alg = stages_bhc,
-  search_score = BIC,
+  search_criterion = BIC,
   lambda = 0,
   join_unobserved = TRUE,
   ...
@@ -21,7 +21,7 @@ search_best(
 The function \code{alg} must accept the argument
 \code{scope}.}
 
-\item{search_score}{the criterium minimized in the order search.}
+\item{search_criterion}{the criterion minimized in the order search.}
 
 \item{lambda}{numerical value passed to \code{\link{full}}.}
 
@@ -33,14 +33,14 @@ The function \code{alg} must accept the argument
 The estimated staged event tree model.
 }
 \description{
-Find the optimal staged event tree with different orders
+Find the optimal staged event tree
 with a dynamic programming approach.
 }
 \details{
 This function is an implementation of the
 dynamic programming approach
 of Silander and Leong (2013).
-If the \code{search_score} is decomposable
+If the \code{search_criterion} is decomposable
 the returned model attains the best value
 among all possible orders.
 }
@@ -48,9 +48,9 @@ among all possible orders.
 ## default search using BIC score
 model <- search_best(Titanic, alg = stages_kmeans)
 
-## use df as search_score
+## use df as search_criterion
 model1 <- search_best(Titanic, alg = stages_bhc, 
-                      search_score = function(m) attr(logLik(m), "df"))
+                      search_criterion = function(m) attr(logLik(m), "df"))
 }
 \references{
 Silander T., Leong TY.

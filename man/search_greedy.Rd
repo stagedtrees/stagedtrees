@@ -7,7 +7,7 @@
 search_greedy(
   data,
   alg = stages_bhc,
-  search_score = BIC,
+  search_criterion = BIC,
   lambda = 0,
   join_unobserved = TRUE,
   ...
@@ -21,7 +21,7 @@ search_greedy(
 The function \code{alg} must accept the argument
 \code{scope}.}
 
-\item{search_score}{the criterium minimized in the order search.}
+\item{search_criterion}{the criterion minimized in the order search.}
 
 \item{lambda}{numerical value passed to \code{\link{full}}.}
 
@@ -33,13 +33,13 @@ The function \code{alg} must accept the argument
 The estimated staged event tree model.
 }
 \description{
-Search the optimal staged event tree with different orders
+Search the optimal staged event tree
 with a greedy heuristic.
 }
 \details{
 The greedy approach implemented in this function
 iteratively adds variables to the staged tree that
-better imporve the \code{search_score}.
+better improve the \code{search_criterion}.
 }
 \examples{
 model <- search_greedy(Titanic, alg = stages_fbhc)

@@ -59,26 +59,26 @@ sevt_add <- function(object, var, data, join_unobserved = TRUE){
 
 #' Greedy Order Search 
 #' 
-#' Search the optimal staged event tree with different orders
+#' Search the optimal staged event tree
 #' with a greedy heuristic.
 #' @param data either a data.frame or a table containing the data.
 #' @param alg a function that performs stages structure estimation. Similar to
 #'            \code{\link{stages_bhc}} or \code{\link{stages_hclust}}. 
 #'            The function \code{alg} must accept the argument 
 #'            \code{scope}.
-#' @param search_score the criterium minimized in the order search. 
+#' @param search_criterion the criterion minimized in the order search. 
 #' @param lambda numerical value passed to \code{\link{full}}.
 #' @param join_unobserved logical, passed to \code{\link{full}}.
 #' @param ... additional arguments, passed to \code{alg}.
 #' @return The estimated staged event tree model.
 #' @details The greedy approach implemented in this function 
 #'          iteratively adds variables to the staged tree that 
-#'          better imporve the \code{search_score}.
+#'          better improve the \code{search_criterion}.
 #' @examples 
 #' model <- search_greedy(Titanic, alg = stages_fbhc)
 #' print(model)
 #' @export
-search_greedy <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0, 
+search_greedy <- function(data, alg = stages_bhc, search_criterion = BIC, lambda = 0, 
                           join_unobserved = TRUE, ...){
   if (is.data.frame(data)){
     vs <- colnames(data)
@@ -94,7 +94,7 @@ search_greedy <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0
   for (v in vs){
     tmp <- full(data, order = v, lambda = lambda, join_unobserved = join_unobserved)
     #print(score(tmp))
-    if (search_score(tmp) < search_score(best)){
+    if (search_criterion(tmp) < search_criterion(best)){
       best <- tmp
     }
   }
@@ -108,7 +108,7 @@ search_greedy <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0
     for (v in svs[-1]){
       tmp <- alg(sevt_add(object, v, data, join_unobserved = join_unobserved), 
                  scope = v, ...)
-      if (search_score(tmp) < search_score(best)){
+      if (search_criterion(tmp) < search_criterion(best)){
         best <- tmp
         #done <- TRUE
       }  
@@ -120,25 +120,25 @@ search_greedy <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0
   return(object)
 }
 
-bls <- function(data, left, new, alg, search_score = BIC, lambda, join_unobserved, ...){
+bls <- function(data, left, new, alg, search_criterion = BIC, lambda, join_unobserved, ...){
   m <- full(data = data, order = left, 
             join_unobserved = join_unobserved,
             lambda = lambda)
-  s <- search_score(m)
+  s <- search_criterion(m)
   m <- alg(sevt_add(m, new, data, join_unobserved = join_unobserved), scope = new, ...)
-  return(search_score(m) - s)
+  return(search_criterion(m) - s)
 }
 
 #' Optimal Order Search  
 #' 
-#' Find the optimal staged event tree with different orders
+#' Find the optimal staged event tree
 #' with a dynamic programming approach.
 #' @param data either a data.frame or a table containing the data.
 #' @param alg a function that performs stages structure estimation. Similar to
 #'            \code{\link{stages_bhc}} or \code{\link{stages_hclust}}. 
 #'            The function \code{alg} must accept the argument 
 #'            \code{scope}.
-#' @param search_score the criterium minimized in the order search. 
+#' @param search_criterion the criterion minimized in the order search. 
 #' @param lambda numerical value passed to \code{\link{full}}.
 #' @param join_unobserved logical, passed to \code{\link{full}}.
 #' @param ... additional arguments, passed to \code{alg}.
@@ -146,7 +146,7 @@ bls <- function(data, left, new, alg, search_score = BIC, lambda, join_unobserve
 #' @details This function is an implementation of the 
 #'          dynamic programming approach 
 #'          of Silander and Leong (2013). 
-#'          If the \code{search_score} is decomposable
+#'          If the \code{search_criterion} is decomposable
 #'          the returned model attains the best value 
 #'          among all possible orders.  
 #' @references 
@@ -163,12 +163,12 @@ bls <- function(data, left, new, alg, search_score = BIC, lambda, join_unobserve
 #' ## default search using BIC score
 #' model <- search_best(Titanic, alg = stages_kmeans)
 #' 
-#' ## use df as search_score
+#' ## use df as search_criterion
 #' model1 <- search_best(Titanic, alg = stages_bhc, 
-#'                       search_score = function(m) attr(logLik(m), "df"))
+#'                       search_criterion = function(m) attr(logLik(m), "df"))
 #' @importFrom utils combn
 #' @export
-search_best <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0, 
+search_best <- function(data, alg = stages_bhc, search_criterion = BIC, lambda = 0, 
                            join_unobserved = TRUE, ...){
   if (is.data.frame(data)){
     vs <- colnames(data)
@@ -179,7 +179,7 @@ search_best <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0,
   }
   ## initialize scores with 1 variables
   scores <- sapply(vs, FUN = function(vv){
-    search_score(full(data, order = vv, join_unobserved = join_unobserved, 
+    search_criterion(full(data, order = vv, join_unobserved = join_unobserved, 
                       lambda = lambda))
   }, USE.NAMES = TRUE )
   sinks <- vs
@@ -189,7 +189,7 @@ search_best <- function(data, alg = stages_bhc, search_score = BIC, lambda = 0,
     tmp <- apply(sets, MARGIN = 2, FUN = function(W){
       sapply(W, function(v){
         scores[paste(W[W!=v],collapse="-")] + bls(data, W[W!=v], v, alg, 
-                                                  search_score, 
+                                                  search_criterion, 
                                                   lambda = lambda,
                                                   join_unobserved = join_unobserved, 
                                                   ...)
