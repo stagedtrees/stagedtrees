@@ -97,3 +97,54 @@ test_that("logLik after joining", {
     expect_equal(ll1, ll2)
   }))
 })
+
+
+context("lr_test")
+
+modf <- full(Titanic)
+mod1 <- indep(Titanic)
+mod2 <- stages_bj(modf, thr = 0.1)
+mod3 <- full(generate_linear_dataset(4, 10))
+mod4 <- full(generate_linear_dataset(2, 10))
+
+test_that("lr_test throws error with not nested models I", {
+  expect_is(lr_test(mod1), "anova")
+  expect_is(lr_test(mod2), "anova")
+  expect_error(lr_test(mod2, mod1))
+})
+
+test_that("lr_test throws error with not nested models II", {
+  expect_is(lr_test(mod1), "anova")
+  expect_is(lr_test(modf), "anova")
+  expect_error(lr_test(modf, mod1))
+})
+
+test_that("lr_test throws error with model on different variables", {
+  expect_is(lr_test(mod1), "anova")
+  expect_is(lr_test(mod3), "anova")
+  expect_is(lr_test(mod4), "anova")
+  expect_error(lr_test(mod1, mod3))
+  expect_error(lr_test(mod1, mod4))
+})
+
+test_that("lr_test works with one", {
+  expect_is(lr_test(mod2), class = "anova")
+})
+
+test_that("lr_test works with two nested models", {
+  expect_is(lr_test(mod1, mod2), class = "anova")
+})
+
+
+test_that("lr_test works with three models ", {
+  expect_is(lr_test(mod1, mod2, modf), class = "anova")
+})
+
+
+test_that("lr_test throws warning if lambda > 0", {
+  mod1a <- sevt_fit(mod1, lambda = 1)
+  mod2a <- sevt_fit(mod2, lambda = 2)
+  expect_warning(lr_test(mod1a, mod2a))
+  expect_warning(lr_test(mod2a))
+})
+
