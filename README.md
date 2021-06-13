@@ -26,7 +26,7 @@ for Structural Learning of Stratified Staged Trees, 2020
 ### Overview
 
 `stagedtrees` is a package that implements staged event trees, a
-probability model for discrete random variables.
+probability model for categorical random variables.
 
 ### Installation
 
@@ -278,8 +278,8 @@ predicted <- predict(mod3, newdata = PhDArticles)
 table(predicted, PhDArticles$Gender)
 #>          
 #> predicted male female
-#>    male    311    145
-#>    female  183    276
+#>    male    310    155
+#>    female  184    266
 ```
 
 Conditional probabilities (or log-) can be obtained setting `prob =
@@ -302,11 +302,11 @@ predict(mod3, newdata = PhDArticles[1:5,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>   Gender Kids Married Articles
-#> 1   male   no     yes       >2
-#> 2   male   no     yes      1-2
-#> 3   male  yes     yes      1-2
-#> 4   male   no      no      1-2
-#> 5 female  yes     yes        0
+#> 1   male   no      no        0
+#> 2 female   no      no      1-2
+#> 3 female   no     yes      1-2
+#> 4   male  yes     yes      1-2
+#> 5 female   no      no       >2
 ```
 
 #### Explore the model
@@ -376,9 +376,8 @@ plot(stndnaming(mod5, uniq = TRUE),
 
 ###### Barplot
 
-`barplot_stages` permit to easily plot barplots (via `barplot`)
-representing the different probabilities defined for the different
-stages of a variable.
+The method `barplot.sevt` creates a bar plot for the conditional
+probabilities of a variable.
 
 ``` r
 barplot(mod4, "Kids", legend.text = TRUE)
@@ -388,8 +387,8 @@ barplot(mod4, "Kids", legend.text = TRUE)
 
 ##### Subtrees
 
-A subtree can be extracted, the result is another staged event tree
-object in the remaining variables.
+From a staged evnt tree a subtree can be extracted, the resulting model
+is ar staged event tree in the remaining variables.
 
 ``` r
 sub <- subtree(mod4, c("female"))
