@@ -296,7 +296,7 @@ plot(sub)
 
 #### Comparing models
 
-Check if models are equal.
+##### Compare stages structure
 ```{r}
 compare_stages(mod1, mod4)
 
@@ -311,7 +311,14 @@ difftree <- compare_stages(mod1, mod4, method = "stages", plot = FALSE,
 difftree$Married
 ```
 
-Penalized log-likelihood.
+##### Penalized log-likelihood.
 ```{r}
 BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
+```
+
+##### Likelihood-ratio test
+
+```{r}
+mod1a <- join_stages(mod1, "Class", "3", "4")
+lr_test(mod1a, mod1)
 ```

@@ -282,10 +282,10 @@ predict(mod3, newdata = titanic_df[1:3,], prob = TRUE)
 sample_from(mod4, 5)
 #>      Sex   Age Class Survived
 #> 1   Male Adult   3rd       No
-#> 2   Male Adult   3rd       No
-#> 3   Male Adult  Crew       No
-#> 4 Female Adult   3rd      Yes
-#> 5   Male Adult   2nd       No
+#> 2   Male Adult  Crew       No
+#> 3   Male Adult   2nd       No
+#> 4 Female Adult   1st      Yes
+#> 5   Male Adult  Crew       No
 ```
 
 #### Explore the model
@@ -397,7 +397,7 @@ plot(sub)
 
 #### Comparing models
 
-Check if models are equal.
+##### Compare stages structure
 
 ``` r
 compare_stages(mod1, mod4)
@@ -420,7 +420,7 @@ compare_stages(mod1, mod4, method = "hamming", plot = TRUE,
     difftree$Married
     #> NULL
 
-Penalized log-likelihood.
+##### Penalized log-likelihood.
 
 ``` r
 BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
@@ -432,4 +432,21 @@ BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
 #> mod3      18 10467.96
 #> mod4      21 10503.17
 #> mod5      12 10575.62
+```
+
+##### Likelihood-ratio test
+
+``` r
+mod1a <- join_stages(mod1, "Class", "3", "4")
+lr_test(mod1a, mod1)
+#> Likelihood-ratio test 
+#> 
+#> Sex[2] -> Age[2] -> Class[4] -> Survived[2] 
+#> Model 1: mod1a
+#> Model 2: mod1
+#>   #Df  LogLik Df  Chisq Pr(>Chisq)    
+#> 1  15 -5359.6                         
+#> 2  18 -5161.2  3 396.65  < 2.2e-16 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
