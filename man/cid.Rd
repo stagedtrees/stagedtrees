@@ -35,3 +35,8 @@ model2 <- stages_bhc(full(Titanic,
 cid(model1, model2)$cid
 cid(model1, model2)$wrong
 }
+\references{
+Leonelli M., Varando G.
+Context-Specific Causal Discovery for Categorical Data Using Staged Trees
+\url{arXiv:2106.04416}
+}
