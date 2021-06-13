@@ -6,8 +6,10 @@
 * `sample_from` now returns a data.frame of factors. 
 * `prob` earns a new argument `conditional_on`, that 
    makes easier to compute conditional probabilities. 
-* `confint.sevt`, implemented the confidence interval method
+* `confint.sevt`, implement a method for confidence intervals
    for the parameters of a model of class `sevt`. 
+* `lr_test` new function, implementing likelihood-ratio 
+   test.
 * more and better testing and documentation.
 
 # 2.1.0 
