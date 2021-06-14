@@ -12,6 +12,7 @@
    test.
 * functions to search optimal staged trees among different orders:
   `search_best` and `search_greedy`.
+* `cid` function that implements context intervention discrepancy
 * more and better testing and documentation.
 
 # 2.1.0 
