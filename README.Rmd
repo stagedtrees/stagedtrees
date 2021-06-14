@@ -37,7 +37,7 @@ Eprint = {arXiv:2004.06459},
 ### Overview 
 
 `stagedtrees` is a package that implements staged event trees, a probability
-model for discrete random variables.   
+model for categorical random variables.   
 
 ### Installation 
   
@@ -268,9 +268,8 @@ plot(stndnaming(mod5, uniq = TRUE),
 
 ###### Barplot
 
-`barplot_stages` permit to easily plot barplots (via `barplot`) 
-representing the different probabilities defined for the different
-stages of a variable.
+The method `barplot.sevt` creates a bar plot 
+for the conditional probabilities of a variable.
 
 ```{r}
 barplot(mod4, "Class", legend.text = TRUE)
@@ -286,7 +285,8 @@ plot(ceg(mod5))
 
 ##### Subtrees
 
-A subtree can be extracted, the result is another staged event tree object
+From a staged evnt tree a subtree can be extracted, 
+the resulting model is ar staged event tree
 in the remaining variables.
 
 ```{r}
