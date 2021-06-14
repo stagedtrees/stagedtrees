@@ -10,6 +10,8 @@
    for the parameters of a model of class `sevt`. 
 * `lr_test` new function, implementing likelihood-ratio 
    test.
+* functions to search optimal staged trees among different orders:
+  `search_best` and `search_greedy`.
 * more and better testing and documentation.
 
 # 2.1.0 
