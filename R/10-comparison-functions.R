@@ -253,7 +253,7 @@ diff_stages <- function(object1, object2) {
 #' @references 
 #' Leonelli M., Varando G. 
 #' Context-Specific Causal Discovery for Categorical Data Using Staged Trees
-#' <arXiv:2106.04416>
+#' <https://arxiv.org/abs/2106.04416>
 #' @examples 
 #' model1 <- stages_bhc(full(Titanic))
 #' model2 <- stages_bhc(full(Titanic, 
