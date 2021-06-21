@@ -1,7 +1,7 @@
 Package: stagedtrees
 Type: Package
 Title: Staged Event Trees 
-Version: 2.1.0
+Version: 2.2.0
 Authors@R: c(
   person(given = "Gherardo", family = "Varando", role = c("aut", "cre"),
   email = "gherardo.varando@gmail.com", 
@@ -41,4 +41,5 @@ Suggests:
     testthat,
     bnlearn,
     covr,
-    clue
+    clue,
+    igraph

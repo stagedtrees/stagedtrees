@@ -8,6 +8,11 @@ test_that("plot staged event tree", {
   expect_silent(plot(ev))
 })
 
+
+test_that("plot staged event tree cex_label_nodes = 1", {
+  expect_silent(plot(ev, cex_label_nodes = 1, pch =1))
+})
+
 test_that("plot should return NULL", {
   expect_null(plot(ev))
 })
@@ -64,4 +69,43 @@ test_that("barplot.sevt should accept col = LL", {
 test_that("barplot.sevt with legend.text=TRUE", {
   expect_silent(barplot(mod, "B", legend.text = TRUE))
 })
+
+context("plot ceg")
+
+test_that("plot.ceg", {
+  expect_silent(plot(ceg(mod)))
+})
+
+test_that("plot.ceg", {
+  expect_silent(plot(ceg(mod), col = "stages"))
+})
+
+context("make_stages_col")
+
+test_that("make_stages_col with NULL", {
+  expect_silent(cols <- make_stages_col(mod))
+  expect_is(cols, "list")
+  expect_length(cols, 8)
+  expect_silent(plot(mod, col = cols))
+})
+
+
+test_that("make_stages_col with list of stages colors", {
+  expect_silent(cols <- make_stages_col(mod))
+  expect_silent(cols <- make_stages_col(mod, cols))
+  expect_is(cols, "list")
+  expect_length(cols, 8)
+  expect_silent(plot(mod, col = cols))
+})
+
+test_that("make_stages_col with function", {
+  expect_silent(cols <- make_stages_col(mod, col = function(stages){
+    hcl.colors(n = length(stages))
+  }))
+  expect_is(cols, "list")
+  expect_length(cols, 8)
+  expect_silent(plot(mod, col = cols))
+})
+
+
 

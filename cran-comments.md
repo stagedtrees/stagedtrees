@@ -2,26 +2,43 @@
 
 MINOR version.  
 
-* new conversion methods: `as_sevt`, `as_parentslist`, `as_bn`. 
-* improved implementation of `as_sevt.bn.fit`.
-* various fixes and improved documentation. 
+* `plot.ceg` new plotting functions using `igraph` plotting.
+* new util function `make_stages_col` which help computing 
+  stages colors for `sevt` and `ceg` plotting.
+* `sample_from` now returns a data.frame of factors. 
+* `prob` earns a new argument `conditional_on`, that 
+   makes easier to compute conditional probabilities. 
+* `confint.sevt`, implement a method for confidence intervals
+   for the parameters of a model of class `sevt`. 
+* `lr_test` new function, implementing likelihood-ratio 
+   test.
+* functions to search optimal staged trees among different orders:
+  `search_best` and `search_greedy`.
+* `cid` function that implements context intervention discrepancy
+* more and better testing and documentation.
 
 ## Test environments
 
-* Ubuntu 20.04.2          (64-bit)  R 4.0.5 (local) 
-* macOS Catalina 10.15.7  (64-bit)  R 3.6.1 (local)
-* Ubuntu 16.04.6      (64-bit)  R 4.0.2 (on travis-ci) 
-* Windows Server 2008 (64-bit)  R 4.0.5 (win-builder, r-release)
-* Windows Server 2008 (64-bit)  R 3.6.3 (win-builder, r-oldrelease)
-* Windows Server 2008 (64-bit)  devel (unstable) (win-builder, r-devel)
+* local ubuntu 20.04.2  (64-bit)  R 4.1.0
+* travis-ci ubuntu 16.04.6  (64-bit)  R 4.0.2
+* win-builder (r-release)
+* win-builder (r-oldrelease)
+* win-builder (r-devel)
+* github actions windows-latest (r-release)
+* github actions macOS-latest (r-release)
+* github actions ubuntu-20.04 (r-release)
+* github actions ubuntu-20.04 (r-devel)
+* R-hub fedora-clang-devel (r-devel)
+* R-hub windows-x86_64-devel (r-devel)
+* R-hub ubuntu-gcc-release (r-release)
 
 ## R CMD Check results
 
-### Ubuntu 20.04.2 R 4.0.5 (local) 
+### local ubuntu 20.04.2 R 4.1.0
 
 #### devtools::check()
 
-Duration: 24.6s
+Duration: 36.5s
 
 0 errors | 0 warnings | 0 note
 
@@ -29,14 +46,7 @@ Duration: 24.6s
 
 Status: OK
 
-
-### OS X R 3.6.1 (local)
-
-Duration: 26.1s
-
-0 errors | 0 warnings | 0 notes
-
-### Ubuntu 16.04.6 R 3.6.1 (on travis-ci)
+### travis-ci 
 
 Status: OK
 
@@ -44,3 +54,10 @@ Status: OK
 
 Status: OK
 
+### github actions R-CMD-check 
+
+Status: OK
+
+### R-hub
+
+Status: OK
