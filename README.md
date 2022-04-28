@@ -5,7 +5,7 @@
 
 [![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 [![Build
-Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://travis-ci.com/gherardovarando/stagedtrees)
+Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://app.travis-ci.com/github/gherardovarando/stagedtrees)
 [![R-CMD-check](https://github.com/gherardovarando/stagedtrees/workflows/R-CMD-check/badge.svg)](https://github.com/gherardovarando/stagedtrees/actions)
 [![Coverage
 status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
@@ -281,10 +281,10 @@ predict(mod3, newdata = titanic_df[1:3,], prob = TRUE)
 ``` r
 sample_from(mod4, 5)
 #>    Sex   Age Class Survived
-#> 1 Male Adult  Crew       No
-#> 2 Male Adult   3rd       No
-#> 3 Male Adult  Crew      Yes
-#> 4 Male Adult   3rd       No
+#> 1 Male Adult   3rd       No
+#> 2 Male Adult   1st       No
+#> 3 Male Adult  Crew       No
+#> 4 Male Adult  Crew      Yes
 #> 5 Male Adult   3rd       No
 ```
 
