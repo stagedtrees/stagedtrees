@@ -1,0 +1,20 @@
+bibentry(bibtype = "Article",
+  title        = "The {R} Package {stagedtrees} for Structural Learning of Stratified Staged Trees",
+  author       = c(person(given = "Federico",
+                          family = "Carli"),
+                   person(given = "Manuele",
+                          family = "Leonelli"),
+                   person(given = "Eva",
+                          family = "Riccomagno"),
+                   person(given = "Gherardo",
+                          family = "Varando",
+                          email = "gherardo.varando@uv.es")),
+  journal      = "Journal of Statistical Software",
+  year         = "2022",
+  volume       = "102",
+  number       = "6",
+  pages        = "1--30",
+  doi          = "10.18637/jss.v102.i06",
+  header       = "To cite stagedtrees in publications use:"
+)
+
