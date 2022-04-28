@@ -3,6 +3,7 @@
 * `inst/CITATION` file added as requested by JSS.
 * The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
 * broken badge url fixed in README.
+* update documentation. 
 
 ## Test environments
 
@@ -34,11 +35,18 @@ Duration: 40.7s
 Status: 1 NOTE
 
 ```
+Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.18637/jss.v102.i06
+    From: README.md
+    Status: 404
+    Message: Not Found
+
 Found the following (possibly) invalid DOIs:
   DOI: 10.18637/jss.v102.i06
     From: inst/CITATION
     Status: Not Found
     Message: 404
+
 ```
 The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
 
