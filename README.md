@@ -11,18 +11,25 @@ Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](http
 status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
 [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
-##### Preprint
+##### Citation
 
-F Carli, M Leonelli, E Riccomagno, G Varando, The R Package stagedtrees
-for Structural Learning of Stratified Staged Trees, 2020
-[arXiv:2004.06459](https://arxiv.org/abs/2004.06459)
+To cite stagedtrees in publications use:
 
-    @misc{2004.06459,
-    Author = {Federico Carli and Manuele Leonelli and Eva Riccomagno and Gherardo Varando},
-    Title = {The R Package stagedtrees for Structural Learning of Stratified Staged Trees},
-    Year = {2020},
-    Eprint = {arXiv:2004.06459},
-    }
+Carli F, Leonelli M, Riccomagno E, Varando G (2022). “The R Package
+stagedtrees for Structural Learning of Stratified Staged Trees.”
+*Journal of Statistical Software*, *102*(6), 1-30. doi:
+10.18637/jss.v102.i06 (URL: <https://doi.org/10.18637/jss.v102.i06>).
+
+    @Article{,
+        title = {The {R} Package {stagedtrees} for Structural Learning of Stratified Staged Trees},
+        author = {Federico Carli and Manuele Leonelli and Eva Riccomagno and Gherardo Varando},
+        journal = {Journal of Statistical Software},
+        year = {2022},
+        volume = {102},
+        number = {6},
+        pages = {1--30},
+        doi = {10.18637/jss.v102.i06},
+      }
 
 ### Overview
 
@@ -280,12 +287,12 @@ predict(mod3, newdata = titanic_df[1:3,], prob = TRUE)
 
 ``` r
 sample_from(mod4, 5)
-#>    Sex   Age Class Survived
-#> 1 Male Adult   3rd       No
-#> 2 Male Adult   1st       No
-#> 3 Male Adult  Crew       No
-#> 4 Male Adult  Crew      Yes
-#> 5 Male Adult   3rd       No
+#>      Sex   Age Class Survived
+#> 1   Male Adult   2nd       No
+#> 2 Female Adult   3rd       No
+#> 3 Female Adult   2nd       No
+#> 4   Male Adult   2nd       No
+#> 5   Male Adult  Crew       No
 ```
 
 #### Explore the model
