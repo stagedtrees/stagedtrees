@@ -15,23 +15,31 @@ knitr::opts_chunk$set(
 # stagedtrees
 
 [![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
-[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://travis-ci.com/gherardovarando/stagedtrees)
+[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://app.travis-ci.com/github/gherardovarando/stagedtrees)
   [![R-CMD-check](https://github.com/gherardovarando/stagedtrees/workflows/R-CMD-check/badge.svg)](https://github.com/gherardovarando/stagedtrees/actions)
  [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
  [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
-##### Preprint
+##### Citation
 
-F Carli, M Leonelli, E Riccomagno, G Varando, The R Package stagedtrees for Structural Learning of Stratified Staged Trees, 2020
-[arXiv:2004.06459](https://arxiv.org/abs/2004.06459)
+To cite stagedtrees in publications use:
+
+Carli F, Leonelli M, Riccomagno E, Varando G (2022). “The R Package stagedtrees for
+Structural Learning of Stratified Staged Trees.” _Journal of Statistical Software_,
+*102*(6), 1-30. doi: 10.18637/jss.v102.i06 (URL:
+https://doi.org/10.18637/jss.v102.i06).
 
 ```
-@misc{2004.06459,
-Author = {Federico Carli and Manuele Leonelli and Eva Riccomagno and Gherardo Varando},
-Title = {The R Package stagedtrees for Structural Learning of Stratified Staged Trees},
-Year = {2020},
-Eprint = {arXiv:2004.06459},
-}
+@Article{,
+    title = {The {R} Package {stagedtrees} for Structural Learning of Stratified Staged Trees},
+    author = {Federico Carli and Manuele Leonelli and Eva Riccomagno and Gherardo Varando},
+    journal = {Journal of Statistical Software},
+    year = {2022},
+    volume = {102},
+    number = {6},
+    pages = {1--30},
+    doi = {10.18637/jss.v102.i06},
+  }
 ```
 
 ### Overview 
