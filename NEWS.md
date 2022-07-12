@@ -1,3 +1,15 @@
+# 2.2.2
+
+* Carli et al. 2022 JSS citation added in DESCRIPTION.
+
+# 2.2.1
+
+* `inst/CITATION` file added as requested by JSS.
+* The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
+* broken badge url fixed in README.
+* update documentation.
+
+
 # 2.2.0
 
 * `plot.ceg` new plotting functions using `igraph` plotting.
