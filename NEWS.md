@@ -1,6 +1,7 @@
-# 2.2.2
+# 2.3.0
 
 * Carli et al. 2022 JSS citation added in DESCRIPTION.
+* Functions for random generation of staged trees added.
 
 # 2.2.1
 
