@@ -490,6 +490,7 @@ barplot.sevt <- function(height, var,
 #'  plot(model.ceg, edge.arrow.size = 0.1, vertex.label.dist = -2)
 #'  }
 #' @importFrom grDevices palette
+#' @importFrom stats na.exclude
 #' @export
 plot.ceg <- function(x, col = NULL,
                      ignore = x$name_unobserved, 
@@ -504,7 +505,7 @@ plot.ceg <- function(x, col = NULL,
   if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
     x$stages[[nms[1]]] <- c("1")
   }
-  A <- ceg2adjmat(x)
+  A <- ceg2adjmat(x, ignore)
   ### get colors as in plot.sevt
   col <- make_stages_col(x, col, ignore)
   g <- igraph::graph_from_adjacency_matrix(A)
@@ -514,7 +515,7 @@ plot.ceg <- function(x, col = NULL,
     cc <- col[[nms[i]]][ustag]
     if (is.null(cc)) cc <- NA
     names(cc) <- paste0(nms[i], ":", upos)
-    return(cc)
+    return(na.exclude(cc))
   })
   igraph::V(g)$color <- c(unlist(col.pos), 1)
   if (is.null(layout)){

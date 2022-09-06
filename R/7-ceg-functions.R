@@ -55,6 +55,9 @@ ceg <- function(object) {
 #'
 #' Obtain the adjacency matrix corresponding to a CEG.
 #' @param x an object of class \code{\link{ceg}}.
+#' @param ignore vector of stages which will be ignored and left untouched,
+#'               by default the name of the unobserved stages stored in
+#'               `x$name_unobserved`.
 #' @return the adj matrix
 #' @details This utility function can be used to prepare the adjacency 
 #' matrix to plot the CEG using a graph package (e.g. \pkg{igraph}).
@@ -63,11 +66,16 @@ ceg <- function(object) {
 #' model.ceg <- ceg(model)
 #' ceg2adjmat(model.ceg)
 #' @export
-ceg2adjmat <- function(x) {
+ceg2adjmat <- function(x, ignore = x$name_unobserved) {
   tree <- x$tree
   var <- names(tree)
   pos <- uni_idx(x$positions)
+  pos.ignore <- lapply(var[-1], function(v){
+    pos[[v]][x$stages[[v]] %in% ignore]
+  })
+  allignore <- c(unique(unlist(pos.ignore)))
   allpos <- c(unique(unlist(pos)), "END")
+  wignore <- allpos %in% allignore
   k <- length(allpos)
   mat <- matrix(nrow = k, ncol = k, 0, dimnames = list(allpos, allpos))
   m <- 1
@@ -76,7 +84,7 @@ ceg2adjmat <- function(x) {
     m <- length(x$tree[[v]])
     for (p1 in unique(pos[[v]])) {
       ix <- min(which(pos[[v]] %in% p1))
-      for (p2 in pos[[var[i]]][ ((ix - 1) * m + 1):(ix * m)]) {
+      for (p2 in pos[[var[i]]][((ix - 1) * m + 1):(ix * m)]) {
         mat[p1, p2] <- mat[p1, p2] + 1
       }
     }
@@ -85,5 +93,6 @@ ceg2adjmat <- function(x) {
   for (p1 in unique(pos[[v]])) {
     mat[p1, "END"] <- length(x$tree[[v]])
   }
+  mat <- mat[!wignore, !wignore]
   return(mat)
 }

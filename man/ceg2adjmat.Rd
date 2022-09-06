@@ -4,10 +4,14 @@
 \alias{ceg2adjmat}
 \title{Ceg to adjmat of graph}
 \usage{
-ceg2adjmat(x)
+ceg2adjmat(x, ignore = x$name_unobserved)
 }
 \arguments{
 \item{x}{an object of class \code{\link{ceg}}.}
+
+\item{ignore}{vector of stages which will be ignored and left untouched,
+by default the name of the unobserved stages stored in
+\code{x$name_unobserved}.}
 }
 \value{
 the adj matrix
