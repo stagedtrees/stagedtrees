@@ -223,6 +223,7 @@ as_parentslist.sevt <- function(x, ...){
     }
     prnt_list[[Vs[i + 1]]] <- list(parents = prn, context = cntx, 
                                    partial = prtl, local = lcl, 
+                                   stages = stgs,
                                    values = x$tree[[Vs[i + 1]]])
   }
   if (wrn){
