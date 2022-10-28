@@ -56,14 +56,14 @@ a the staged tree equivalent to the DAG.
 For \code{random_sevt.sevt}, \code{x} should be
 a \code{\link{sevt}}.
 The random generated \code{sevt} will be
-obtained by randomly joining stages starting the provided
-sevt object.
+obtained by randomly joining stages starting
+from the provided sevt object.
 Stages (conditional) probabilities are sampled from
 the corresponding probability simplex by generating
 a vector with the \code{rfun} supplied function and
 sequentially normalizing to sum up to one.
-Absoulte value is applied to assure non-negativity.
-The default \code{rfun = rexp} induce a uniform sampling
+Absolute value is applied to assure non-negativity.
+The default \code{rfun = rexp} induces a uniform sampling
 from the probability simplex.
 }
 \examples{

@@ -11,7 +11,7 @@ random_parentslist(n, k = 2, maxp = n)
 
 \item{k}{maximum number of levels for each variable.}
 
-\item{maxp}{maximum cardinalty of parents sets.}
+\item{maxp}{maximum cardinality of parents sets.}
 }
 \value{
 a \code{\link[=as_parentslist]{parentslist}} object.
@@ -19,4 +19,11 @@ a \code{\link[=as_parentslist]{parentslist}} object.
 \description{
 generate a random DAG coded as
 \code{\link[=as_parentslist]{parentslist}} object.
+}
+\details{
+For each variable a subset of random cardinality
+(maximum \code{maxp}) of the preceding
+variables is randomly selected as parents set.
+The possible levels of each variables are randomly selected
+in \code{2,...,k}.
 }
