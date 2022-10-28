@@ -7,6 +7,8 @@
 #' @param data either a \code{data.frame} or a \code{table} containing 
 #'             the data from the variables in \code{object} plus \code{var}.
 #' @param join_unobserved logical, passed to \code{\link{full}}.
+#' @param useNA whether to include NA values in the tables. 
+#'              Argument passed to \code{\link{table}}.
 #' @details This function update a staged event tree object with
 #'          an additional variable. The stages structure of the 
 #'          new variable is initialized as in the saturated model.
@@ -18,16 +20,22 @@
 #' model <- sevt_add(model, "Survived", Titanic)
 #' print(model)
 #' @export
-sevt_add <- function(object, var, data, join_unobserved = TRUE){
+#' @importFrom stats ftable
+sevt_add <- function(object, var, data, join_unobserved = TRUE, 
+                     useNA = "ifany"){
+  check_sevt(object)
+  path <- names(object$tree)
   if (is.data.frame(data)) {
-    data <- table(data[, c(names(object$tree), var)])
+    data <- table(data[, c(path, var)], useNA = useNA)
+    ll <- lapply(attr(data, "dimnames"), function(x) !is.na(x))
+    data <- do.call("[", c(list(data), ll))
   }
   if (!is.table(data)){
     stop("Invalid data argument. Data must be a data.frame or a table obejct.")
   }
-  path <- names(object$tree)
   tt <- apply(data, MARGIN = c(path, var), sum)
-  ctable <- ftable(tt, col.vars = var, row.vars = path)
+  ctable <- ftable(tt, col.vars = var,
+                   row.vars = path)
   tmp <- sevt(data, full = TRUE, order = c(path, var))
   object$tree <- tmp$tree
   object$stages[[var]] <- tmp$stages[[var]]

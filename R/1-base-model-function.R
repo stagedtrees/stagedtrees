@@ -237,7 +237,8 @@ make_ctables <- function(object, data, useNA = "ifany") {
       return(tt[!is.na(attr(tt, "names"))])
     }
     ll <- lapply(attr(tt, "dimnames"), function(x) !is.na(x))
-    return(ftable(do.call("[", c(list(tt), ll)), col.vars = order[i], row.vars = order[1:(i - 1)]))
+    return(ftable(do.call("[", c(list(tt), ll)), col.vars = order[i],
+                  row.vars = order[1:(i - 1)]))
   })
   names(ctables) <- order
   return(ctables)
