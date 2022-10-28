@@ -6,7 +6,9 @@
 \usage{
 stages_bhcr(
   object,
-  score = function(x) {     return(-BIC(x)) },
+  score = function(x) {
+     return(-BIC(x))
+ },
   max_iter = 100,
   trace = 0
 )
