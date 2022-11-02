@@ -31,12 +31,6 @@ test_that("summary.sevt for indep", {
 })
 
 
-test_that("subtree", {
-  expect_silent(sub <- subtree(sev, c("a", "1", "-1")))
-  expect_silent(plot(sub))
-  expect_silent(stages_fbhc(sub))
-  expect_silent(stagedtrees:::sevt_fit(sub, data = DD))
-})
 
 test_that("sevt_df", {
   expect_equal(stagedtrees:::sevt_df(sev), 63)
@@ -55,4 +49,24 @@ test_that("summary.sevt is printed", {
 test_that("rename_stage", {
   expect_is(rename_stage(sev, var = "X2", 
                          stage = "2", new = "NEW"), "sevt")
+})
+
+context("subtree(s)")
+
+test_that("subtree", {
+  expect_silent(sub <- subtree(sev, c("a", "1", "-1")))
+  expect_silent(plot(sub))
+  expect_silent(stages_fbhc(sub))
+  expect_silent(stagedtrees:::sevt_fit(sub, data = DD))
+})
+
+test_that("depsubtree", {
+  expect_silent(sub <- depsubtree(sev, "X3"))
+  expect_silent(plot(sub))
+})
+
+test_that("depsubtree (other stages)", {
+  expect_silent(sub <- depsubtree(sev, "X3", other_stages = "indep"))
+  expect_silent(plot(sub))
+  expect_silent(stagedtrees:::sevt_fit(sub, data = DD, lambda = 0))
 })

@@ -2,6 +2,7 @@
 
 * Carli et al. 2022 JSS citation added in DESCRIPTION.
 * Functions for random generation of staged trees added.
+* Added new function `depsubtree` which build the dependency subtree. 
 
 # 2.2.1
 
