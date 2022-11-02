@@ -170,14 +170,15 @@ as_parentslist.bn.fit <- function(x, order = NULL,  ...){
 
 
 #' @rdname as_parentslist
+#' @param silent if function should be silent.
 #' @details In `as_parentslist.sevt`, if a context-specific or a local-partial independence is detected
-#' a message is printed and the minimal super-model is returned.
+#' a message is printed (if \code{silent = FALSE}) and the minimal super-model is returned.
 #' @examples 
 #' model <- stages_hclust(full(Titanic), k = 2)
 #' pl <- as_parentslist(model)
 #' pl$Age 
 #' @export
-as_parentslist.sevt <- function(x, ...){
+as_parentslist.sevt <- function(x, silent = FALSE,...){
   check_sevt(x)
   wrn <- FALSE
   Ms <- sapply(x$tree, length)
@@ -226,7 +227,7 @@ as_parentslist.sevt <- function(x, ...){
                                    stages = stgs,
                                    values = x$tree[[Vs[i + 1]]])
   }
-  if (wrn){
+  if (wrn && !silent){
     message("Context specific and/or local partial independences detected.")
     message("The input staged tree is not equivalent to a BN, 
             the minimal super-model is returned.")
