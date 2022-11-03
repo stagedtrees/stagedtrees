@@ -461,6 +461,7 @@ barplot.sevt <- function(height, var,
           horiz = horiz, ...)
 }
 
+
 #' igraph's plotting for CEG 
 #' 
 #' @param x an object of class \code{\link{ceg}}. 
@@ -469,6 +470,7 @@ barplot.sevt <- function(height, var,
 #'               by default the name of the unobserved stages stored in
 #'               `x$name_unobserved`.
 #' @param layout an igraph layout.
+#' @param endnode if the end node should be plotted.
 #' @param ... additional arguments passed to \code{plot.igraph}.
 #' @details This function is a simple wrapper around 
 #'  \pkg{igraph}'s \code{plot.igraph}.
@@ -495,31 +497,35 @@ barplot.sevt <- function(height, var,
 plot.ceg <- function(x, col = NULL,
                      ignore = x$name_unobserved, 
                      layout = NULL,
+                     endnode = TRUE,
                       ...){
   if (!requireNamespace("igraph", quietly = TRUE)) {
     stop("Package \"igraph\" is needed to plot ceg.",
          call. = FALSE
     )
   }
-  nms <- names(x$tree)
+  nms <- sevt_varnames(x)
   if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
-    x$stages[[nms[1]]] <- c("1")
+    x$stages[[nms[1]]] <- c("0")
   }
-  A <- ceg2adjmat(x, ignore)
   ### get colors as in plot.sevt
   col <- make_stages_col(x, col, ignore)
-  g <- igraph::graph_from_adjacency_matrix(A)
+  ### ssociate stages color to node of CEG
   col.pos <- lapply(seq_along(x$positions), function(i){
     upos <- unique(x$positions[[nms[i]]])
-    ustag <- x$stages[[nms[i]]][sapply(upos, function(pp) which.max(x$positions[[nms[i]]] == pp))]
+    ustag <- x$stages[[nms[i]]][sapply(upos, function(pp) 
+      which.max(x$positions[[nms[i]]] == pp))]
     cc <- col[[nms[i]]][ustag]
     if (is.null(cc)) cc <- NA
     names(cc) <- paste0(nms[i], ":", upos)
     return(na.exclude(cc))
   })
-  igraph::V(g)$color <- c(unlist(col.pos), 1)
+  ucol <- unlist(col.pos)
+  if (endnode) ucol <- c(ucol,1)
+  g <- graph_from_ceg(x, ignore = ignore, endnode = endnode)
+  igraph::V(g)$color <- ucol
   if (is.null(layout)){
-    layout = igraph::layout.reingold.tilford(g)
+    layout = igraph::layout.sugiyama(g)$layout
     layout = layout[,2:1]
     layout[,1] <- -layout[,1]
   }
