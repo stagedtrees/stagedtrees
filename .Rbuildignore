@@ -8,3 +8,4 @@ README_files
 ^CRAN-RELEASE$
 ^LICENSE\.md$
 ^\.github$
+^CRAN-SUBMISSION$

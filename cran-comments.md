@@ -1,25 +1,10 @@
-## stagedtrees 2.1.0
+## stagedtrees 2.2.2
 
-MINOR version.  
-
-* `plot.ceg` new plotting functions using `igraph` plotting.
-* new util function `make_stages_col` which help computing 
-  stages colors for `sevt` and `ceg` plotting.
-* `sample_from` now returns a data.frame of factors. 
-* `prob` earns a new argument `conditional_on`, that 
-   makes easier to compute conditional probabilities. 
-* `confint.sevt`, implement a method for confidence intervals
-   for the parameters of a model of class `sevt`. 
-* `lr_test` new function, implementing likelihood-ratio 
-   test.
-* functions to search optimal staged trees among different orders:
-  `search_best` and `search_greedy`.
-* `cid` function that implements context intervention discrepancy
-* more and better testing and documentation.
+* Carli et al. 2022 JSS citation added in DESCRIPTION.
 
 ## Test environments
 
-* local ubuntu 20.04.2  (64-bit)  R 4.1.0
+* local ubuntu 20.04.2  (64-bit)  R 4.1.3
 * travis-ci ubuntu 16.04.6  (64-bit)  R 4.0.2
 * win-builder (r-release)
 * win-builder (r-oldrelease)
@@ -38,26 +23,42 @@ MINOR version.
 
 #### devtools::check()
 
-Duration: 36.5s
+Duration: 40.7s
 
 0 errors | 0 warnings | 0 note
 
 #### R CMD check --as-cran
 
-Status: OK
+Status: 1 NOTE
+
+```
+Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.18637/jss.v102.i06
+    From: README.md
+    Status: 404
+    Message: Not Found
+
+Found the following (possibly) invalid DOIs:
+  DOI: 10.18637/jss.v102.i06
+    From: inst/CITATION
+    Status: Not Found
+    Message: 404
+
+```
+The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
 
 ### travis-ci 
 
-Status: OK
+Status: Status: OK
 
 ### win-builder
 
-Status: OK
+Status: 1 NOTE (as above)
 
 ### github actions R-CMD-check 
 
-Status: OK
+Status: Status: OK
 
 ### R-hub
 
-Status: OK
+Status: 1 NOTE (as above)

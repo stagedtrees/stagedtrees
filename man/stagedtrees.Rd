@@ -29,13 +29,16 @@ Model selection algorithms:
 \item Backward joining \code{\link{stages_bj}}
 \item Hierarchical Clustering \code{\link{stages_hclust}}
 \item K-Means Clustering \code{\link{stages_kmeans}}
+\item Optimal order search \code{\link{search_best}}
+\item Greedy order search \code{\link{search_greedy}}
 }
 
 Probabilities, log-likelihood and predictions:
 \itemize{
-\item Marginal probabilities \code{\link{prob}}
+\item Marginal/Conditional probabilities \code{\link{prob}}
 \item Log-Likelihood \code{\link{logLik.sevt}}
 \item Predict method \code{\link{predict.sevt}}
+\item Confidence intervals \code{\link{confint.sevt}}
 }
 
 Plot, explore and compare:
@@ -44,6 +47,10 @@ Plot, explore and compare:
 \item Compare \code{\link{compare_stages}}
 \item Stages inclusion \code{\link{inclusions_stages}}
 \item Stages info \code{\link{summary.sevt}}
+\item List of parents \code{\link{as_parentslist}}
+\item Barplot construction \code{\link{barplot.sevt}}
+\item Likelihood-ratio test \code{\link{lr_test}}
+\item Context-specific interventional distance \code{\link{cid}}
 }
 
 Modify models:

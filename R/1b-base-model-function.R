@@ -502,6 +502,49 @@ subtree <- function(object, path) {
 }
 
 
+#' Extract dependency subtree
+#' 
+#' Extract the dependency subtree of a staged tree with respect to 
+#' a variable
+#' @param object an object of class \code{\link{sevt}}.
+#' @param var the name of one of the variable of the staged event tree. 
+#' @param other_stages how to set stages for other variables (if any).
+#' @return an object of class \code{\link{sevt}} representing the 
+#' dependency sub-tree. 
+#' @details The dependency sub-tree is a staged event tree which is 
+#' sufficient to describe the conditional distribution of the variable 
+#' \code{var} given its predecessors in the original tree represented by
+#' \code{object}. 
+#' In particular the preceding variables are restricted to the 
+#' parents of \code{var} in the minimal-DAG obtained with 
+#' \code{\link{as_parentslist}}. This is the minimal set of
+#' variables which contexts are sufficient to fully represent the
+#' conditional distribution of \code{var}.
+#' Stages for variables different from \code{var} are either set to 
+#' NA, or to the full or indep model, depending on \code{other_stages}.
+#' @export
+#' @examples 
+#' mod <- full(Titanic) |> stages_kmeans(k=2)
+#' par(mfrow = c(1,2))
+#' plot(mod, main = "staged tree")
+#' plot(depsubtree(mod, "Age"), main = "dependency subtree for Age")
+#' par(mfrow = c(1,1))
+depsubtree <- function(object, var, other_stages=c("NA", "indep", "full")){
+  check_sevt(object)
+  other = match.arg(other_stages)
+  pl <- as_parentslist(object, silent = TRUE)
+  st <- sevt(object$tree[c(rev(pl[[var]]$parents), var)], 
+             full = other == "full")
+  if (other == "NA"){
+    st$stages <- lapply(st$stages, function(x) rep(NA, length(x)))
+    st$stages[[sevt_varnames(st)[1]]] <- NA
+  }
+  st$stages[[var]] <- pl[[var]]$stages
+  st
+}
+
+
+
 #'  Standard renaming of stages
 #'
 #' Rename all stages in a staged event tree.
