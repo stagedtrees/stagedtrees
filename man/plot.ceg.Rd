@@ -4,7 +4,14 @@
 \alias{plot.ceg}
 \title{igraph's plotting for CEG}
 \usage{
-\method{plot}{ceg}(x, col = NULL, ignore = x$name_unobserved, layout = NULL, ...)
+\method{plot}{ceg}(
+  x,
+  col = NULL,
+  ignore = x$name_unobserved,
+  layout = NULL,
+  endnode = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{\link{ceg}}.}
@@ -16,6 +23,8 @@ by default the name of the unobserved stages stored in
 \code{x$name_unobserved}.}
 
 \item{layout}{an igraph layout.}
+
+\item{endnode}{if the end node should be plotted.}
 
 \item{...}{additional arguments passed to \code{plot.igraph}.}
 }

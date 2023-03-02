@@ -3,7 +3,9 @@
 * Carli et al. 2022 JSS citation added in DESCRIPTION.
 * Functions for random generation of staged trees added.
 * Added new function `depsubtree` which build the dependency subtree. 
+* New functions to translate `sevt` and `ceg` objects to graphs (edge lists and igraph). 
 * fixed handling of NAs 
+
 
 # 2.2.1
 
