@@ -4,7 +4,7 @@
 \alias{sevt_add}
 \title{Add a variable to a staged event tree}
 \usage{
-sevt_add(object, var, data, join_unobserved = TRUE)
+sevt_add(object, var, data, join_unobserved = TRUE, useNA = "ifany")
 }
 \arguments{
 \item{object}{an object of class \code{sevt}.}
@@ -15,6 +15,9 @@ sevt_add(object, var, data, join_unobserved = TRUE)
 the data from the variables in \code{object} plus \code{var}.}
 
 \item{join_unobserved}{logical, passed to \code{\link{full}}.}
+
+\item{useNA}{whether to include NA values in the tables.
+Argument passed to \code{\link{table}}.}
 }
 \value{
 An object of class \code{sevt} representing a

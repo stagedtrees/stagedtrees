@@ -94,8 +94,8 @@ random_sevt.sevt <- function(x, q = 0.5, rfun = rexp,...){
       return(p)
     }, simplify = FALSE, USE.NAMES = TRUE)
   })
-  p <- runif(length(x$tree[[1]])) 
-  p <- p / sum(p)
+  p <- rfun(length(x$tree[[1]])) 
+  p <- abs(p) / sum(p)
   names(p) <- x$tree[[1]]
   attr(p, "n") <- 1
   x$prob <- c(list(list("1" = p)), x$prob)

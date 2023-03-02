@@ -4,13 +4,16 @@
 \alias{make_ctables}
 \title{Distribute counts along tree}
 \usage{
-make_ctables(object, data)
+make_ctables(object, data, useNA = "ifany")
 }
 \arguments{
 \item{object}{A stratified event tree, a list with a \code{tree} field.}
 
 \item{data}{table or data.frame containing observations
 of the variable in \code{object}.}
+
+\item{useNA}{whether to include NA values in the tables.
+Argument passed to \code{\link{table}}.}
 }
 \value{
 A list of \code{ftable}s.
