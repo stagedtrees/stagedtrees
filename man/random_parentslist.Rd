@@ -27,3 +27,10 @@ variables is randomly selected as parents set.
 The possible levels of each variables are randomly selected
 in \code{2,...,k}.
 }
+\examples{
+random_parentslist(5, 3, 2)
+
+## we can generate the associated staged tree
+pl <- random_parentslist(4, 2, 2)
+plot(as_sevt(pl), main = as.character(pl))
+}
