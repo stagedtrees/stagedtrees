@@ -37,6 +37,7 @@ cid(model1, model2)$wrong
 }
 \references{
 Leonelli M., Varando G.
-Context-Specific Causal Discovery for Categorical Data Using Staged Trees
+\emph{Context-Specific Causal Discovery for Categorical Data Using Staged Trees},
+The 26th International Conference on Artificial Intelligence and Statistics (AISTATS), 2023,
 \url{https://arxiv.org/abs/2106.04416}
 }
