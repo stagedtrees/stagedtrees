@@ -5,6 +5,22 @@ pl <- list("X" = list(parents = c(), values = c("a", "b")),
            "Y" = list(parents = "X", values = c('1', "2")))
 class(pl) <- "parentslist"
 
+test_that("as.character.parentslist",{
+  expect_visible(as.character(pl))
+})
+
+test_that("as.character.parentslist",{
+  expect_invisible(print(pl))
+})
+
+test_that("as_bn.parentslist",{
+  expect_s3_class(as_bn(pl), "bn")
+})
+
+test_that("as_bn.sevt",{
+  expect_s3_class(as_bn(as_sevt(pl)), "bn")
+})
+
 test_that("as_sevt for parentslist", {
   expect_silent(sev <- as_sevt(pl))
   expect_equal(names(sev$tree), c("X", "Y"))
@@ -85,3 +101,14 @@ test_that("as_adj_matrix.parentslist", {
   expect_identical(as_adj_matrix(p.i), AA)
 })
 
+
+test_that("as_sevt.bn", {
+  bn <- bnlearn::hc(PhDArticles)
+  expect_silent(as_sevt(bn, values = lapply(PhDArticles, levels)))
+})
+
+test_that("as_sevt.bn.fit", {
+  bn <- bnlearn::hc(PhDArticles)
+  bn <- bnlearn::bn.fit(bn, PhDArticles)
+  expect_silent(as_sevt(bn, values = lapply(PhDArticles, levels)))
+})
