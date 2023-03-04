@@ -242,7 +242,7 @@ diff_stages <- function(object1, object2) {
 #' @param object2 an object of class \code{\link{sevt}}.
 #' @param FUN a function that is used to aggregate CID for each variable.
 #'                  The default \code{mean} will obtain the CID 
-#'                  as defined in Leonelli and Varando (2021).
+#'                  as defined in Leonelli and Varando (2023).
 #' @return A list with components:
 #' 
 #' * \code{wrong} a stages-like structure which record where 

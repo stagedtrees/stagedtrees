@@ -13,7 +13,7 @@ cid(object1, object2, FUN = mean)
 
 \item{FUN}{a function that is used to aggregate CID for each variable.
 The default \code{mean} will obtain the CID
-as defined in Leonelli and Varando (2021).}
+as defined in Leonelli and Varando (2023).}
 }
 \value{
 A list with components:
