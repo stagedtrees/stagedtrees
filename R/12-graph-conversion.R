@@ -25,7 +25,7 @@ sevt2edges <- function(x, ignore = x$name_unobserved){
   tree <- x$tree
   var <- sevt_varnames(x)
   if (is.null(x$stages[[var[1]]])){ ## add stage name also to root
-    x$stages[[var[1]]] <- c("1")
+    x$stages[[var[1]]] <- c(NA)
   }
   edges <- data.frame(from = NA, to = NA, label = NA, var = NA, stage = NA)
   now <- "root"
@@ -71,14 +71,18 @@ sevt2vert <- function(x, ignore = x$name_unobserved){
       paste0("root-", paste0(x, collapse = "-"))
     })
     ix <- !(x$stages[[v]] %in% ignore)
-    vert <- rbind(vert, data.frame(name = now[ix], 
-                                   stage = x$stages[[v]][ix], 
-                                   var = v))
+    if (any(ix)){
+      vert <- rbind(vert, data.frame(name = now[ix], 
+                                     stage = x$stages[[v]][ix], 
+                                     var = v))
+    }
   }
-  now <- paste(now[ix], c(sapply(x$tree[[var[i]]], rep, sum(ix))), sep = "-")
-  vert <- rbind(vert, data.frame(name = now, 
-                                 stage = NA,
-                                 var = "leaves"))
+  if (any(ix)){
+    now <- paste(now[ix], c(sapply(x$tree[[var[i]]], rep, sum(ix))), sep = "-")
+    vert <- rbind(vert, data.frame(name = now, 
+                                   stage = NA,
+                                   var = "leaves"))
+  }
   return(vert)
 }
 

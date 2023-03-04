@@ -126,7 +126,7 @@ plot.sevt <-
     d <- min(length(x$tree), limit) ## avoid too much plotting
     nms <- names(x$tree) ## name of variable
     if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
-      x$stages[[nms[1]]] <- c("1")
+      x$stages[[nms[1]]] <- c(NA)
     }
     col <- make_stages_col(x, col, ignore,limit =  d) 
     if (is.null(col_edges)){
@@ -295,6 +295,7 @@ make_stages_col <- function(x, col = NULL,
   } else if (is.function(col)) {
     col <- lapply(x$stages[nms[1:d]], function(stages) {
       if (is.null(stages)) {
+        ## this should be checked 
         return(list("1" = "black"))
       }
       stages <- unique(stages)
@@ -506,7 +507,7 @@ plot.ceg <- function(x, col = NULL,
   }
   nms <- sevt_varnames(x)
   if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
-    x$stages[[nms[1]]] <- c("0")
+    x$stages[[nms[1]]] <- c('0')
   }
   ### get colors as in plot.sevt
   col <- make_stages_col(x, col, ignore)
