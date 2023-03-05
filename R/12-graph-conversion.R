@@ -81,7 +81,7 @@ sevt2vert <- function(x, ignore = x$name_unobserved){
     now <- paste(now[ix], c(sapply(x$tree[[var[i]]], rep, sum(ix))), sep = "-")
     vert <- rbind(vert, data.frame(name = now, 
                                    stage = NA,
-                                   var = "leaves"))
+                                   var = NA))
   }
   return(vert)
 }
