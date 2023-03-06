@@ -9,6 +9,6 @@ test_that("ceg function works", {
 })
 
 test_that("ceg2adjmat", {
-  expect_is(ceg2adjmat(ceg(model)), "matrix")
-  expect_is(ceg2adjmat(ceg(model2)), "matrix")
+  expect_is(as_adj_matrix(ceg(model)), "matrix")
+  expect_is(as_adj_matrix(ceg(model2)), "matrix")
 })

@@ -20,10 +20,10 @@ new_label <- function(labels) {
 #' @param x a named list.
 #' @return A named list with unique ids.
 #' @keywords internal
-uni_idx <- function(x) {
+uni_idx <- function(x, sep = "_") {
   nn <- names(x)
   x <- lapply(seq_along(x), function(i) {
-    paste0(nn[i], ":", x[[i]])
+    paste0(nn[i], sep , x[[i]])
   })
   names(x) <- nn
   return(x)

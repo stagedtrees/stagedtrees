@@ -10,26 +10,26 @@ model.ceg <- ceg(model)
 context("graph conversions for sevt")
 
 test_that("sevt2edges",{
-  edg <- sevt2edges(model)
+  edg <- get_edges(model)
   expect_equal(nrow(edg), 2 + 6 + 12 + 24)
   expect_equal(colnames(edg)[1:2], c("from", "to"))
 })
 
 
 test_that("sevt2vert",{
-  vert <- sevt2vert(model)
+  vert <- get_vertices(model)
   expect_equal(nrow(vert), 1 + 2 + 6 + 12 + 24)
 })
 
 test_that("sevt2vert and sevt2edges are compatible I ",{
-  vert <- sevt2vert(model, ignore = FALSE)
-  edg <- sevt2edges(model, ignore = FALSE)
+  vert <- get_vertices(model, ignore = FALSE)
+  edg <- get_edges(model, ignore = FALSE)
   expect_setequal(vert$name, unique(c(edg$from, edg$to)))
 })
 
 test_that("sevt2vert and sevt2edges are compatible II (with ignore)",{
-  vert <- sevt2vert(model, ignore = "1")
-  edg <- sevt2edges(model, ignore = "1")
+  vert <- get_vertices(model, ignore = "1")
+  edg <- get_edges(model, ignore = "1")
   expect_setequal(vert$name, unique(c(edg$from, edg$to)))
 })
 

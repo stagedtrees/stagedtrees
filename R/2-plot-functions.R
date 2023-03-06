@@ -471,15 +471,13 @@ barplot.sevt <- function(height, var,
 #'               by default the name of the unobserved stages stored in
 #'               `x$name_unobserved`.
 #' @param layout an igraph layout.
-#' @param endnode if the end node should be plotted.
 #' @param ... additional arguments passed to \code{plot.igraph}.
 #' @details This function is a simple wrapper around 
 #'  \pkg{igraph}'s \code{plot.igraph}.
 #'  The ceg object is converted to an igraph object 
-#'  by firstly obtaining the adjacency matrix representation
-#'  with \code{\link{ceg2adjmat}}. 
+#'  with \code{\link{as_igraph}}.
 #'  If not specified, the default \code{layout} used is 
-#'  a rotated \code{layout.reingold.tilford}.
+#'  a rotated \code{layout.sugiyama}.
 #'  
 #'  We use \code{palette()} as palette for
 #'  the \pkg{igraph} plotting, while \code{plot.igraph} uses 
@@ -498,7 +496,6 @@ barplot.sevt <- function(height, var,
 plot.ceg <- function(x, col = NULL,
                      ignore = x$name_unobserved, 
                      layout = NULL,
-                     endnode = TRUE,
                       ...){
   if (!requireNamespace("igraph", quietly = TRUE)) {
     stop("Package \"igraph\" is needed to plot ceg.",
@@ -522,8 +519,8 @@ plot.ceg <- function(x, col = NULL,
     return(na.exclude(cc))
   })
   ucol <- unlist(col.pos)
-  if (endnode) ucol <- c(ucol,1)
-  g <- graph_from_ceg(x, ignore = ignore, endnode = endnode)
+  ucol <- c(ucol,1)
+  g <- as_igraph(x, ignore = ignore)
   igraph::V(g)$color <- ucol
   if (is.null(layout)){
     layout = igraph::layout.sugiyama(g)$layout

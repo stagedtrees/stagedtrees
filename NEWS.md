@@ -4,7 +4,7 @@
 * Functions for random generation of staged trees added.
 * Added new function `depsubtree` which build the dependency subtree. 
 * New functions to translate `sevt` and `ceg` objects to graphs (edge lists and igraph). 
-* fixed handling of NAs 
+* fixed handling of NAs.
 * fix bug on `plot.sevt` and on graph conversion methods 
   when ignoring stage "1" which is assigned to root 
 

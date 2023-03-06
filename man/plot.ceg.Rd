@@ -4,14 +4,7 @@
 \alias{plot.ceg}
 \title{igraph's plotting for CEG}
 \usage{
-\method{plot}{ceg}(
-  x,
-  col = NULL,
-  ignore = x$name_unobserved,
-  layout = NULL,
-  endnode = TRUE,
-  ...
-)
+\method{plot}{ceg}(x, col = NULL, ignore = x$name_unobserved, layout = NULL, ...)
 }
 \arguments{
 \item{x}{an object of class \code{\link{ceg}}.}
@@ -24,8 +17,6 @@ by default the name of the unobserved stages stored in
 
 \item{layout}{an igraph layout.}
 
-\item{endnode}{if the end node should be plotted.}
-
 \item{...}{additional arguments passed to \code{plot.igraph}.}
 }
 \description{
@@ -35,10 +26,9 @@ igraph's plotting for CEG
 This function is a simple wrapper around
 \pkg{igraph}'s \code{plot.igraph}.
 The ceg object is converted to an igraph object
-by firstly obtaining the adjacency matrix representation
-with \code{\link{ceg2adjmat}}.
+with \code{\link{as_igraph}}.
 If not specified, the default \code{layout} used is
-a rotated \code{layout.reingold.tilford}.
+a rotated \code{layout.sugiyama}.
 
 We use \code{palette()} as palette for
 the \pkg{igraph} plotting, while \code{plot.igraph} uses

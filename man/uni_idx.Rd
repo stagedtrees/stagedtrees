@@ -4,7 +4,7 @@
 \alias{uni_idx}
 \title{Unique id from named list}
 \usage{
-uni_idx(x)
+uni_idx(x, sep = "_")
 }
 \arguments{
 \item{x}{a named list.}
