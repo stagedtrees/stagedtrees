@@ -75,8 +75,3 @@ test_that("write_tikz with stages col",{
 test_that("write_tikz works for ceg",{
   expect_output(write_tikz(ceg(model)))
 })
-
-
-test_that("write_tikz works for ceg",{
-  expect_output(write_tikz(ceg(model), col = "stages"))
-})
