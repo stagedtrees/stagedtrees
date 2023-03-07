@@ -13,7 +13,7 @@ write_tikz(
   ignore = x$name_unobserved,
   node_label = function(node) ifelse(is.na(node$stage), "", node$stage),
   edge_label = function(edge) {
-     ifelse(is.na(edge$label), "", edge$lable)
+     ifelse(is.na(edge$label), "", edge$label)
  },
   scale = 10,
   normalize_layout = TRUE,
