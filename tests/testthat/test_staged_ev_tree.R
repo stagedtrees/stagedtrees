@@ -211,3 +211,13 @@ test_that("test indep model (NA)", {
                                                          !is.na(DD$V4) &
                                                          !is.na(DD$V5)))
 })
+
+
+test_that("partial fitting", {
+  mod1 <- full(PhDArticles)
+  mod2 <- mod1 
+  mod2$stages$Married[c(1,2,3,7,9)] <- "aa"
+  mod2a <- sevt_fit(mod2, scope = "Married")
+  mod2b <- sevt_fit(mod2)
+  expect_identical(logLik(mod2a), logLik(mod2b))
+})

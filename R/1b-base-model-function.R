@@ -7,11 +7,24 @@
 #' @param data data.frame or contingency table with observations of 
 #'             the variables in \code{object}.
 #' @param lambda smoothing parameter or pseudocount.
-#' @return A fitted staged event tree, that is an object of class `sevt`
+#' @param scope which variable should be fitted. Default (NULL) to 
+#'                all variables in the model. A partial re-fit is 
+#'                possible only for model which are already fitted and in 
+#'                that case the provided \code{lambda} will be ignored if 
+#'                different from \code{object$lambda}. 
+#' @param compute_logLIK logical value. If \code{TRUE} the log-likelihood
+#'                       of the model is computed and stored. 
+#' @return A (partially) fitted staged event tree, 
+#'         that is an object of class `sevt`
 #'         with `ctables`, `prob` and `ll` components.
 #' @details The data in form of contingency tables and the 
-#'          log-likelihood of the model is 
+#'          log-likelihood of the model is (eventually) 
 #'          stored in the returned staged event tree.
+#'          Partial re-fit of a model can be performed 
+#'          with the \code{scope} argument. 
+#'          Partial re-fit can only be done over a 
+#'          fully fitted model, e.g. when changing 
+#'          the stages structure of one of the variables.
 #' @export
 #' @examples
 #'
@@ -27,10 +40,12 @@
 #' model.fit <- sevt_fit(model, data = D, lambda = 1)
 sevt_fit <- function(object,
                      data = NULL,
-                     lambda = object$lambda) {
+                     lambda = object$lambda,
+                     scope = NULL,
+                     compute_logLik = TRUE) {
   if (is.null(data)) {
     if (!has_ctables(object)) {
-      warning("Data must be provided or included in the model object as ctbales")
+      warning("Data must be provided or included in the model object as ctables")
       return(object)
     }
   }else{
@@ -43,41 +58,61 @@ sevt_fit <- function(object,
   # store lambda 
   object$lambda <- lambda
   # extract order of variables 
-  order <- names(object$tree)
+  order <- sevt_varnames(object)
+  if (is.null(scope)){
+    scope <- order
+    object$prob <- list()
+  }else{
+    scope <- scope[scope %in% order]
+    scope <- unique(scope)
+    if (!setequal(scope, order)){
+      ## partial fit, check if objectis fitted 
+      if (!has_prob(object)){
+        stop("Partial fitting is allowed only for completely fitted sevt objects.")
+      }
+      lambda <- object$lambda ## force using same lambda
+    }else{
+      ## clean prob
+      object$prob <- list()
+    }
+  }
   # 
   dims <- vapply(object$tree, length, FUN.VALUE = 1)
-  object$prob <- list()
-  n <- sum(object$ctables[[order[1]]])
-  pp <- object$ctables[[order[1]]] + lambda
-  pp <- pp / sum(pp)
-  attr(pp, "n") <- n
-  object$prob[[order[1]]] <- list("1" = pp)
-  if (length(object$tree)>1){
-  for (i in 2:length(order)) {
-    stages <- unique(object$stages[[order[i]]])
-    object$prob[[order[i]]] <-
+  # root variable
+  if (order[1] %in% scope){
+    n <- sum(object$ctables[[order[1]]])
+    pp <- object$ctables[[order[1]]] + lambda
+    pp <- pp / sum(pp)
+    attr(pp, "n") <- n
+    object$prob[[order[1]]] <- list("1" = pp)
+    scope <- scope[scope != order[1]] ## remove first var from scope if done 
+  }
+  if (length(scope) > 0){
+  for (v in scope) {
+    stages <- unique(object$stages[[v]])
+    object$prob[[v]] <-
       lapply(stages, function(s) {
-        ix <- object$stages[[order[i]]] == s
+        ix <- object$stages[[v]] == s
         if (sum(ix) > 1) {
-          tt <- apply(object$ctables[[order[i]]][ix, ], MARGIN = 2, sum)
+          tt <- apply(object$ctables[[v]][ix, ], MARGIN = 2, sum)
         } else {
-          tt <- object$ctables[[order[i]]][ix, ]
+          tt <- object$ctables[[v]][ix, ]
         }
-
-        names(tt) <- object$tree[[order[i]]]
+        names(tt) <- object$tree[[v]]
         n <- sum(tt) ## compute sample size
         tt <- (tt + lambda) ## smoothing
         tt <- tt / sum(tt) ## normalize
         tt[is.nan(tt)] <- NA  ## replace NaN with NA
         attr(tt, "n") <- n ## save sample size
-        
         return(tt) # return normalized prob
       })
-    names(object$prob[[order[i]]]) <- stages
+    names(object$prob[[v]]) <- stages
   }
   }
   object$ll <- NULL ## force recompute log-likelihood
-  object$ll <- logLik(object)
+  if (compute_logLik){
+    object$ll <- logLik(object)
+  }
   return(object)
 }
 

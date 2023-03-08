@@ -4,7 +4,13 @@
 \alias{sevt_fit}
 \title{Fit a staged event tree}
 \usage{
-sevt_fit(object, data = NULL, lambda = object$lambda)
+sevt_fit(
+  object,
+  data = NULL,
+  lambda = object$lambda,
+  scope = NULL,
+  compute_logLik = TRUE
+)
 }
 \arguments{
 \item{object}{an object of class \code{sevt}.}
@@ -13,9 +19,19 @@ sevt_fit(object, data = NULL, lambda = object$lambda)
 the variables in \code{object}.}
 
 \item{lambda}{smoothing parameter or pseudocount.}
+
+\item{scope}{which variable should be fitted. Default (NULL) to
+all variables in the model. A partial re-fit is
+possible only for model which are already fitted and in
+that case the provided \code{lambda} will be ignored if
+different from \code{object$lambda}.}
+
+\item{compute_logLIK}{logical value. If \code{TRUE} the log-likelihood
+of the model is computed and stored.}
 }
 \value{
-A fitted staged event tree, that is an object of class \code{sevt}
+A (partially) fitted staged event tree,
+that is an object of class \code{sevt}
 with \code{ctables}, \code{prob} and \code{ll} components.
 }
 \description{
@@ -25,8 +41,13 @@ eventually, an additive (Laplace) smoothing.
 }
 \details{
 The data in form of contingency tables and the
-log-likelihood of the model is
+log-likelihood of the model is (eventually)
 stored in the returned staged event tree.
+Partial re-fit of a model can be performed
+with the \code{scope} argument.
+Partial re-fit can only be done over a
+fully fitted model, e.g. when changing
+the stages structure of one of the variables.
 }
 \examples{
 
