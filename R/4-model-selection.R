@@ -649,7 +649,7 @@ stages_hc <- function(object,
           try <- object
           for (s2 in c(ustages[-j], newname)) {
             try$stages[[v]][i] <- s2
-            try <- sevt_fit(try, lambda = object$lambda, scope = v)
+            try <- sevt_fit(try, scope = v)
             try_score <- score(try)
             if (try_score > temp_score) {
               temp <- try

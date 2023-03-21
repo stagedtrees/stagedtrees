@@ -6,7 +6,9 @@
 #' @param object an object of class \code{sevt}.
 #' @param data data.frame or contingency table with observations of 
 #'             the variables in \code{object}.
-#' @param lambda smoothing parameter or pseudocount.
+#' @param lambda smoothing parameter or pseudocount. Default (NULL) to
+#'               lambda value stored in `object`. If no lambda value is 
+#'               stored nor provided, 0 will be used with a warning.
 #' @param scope which variable should be fitted. Default (NULL) to 
 #'                all variables in the model. A partial re-fit is 
 #'                possible only for model which are already fitted and in 
@@ -28,6 +30,10 @@
 #'          Partial re-fit can only be done over a 
 #'          fully fitted model, e.g. when changing 
 #'          the stages structure of one of the variables.
+#'          In case of a partial re-fit, the `data` and `lambda` arguments 
+#'          will be ignored and the data and lambda value stored in the 
+#'          sevt object will be used (a warning is issued if such arguments are 
+#'          supplied). 
 #' @export
 #' @examples
 #'
@@ -43,21 +49,10 @@
 #' model.fit <- sevt_fit(model, data = D, lambda = 1)
 sevt_fit <- function(object,
                      data = NULL,
-                     lambda = object$lambda,
+                     lambda = NULL,
                      scope = NULL,
                      compute_logLik = TRUE) {
-  if (is.null(data)) {
-    if (!has_ctables(object)) {
-      warning("Data must be provided or included in the model object as ctables")
-      return(object)
-    }
-  }else{
-    object$ctables <- make_ctables(object, data)
-  }
-  if (is.null(lambda)){
-    warning("lambda not provided nor available in the sevt object, lambda = 0 used")
-    lambda <- 0
-  }
+  ### checking parameters ###
   # extract order of variables 
   order <- sevt_varnames(object)
   if (is.null(scope)){
@@ -68,18 +63,40 @@ sevt_fit <- function(object,
     scope <- unique(scope)
     if (!setequal(scope, order)){
       ## partial fit, check if object is fitted 
-      if (!has_prob(object)){
+      if (!is_fitted_sevt(object)){
         stop("Partial fitting is allowed only for completely fitted sevt objects.")
       }
+      if (!is.null(data) | !is.null(lambda)){
+        warning("Partial fitting ignores data and/or lambda inputs. 
+                If the data to be fitted or the lambda values need 
+                to be changed, perform a complete fit of the model.")
+      }
       lambda <- object$lambda ## force using same lambda
+      data <- NULL ## force using stored data
     }else{
       ## clean prob
       object$prob <- list()
     }
   }
+  if (is.null(data)) {
+    if (!has_ctables(object)) {
+      warning("Data must be provided or included in the model object as ctables")
+      return(object)
+    }
+  }else{
+    object$ctables <- make_ctables(object, data)
+  }
+  if (is.null(lambda)){
+    if (is.null(object$lambda)){
+      warning("lambda not provided nor available in the sevt object, lambda = 0 used")
+      lambda <- 0
+    }else{
+      lambda <- object$lambda
+    }
+  }
   # store lambda 
   object$lambda <- lambda
-  # 
+  ### start fitting ###
   dims <- vapply(object$tree, length, FUN.VALUE = 1)
   # root variable
   if (order[1] %in% scope){

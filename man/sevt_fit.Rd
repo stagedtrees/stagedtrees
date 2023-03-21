@@ -7,7 +7,7 @@
 sevt_fit(
   object,
   data = NULL,
-  lambda = object$lambda,
+  lambda = NULL,
   scope = NULL,
   compute_logLik = TRUE
 )
@@ -18,7 +18,9 @@ sevt_fit(
 \item{data}{data.frame or contingency table with observations of
 the variables in \code{object}.}
 
-\item{lambda}{smoothing parameter or pseudocount.}
+\item{lambda}{smoothing parameter or pseudocount. Default (NULL) to
+lambda value stored in \code{object}. If no lambda value is
+stored nor provided, 0 will be used with a warning.}
 
 \item{scope}{which variable should be fitted. Default (NULL) to
 all variables in the model. A partial re-fit is
@@ -51,6 +53,10 @@ with the \code{scope} argument.
 Partial re-fit can only be done over a
 fully fitted model, e.g. when changing
 the stages structure of one of the variables.
+In case of a partial re-fit, the \code{data} and \code{lambda} arguments
+will be ignored and the data and lambda value stored in the
+sevt object will be used (a warning is issued if such arguments are
+supplied).
 }
 \examples{
 
