@@ -221,3 +221,14 @@ test_that("partial fitting", {
   mod2b <- sevt_fit(mod2)
   expect_identical(logLik(mod2a), logLik(mod2b))
 })
+
+
+test_that("partial fitting should not change lambda", {
+  mod1 <- full(PhDArticles, lambda = 0)
+  mod2 <- mod1 
+  mod2$stages$Married[c(1,2,3,7,9)] <- "aa"
+  mod2a <- sevt_fit(mod2, scope = "Married", lambda = 3)
+  mod2b <- sevt_fit(mod2)
+  expect_identical(logLik(mod2a), logLik(mod2b))
+  expect_identical(mod2a$lambda, mod2b$lambda)
+})

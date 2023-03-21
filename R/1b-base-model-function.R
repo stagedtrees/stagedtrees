@@ -55,8 +55,6 @@ sevt_fit <- function(object,
     warning("lambda not provided nor available in the sevt object, lambda = 0 used")
     lambda <- 0
   }
-  # store lambda 
-  object$lambda <- lambda
   # extract order of variables 
   order <- sevt_varnames(object)
   if (is.null(scope)){
@@ -76,6 +74,8 @@ sevt_fit <- function(object,
       object$prob <- list()
     }
   }
+  # store lambda 
+  object$lambda <- lambda
   # 
   dims <- vapply(object$tree, length, FUN.VALUE = 1)
   # root variable
