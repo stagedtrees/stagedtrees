@@ -259,7 +259,22 @@ has_ctables <- function(object){
 #' @return logical.
 #' @keywords internal
 has_prob <- function(object){
-  isFALSE(is.null(object$prob))
+  if (isTRUE(is.null(object$prob))){
+    return(FALSE)
+  }else{
+    ## check that we have all probabilities 
+    vars <- sevt_varnames(object)
+    if (isTRUE(any(sapply(vars, function(v) is.null(object$prob[[v]]))))){
+      return(FALSE)
+    }else{
+      ## check probabilities are ok 
+      isFALSE(any(sapply(vars, function(v){
+        any(sapply(object$prob[[v]], function(pp){
+          isFALSE(length(pp) == length(object$tree[[v]]))
+        }))
+      })))
+    }
+  }
 }
 
 #' Check if the stages event tree is fitted
