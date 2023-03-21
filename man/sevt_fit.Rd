@@ -26,13 +26,16 @@ possible only for model which are already fitted and in
 that case the provided \code{lambda} will be ignored if
 different from \code{object$lambda}.}
 
-\item{compute_logLIK}{logical value. If \code{TRUE} the log-likelihood
+\item{compute_logLik}{logical value. If \code{TRUE} the log-likelihood
 of the model is computed and stored.}
 }
 \value{
-A (partially) fitted staged event tree,
+A fitted staged event tree,
 that is an object of class \code{sevt}
-with \code{ctables}, \code{prob} and \code{ll} components.
+with \code{ctables} and \code{prob} components.
+Additionally the chosen \code{lambda} is stored in the returned object
+and eventually the log-likelihood of the model is saved in
+the \code{ll} field.
 }
 \description{
 Estimate transition probabilities in a staged event tree from data.

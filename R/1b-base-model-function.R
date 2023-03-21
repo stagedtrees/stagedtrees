@@ -12,11 +12,14 @@
 #'                possible only for model which are already fitted and in 
 #'                that case the provided \code{lambda} will be ignored if 
 #'                different from \code{object$lambda}. 
-#' @param compute_logLIK logical value. If \code{TRUE} the log-likelihood
+#' @param compute_logLik logical value. If \code{TRUE} the log-likelihood
 #'                       of the model is computed and stored. 
-#' @return A (partially) fitted staged event tree, 
+#' @return A fitted staged event tree, 
 #'         that is an object of class `sevt`
-#'         with `ctables`, `prob` and `ll` components.
+#'         with `ctables` and `prob` components.
+#'         Additionally the chosen `lambda` is stored in the returned object 
+#'         and eventually the log-likelihood of the model is saved in 
+#'         the `ll` field. 
 #' @details The data in form of contingency tables and the 
 #'          log-likelihood of the model is (eventually) 
 #'          stored in the returned staged event tree.
@@ -64,7 +67,7 @@ sevt_fit <- function(object,
     scope <- scope[scope %in% order]
     scope <- unique(scope)
     if (!setequal(scope, order)){
-      ## partial fit, check if objectis fitted 
+      ## partial fit, check if object is fitted 
       if (!has_prob(object)){
         stop("Partial fitting is allowed only for completely fitted sevt objects.")
       }
