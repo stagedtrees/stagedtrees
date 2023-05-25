@@ -7,11 +7,14 @@
 stages_hclust(
   object,
   distance = "totvar",
-  k = length(object$tree[[1]]),
+  k = NA,
   method = "complete",
   ignore = object$name_unobserved,
   limit = length(object$tree),
-  scope = NULL
+  scope = NULL,
+  score = function(x) {
+     return(-BIC(x))
+ }
 )
 }
 \arguments{
@@ -23,17 +26,24 @@ a possible \code{method} for \code{\link{dist}} or
 one of the following: \code{"totvar", "hellinger"}.}
 
 \item{k}{integer or (named) vector: number of clusters, that is stages per variable.
-Values will be recycled if needed.}
+Values will be recycled if needed. If \code{NA} (default) a search of
+the number of stage is performed with respect to the maximization of
+the \code{score} function. \code{NA} and integer can be mixed
+to fix the number of stage for some variables and use the
+score to select others.}
 
 \item{method}{the agglomeration method to be used in \code{\link{hclust}}.}
 
-\item{ignore}{vector of stages which will be ignored and left untouched,
-by default the name of the unobserved stages stored in
+\item{ignore}{vector of stages which will be ignored and left untouched.
+By default the name of the unobserved stages stored in
 \code{object$name_unobserved}.}
 
 \item{limit}{the maximum number of variables to consider.}
 
 \item{scope}{names of the variables to consider.}
+
+\item{score}{A function. Score to maximize for automatic selection
+of the number of stages. Used if \code{k=NA} for some variables.}
 }
 \value{
 A staged event tree object.
@@ -50,9 +60,15 @@ of stages (\code{k}).
 A different number of stages for the different variables
 in the model can be specified by supplying a (named) vector
 via the argument \code{k}.
+If \code{k} is \code{NA} for some variables, all
+possible number of stages will be checked and the
+one that maximize the \code{score} will be selected.
 }
 \examples{
 data("Titanic")
 model <- stages_hclust(full(Titanic, join_unobserved = TRUE, lambda = 1), k = 2)
 summary(model)
+
+### or search k via BIC minimization
+model1 <- stages_hclust(full(Titanic), k = NA)
 }

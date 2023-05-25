@@ -211,3 +211,31 @@ test_that("test indep model (NA)", {
                                                          !is.na(DD$V4) &
                                                          !is.na(DD$V5)))
 })
+
+
+test_that("partial fitting", {
+  mod1 <- full(PhDArticles)
+  mod2 <- mod1 
+  mod2$stages$Married[c(1,2,3,7,9)] <- "aa"
+  mod2a <- sevt_fit(mod2, scope = "Married")
+  mod2b <- sevt_fit(mod2)
+  expect_identical(logLik(mod2a), logLik(mod2b))
+})
+
+
+test_that("partial fitting should not change lambda", {
+  mod1 <- full(PhDArticles, lambda = 0)
+  mod2 <- mod1 
+  mod2$stages$Married[c(1,2,3,7,9)] <- "aa"
+  expect_warning(mod2a <- sevt_fit(mod2, scope = "Married", lambda = 3))
+  mod2b <- sevt_fit(mod2)
+  expect_identical(logLik(mod2a), logLik(mod2b))
+  expect_identical(mod2a$lambda, mod2b$lambda)
+})
+
+
+test_that("partial fitting throws warning if data or lambda is provided", {
+  mod1 <- full(PhDArticles, lambda = 0)
+  expect_warning(sevt_fit(mod1, scope = "Married", lambda = 3))
+  expect_warning(sevt_fit(mod1, scope = "Married", data = PhDArticles))
+})

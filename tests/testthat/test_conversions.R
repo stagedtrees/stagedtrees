@@ -10,7 +10,7 @@ test_that("as.character.parentslist",{
 })
 
 test_that("as.character.parentslist",{
-  expect_invisible(print(pl))
+  capture_output(expect_invisible(print(pl, )))
 })
 
 test_that("as_bn.parentslist",{
