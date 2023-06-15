@@ -350,9 +350,9 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   
   if (normalize_layout){
     layout[,1] <-  (layout[,1] - min(layout[,1])) / 
-      (max(abs(layout[,1])) - min(layout[,1]))
+      (max(layout[,1]) - min(layout[,1]))
     layout[,2] <-  (layout[,2]- min(layout[,2])) / 
-      (max(abs(layout[,2])) - min(layout[,2]))
+      (max(layout[,2]) - min(layout[,2]))
   }
   
   cat2 <- function(x) cat(x, file = file, append = TRUE)
