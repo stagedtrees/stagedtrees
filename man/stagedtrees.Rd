@@ -27,6 +27,7 @@ Model selection algorithms:
 \item Fast Backward Hill-Climbing \code{\link{stages_fbhc}}
 \item Backward Hill-Climbing Random \code{\link{stages_bhcr}}
 \item Backward joining \code{\link{stages_bj}}
+\item Simple Backward Hill-Climbing \code{\link{stages_simplebhc}}
 \item Hierarchical Clustering \code{\link{stages_hclust}}
 \item K-Means Clustering \code{\link{stages_kmeans}}
 \item Optimal order search \code{\link{search_best}}
@@ -57,6 +58,7 @@ Modify models:
 \itemize{
 \item Join and isolate unobserved situations \code{\link{join_unobserved}}
 \item Join two stages \code{\link{join_stages}}
+\item Join two positions \code{\link{join_positions}}
 \item Rename a stage \code{\link{rename_stage}}
 }
 }
