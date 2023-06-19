@@ -170,14 +170,15 @@ as_parentslist.bn.fit <- function(x, order = NULL,  ...){
 
 
 #' @rdname as_parentslist
+#' @param silent if function should be silent.
 #' @details In `as_parentslist.sevt`, if a context-specific or a local-partial independence is detected
-#' a message is printed and the minimal super-model is returned.
+#' a message is printed (if \code{silent = FALSE}) and the minimal super-model is returned.
 #' @examples 
 #' model <- stages_hclust(full(Titanic), k = 2)
 #' pl <- as_parentslist(model)
 #' pl$Age 
 #' @export
-as_parentslist.sevt <- function(x, ...){
+as_parentslist.sevt <- function(x, silent = FALSE,...){
   check_sevt(x)
   wrn <- FALSE
   Ms <- sapply(x$tree, length)
@@ -226,7 +227,7 @@ as_parentslist.sevt <- function(x, ...){
                                    stages = stgs,
                                    values = x$tree[[Vs[i + 1]]])
   }
-  if (wrn){
+  if (wrn && !silent){
     message("Context specific and/or local partial independences detected.")
     message("The input staged tree is not equivalent to a BN, 
             the minimal super-model is returned.")
@@ -322,16 +323,17 @@ as_bn.sevt <- function(x){
 
 #' Convert to an adjacency matrix
 #' @param x an R object
+#' @param ... additional parameters
 #' @return the equivalent adjacency matrix
 #' @export
-as_adj_matrix <- function(x){
+as_adj_matrix <- function(x, ...){
   UseMethod("as_adj_matrix", x)
 }
 
 
 #' @rdname as_adj_matrix 
 #' @export
-as_adj_matrix.parentslist <- function(x){
+as_adj_matrix.parentslist <- function(x, ...){
   n <- length(x)
   adj <- matrix(nrow = n, ncol = n, 
                 dimnames = list(names(x), names(x)), 
@@ -340,4 +342,42 @@ as_adj_matrix.parentslist <- function(x){
     adj[x[[i]]$parents, i] <- 1
   }
   adj
+}
+
+#' @rdname as_adj_matrix 
+#' @param ignore list of stages to be ignored.
+#' @param endnode logical value. If \code{TRUE} a final node fil be added. 
+#' @return for \code{as_adj_matrix.ceg}: the adj matrix corresponding to the CEG.
+#' @export
+as_adj_matrix.ceg <- function(x, ignore = x$name_unobserved, endnode = TRUE, ...) {
+  tree <- x$tree
+  var <- names(tree)
+  pos <- uni_idx(x$positions)
+  pos.ignore <- lapply(var[-1], function(v){
+    pos[[v]][x$stages[[v]] %in% ignore]
+  })
+  allignore <- c(unique(unlist(pos.ignore)))
+  allpos <- c(unique(unlist(pos)), "END")
+  wignore <- allpos %in% allignore
+  k <- length(allpos)
+  mat <- matrix(nrow = k, ncol = k, 0, dimnames = list(allpos, allpos))
+  m <- 1
+  for (i in 2:length(var)) {
+    v <- var[i - 1]
+    m <- length(x$tree[[v]])
+    for (p1 in unique(pos[[v]])) {
+      ix <- min(which(pos[[v]] %in% p1))
+      for (p2 in pos[[var[i]]][((ix - 1) * m + 1):(ix * m)]) {
+        mat[p1, p2] <- mat[p1, p2] + 1
+      }
+    }
+  }
+  v <- var[i]
+  if (endnode){
+    for (p1 in unique(pos[[v]])) {
+      mat[p1, "END"] <- length(x$tree[[v]])
+    }
+  }
+  mat <- mat[!wignore, !wignore]
+  return(mat)
 }

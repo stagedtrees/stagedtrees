@@ -13,7 +13,7 @@ as_parentslist(x, ...)
 
 \method{as_parentslist}{bn.fit}(x, order = NULL, ...)
 
-\method{as_parentslist}{sevt}(x, ...)
+\method{as_parentslist}{sevt}(x, silent = FALSE, ...)
 }
 \arguments{
 \item{x}{an R object.}
@@ -21,6 +21,8 @@ as_parentslist(x, ...)
 \item{...}{additional parameters.}
 
 \item{order}{order of the variables, usually a topological order.}
+
+\item{silent}{if function should be silent.}
 }
 \value{
 An object of class \code{parentslist} for which a
@@ -49,7 +51,7 @@ sample space of the variables and the context/partial/local
 independences.
 
 In \code{as_parentslist.sevt}, if a context-specific or a local-partial independence is detected
-a message is printed and the minimal super-model is returned.
+a message is printed (if \code{silent = FALSE}) and the minimal super-model is returned.
 }
 \examples{
 model <- stages_hclust(full(Titanic), k = 2)

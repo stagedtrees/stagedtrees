@@ -4,7 +4,13 @@
 \alias{sevt_fit}
 \title{Fit a staged event tree}
 \usage{
-sevt_fit(object, data = NULL, lambda = object$lambda)
+sevt_fit(
+  object,
+  data = NULL,
+  lambda = NULL,
+  scope = NULL,
+  compute_logLik = TRUE
+)
 }
 \arguments{
 \item{object}{an object of class \code{sevt}.}
@@ -12,11 +18,26 @@ sevt_fit(object, data = NULL, lambda = object$lambda)
 \item{data}{data.frame or contingency table with observations of
 the variables in \code{object}.}
 
-\item{lambda}{smoothing parameter or pseudocount.}
+\item{lambda}{smoothing parameter or pseudocount. Default (NULL) to
+lambda value stored in \code{object}. If no lambda value is
+stored nor provided, 0 will be used with a warning.}
+
+\item{scope}{which variable should be fitted. Default (NULL) to
+all variables in the model. A partial re-fit is
+possible only for model which are already fitted and in
+that case the provided \code{lambda} will be ignored if
+different from \code{object$lambda}.}
+
+\item{compute_logLik}{logical value. If \code{TRUE} the log-likelihood
+of the model is computed and stored.}
 }
 \value{
-A fitted staged event tree, that is an object of class \code{sevt}
-with \code{ctables}, \code{prob} and \code{ll} components.
+A fitted staged event tree,
+that is an object of class \code{sevt}
+with \code{ctables} and \code{prob} components.
+Additionally the chosen \code{lambda} is stored in the returned object
+and eventually the log-likelihood of the model is saved in
+the \code{ll} field.
 }
 \description{
 Estimate transition probabilities in a staged event tree from data.
@@ -25,8 +46,17 @@ eventually, an additive (Laplace) smoothing.
 }
 \details{
 The data in form of contingency tables and the
-log-likelihood of the model is
+log-likelihood of the model is (eventually)
 stored in the returned staged event tree.
+Partial re-fit of a model can be performed
+with the \code{scope} argument.
+Partial re-fit can only be done over a
+fully fitted model, e.g. when changing
+the stages structure of one of the variables.
+In case of a partial re-fit, the \code{data} and \code{lambda} arguments
+will be ignored and the data and lambda value stored in the
+sevt object will be used (a warning is issued if such arguments are
+supplied).
 }
 \examples{
 

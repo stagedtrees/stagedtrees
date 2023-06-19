@@ -14,7 +14,7 @@
 ceg <- function(object) {
   check_sevt(object)
   positions <- object$stages
-  ls <- length(object$stages)
+  ls <- length(object$tree) - 1
   us <- unique(object$stages[[ls]])
   positions[[ls]] <- vapply(object$stages[[ls]],
     FUN.VALUE = "a",
@@ -47,43 +47,4 @@ ceg <- function(object) {
   object$positions <- object$positions[c(ls + 1, 1:ls)]
   class(object) <- c("ceg", class(object))
   return(object)
-}
-
-
-
-#' Ceg to adjmat of graph
-#'
-#' Obtain the adjacency matrix corresponding to a CEG.
-#' @param x an object of class \code{\link{ceg}}.
-#' @return the adj matrix
-#' @details This utility function can be used to prepare the adjacency 
-#' matrix to plot the CEG using a graph package (e.g. \pkg{igraph}).
-#' @examples
-#' model <- stages_fbhc(full(PhDArticles))
-#' model.ceg <- ceg(model)
-#' ceg2adjmat(model.ceg)
-#' @export
-ceg2adjmat <- function(x) {
-  tree <- x$tree
-  var <- names(tree)
-  pos <- uni_idx(x$positions)
-  allpos <- c(unique(unlist(pos)), "END")
-  k <- length(allpos)
-  mat <- matrix(nrow = k, ncol = k, 0, dimnames = list(allpos, allpos))
-  m <- 1
-  for (i in 2:length(var)) {
-    v <- var[i - 1]
-    m <- length(x$tree[[v]])
-    for (p1 in unique(pos[[v]])) {
-      ix <- min(which(pos[[v]] %in% p1))
-      for (p2 in pos[[var[i]]][ ((ix - 1) * m + 1):(ix * m)]) {
-        mat[p1, p2] <- mat[p1, p2] + 1
-      }
-    }
-  }
-  v <- var[i]
-  for (p1 in unique(pos[[v]])) {
-    mat[p1, "END"] <- length(x$tree[[v]])
-  }
-  return(mat)
 }

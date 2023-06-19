@@ -3,17 +3,28 @@
 \name{as_adj_matrix}
 \alias{as_adj_matrix}
 \alias{as_adj_matrix.parentslist}
+\alias{as_adj_matrix.ceg}
 \title{Convert to an adjacency matrix}
 \usage{
-as_adj_matrix(x)
+as_adj_matrix(x, ...)
 
-\method{as_adj_matrix}{parentslist}(x)
+\method{as_adj_matrix}{parentslist}(x, ...)
+
+\method{as_adj_matrix}{ceg}(x, ignore = x$name_unobserved, endnode = TRUE, ...)
 }
 \arguments{
 \item{x}{an R object}
+
+\item{...}{additional parameters}
+
+\item{ignore}{list of stages to be ignored.}
+
+\item{endnode}{logical value. If \code{TRUE} a final node fil be added.}
 }
 \value{
 the equivalent adjacency matrix
+
+for \code{as_adj_matrix.ceg}: the adj matrix corresponding to the CEG.
 }
 \description{
 Convert to an adjacency matrix

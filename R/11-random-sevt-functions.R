@@ -65,7 +65,7 @@ random_sevt.parentslist <- function(x, ...){
 #'          from the provided sevt object.
 #'          Stages (conditional) probabilities are sampled from 
 #'          the corresponding probability simplex by generating 
-#'          a vector with the \code{rfun} supplied function and 
+#'          a vector with the  uder-defined function \code{rfun} and 
 #'          sequentially normalizing to sum up to one. 
 #'          Absolute value is applied to assure non-negativity.
 #'          The default \code{rfun = rexp} induces a uniform sampling
@@ -94,8 +94,8 @@ random_sevt.sevt <- function(x, q = 0.5, rfun = rexp,...){
       return(p)
     }, simplify = FALSE, USE.NAMES = TRUE)
   })
-  p <- runif(length(x$tree[[1]])) 
-  p <- p / sum(p)
+  p <- rfun(length(x$tree[[1]])) 
+  p <- abs(p) / sum(p)
   names(p) <- x$tree[[1]]
   attr(p, "n") <- 1
   x$prob <- c(list(list("1" = p)), x$prob)

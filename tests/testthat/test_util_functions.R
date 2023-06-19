@@ -16,7 +16,7 @@ test_that("uni_idx works as expected", {
   expect_silent(ui <-
     stagedtrees:::uni_idx(list(
       A = c(1, 2, 3), B = c(1, 2, 3)
-    )))
+    ), sep = ":"))
   expect_true(all(ui$A == c("A:1", "A:2", "A:3")))
 })
 

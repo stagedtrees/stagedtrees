@@ -26,10 +26,9 @@ igraph's plotting for CEG
 This function is a simple wrapper around
 \pkg{igraph}'s \code{plot.igraph}.
 The ceg object is converted to an igraph object
-by firstly obtaining the adjacency matrix representation
-with \code{\link{ceg2adjmat}}.
+with \code{\link{as_igraph}}.
 If not specified, the default \code{layout} used is
-a rotated \code{layout.reingold.tilford}.
+a rotated \code{layout.sugiyama}.
 
 We use \code{palette()} as palette for
 the \pkg{igraph} plotting, while \code{plot.igraph} uses
