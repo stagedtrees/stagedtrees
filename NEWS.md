@@ -1,3 +1,30 @@
+# 2.3.0
+
+* Carli et al. 2022 JSS citation added in DESCRIPTION.
+* Functions for random generation of staged trees added.
+* Added new function `depsubtree` which build the dependency subtree. 
+* New functions to translate `sevt` and `ceg` objects to graphs (edge lists and igraph). 
+* fixed handling of NAs.
+* fix bug on `plot.sevt` and on graph conversion methods 
+  when ignoring stage "1" which is assigned to root 
+* `sevt_fit` earns the `scope` argument, it is now possible to do partial re-fit
+   of staged tree models. Moreover, with the `compute_logLik` argument, the user 
+   can decide if the log-likelihood should be computed when fitting the model.
+* `stages_hclust` can now search the best cut of the hierarchical cluster with
+   respect to some `score` function to be maximized. 
+* various minor fixes in colors specification for visualization functions. 
+* `stages_simplebhc` implements a new stage structure search by iterative joining of positions, thus searching in the space of simple staged trees.
+* `sevt_simplify` return the simplified staged tree, that is a stage tree where positions and stages are equivalent. 
+
+
+# 2.2.1
+
+* `inst/CITATION` file added as requested by JSS.
+* The DOI in the CITATION is for a new JSS publication that will be registered after publication on CRAN.
+* broken badge url fixed in README.
+* update documentation.
+
+
 # 2.2.0
 
 * `plot.ceg` new plotting functions using `igraph` plotting.

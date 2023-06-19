@@ -242,7 +242,7 @@ diff_stages <- function(object1, object2) {
 #' @param object2 an object of class \code{\link{sevt}}.
 #' @param FUN a function that is used to aggregate CID for each variable.
 #'                  The default \code{mean} will obtain the CID 
-#'                  as defined in Leonelli and Varando (2021).
+#'                  as defined in Leonelli and Varando (2023).
 #' @return A list with components:
 #' 
 #' * \code{wrong} a stages-like structure which record where 
@@ -252,8 +252,9 @@ diff_stages <- function(object1, object2) {
 #'
 #' @references 
 #' Leonelli M., Varando G. 
-#' Context-Specific Causal Discovery for Categorical Data Using Staged Trees
-#' <https://arxiv.org/abs/2106.04416>
+#' _Context-Specific Causal Discovery for Categorical Data Using Staged Trees_,
+#'  The 26th International Conference on Artificial Intelligence and Statistics (AISTATS), 2023,
+#'  <https://arxiv.org/abs/2106.04416>
 #' @examples 
 #' model1 <- stages_bhc(full(Titanic))
 #' model2 <- stages_bhc(full(Titanic, 

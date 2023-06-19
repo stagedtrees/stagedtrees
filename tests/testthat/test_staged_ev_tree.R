@@ -139,3 +139,103 @@ test_that("test indep model", {
 
   expect_true(compare_stages(sev1, sev2))
 })
+
+
+test_that("test full model (NA)", {
+  N <- sample(100:200, size = 1)
+  ns <- sample(5:15, size = 3)
+  DD <- as.data.frame(sapply(1:5, function(i) {
+    return(as.factor(sample(
+      c(0, 1, 2),
+      size = N,
+      replace = TRUE
+    )))
+  }))
+  DD[sample(nrow(DD), ns[1]), 1] <- NA
+  DD[sample(nrow(DD), ns[2]), 2] <- NA
+  DD[sample(nrow(DD), ns[3]), 4] <- NA
+  
+  expect_silent(model <- full(DD))
+  
+  AA <- summary(model)
+  
+  expect_equal(sum(AA$stages.info$V1$sample.size), sum(!is.na(DD$V1)))
+  expect_equal(sum(AA$stages.info$V2$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2)))
+  expect_equal(sum(AA$stages.info$V3$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2) &
+                                                         !is.na(DD$V3)))
+  expect_equal(sum(AA$stages.info$V4$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2) &
+                                                         !is.na(DD$V3) &
+                                                         !is.na(DD$V4)))
+  expect_equal(sum(AA$stages.info$V5$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2) &
+                                                         !is.na(DD$V3) &
+                                                         !is.na(DD$V4) &
+                                                         !is.na(DD$V5)))
+})
+
+
+test_that("test indep model (NA)", {
+  N <- sample(100:200, size = 1)
+  ns <- sample(5:15, size = 3)
+  DD <- as.data.frame(sapply(1:5, function(i) {
+    return(as.factor(sample(
+      c(0, 1, 2),
+      size = N,
+      replace = TRUE
+    )))
+  }))
+  DD[sample(nrow(DD), ns[1]), 1] <- NA
+  DD[sample(nrow(DD), ns[2]), 2] <- NA
+  DD[sample(nrow(DD), ns[3]), 4] <- NA
+  
+  expect_silent(model <- indep(DD))
+  
+  AA <- summary(model)
+  
+  expect_equal(sum(AA$stages.info$V1$sample.size), sum(!is.na(DD$V1)))
+  expect_equal(sum(AA$stages.info$V2$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2)))
+  expect_equal(sum(AA$stages.info$V3$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2) &
+                                                         !is.na(DD$V3)))
+  expect_equal(sum(AA$stages.info$V4$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2) &
+                                                         !is.na(DD$V3) &
+                                                         !is.na(DD$V4)))
+  expect_equal(sum(AA$stages.info$V5$sample.size), sum(!is.na(DD$V1) & 
+                                                         !is.na(DD$V2) &
+                                                         !is.na(DD$V3) &
+                                                         !is.na(DD$V4) &
+                                                         !is.na(DD$V5)))
+})
+
+
+test_that("partial fitting", {
+  mod1 <- full(PhDArticles)
+  mod2 <- mod1 
+  mod2$stages$Married[c(1,2,3,7,9)] <- "aa"
+  mod2a <- sevt_fit(mod2, scope = "Married")
+  mod2b <- sevt_fit(mod2)
+  expect_identical(logLik(mod2a), logLik(mod2b))
+})
+
+
+test_that("partial fitting should not change lambda", {
+  mod1 <- full(PhDArticles, lambda = 0)
+  mod2 <- mod1 
+  mod2$stages$Married[c(1,2,3,7,9)] <- "aa"
+  expect_warning(mod2a <- sevt_fit(mod2, scope = "Married", lambda = 3))
+  mod2b <- sevt_fit(mod2)
+  expect_identical(logLik(mod2a), logLik(mod2b))
+  expect_identical(mod2a$lambda, mod2b$lambda)
+})
+
+
+test_that("partial fitting throws warning if data or lambda is provided", {
+  mod1 <- full(PhDArticles, lambda = 0)
+  expect_warning(sevt_fit(mod1, scope = "Married", lambda = 3))
+  expect_warning(sevt_fit(mod1, scope = "Married", data = PhDArticles))
+})

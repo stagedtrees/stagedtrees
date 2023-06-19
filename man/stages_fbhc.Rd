@@ -6,7 +6,9 @@
 \usage{
 stages_fbhc(
   object = NULL,
-  score = function(x) {     return(-BIC(x)) },
+  score = function(x) {
+     return(-BIC(x))
+ },
   max_iter = Inf,
   scope = NULL,
   ignore = object$name_unobserved,

@@ -126,7 +126,7 @@ plot.sevt <-
     d <- min(length(x$tree), limit) ## avoid too much plotting
     nms <- names(x$tree) ## name of variable
     if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
-      x$stages[[nms[1]]] <- c("1")
+      x$stages[[nms[1]]] <- c(NA)
     }
     col <- make_stages_col(x, col, ignore,limit =  d) 
     if (is.null(col_edges)){
@@ -284,7 +284,7 @@ make_stages_col <- function(x, col = NULL,
   if (is.null(col)) {
     col <- lapply(x$stages[nms[1:d]], function(stages) {
       if (is.null(stages)) {
-        return(list("1" = "black"))
+        return(c("1" = "black"))
       }
       stages <- unique(stages)
       stages <- stages[!(stages %in% ignore)]
@@ -295,7 +295,8 @@ make_stages_col <- function(x, col = NULL,
   } else if (is.function(col)) {
     col <- lapply(x$stages[nms[1:d]], function(stages) {
       if (is.null(stages)) {
-        return(list("1" = "black"))
+        ## this should be checked 
+        return(c("1" = "black"))
       }
       stages <- unique(stages)
       stages <- stages[!(stages %in% ignore)]
@@ -309,13 +310,21 @@ make_stages_col <- function(x, col = NULL,
     if (col == "stages") {
       col <- lapply(x$stages[nms[1:d]], function(stages) {
         if (is.null(stages)) {
-          return(list("1" = 1))
+          return(c("1" = 1))
         }
         stages <- unique(stages)
         stages <- stages[!(stages %in% ignore)]
         names(stages) <- stages
         return(stages)
       })
+    }
+  }else{
+    if (is.list(col) && !is.null(names(col))){
+      col <- sapply(nms[1:d], function(nm){
+        col[[nm]]
+      }, simplify = FALSE)
+    }else{
+      stop("Irregular argument for col, please check sevt plotting documentation ?plot.sevt.")
     }
   }
   return(col)
@@ -422,30 +431,13 @@ barplot.sevt <- function(height, var,
   stg <- stages(height, var)
   stg <- stg[!(stg %in% ignore)]
   ustg <- unique(stg) 
-  if (is.null(col)) {
-      if (is.null(stg)) {
-        col = list("1" = "black")
-      }else{
-        col <- seq_along(ustg)
-        names(col) <- ustg
-      }
-  } else if (is.function(col)) {
-      if (is.null(stg)) {
-        col <- list("1" = 1)
-      }else{
-        col <- col(ustg)
-        if (is.null(names(col))){
-          names(col) <- ustg
-        }
-      }
-  } else if (length(col) == 1 && col == "stages") {
-    if (col == "stages") {
-        if (is.null(stg)) {
-          col <- list("1" = 1)
-        }else{
-          col <- ustg
-          names(col) <- ustg
-        }
+  col <- make_stages_col(height, col = col, ignore = ignore)[[var]]
+  if (!is.null(names(col))){
+    if (all(ustg %in% names(col))){
+      ## order (and select) colors 
+      col <- col[ustg]
+    }else{
+      stop("Names of provided colors (col) do not match stage names.")
     }
   }
   tmp <- summary(height)[["stages.info"]][[var]]
@@ -461,6 +453,7 @@ barplot.sevt <- function(height, var,
           horiz = horiz, ...)
 }
 
+
 #' igraph's plotting for CEG 
 #' 
 #' @param x an object of class \code{\link{ceg}}. 
@@ -473,10 +466,9 @@ barplot.sevt <- function(height, var,
 #' @details This function is a simple wrapper around 
 #'  \pkg{igraph}'s \code{plot.igraph}.
 #'  The ceg object is converted to an igraph object 
-#'  by firstly obtaining the adjacency matrix representation
-#'  with \code{\link{ceg2adjmat}}. 
+#'  with \code{\link{as_igraph}}.
 #'  If not specified, the default \code{layout} used is 
-#'  a rotated \code{layout.reingold.tilford}.
+#'  a rotated \code{layout.sugiyama}.
 #'  
 #'  We use \code{palette()} as palette for
 #'  the \pkg{igraph} plotting, while \code{plot.igraph} uses 
@@ -490,6 +482,7 @@ barplot.sevt <- function(height, var,
 #'  plot(model.ceg, edge.arrow.size = 0.1, vertex.label.dist = -2)
 #'  }
 #' @importFrom grDevices palette
+#' @importFrom stats na.exclude
 #' @export
 plot.ceg <- function(x, col = NULL,
                      ignore = x$name_unobserved, 
@@ -500,25 +493,28 @@ plot.ceg <- function(x, col = NULL,
          call. = FALSE
     )
   }
-  nms <- names(x$tree)
+  nms <- sevt_varnames(x)
   if (is.null(x$stages[[nms[1]]])){ ## add stage name also to root
-    x$stages[[nms[1]]] <- c("1")
+    x$stages[[nms[1]]] <- c('0')
   }
-  A <- ceg2adjmat(x)
   ### get colors as in plot.sevt
   col <- make_stages_col(x, col, ignore)
-  g <- igraph::graph_from_adjacency_matrix(A)
+  ### ssociate stages color to node of CEG
   col.pos <- lapply(seq_along(x$positions), function(i){
     upos <- unique(x$positions[[nms[i]]])
-    ustag <- x$stages[[nms[i]]][sapply(upos, function(pp) which.max(x$positions[[nms[i]]] == pp))]
+    ustag <- x$stages[[nms[i]]][sapply(upos, function(pp) 
+      which.max(x$positions[[nms[i]]] == pp))]
     cc <- col[[nms[i]]][ustag]
     if (is.null(cc)) cc <- NA
     names(cc) <- paste0(nms[i], ":", upos)
-    return(cc)
+    return(na.exclude(cc))
   })
-  igraph::V(g)$color <- c(unlist(col.pos), 1)
+  ucol <- unlist(col.pos)
+  ucol <- c(ucol,1)
+  g <- as_igraph(x, ignore = ignore)
+  igraph::V(g)$color <- ucol
   if (is.null(layout)){
-    layout = igraph::layout.reingold.tilford(g)
+    layout = igraph::layout.sugiyama(g)$layout
     layout = layout[,2:1]
     layout[,1] <- -layout[,1]
   }

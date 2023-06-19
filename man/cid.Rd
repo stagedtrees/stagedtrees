@@ -13,7 +13,7 @@ cid(object1, object2, FUN = mean)
 
 \item{FUN}{a function that is used to aggregate CID for each variable.
 The default \code{mean} will obtain the CID
-as defined in Leonelli and Varando (2021).}
+as defined in Leonelli and Varando (2023).}
 }
 \value{
 A list with components:
@@ -37,6 +37,7 @@ cid(model1, model2)$wrong
 }
 \references{
 Leonelli M., Varando G.
-Context-Specific Causal Discovery for Categorical Data Using Staged Trees
+\emph{Context-Specific Causal Discovery for Categorical Data Using Staged Trees},
+The 26th International Conference on Artificial Intelligence and Statistics (AISTATS), 2023,
 \url{https://arxiv.org/abs/2106.04416}
 }

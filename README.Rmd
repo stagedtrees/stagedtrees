@@ -15,9 +15,8 @@ knitr::opts_chunk$set(
 # stagedtrees
 
 [![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
-[![Build Status](https://travis-ci.com/gherardovarando/stagedtrees.svg?branch=main)](https://app.travis-ci.com/github/gherardovarando/stagedtrees)
-  [![R-CMD-check](https://github.com/gherardovarando/stagedtrees/workflows/R-CMD-check/badge.svg)](https://github.com/gherardovarando/stagedtrees/actions)
- [![Coverage status](https://codecov.io/gh/gherardovarando/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/gherardovarando/stagedtrees?branch=main)
+  [![R-CMD-check](https://github.com/stagedtrees/stagedtrees/workflows/R-CMD-check/badge.svg)](https://github.com/stagedtrees/stagedtrees/actions)
+[![codecov](https://codecov.io/github/stagedtrees/stagedtrees/branch/main/graph/badge.svg?token=K76ZINC3IT)](https://codecov.io/github/stagedtrees/stagedtrees)
  [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
 ##### Citation
@@ -44,289 +43,35 @@ https://doi.org/10.18637/jss.v102.i06).
 
 ### Overview 
 
-`stagedtrees` is a package that implements staged event trees, a probability
-model for categorical random variables.   
+`stagedtrees` is a package that implements staged event trees, a class of
+probability models for categorical random variables.   
 
 ### Installation 
   
 ```{r, eval = FALSE}
-#stable version from CRAN 
+# Install stable version from CRAN:
 install.packages("stagedtrees")
 
-#development version from github
-# install.packages("devtools")
-devtools::install_github("gherardovarando/stagedtrees")
+# Or the development version from GitHub:
+remotes::install_github("stagedtrees/stagedtrees")
 ```
 
 ### Usage
 
+With the `stagedtrees` package it is possible to estimate (stratified) staged event trees from data, use them to compute probabilities, make predictions, visualize and compare different models. 
+
 ```{r}
 library("stagedtrees")
+
+tree <- Titanic |> full() |> stages_bhc() |> stndnaming(uniq = TRUE)
+
+prob(tree, c(Survived="Yes"), conditional_on = c(Age="Adult"))
+
+palette("Okabe-Ito")
+par(mfrow = c(1,2))
+plot(tree, col = "stages")
+barplot(tree, var = "Survived", main = "P(Survived|-)", col = "stages")
 ```
 
-With the `stagedtrees` package it is possible to fit (stratified) staged 
-event trees to data, use them to compute probabilities, make predictions, 
-visualize and compare different models. 
 
 
-#### Creating the model
-
-A staged event tree object (`sevt` class) 
-can be initialized as the full (saturated) or as 
-the fully independent model with, respectively, 
-the functions `indep` and `full`. 
-It is possible to build a staged event tree 
-from data stored in a `data.frame` or a 
-`table` object. 
-
-```{r example}
-# Load the PhDArticles data
-data("Titanic")
-
-# define order of variables
-order <- c("Sex", "Age",  "Class", "Survived")
-
-# Independence model 
-mod_indep <- indep(Titanic, order)
-mod_indep
-
-# Full (saturated) model
-mod_full <- full(Titanic, order) 
-mod_full
-```
-
-##### Structural zeros and unobserved situations
-
-By default staged trees object are defined assuming structural zeros 
-in the contingency tables. This is implemented by joining all 
-unobserved situations in particular stages (named by default `"UNOBSERVED"`) 
-which are, by default, 
-ignored by other methods and functions (see the `ignore` argument in 
-`?stages_bhc` or `?plot.sevt`).
-
-```{r}
-## there are no observations for Sex=Male (Female), Age = Child, Class = Crew
-get_stage(mod_full, c("Male", "Child", "Crew"))
-
-## and obviously 
-prob(mod_full, c(Age = "CHild", CLass = "Crew"))
-```
-
-###### Initialize a model without structural zeros 
-
-It is possible to initialize a staged tree without structural zeros 
-by setting the argument `join_unobserved=FALSE`. 
-In that case, it can be useful to set `lambda > 0` to avoid problems 
-with probabilities on unobserved situations. 
-
-```{r}
-mod_full0 <- full(Titanic, join_unobserved = FALSE, lambda = 1)
-```
-
-#### Model selection
-
-`stagedtrees` implements methods to perform automatic model selection. All methods can be initialized from an arbitrary staged event tree object. 
-
-##### Score methods
-
-This methods perform optimization for a given score 
-using different heuristics. 
-
-* **Hill-Climbing** `stages_hc(object, score, max_iter, scope, ignore, trace)`
-```{r}
-mod1 <- stages_hc(mod_indep)
-mod1
-```
-* **Backward Hill-Climbing** `stages_bhc(object, score, max_iter, scope, ignore, trace)`
-```{r}
-mod2 <- stages_bhc(mod_full)
-mod2
-```
-
-* **Backward Fast Hill-Climbing** `stages_fbhc(object, score, max_iter, scope, ignore, trace)`
-```{r}
-mod3 <- stages_fbhc(mod_full, score = function(x) -BIC(x))
-mod3
-```
-
-##### Clustering methods
-
-* **Backward Joining** `stages_bj(object, distance, thr, scope, ignore, trace)`
-```{r}
-mod4 <- stages_bj(mod_full)
-mod4
-```
-
-* **Hierarchical Clustering** `stages_hclust(object, distance, k, method, ignore, limit, scope)`
-```{r}
-mod5 <- stages_hclust(mod_full,
-                    k = 2, 
-                    distance = "totvar",
-                   method = "mcquitty")
-mod5
-```
-
-* **K-Means Clustering** `stages_kmeans(object, k, algorithm, ignore, limit, scope, nstart)`
-```{r}
-mod6 <- stages_kmeans(mod_full,
-                    k = 2, 
-                   algorithm = "Hartigan-Wong")
-mod6
-```
-
-#### Combining model selections with `|>` (or `%>%`)
-
-The new native pipe operator `|>` (or the one  from the `magrittr` package) can be used to combine
-various model selection algorithms. 
-
-```{r}
-model <- Titanic |> full(lambda = 1) |> stages_hclust() |> stages_hc()
-
-## extract a sub_tree and join two stages
-small_model <- model |> subtree(path = c("Crew"))  |>
-              join_stages("Survived", "3", "7")
-```
-
-#### Probabilities, predictions and sampling
-
-##### Marginal probabilities
-
-Obtain marginal (or conditionals) probabilities with the  `prob` function.
-```{r}
-# estimated probability of c(Sex = "Male", Class = "1st")
-# using different models
-prob(mod_indep, c(Sex = "Male", Class = "1st")) 
-prob(mod3, c(Sex = "Male", Class = "1st"))
-```
-
-Or for a  `data.frame` of observations:
-
-```{r}
-obs <- expand.grid(mod_full$tree[c(1,3)])
-p <- prob(mod2, obs)
-cbind(obs, P = p)
-```
-
-Conditional probabilities can be obtained via the 
-`conditional_on` argument. 
-```{r}
-prob(mod3, c(Sex = "Male", Class = "1st"),       
-     conditional_on = c(Survived = "Yes"))
-```
-
-##### Predictions
-
-A staged event tree object can be used to make predictions with the
-`predict` method. The class variable can be specified, otherwise the 
-first variable (root) in the tree will be used. 
-
-```{r}
-## check accuracy over the Titanic data
-titanic_df <- as.data.frame(Titanic)
-predicted <- predict(mod3, class = "Survived", newdata = titanic_df)
-table(predicted, titanic_df$Survived)
-```
-
-Conditional probabilities (or log-) can be obtained setting `prob = TRUE`:
-
-```{r}
-## obtain estimated conditional probabilities in mod3 
-predict(mod3, newdata = titanic_df[1:3,], prob = TRUE)
-```
-
-##### Sampling
-
-```{r}
-sample_from(mod4, 5)
-```
-
-#### Explore the model
-
-##### Model info
-
-```{r}
-# stages
-stages(mod1, "Age")
-
-# summary
-summary(mod1)
-
-# confidence intervals
-confint(mod1, parm = "Age")
-```
-
-##### Plot 
-
-```{r}
-plot(mod4, main = "Staged tree learned with bj.sevt", 
-     cex_label_edges = 0.6, cex_nodes = 1.5)
-```
-
-By default stages associated with the unobserved situations are not plotted, 
-if the model has been created with `join_unobserved = TRUE`. 
-But we can plot also the unobserved stages in a specific color.
-```{r}
-plot(stndnaming(mod5, uniq = TRUE), 
-     main = "Staged tree learned with stages_hclust 
-     (unobserved in grey)",  
-     ignore = FALSE, ## do not ignore stages
-     col = function(stages) ifelse(stages=="UNOBSERVED", "grey", stages),
-     cex_label_edges = 0.6, cex_nodes = 1.5)
-```
-
-###### Barplot
-
-The method `barplot.sevt` creates a bar plot 
-for the conditional probabilities of a variable.
-
-```{r}
-barplot(mod4, "Class", legend.text = TRUE)
-```
-
-###### CEG plots
-
-Plotting CEG requires the `igraph` package. 
-
-```{r}
-plot(ceg(mod5))
-```
-
-##### Subtrees
-
-From a staged evnt tree a subtree can be extracted, 
-the resulting model is ar staged event tree
-in the remaining variables.
-
-```{r}
-sub <- subtree(mod4, c("Female"))
-plot(sub)
-```
-
-#### Comparing models
-
-##### Compare stages structure
-```{r}
-compare_stages(mod1, mod4)
-
-compare_stages(mod1, mod4, method = "hamming", plot = TRUE, 
-             cex_label_nodes = 0, cex_label_edges = 0)
-
-hamming_stages(mod1, mod4)
-
-difftree <- compare_stages(mod1, mod4, method = "stages", plot = FALSE, 
-             return_tree = TRUE)
-
-difftree$Married
-```
-
-##### Penalized log-likelihood.
-```{r}
-BIC(mod_indep, mod_full, mod1, mod2, mod3, mod4, mod5)
-```
-
-##### Likelihood-ratio test
-
-```{r}
-mod1a <- join_stages(mod1, "Class", "3", "4")
-lr_test(mod1a, mod1)
-```

@@ -1,7 +1,7 @@
 Package: stagedtrees
 Type: Package
 Title: Staged Event Trees 
-Version: 2.2.1
+Version: 2.2.9999
 Authors@R: c(
   person(given = "Gherardo", family = "Varando", role = c("aut", "cre"),
   email = "gherardo.varando@gmail.com", 
@@ -19,6 +19,8 @@ Description: Creates and fits staged event tree probability models,
              event trees from data, as well as many efficient structure 
              learning algorithms.
              References:
+             Carli F, Leonelli M, Riccomagno E, Varando G (2022). 
+             <doi: 10.18637/jss.v102.i06>.
              Collazo R. A., Görgen C. and Smith J. Q. 
              (2018, ISBN:9781498729604).
              Görgen C., Bigatti A., Riccomagno E. and Smith J. Q. (2018) 
@@ -31,7 +33,7 @@ Description: Creates and fits staged event tree probability models,
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/gherardovarando/stagedtrees
 BugReports: https://github.com/gherardovarando/stagedtrees/issues

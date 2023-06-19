@@ -212,6 +212,8 @@ expand_prob <- function(object) {
 #' @param object A stratified event tree, a list with a \code{tree} field.
 #' @param data table or data.frame containing observations 
 #'             of the variable in \code{object}.
+#' @param useNA whether to include NA values in the tables. 
+#'              Argument passed to \code{\link{table}}.
 #' @return  A list of \code{ftable}s.
 #' @details Distribute the counts along the event tree.
 #'          This is an internal function, the user will 
@@ -222,19 +224,21 @@ expand_prob <- function(object) {
 #'          will work for an object with only a \code{tree} field.
 #' @keywords internal
 #' @importFrom stats ftable
-make_ctables <- function(object, data) {
+make_ctables <- function(object, data, useNA = "ifany") {
   order <- names(object$tree)
   if (is.data.frame(data)) {
-    data <- table(data[, order], dnn = order)
+    data <- table(data[, order], dnn = order, useNA = useNA)
   }
   stopifnot(is.table(data))
   ctables <- lapply(seq_along(order), function(i) {
     path <- order[i:1]
     tt <- apply(data, MARGIN = path, sum)
     if (i == 1) {
-      return(tt)
+      return(tt[!is.na(attr(tt, "names"))])
     }
-    return(ftable(tt, col.vars = order[i], row.vars = order[1:(i - 1)]))
+    ll <- lapply(attr(tt, "dimnames"), function(x) !is.na(x))
+    return(ftable(do.call("[", c(list(tt), ll)), col.vars = order[i],
+                  row.vars = order[1:(i - 1)]))
   })
   names(ctables) <- order
   return(ctables)
@@ -255,7 +259,22 @@ has_ctables <- function(object){
 #' @return logical.
 #' @keywords internal
 has_prob <- function(object){
-  isFALSE(is.null(object$prob))
+  if (isTRUE(is.null(object$prob))){
+    return(FALSE)
+  }else{
+    ## check that we have all probabilities 
+    vars <- sevt_varnames(object)
+    if (isTRUE(any(sapply(vars, function(v) is.null(object$prob[[v]]))))){
+      return(FALSE)
+    }else{
+      ## check probabilities are ok 
+      isFALSE(any(sapply(vars, function(v){
+        any(sapply(object$prob[[v]], function(pp){
+          isFALSE(length(pp) == length(object$tree[[v]]))
+        }))
+      })))
+    }
+  }
 }
 
 #' Check if the stages event tree is fitted
