@@ -280,7 +280,7 @@ as_igraph.ceg <- function(x, ignore = x$name_unobserved, ...){
 #' by default the name of the unobserved stages stored in \code{x$name_unobserved}.
 #' @param node_label a function that produces nodes labels. 
 #' @param edge_label a function that produces edge labels. 
-#' @param edge_label a function that produces edge label options. 
+#' @param edge_label_options a function that produces edge label options. 
 #' @param scale for the tikzfigure. 
 #' @param normalize_layout a logical value. If \code{TRUE}
 #'        layout positions are scaled to the \code{[0,1]} interval.
@@ -306,7 +306,7 @@ write_tikz <- function(x, layout = NULL, file = "",
                        edge_label = function(edge){
                          ifelse(is.na(edge$label), "", edge$label)
                        },
-                       edge_label_option = function(edge){
+                       edge_label_options = function(edge){
                          return("sloped")
                        },
                        scale = 10, 
@@ -329,7 +329,7 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
                        edge_label = function(edge){
                          ifelse(is.na(edge$label), "", edge$label)
                        },
-                       edge_label_option = function(edge){
+                       edge_label_options = function(edge){
                          return("sloped")
                        },
                        scale = 10, 
@@ -367,10 +367,8 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   
   cat2 <- function(x) cat(x, file = file, append = TRUE)
   
-  ##Size
   cat(paste0("\\begin{tikzpicture}[auto, scale=",scale,",\n"), file = file)
   
-  ##TikZ initialisation and default options (see pgf/TikZ manual)
   nodestyle <- "\t%s/.style={%s,inner sep=%s,minimum size=%s,draw,%s,%s,fill=%s,text=%s},\n"
   c1 <- col2rgb(col[[1]][[1]])
   c1 <- sprintf("{rgb,255:red,%s; green,%s; blue,%s}" , c1[1], c1[2], c1[3])
@@ -427,7 +425,7 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
     from <- edgs[i, "from"]
     to <- edgs[i, "to"]
     label <- edge_label(edgs[i, ,drop = FALSE])
-    opt <- paste(edge_label_option(edgs[i, ,drop = FALSE]), 
+    opt <- paste(edge_label_options(edgs[i, ,drop = FALSE]), 
                  collapse = ",")
     cat2(sprintf ("\t\\draw[->] (%s) -- node [%s]{%s} (%s);\n", 
                   from, opt, label, to))

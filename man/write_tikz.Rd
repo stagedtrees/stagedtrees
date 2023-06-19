@@ -15,7 +15,7 @@ write_tikz(
   edge_label = function(edge) {
      ifelse(is.na(edge$label), "", edge$label)
  },
-  edge_label_option = function(edge) {
+  edge_label_options = function(edge) {
      return("sloped")
  },
   scale = 10,
@@ -38,7 +38,7 @@ write_tikz(
   edge_label = function(edge) {
      ifelse(is.na(edge$label), "", edge$label)
  },
-  edge_label_option = function(edge) {
+  edge_label_options = function(edge) {
      return("sloped")
  },
   scale = 10,
@@ -71,7 +71,9 @@ by default the name of the unobserved stages stored in \code{x$name_unobserved}.
 
 \item{node_label}{a function that produces nodes labels.}
 
-\item{edge_label}{a function that produces edge label options.}
+\item{edge_label}{a function that produces edge labels.}
+
+\item{edge_label_options}{a function that produces edge label options.}
 
 \item{scale}{for the tikzfigure.}
 
