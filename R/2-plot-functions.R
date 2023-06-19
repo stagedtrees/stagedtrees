@@ -318,6 +318,14 @@ make_stages_col <- function(x, col = NULL,
         return(stages)
       })
     }
+  }else{
+    if (is.list(col) && !is.null(names(col))){
+      col <- sapply(nms[1:d], function(nm){
+        col[[nm]]
+      }, simplify = FALSE)
+    }else{
+      stop("Irregular argument for col, please check sevt plotting documentation ?plot.sevt.")
+    }
   }
   return(col)
 }
@@ -423,30 +431,13 @@ barplot.sevt <- function(height, var,
   stg <- stages(height, var)
   stg <- stg[!(stg %in% ignore)]
   ustg <- unique(stg) 
-  if (is.null(col)) {
-      if (is.null(stg)) {
-        col = list("1" = "black")
-      }else{
-        col <- seq_along(ustg)
-        names(col) <- ustg
-      }
-  } else if (is.function(col)) {
-      if (is.null(stg)) {
-        col <- list("1" = 1)
-      }else{
-        col <- col(ustg)
-        if (is.null(names(col))){
-          names(col) <- ustg
-        }
-      }
-  } else if (length(col) == 1 && col == "stages") {
-    if (col == "stages") {
-        if (is.null(stg)) {
-          col <- list("1" = 1)
-        }else{
-          col <- ustg
-          names(col) <- ustg
-        }
+  col <- make_stages_col(height, col = col, ignore = ignore)[[var]]
+  if (!is.null(names(col))){
+    if (all(ustg %in% names(col))){
+      ## order (and select) colors 
+      col <- col[ustg]
+    }else{
+      stop("Names of provided colors (col) do not match stage names.")
     }
   }
   tmp <- summary(height)[["stages.info"]][[var]]
