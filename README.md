@@ -5,8 +5,7 @@
 
 [![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 [![R-CMD-check](https://github.com/stagedtrees/stagedtrees/workflows/R-CMD-check/badge.svg)](https://github.com/stagedtrees/stagedtrees/actions)
-[![Coverage
-status](https://codecov.io/gh/stagedtrees/stagedtrees/branch/master/graph/badge.svg)](https://codecov.io/github/stagedtrees/stagedtrees?branch=main)
+[![codecov](https://codecov.io/github/stagedtrees/stagedtrees/branch/main/graph/badge.svg?token=K76ZINC3IT)](https://codecov.io/github/stagedtrees/stagedtrees)
 [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
 ##### Citation
@@ -31,17 +30,17 @@ stagedtrees for Structural Learning of Stratified Staged Trees.”
 
 ### Overview
 
-`stagedtrees` is a package that implements staged event trees, a
-probability model for categorical random variables.
+`stagedtrees` is a package that implements staged event trees, a class
+of probability models for categorical random variables.
 
 ### Installation
 
 ``` r
-#stable version from CRAN 
+# Install stable version from CRAN:
 install.packages("stagedtrees")
 
-#development version from github
-remotes::install_github("stagedtrees/stagedtrees", ref = "dev")
+# Or the development version from GitHub:
+remotes::install_github("stagedtrees/stagedtrees")
 ```
 
 ### Usage
