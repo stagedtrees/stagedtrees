@@ -35,7 +35,7 @@ Stages for variables different from \code{var} are either set to
 NA, or to the full or indep model, depending on \code{other_stages}.
 }
 \examples{
-mod <- full(Titanic) |> stages_kmeans(k=2)
+mod <- stages_kmeans(full(Titanic), k=2)
 par(mfrow = c(1,2))
 plot(mod, main = "staged tree")
 plot(depsubtree(mod, "Age"), main = "dependency subtree for Age")

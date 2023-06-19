@@ -579,7 +579,7 @@ subtree <- function(object, path) {
 #' NA, or to the full or indep model, depending on \code{other_stages}.
 #' @export
 #' @examples 
-#' mod <- full(Titanic) |> stages_kmeans(k=2)
+#' mod <- stages_kmeans(full(Titanic), k=2)
 #' par(mfrow = c(1,2))
 #' plot(mod, main = "staged tree")
 #' plot(depsubtree(mod, "Age"), main = "dependency subtree for Age")
