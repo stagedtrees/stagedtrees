@@ -319,7 +319,6 @@ make_stages_col <- function(x, col = NULL,
       })
     }
   }
-  names(col) <- names(x$tree)
   return(col)
 }
 
