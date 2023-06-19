@@ -13,6 +13,8 @@
 * `stages_hclust` can now search the best cut of the hierarchical cluster with
    respect to some `score` function to be maximized. 
 * various minor fixes in colors specification for visualization functions. 
+* `stages_simplebhc` implements a new stage structure search by iterative joining of positions, thus searching in the space of simple staged trees.
+* `sevt_simplify` return the simplified staged tree, that is a stage tree where positions and stages are equivalent. 
 
 
 # 2.2.1
