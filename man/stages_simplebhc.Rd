@@ -2,7 +2,7 @@
 % Please edit documentation in R/13-simple-functions.R
 \name{stages_simplebhc}
 \alias{stages_simplebhc}
-\title{Total BHC search of simple staged trees}
+\title{Backward hill-climbing for simple staged trees}
 \usage{
 stages_simplebhc(
   object,
@@ -36,7 +36,17 @@ an object of class \code{sevt}, the simple staged tree resulting
 from the search.
 }
 \description{
-Total BHC search of simple staged trees
+Greedy search of simple staged event trees
+with iterative joining of positions.
+}
+\details{
+This function is similar to the classical
+backward hill-climbing implemented in \code{\link{stages_bhc}}, but
+instead of joining stages it consider joining of \emph{positions} via
+\code{\link{join_positions}}.
+Thus, the search is in the space of simple staged tree models if the
+initial stage tree is simple.
+See the references for additional details.
 }
 \examples{
 mod <- stages_simplebhc(full(Titanic))
@@ -47,4 +57,7 @@ Leonelli M, Varando G.
 Structural Learning of Simple Staged Trees,
 \emph{arXiv preprint}
 \href{https://arxiv.org/abs/2203.04390}{arXiv:2203.04390v1}
+}
+\seealso{
+\link{join_positions} \link{simplify}
 }

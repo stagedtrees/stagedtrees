@@ -151,3 +151,23 @@ test_that("stages_kmeans", {
   ll2 <- logLik(mod)
   expect_equal(ll1, ll2)
 })
+
+
+test_that("stages_simplebhc", {
+  expect_silent(mod <- stages_simplebhc(f))
+  mod_c <- ceg(mod)
+  expect_identical(stndnaming(mod)$stages, mod_c$positions[-1])
+  ll1 <- logLik(mod)
+  mod$ll <- NULL
+  ll2 <- logLik(mod)
+  expect_equal(ll1, ll2)
+})
+
+test_that("simplify simplify", {
+  tree <- sevt(list("A" = c("1","2"), "B" = c("1","2"),
+                    "C" = c("1", "2", "3"), "D" = c("1","2")))
+  tree$stages$D[c(2,4,6,10,11,12)] <- "2"
+  expect_silent(simpl <- sevt_simplify(tree))
+  ceg_s <- ceg(simpl)
+  expect_identical(stndnaming(simpl)$stages, ceg_s$positions[-1])
+})

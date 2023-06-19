@@ -29,7 +29,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#' Simplify a stagedtree 
+#' Simplify a staged tree model 
 #' 
 #' Function to simplify a staged tree model. 
 #' @param model an object of class \code{sevt}
@@ -43,16 +43,15 @@
 #'          To do so the function \code{ceg} is used to compute positions, and 
 #'          then the stages' vectors are replaced with the positions' vectors. 
 #'          The model is the re-fitted if the input was a fitted staged tree. 
-#'          
 #'          Despite the name, the simplified staged tree has always a number 
 #'          of stages greater or equal to the initial staged tree, thus it is 
 #'          a more complex statistical model. 
 #' @examples
 #' mod <- stages_kmeans(full(Titanic), k = 2)
-#' simpl <- simplify(mod)
+#' simpl <- sevt_simplify(mod)
 #' plot(simpl)
 #' @export
-simplify <- function(model, fit = TRUE){
+sevt_simplify <- function(model, fit = TRUE){
   tmp_ceg <- ceg(model)
   oldstg <- model$stages
   model$stages <- sapply(names(model$stages), function(vv){
@@ -103,8 +102,10 @@ join_positions <- function(model, v, s1, s2){
 }
 
 
-#' Total BHC search of simple staged trees
+#' Backward hill-climbing for simple staged trees
 #' 
+#' Greedy search of simple staged event trees
+#' with iterative joining of positions.
 #' @param object an object of class \code{\link{sevt}} 
 #'               with fitted probabilities and data, 
 #'               as returned by \code{\link{full}} or 
@@ -116,6 +117,15 @@ join_positions <- function(model, v, s1, s2){
 #' @param ignore vector of stages which will be ignored and left untouched,
 #'               by default the name of the unobserved stages stored in 
 #'               \code{object$name_unobserved}.
+#'               
+#' @details This function is similar to the classical 
+#' backward hill-climbing implemented in \code{\link{stages_bhc}}, but
+#' instead of joining stages it consider joining of _positions_ via 
+#' \code{\link{join_positions}}.
+#' Thus, the search is in the space of simple staged tree models if the
+#' initial stage tree is simple. 
+#' See the references for additional details. 
+#'               
 #' @return an object of class \code{sevt}, the simple staged tree resulting 
 #'         from the search. 
 #' @references Leonelli M, Varando G. 
@@ -125,6 +135,7 @@ join_positions <- function(model, v, s1, s2){
 #' @examples
 #' mod <- stages_simplebhc(full(Titanic))
 #' plot(mod)
+#' @seealso [join_positions] [simplify]
 #' @export
 stages_simplebhc <- function (object, 
                               score = function(x) {return(-BIC(x))}, 
