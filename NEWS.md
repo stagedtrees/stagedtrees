@@ -12,6 +12,7 @@
    can decide if the log-likelihood should be computed when fitting the model.
 * `stages_hclust` can now search the best cut of the hierarchical cluster with
    respect to some `score` function to be maximized. 
+* various minor fixes in colors specification for visualization functions. 
 
 
 # 2.2.1
