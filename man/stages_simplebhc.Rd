@@ -59,5 +59,6 @@ Structural Learning of Simple Staged Trees,
 \href{https://arxiv.org/abs/2203.04390}{arXiv:2203.04390v1}
 }
 \seealso{
-\link{join_positions} \link{simplify}
+\code{\link[=join_positions]{join_positions()}}
+\code{\link[=sevt_simplify]{sevt_simplify()}}
 }

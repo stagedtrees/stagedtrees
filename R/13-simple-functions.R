@@ -135,7 +135,8 @@ join_positions <- function(model, v, s1, s2){
 #' @examples
 #' mod <- stages_simplebhc(full(Titanic))
 #' plot(mod)
-#' @seealso [join_positions] [simplify]
+#' @seealso [join_positions()] 
+#'          [sevt_simplify()]
 #' @export
 stages_simplebhc <- function (object, 
                               score = function(x) {return(-BIC(x))}, 
