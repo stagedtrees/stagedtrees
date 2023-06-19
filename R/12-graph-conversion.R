@@ -15,7 +15,7 @@
 #' This can be useful, for example to plot the staged tree  with 
 #' \pkg{igraph} or additional packages (see the examples).
 #' @examples 
-#' mod <- full(Titanic) |> stages_bhc()
+#' mod <-  stages_bhc(full(Titanic))
 #' get_edges(mod)
 #' get_vertices(mod)
 #' \dontrun{
