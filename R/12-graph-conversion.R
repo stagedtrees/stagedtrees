@@ -137,7 +137,10 @@ get_vertices.sevt <- function(x, ignore = x$name_unobserved, ...){
     }
   }
   if (any(ix)){
-    now <- paste(now[ix], c(sapply(x$tree[[var[i]]], rep, sum(ix))), sep = "-")
+    now <- paste(c(vapply(now[ix], FUN = rep, 
+                          FUN.VALUE = x$tree[[var[i]]],
+                          length(x$tree[[var[i]]]))), 
+                 x$tree[[var[i]]], sep = "-")
     vert <- rbind(vert, data.frame(name = now, 
                                    stage = NA,
                                    var = NA))
@@ -277,6 +280,7 @@ as_igraph.ceg <- function(x, ignore = x$name_unobserved, ...){
 #' by default the name of the unobserved stages stored in \code{x$name_unobserved}.
 #' @param node_label a function that produces nodes labels. 
 #' @param edge_label a function that produces edge labels. 
+#' @param edge_label a function that produces edge label options. 
 #' @param scale for the tikzfigure. 
 #' @param normalize_layout a logical value. If \code{TRUE}
 #'        layout positions are scaled to the \code{[0,1]} interval.
@@ -302,6 +306,9 @@ write_tikz <- function(x, layout = NULL, file = "",
                        edge_label = function(edge){
                          ifelse(is.na(edge$label), "", edge$label)
                        },
+                       edge_label_option = function(edge){
+                         return("sloped")
+                       },
                        scale = 10, 
                        normalize_layout = TRUE,
                        node_shape = "circle",
@@ -321,6 +328,9 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
                          ifelse(is.na(node$stage), "", node$stage),
                        edge_label = function(edge){
                          ifelse(is.na(edge$label), "", edge$label)
+                       },
+                       edge_label_option = function(edge){
+                         return("sloped")
                        },
                        scale = 10, 
                        normalize_layout = TRUE,
@@ -358,7 +368,7 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   cat2 <- function(x) cat(x, file = file, append = TRUE)
   
   ##Size
-  cat(paste0("\\begin{tikzpicture}[scale=",scale,",\n"), file = file)
+  cat(paste0("\\begin{tikzpicture}[auto, scale=",scale,",\n"), file = file)
   
   ##TikZ initialisation and default options (see pgf/TikZ manual)
   nodestyle <- "\t%s/.style={%s,inner sep=%s,minimum size=%s,draw,%s,%s,fill=%s,text=%s},\n"
@@ -413,13 +423,14 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
     
   }
   cat2("\n")
-  
   for (i in 1:nrow(edgs)){
     from <- edgs[i, "from"]
     to <- edgs[i, "to"]
     label <- edge_label(edgs[i, ,drop = FALSE])
-    cat2(sprintf ("\t\\draw[->] (%s) -- node [below, sloped]{%s} (%s);\n", 
-                  from, label, to))
+    opt <- paste(edge_label_option(edgs[i, ,drop = FALSE]), 
+                 collapse = ",")
+    cat2(sprintf ("\t\\draw[->] (%s) -- node [%s]{%s} (%s);\n", 
+                  from, opt, label, to))
   }
   
   cat2("\\end{tikzpicture}\n")
