@@ -14,7 +14,7 @@
 ceg <- function(object) {
   check_sevt(object)
   positions <- object$stages
-  ls <- length(object$stages)
+  ls <- length(object$tree) - 1
   us <- unique(object$stages[[ls]])
   positions[[ls]] <- vapply(object$stages[[ls]],
     FUN.VALUE = "a",
