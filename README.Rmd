@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 [![stagedtrees](https://www.r-pkg.org/badges/version/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
   [![R-CMD-check](https://github.com/stagedtrees/stagedtrees/workflows/R-CMD-check/badge.svg)](https://github.com/stagedtrees/stagedtrees/actions)
-[![codecov](https://codecov.io/github/stagedtrees/stagedtrees/branch/main/graph/badge.svg?token=K76ZINC3IT)](https://codecov.io/github/stagedtrees/stagedtrees)
+[![codecov](https://codecov.io/github/stagedtrees/stagedtrees/branch/main/graph/badge.svg?token=K76ZINC3IT)](https://app.codecov.io/github/stagedtrees/stagedtrees)
  [![](https://cranlogs.r-pkg.org/badges/stagedtrees)](https://cran.r-project.org/package=stagedtrees)
 
 ##### Citation
