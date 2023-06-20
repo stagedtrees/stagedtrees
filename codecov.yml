@@ -1,7 +1,4 @@
 comment: false
-language: R
-sudo: false
-cache: packages
 coverage:
   status:
     project:
@@ -12,3 +9,6 @@ coverage:
       default:
         target: auto
         threshold: 1%
+
+# When modifying this file, please validate using
+# curl -X POST --data-binary @codecov.yml https://codecov.io/validate
