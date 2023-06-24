@@ -1,4 +1,4 @@
-# 2.3.0
+# dev
 
 * Carli et al. 2022 JSS citation added in DESCRIPTION.
 * Functions for random generation of staged trees added.
@@ -15,6 +15,7 @@
 * various minor fixes in colors specification for visualization functions. 
 * `stages_simplebhc` implements a new stage structure search by iterative joining of positions, thus searching in the space of simple staged trees.
 * `sevt_simplify` return the simplified staged tree, that is a stage tree where positions and stages are equivalent. 
+* fix problem with positions computation in `ceg` when model has 2 less variables.
 
 
 # 2.2.1
