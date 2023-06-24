@@ -40,8 +40,9 @@ BugReports: https://github.com/gherardovarando/stagedtrees/issues
 Imports: stats,
          graphics
 Suggests: 
-    testthat,
+    testthat (>= 3.0.0),
     bnlearn,
     covr,
     clue,
     igraph
+Config/testthat/edition: 3
