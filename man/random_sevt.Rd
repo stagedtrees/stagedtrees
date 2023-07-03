@@ -7,19 +7,17 @@
 \alias{random_sevt.sevt}
 \title{Generate a random (fitted) sevt}
 \usage{
-random_sevt(x, ...)
+random_sevt(x, q = 0.5, rfun = rexp)
 
-\method{random_sevt}{list}(x, ...)
+\method{random_sevt}{list}(x, q = 0.5, rfun = rexp)
 
-\method{random_sevt}{parentslist}(x, ...)
+\method{random_sevt}{parentslist}(x, q = 0.5, rfun = rexp)
 
-\method{random_sevt}{sevt}(x, q = 0.5, rfun = rexp, ...)
+\method{random_sevt}{sevt}(x, q = 0.5, rfun = rexp)
 }
 \arguments{
 \item{x}{a \code{sevt} object, a \code{parentslist} object or a
 \code{list}.}
-
-\item{...}{additional parameters passed to specific methods.}
 
 \item{q}{probability of joining stages.}
 

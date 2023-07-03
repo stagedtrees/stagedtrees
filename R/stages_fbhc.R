@@ -26,7 +26,7 @@
 #' @importFrom stats  BIC
 #' @export
 stages_fbhc <-
-  function(object = NULL,
+  function(object,
            score = function(x) {
              return(-BIC(x))
            },
@@ -38,7 +38,7 @@ stages_fbhc <-
     if (is.null(scope)) {
       scope <- sevt_varnames(object)[-1]
     }
-    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+    check_scope(scope, object)
     now_score <- score(object)
     for (v in scope) {
       iter <- 0
@@ -98,7 +98,7 @@ stages_fbhc <-
     if (trace > 0) {
       message("fast HC done")
     }
-    object$call <- sys.call()
+    object$call <- match.call()
     object$score <- list(value = now_score, f = score)
     return(object)
   }

@@ -5,12 +5,11 @@
 #'
 #' @param x a \code{sevt} object, a \code{parentslist} object or a
 #'        \code{list}.
-#' @param ... additional parameters passed to specific methods.
 #' @return A randomly generated fitted \code{sevt} object.
 #' @details The generated staged tree is obtained by randomly
 #' joining stages with probability \code{q}.
 #' @export
-random_sevt <- function(x, ...) {
+random_sevt <- function(x, q = 0.5, rfun = rexp) {
   UseMethod(generic = "random_sevt", object = x)
 }
 
@@ -36,9 +35,9 @@ random_sevt <- function(x, ...) {
 #' ## compare true and estimated model
 #' hamming_stages(model_gt, model_est)
 #' compare_stages(model_gt, model_est, method = "hamming", plot = TRUE)
-random_sevt.list <- function(x, ...) {
+random_sevt.list <- function(x, q = 0.5, rfun = rexp) {
   model <- sevt(x, full = TRUE)
-  random_sevt.sevt(model, ...)
+  random_sevt.sevt(model, q = q, rfun = rfun)
 }
 
 #' @rdname random_sevt
@@ -51,9 +50,9 @@ random_sevt.list <- function(x, ...) {
 #'          obtained by randomly joining stages starting from
 #'          a the staged tree equivalent to the DAG.
 #' @export
-random_sevt.parentslist <- function(x, ...) {
+random_sevt.parentslist <- function(x, q = 0.5, rfun = rexp) {
   model <- as_sevt(x)
-  random_sevt.sevt(model, ...)
+  random_sevt.sevt(model, q = q, rfun = rfun)
 }
 
 #' @rdname random_sevt
@@ -74,7 +73,8 @@ random_sevt.parentslist <- function(x, ...) {
 #'          from the probability simplex.
 #' @importFrom stats rexp
 #' @export
-random_sevt.sevt <- function(x, q = 0.5, rfun = rexp, ...) {
+random_sevt.sevt <- function(x, q = 0.5, rfun = rexp) {
+  check_sevt(x)
   for (i in seq_along(x$tree)[-1]) {
     v <- names(x$tree)[i]
     for (s in unique(x$stages[[v]])) {

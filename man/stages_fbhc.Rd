@@ -5,7 +5,7 @@
 \title{Fast backward hill-climbing}
 \usage{
 stages_fbhc(
-  object = NULL,
+  object,
   score = function(x) {
      return(-BIC(x))
  },

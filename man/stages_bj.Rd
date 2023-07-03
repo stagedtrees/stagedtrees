@@ -5,7 +5,7 @@
 \title{Backward joining of stages}
 \usage{
 stages_bj(
-  object = NULL,
+  object,
   distance = "kullback",
   thr = 0.1,
   scope = NULL,

@@ -1,34 +1,34 @@
 Package: stagedtrees
 Type: Package
-Title: Staged Event Trees 
+Title: Staged Event Trees
 Version: 2.2.9999
 Authors@R: c(
   person(given = "Gherardo", family = "Varando", role = c("aut", "cre"),
-  email = "gherardo.varando@gmail.com", 
+  email = "gherardo.varando@gmail.com",
 	comment = c(ORCID = "0000-0002-6708-1103")),
 	person(given = "Federico", family = "Carli", role = "aut"),
-	person(given = "Manuele", family = "Leonelli", role = "aut", 
+	person(given = "Manuele", family = "Leonelli", role = "aut",
 	comment = c(ORCID = "0000-0002-2562-5192")),
 	person(given = "Eva", family = "Riccomagno", role = "aut")
 	)
-Description: Creates and fits staged event tree probability models, 
-             which are probabilistic graphical models capable of representing 
-             asymmetric conditional independence statements 
-             for categorical variables. 
-             Includes functions to create, plot and fit staged 
-             event trees from data, as well as many efficient structure 
+Description: Creates and fits staged event tree probability models,
+             which are probabilistic graphical models capable of representing
+             asymmetric conditional independence statements
+             for categorical variables.
+             Includes functions to create, plot and fit staged
+             event trees from data, as well as many efficient structure
              learning algorithms.
              References:
-             Carli F, Leonelli M, Riccomagno E, Varando G (2022). 
+             Carli F, Leonelli M, Riccomagno E, Varando G (2022).
              <doi: 10.18637/jss.v102.i06>.
-             Collazo R. A., Görgen C. and Smith J. Q. 
+             Collazo R. A., Görgen C. and Smith J. Q.
              (2018, ISBN:9781498729604).
-             Görgen C., Bigatti A., Riccomagno E. and Smith J. Q. (2018) 
+             Görgen C., Bigatti A., Riccomagno E. and Smith J. Q. (2018)
              <arXiv:1705.09457>.
              Thwaites P. A., Smith, J. Q. (2017) <arXiv:1510.00186>.
-             Barclay L. M., Hutton J. L. and Smith J. Q. (2013) 
+             Barclay L. M., Hutton J. L. and Smith J. Q. (2013)
              <doi:10.1016/j.ijar.2013.05.006>.
-             Smith J. Q. and Anderson P. E. (2008) 
+             Smith J. Q. and Anderson P. E. (2008)
              <doi:10.1016/j.artint.2007.05.004>.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -37,9 +37,12 @@ RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/gherardovarando/stagedtrees
 BugReports: https://github.com/gherardovarando/stagedtrees/issues
-Imports: stats,
-         graphics
-Suggests: 
+Imports:
+    stats,
+    graphics,
+    cli,
+    rlang
+Suggests:
     testthat (>= 3.0.0),
     bnlearn,
     covr,

@@ -13,7 +13,7 @@
 #'          If multiple objects are passed,
 #'          likelihood-ratio tests between the first
 #'          object and the followings are computed.
-#'          In the latter casem the function checks automatically if
+#'          In the latter case the function checks automatically if
 #'          the first model is nested in the additional ones,
 #'          via \code{\link{inclusions_stages}}, and throws
 #'          an error if not.
@@ -50,24 +50,20 @@ lr_test <- function(object, ...) {
     variables <- c("indep", variables)
     nmodels <- 2
   }
-  if (object$lambda != 0) {
-    warning("parameters are not fitted with maximum-likelihood")
-  }
+  call <- rlang::current_call()
   others_sts <- lapply(others, function(object2) {
-    check_sevt_fit(object2)
-    stopifnot(sevt_nvar(object) == sevt_nvar(object2))
-    stopifnot(all(sevt_varnames(object) == sevt_varnames(object2)))
-    if (object2$lambda != 0) {
-      warning("parameters are not fitted with maximum-likelihood")
-    }
+    check_sevt_fit(object2, call = call)
+    check_same_tree(object, object2, call = call)
     # check nested models
     incl_st <- inclusions_stages(object, object2)
     for (i in 1:length(incl_st)) {
       if (any(incl_st[[i]][, 2] %in% c("!=", "<"))) {
-        stop(paste(c(
-          "Not nested models specified. Check stages structures for ",
-          names(incl_st)[i]
-        )), call. = FALSE)
+        cli::cli_abort(c(
+          "{.fun stagedtrees::lr_test} requires nested models.",
+          "x" = "You've provided models which are not nested.",
+          "i" = "Check the stages structure for variable
+          {.val {names(incl_st)[i]}}."
+        ), call = call)
       }
     }
     logLik(object2)

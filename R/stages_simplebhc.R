@@ -77,7 +77,7 @@ stages_simplebhc <- function(object,
   if (is.null(scope)) {
     scope <- sevt_varnames(object)[-1]
   }
-  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+  check_scope(scope, object)
   for (v in scope) {
     r <- 1
     iter <- 0
@@ -110,7 +110,7 @@ stages_simplebhc <- function(object,
       now_score <- temp_score
     }
   }
-  object$call <- sys.call()
+  object$call <- match.call()
   object$score <- list(value = now_score, f = score)
   return(object)
 }

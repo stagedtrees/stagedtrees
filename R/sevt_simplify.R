@@ -32,7 +32,7 @@
 #' Simplify a staged tree model
 #'
 #' Function to simplify a staged tree model.
-#' @param model an object of class \code{sevt}
+#' @param object an object of class \code{sevt}
 #' @param fit logical, if \code{TRUE} refit the model after simplification.
 #' @return an object of class \code{sevt}
 #'         representing the simplified model.
@@ -51,23 +51,24 @@
 #' simpl <- sevt_simplify(mod)
 #' plot(simpl)
 #' @export
-sevt_simplify <- function(model, fit = TRUE) {
-  tmp_ceg <- ceg(model)
-  oldstg <- model$stages
-  model$stages <- sapply(names(model$stages), function(vv) {
+sevt_simplify <- function(object, fit = TRUE) {
+  check_sevt(object)
+  tmp_ceg <- ceg(object)
+  oldstg <- stages(object)
+  object$stages <- sapply(names(oldstg), function(vv) {
     pp <- tmp_ceg$positions[[vv]]
-    ix <- oldstg[[vv]] %in% model$name_unobserved
+    ix <- oldstg[[vv]] %in% object$name_unobserved
     pp[ix] <- oldstg[[vv]][ix]
     pp
   }, USE.NAMES = TRUE)
   ## if model was fitted then refit it
-  if (is_fitted_sevt(model)) {
+  if (is_fitted_sevt(object)) {
     if (fit) {
-      model <- sevt_fit(model)
+      object <- sevt_fit(object)
     } else {
-      model$prob <- NULL
-      model$ll <- NULL
+      object$prob <- NULL
+      object$ll <- NULL
     }
   }
-  return(model)
+  return(object)
 }

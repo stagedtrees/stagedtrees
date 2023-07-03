@@ -4,12 +4,12 @@
 \alias{join_stages}
 \title{Join stages}
 \usage{
-join_stages(object, v, s1, s2)
+join_stages(object, var, s1, s2)
 }
 \arguments{
 \item{object}{an object of class \code{sevt}.}
 
-\item{v}{variable.}
+\item{var}{variable.}
 
 \item{s1}{first stage.}
 

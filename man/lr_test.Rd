@@ -32,7 +32,7 @@ independence model.
 If multiple objects are passed,
 likelihood-ratio tests between the first
 object and the followings are computed.
-In the latter casem the function checks automatically if
+In the latter case the function checks automatically if
 the first model is nested in the additional ones,
 via \code{\link{inclusions_stages}}, and throws
 an error if not.

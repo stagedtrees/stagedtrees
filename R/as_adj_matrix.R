@@ -29,6 +29,7 @@ as_adj_matrix.parentslist <- function(x, ...) {
 #' @return for \code{as_adj_matrix.ceg}: the adj matrix corresponding to the CEG.
 #' @export
 as_adj_matrix.ceg <- function(x, ignore = x$name_unobserved, endnode = TRUE, ...) {
+  check_sevt(x)
   tree <- x$tree
   var <- names(tree)
   pos <- uni_idx(x$positions)

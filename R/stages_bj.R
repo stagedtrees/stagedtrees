@@ -32,19 +32,30 @@
 #' summary(model)
 #' @export
 stages_bj <-
-  function(object = NULL,
+  function(object,
            distance = "kullback",
            thr = 0.1,
            scope = NULL,
            ignore = object$name_unobserved,
            trace = 0) {
-    check_sevt_fit(object)
-    stopifnot(is.character(distance))
-    stopifnot(distance %in% c(
+    distances <- c(
       "manhattan", "euclidean", "reny", "kullback",
       "totvar", "hellinger",
       "bhatt", "chandarw"
-    ))
+    )
+    check_sevt_fit(object)
+    if (!is.character(distance)) {
+      cli::cli_abort(c(
+        "{.arg distance} should be a character string.",
+        "x" = "You've supplied {.type {distance}}."
+      ))
+    }
+    if (!(distance %in% distances)) {
+      cli::cli_abort(c(
+        "{.arg distance} should be on of {.value {distances}}.",
+        "x" = "You've supplied {.value {distance}}."
+      ))
+    }
     dist_fun <- switch(distance,
       manhattan = probdist.l1,
       euclidean = probdist.l2,
@@ -58,7 +69,7 @@ stages_bj <-
     if (is.null(scope)) {
       scope <- sevt_varnames(object)[-1]
     }
-    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+    check_scope(scope, object)
     for (v in scope) {
       finish <- FALSE
       while (!finish) {
@@ -93,6 +104,6 @@ stages_bj <-
     if (trace > 0) {
       message("backward join done")
     }
-    object$call <- sys.call()
+    object$call <- match.call()
     return(object)
   }

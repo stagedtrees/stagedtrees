@@ -11,11 +11,11 @@
 #' mod <- indep(PhDArticles)
 #' logLik(mod)
 logLik.sevt <- function(object, ...) {
+  check_sevt_fit(object)
   if (!is.null(object$ll)) {
     return(object$ll)
   }
-  check_sevt_fit(object)
-  vars <- names(object$tree)
+  vars <- sevt_varnames(object)
   prob <- expand_prob(object)
   ll <- sum(vapply(
     seq_along(object$tree),

@@ -32,19 +32,21 @@
 #' join positions in a staged tree model
 #'
 #' @param model an object of class \code{sevt}.
-#' @param v the name of a variable in the model.
+#' @param var the name of a variable in the model.
 #' @param s1 stage to join
 #' @param s2 stage to join
 #' @details this functions works similarly to the \code{join_stages}
 #' function in the \code{stagedtrees} package, but it also joins
 #' downstream stages to make nodes with stages \code{s1,s2} in the same
 #' position. This function works properly only when downstream variables
-#' from \code{v} have full stages vectors.
+#' from \code{var} have full stages vectors.
 #' @export
-join_positions <- function(model, v, s1, s2) {
-  i <- which(v == names(model$tree))
+join_positions <- function(model, var, s1, s2) {
+  check_sevt(model)
+  check_var_in(var, model)
+  i <- which(var == names(model$tree))
   order <- names(model$tree)
-  model <- join_stages(model, v, s1, s2)
+  model <- join_stages(model, var, s1, s2)
   if (i == length(model$tree)) {
     return(model)
   }

@@ -15,4 +15,3 @@ integer, degrees of freedom of the staged event tree.
 \description{
 Return the number of parameters of the model.
 }
-\keyword{internal}

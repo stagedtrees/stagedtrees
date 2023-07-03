@@ -16,4 +16,3 @@ A character vector.
 Utility returning variable-names in a staged event tree
 model.
 }
-\keyword{internal}

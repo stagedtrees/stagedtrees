@@ -38,12 +38,26 @@ stages_kmeans <- function(object,
                           scope = NULL,
                           nstart = 1) {
   check_sevt_fit(object)
-  stopifnot(is.function(transform) || is.null(transform))
-  if (is.null(transform)) transform <- function(x) {
-    return(x)
+  if (!(is.function(transform) || is.null(transform))) {
+    cli::cli_abort(c(
+      "{.arg transform} must be a {.cls function} or {.val NULL} (for the identity).",
+      "x" = "You've supplied {.type {transform}}"
+    ))
+  }
+  if (!is.numeric(k)) {
+    cli::cli_abort(c(
+      "{.arg k} should be an integer scalar or a
+        (possibly named vector of integers.",
+      "x" = "You've supplied {.type {k}}."
+    ))
+  }
+  if (is.null(transform)) {
+    transform <- function(x) {
+      return(x)
+    }
   }
   if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
-  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+  check_scope(scope, object)
   if (is.null(names(k))) {
     k <- rep(k, length(scope))[seq_along(scope)]
     names(k) <- scope
@@ -68,6 +82,6 @@ stages_kmeans <- function(object,
     object <- sevt_fit(object, scope = v, compute_logLik = FALSE)
   }
   object$ll <- logLik(object)
-  object$call <- sys.call()
+  object$call <- match.call()
   return(object)
 }

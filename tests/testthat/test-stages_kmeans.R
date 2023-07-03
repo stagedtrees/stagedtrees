@@ -15,3 +15,13 @@ test_that("stages_kmeans", {
   ll2 <- logLik(mod)
   expect_equal(ll1, ll2)
 })
+
+test_that("stages_kmeans fails if not numeric k", {
+  mod <- full(Titanic, lambda = 1)
+  expect_error(stages_kmeans(mod, k = "a"))
+})
+
+test_that("stages_kmeans fails if transofrm is not function or NULL", {
+  mod <- full(Titanic, lambda = 1)
+  expect_error(stages_kmeans(mod, k = 2, transform = "aaa"))
+})

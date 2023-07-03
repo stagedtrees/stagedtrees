@@ -16,4 +16,3 @@ integer, the number of variables.
 Utility returning the number of variables
 in a staged event tree model.
 }
-\keyword{internal}

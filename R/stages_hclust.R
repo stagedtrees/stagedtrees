@@ -53,9 +53,24 @@ stages_hclust <-
              return(-BIC(x))
            }) {
     check_sevt_fit(object)
-    stopifnot(is.character(distance))
+    if (!is.character(distance)) {
+      cli::cli_abort(c(
+        "{.arg distance} should be a character string.",
+        "x" = "You've supplied {.type {distance}}.",
+        "i" = "Possible available distances are: {.val totvar},
+        {.val hellinger} or any possible value for {.arg method} in
+        {.fun stats::dist}."
+      ))
+    }
+    if (!all(is.na(k)) && !is.numeric(k)) {
+      cli::cli_abort(c(
+        "{.arg k} should be an integer scalar, {.val NA} or a
+        (possibly named) vector with integers and {.val NA} values.",
+        "x" = "You've supplied {.type {k}}."
+      ))
+    }
     if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
-    stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+    check_scope(scope, object)
     if (is.null(names(k))) {
       k <- rep(k, length(scope))[seq_along(scope)]
       names(k) <- scope
@@ -94,6 +109,6 @@ stages_hclust <-
       }
       object <- sevt_fit(object, scope = v)
     }
-    object$call <- sys.call()
+    object$call <- match.call()
     return(object)
   }

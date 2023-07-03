@@ -1,15 +1,11 @@
-#' Check if the stages event tree has ctables field
-#'
-#' @param object a staged event tree object.
+#' @rdname check_sevt
 #' @return logical.
 #' @keywords internal
 has_ctables <- function(object) {
   isFALSE(is.null(object$ctables))
 }
 
-#' Check if the stages event tree has probabilities
-#'
-#' @param object a staged event tree object.
+#' @rdname check_sevt
 #' @return logical.
 #' @keywords internal
 has_prob <- function(object) {
@@ -24,73 +20,173 @@ has_prob <- function(object) {
       ## check probabilities are ok
       isFALSE(any(sapply(vars, function(v) {
         any(sapply(object$prob[[v]], function(pp) {
-          isFALSE(length(pp) == length(object$tree[[v]]))
+          isFALSE(identical(length(pp),length(object$tree[[v]])))
         }))
       })))
     }
   }
 }
 
-#' Check if the stages event tree is fitted
-#'
-#' @param object a staged event tree object.
+#' @rdname check_sevt
 #' @return logical.
 #' @keywords internal
 is_fitted_sevt <- function(object) {
-  check_sevt(object)
   has_prob(object) && has_ctables(object)
 }
 
 
-#' check sevt object
+#' Check sevt objects
+#'
 #' @param object an object of class sevt
+#' @param arg passed arg name
+#' @param call passed call
 #' @keywords internal
-check_sevt <- function(object) {
-  if (!is.object(object)) {
-    stop('object is not of class sevt, check ?"sevt"')
-  }
-  if (!inherits(object, "sevt")) {
-    stop('object is not of class sevt, check ?"sevt"')
+check_sevt <- function(object, arg = rlang::caller_arg(object),
+                       call = rlang::caller_env()) {
+  if (!is.object(object) | !inherits(object, "sevt")) {
+    cli::cli_abort(c(
+      "{.arg {arg}} must be of class {.cls sevt}.",
+      "x" = "You've supplied a {.cls {class(object)}} object."
+    ), call = call, arg = arg)
   }
   if (is.null(object$tree)) {
-    stop('object is missing the required tree component, check ?"sevt"')
+    cli::cli_abort(c(
+      "{.arg {arg}} must be a valid object of class {.cls sevt}.",
+      "i" = "An object of class {.cls sevt} must have
+      a {.field tree} component.",
+      "x" = "You've supplied {.arg {arg}} without a {.field tree} component."
+    ), call = call, arg = arg)
   }
+  check_tree(object$tree, arg = arg, call = call)
   if (is.null(object$stages)) {
-    stop('object is missing the required stages component, check ?"sevt"')
+    cli::cli_abort(c(
+      "{.arg {arg}} must be a valid object of class {.cls sevt}.",
+      "i" = "An object of class {.cls sevt} must have
+      a {.field stages} component.",
+      "x" = "You've supplied {.arg {arg}} without a {.field stages} component."
+    ), call = call, arg = arg)
+  }
+  check_stages(object, arg = arg, call = call)
+}
+
+#' @rdname check_sevt
+#' @param tree tree to be checked, a named list
+#' @keywords internal
+check_tree <- function(tree, arg, call){
+  if (is.null(names(tree))){
+    cli::cli_abort(c(
+      "{.arg {arg}} must be a valid object of class {.cls sevt}.",
+      "i" = "An object of class {.cls sevt} must have
+      a named {.field tree} component.",
+      "x" = "You've supplied {.arg {arg}} where the {.field tree}
+      component is not named."
+    ), call = call, arg = arg)
   }
 }
 
-#' check
-#' @param object an object of class sevt
+#' @rdname check_sevt
 #' @keywords internal
-check_sevt_prob <- function(object) {
+check_stages <- function(object, arg, call){
+  if (is.null(names(object$stages)) && sevt_nvar(object) > 1){
+    cli::cli_abort(c(
+      "{.arg {arg}} must be a valid object of class {.cls sevt}.",
+      "i" = "An object of class {.cls sevt} must have
+      a named {.field stages} component.",
+      "x" = "You've supplied {.arg {arg}} where the {.field stages}
+      component is not named."
+    ), call = call, arg = arg)
+  }
+}
+#' @rdname check_sevt
+#' @keywords internal
+check_sevt_prob <- function(object, arg = rlang::caller_arg(object),
+                            call = rlang::caller_env()) {
   check_sevt(object)
   if (!has_prob(object)) {
-    stop("The provided sevt object has no probabilitites (prob), \n",
-      "use sevt_fit to associate data and compute probabilities for an object of class sevt \n",
-      "or check ?full or ?indep for utilities to build fitted staged event trees.",
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "{.arg {arg}} must have associated {.field prob} field.",
+      "x" = "You've supplied {.arg {arg}} without probabilities in
+      {.field prob}.",
+      "i" = "Use {.fun stagedtrees::sevt_fit} to associate data and
+      compute probabilities for an object of class {.cls sevt}."
+    ), call = call, arg = arg)
   }
 }
 
 
 #' @rdname check_sevt
 #' @keywords internal
-check_sevt_ctables <- function(object) {
+check_sevt_ctables <- function(object, arg = rlang::caller_arg(object),
+                               call = rlang::caller_env()) {
   check_sevt(object)
   if (!has_ctables(object)) {
-    stop("The provided sevt object has no data (ctables), \n",
-      "use sevt_fit to associate data and compute probabilities for an object of class sevt \n",
-      "or check ?full or ?indep for utilities to build fitted staged event trees.",
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "{.arg {arg}} must have associated {.field ctables} field.",
+      "x" = "You've supplied {.arg {arg}} without data in  {.field ctables}.",
+      "i" = "Use {.fun stagedtrees::sevt_fit} to associate data and compute
+      probabilities for an object of class {.cls sevt}."
+    ), call = call, arg = arg)
   }
 }
 
 #' @rdname check_sevt
 #' @keywords internal
-check_sevt_fit <- function(object) {
-  check_sevt_ctables(object)
-  check_sevt_prob(object)
+check_sevt_fit <- function(object, arg = rlang::caller_arg(object),
+                           call = rlang::caller_env()) {
+  check_sevt_ctables(object, arg = arg, call = call)
+  check_sevt_prob(object, arg = arg, call = call)
+}
+
+
+#' @rdname check_sevt
+#' @param x a staged event tree object.
+#' @param y a staged event tree object.
+#' @param arg1 passed arg1 name
+#' @param arg2 passed arg2 name
+#' @keywords internal
+check_same_tree <- function(x, y, arg1 = rlang::caller_arg(x),
+                               arg2 = rlang::caller_arg(y),
+                               call = rlang::caller_env()) {
+  if (!identical(x$tree, y$tree)) {
+    cli::cli_abort(c(
+      "{.arg {arg1}} and {.arg {arg2}}
+      must be defined over the same variables.",
+      "x" = "You've supplied {.arg {arg1}}
+      over {.val {sevt_varnames(x)}} and
+      {.arg {arg2}} over {.var {sevt_varnames(y)}}."
+    ), call = call, arg1 = arg1, arg2 = arg2)
+  }
+}
+
+#' @rdname check_sevt
+#' @param var name of a variable to be checked.
+#' @keywords internal
+check_var_in <- function(var, object, arg1 = rlang::caller_arg(var),
+                            arg2 = rlang::caller_arg(object),
+                            call = rlang::caller_env()) {
+  if (!var %in% sevt_varnames(object)) {
+    cli::cli_abort(c(
+      "{.arg {arg1}} should be a variable in  {.arg {arg2}}.",
+      "x" = "You've supplied {.arg {arg2}}
+      over {.val {sevt_varnames(object)}} and {.arg {arg1}} = {.val {var}}
+      is not among them."
+    ), call = call, arg1 = arg1, arg2 = arg2)
+  }
+}
+
+#' @rdname check_sevt
+#' @param scope the scope variables to be checked
+#' @keywords internal
+check_scope <- function(scope, object, arg1 = rlang::caller_arg(scope),
+                         arg2 = rlang::caller_arg(object),
+                         call = rlang::caller_env()) {
+  if (!all(scope %in% sevt_varnames(object))) {
+    cli::cli_abort(c(
+      "{.arg {arg1}} should be a subset of the variables in  {.arg {arg2}}.",
+      "x" = "You've supplied {.arg {arg2}}
+      over {.val {sevt_varnames(object)}} and
+      {.val {scope[!(scope %in% sevt_varnames(object))]}}
+      {?is/are} not among them."
+    ), call = call, arg1 = arg1, arg2 = arg2)
+  }
 }

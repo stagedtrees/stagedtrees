@@ -18,5 +18,6 @@ as_bn.parentslist <- function(x) {
 #' @rdname as_bn
 #' @export
 as_bn.sevt <- function(x) {
+  check_sevt(x)
   as_bn.parentslist(as_parentslist.sevt(x))
 }

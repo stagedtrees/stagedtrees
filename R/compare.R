@@ -58,8 +58,7 @@ compare_stages <-
     # check and rename stages
     check_sevt(object1)
     check_sevt(object2)
-    stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
-    stopifnot(all(names(object1$tree) == names(object2$tree)))
+    check_same_tree(object1, object2)
     object1 <- stndnaming(object1)
     object2 <- stndnaming(object2)
     # use the appropriate method
@@ -108,9 +107,9 @@ compare_stages <-
     if (return_tree) {
       return(difftree)
     } else {
-      return(all(sapply(difftree, function(x) {
+      return(all(vapply(difftree, function(x) {
         all(x == 0)
-      })))
+      }, FUN.VALUE = TRUE)))
     }
   }
 
@@ -132,12 +131,13 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
   check_sevt(object1)
   check_sevt(object2)
   # check if models are over the same variables, and same order
-  stopifnot(sevt_nvar(object1) == sevt_nvar(object2))
-  stopifnot(all(names(object1$tree) == names(object2$tree)))
+  check_same_tree(object1, object2)
   if (!requireNamespace("clue", quietly = TRUE)) {
-    stop("Package \"clue\" needed for this function to work. Please install it.",
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "Package {.pkg clue} needs to be installed
+      for {.fun stagedtrees::hamming_stages} to work.",
+      "x" = "Can't load package {.pkg clue}."
+    ))
   }
   # rename stages with increasing integers
   object1 <- stndnaming(object1)
@@ -186,9 +186,9 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
   if (return_tree) {
     return(difftree)
   } else {
-    sum(sapply(difftree, function(x) {
+    sum(vapply(difftree, function(x) {
       sum(as.numeric(x), na.rm = TRUE)
-    }))
+    }, FUN.VALUE = 1.0))
   }
 }
 
@@ -207,7 +207,7 @@ hamming_stages <- function(object1, object2, return_tree = FALSE) {
 diff_stages <- function(object1, object2) {
   check_sevt(object1)
   check_sevt(object2)
-  stopifnot(all(names(object1$tree) == names(object2$tree)))
+  check_same_tree(object1, object2)
   out <- rep(list(c()), length(object1$stages))
   attr(out, "names") <- attr(object1$stages, "names")
   for (k in seq_along(object1$stages)) {
