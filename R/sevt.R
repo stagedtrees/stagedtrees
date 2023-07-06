@@ -80,7 +80,14 @@ sevt.table <- function(x,
   # extract ordered list of levels
   tree <- dimnames(x)[order]
   # check if tree exist
-  stopifnot(!is.null(tree))
+  if (is.null(tree)) {
+    cli::cli_abort(c(
+      "{.arg x} must be a
+      table with named dimensions including variables
+      listed in {.arg order}.",
+      "x" = "Unable to extract valid tree from table dimnames."
+    ))
+  }
   # build staged tree from list
   sevt.list(tree, full = full)
 }
@@ -127,11 +134,17 @@ sevt.list <- function(x, full = FALSE, order = names(x)) {
   dims <- vapply(x, FUN = length, FUN.VALUE = 1)
   if (any(is.null(dims))) {
     # naive check if levels are vector with lenght
-    stop("Levels should be well defined")
+    cli::cli_abort(c(
+      "{.arg x} must be a list defining levels for each variables.",
+      "x" = "Unable to extract proper levels from {.arg x}."
+    ))
   }
   if (any(dims == 0)) {
-    # naive check if levels are vector with lenght
-    stop("Levels should be well defined")
+    # naive check if levels are vector with length
+    cli::cli_abort(c(
+      "{.arg x} must be a list defining levels for each variables.",
+      "x" = "Unable to extract proper levels from {.arg x}."
+    ))
   }
 
   # initialize empty object
