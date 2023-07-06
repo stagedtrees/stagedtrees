@@ -26,7 +26,7 @@ test_that("can sample data from generated sevt", {
   pl <- random_parentslist(11, k = 3, maxp = 2)
   mod <- random_sevt(pl)
   expect_s3_class(mod, "sevt")
-  data <- sample_from(mod, nsim = 100)
+  data <- sample_from(mod, size = 100)
   expect_s3_class(data, "data.frame")
   expect_equal(dim(data), c(100, 11))
   mod1 <- full(data)

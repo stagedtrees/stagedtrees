@@ -24,7 +24,6 @@
 sevt_add <- function(object, var, data, join_unobserved = TRUE,
                      useNA = "ifany") {
   check_sevt(object)
-  check_var_in(var, object)
   path <- sevt_varnames(object)
   if (is.data.frame(data)) {
     data <- table(data[, c(path, var)], useNA = useNA)
