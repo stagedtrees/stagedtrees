@@ -59,7 +59,8 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...) {
   if (is.null(values)) {
     values <- lapply(x, function(vv) {
       if (is.null(vv$values)) {
-        warning("Missing values for a variable, a binary variable is used", call. = FALSE)
+        cli::cli_warn(c("Missing values for
+                        variable {.value {vv}}, binary variable is assumed."))
         c(0, 1)
       } else {
         vv$values
@@ -69,7 +70,8 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...) {
     values <- sapply(names(x), function(nn) {
       if (is.null(values[[nn]])) {
         if (is.null(x[[nn]]$values)) {
-          warning("Missing values for a variable, a binary variable is used", call. = FALSE)
+          cli::cli_warn(c("Missing values for
+                        variable {.value {nn}}, binary variable is assumed."))
           c(0, 1)
         } else {
           x[[nn]]$values
