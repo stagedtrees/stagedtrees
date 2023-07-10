@@ -9,3 +9,4 @@ README_files
 ^LICENSE\.md$
 ^\.github$
 ^CRAN-SUBMISSION$
+*.pre-commit-config.yaml
