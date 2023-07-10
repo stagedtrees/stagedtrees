@@ -86,7 +86,7 @@ stages_bj <-
           s2 <- stages[j]
           if (abs(M[i, j]) < thr) {
             object <-
-              join_stages(object, v, s1, s2) ## join the 2 stages
+              join_stages_unsafe(object, v, s1, s2) ## join the 2 stages
             finish <- FALSE # if joined the stages we are not finish
             if (trace > 1) {
               message(

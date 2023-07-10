@@ -44,7 +44,7 @@ stages_bhcr <-
             replace = FALSE
           ) ## select randomly two stages
         try <-
-          join_stages(object, v, stgs[1], stgs[2]) ## join the 2 stages
+          join_stages_unsafe(object, v, stgs[1], stgs[2]) ## join the 2 stages
         try_score <- score(try)
         if (try_score >= now_score) {
           object <- try
