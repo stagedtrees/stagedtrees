@@ -103,8 +103,8 @@ test_that("stages function", {
     "B" = c("b", "bb", "bbb"),
     "C" = c("c", "cc")
   ))
-  expect_equal(stages(mod, "B"), mod$stages$B)
-  expect_equal(stages(mod, "C"), mod$stages$C)
+  expect_equal(stages(mod)[["B"]], mod$stages$B)
+  expect_equal(stages(mod)[["C"]], mod$stages$C)
 })
 
 test_that("stages function get all the stages", {
@@ -113,5 +113,6 @@ test_that("stages function get all the stages", {
     "B" = c("b", "bb", "bbb"),
     "C" = c("c", "cc")
   ))
+  expect_s3_class(stages(mod), "sevt.stgs")
   expect_identical(stages(mod), mod$stages)
 })

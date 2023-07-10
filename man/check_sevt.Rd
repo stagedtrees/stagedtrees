@@ -13,6 +13,8 @@
 \alias{check_same_tree}
 \alias{check_var_in}
 \alias{check_scope}
+\alias{check_path}
+\alias{check_context}
 \title{Check sevt objects}
 \usage{
 has_ctables(object)
@@ -23,9 +25,13 @@ is_fitted_sevt(object)
 
 check_sevt(object, arg = rlang::caller_arg(object), call = rlang::caller_env())
 
-check_tree(tree, arg, call)
+check_tree(tree, arg = rlang::caller_arg(object), call = rlang::caller_env())
 
-check_stages(object, arg, call)
+check_stages(
+  object,
+  arg = rlang::caller_arg(object),
+  call = rlang::caller_env()
+)
 
 check_sevt_prob(
   object,
@@ -46,10 +52,10 @@ check_sevt_fit(
 )
 
 check_same_tree(
-  x,
-  y,
-  arg1 = rlang::caller_arg(x),
-  arg2 = rlang::caller_arg(y),
+  object,
+  object2,
+  arg1 = rlang::caller_arg(object),
+  arg2 = rlang::caller_arg(object2),
   call = rlang::caller_env()
 )
 
@@ -62,12 +68,16 @@ check_var_in(
 )
 
 check_scope(
-  scope,
+  x,
   object,
-  arg1 = rlang::caller_arg(scope),
+  arg1 = rlang::caller_arg(x),
   arg2 = rlang::caller_arg(object),
   call = rlang::caller_env()
 )
+
+check_path(x, tree)
+
+check_context(x, var, tree)
 }
 \arguments{
 \item{object}{an object of class sevt}
@@ -76,11 +86,9 @@ check_scope(
 
 \item{call}{passed call}
 
-\item{tree}{tree to be checked, a named list}
+\item{tree}{a list of levels specifying an event tree}
 
-\item{x}{a staged event tree object.}
-
-\item{y}{a staged event tree object.}
+\item{object2}{a staged event tree object.}
 
 \item{arg1}{passed arg1 name}
 
@@ -88,7 +96,7 @@ check_scope(
 
 \item{var}{name of a variable to be checked.}
 
-\item{scope}{the scope variables to be checked}
+\item{x}{scope, context or path to be checked against a model or tree}
 }
 \value{
 logical.

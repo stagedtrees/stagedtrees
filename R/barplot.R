@@ -35,7 +35,7 @@ barplot.sevt <- function(height, var,
                          ...){
   check_sevt_prob(height)
   check_var_in(var, height)
-  stg <- stages(height, var)
+  stg <- height$stages[[var]]
   stg <- stg[!(stg %in% ignore)]
   ustg <- unique(stg)
   col <- make_stages_col(height, col = col, ignore = ignore)[[var]]
