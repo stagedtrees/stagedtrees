@@ -71,15 +71,15 @@ stages_bhc <-
         object <- temp
         now_score <- temp_score
         if ((trace > 1) && !done) {
-          message(v, " joined stages: ", s1a, " and ", s2a)
+          cli::cli_text("{v}: joined stages: {s1a} and {s2a}")
         }
       } ## end while
       if (trace > 0) {
-        message("BHC over ", v, " done after ", iter, " iterations")
+        cli::cli_text("BHC over {v} done after {iter} iterations")
       }
     } ## end for over variables
     if (trace > 0) {
-      message("BHC done")
+      cli::cli_text("BHC done")
     }
     object$call <- match.call()
     object$score <- list(value = now_score, f = score)

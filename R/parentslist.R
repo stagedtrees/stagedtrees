@@ -123,9 +123,13 @@ as_parentslist.sevt <- function(x, silent = FALSE, ...) {
     )
   }
   if (wrn && !silent) {
-    message("Context specific and/or local partial independences detected.")
-    message("The input staged tree is not equivalent to a BN,
-            the minimal super-model is returned.")
+    cli::cli_warn(c("Context specific and/or local
+                  partial independences detected.",
+      "!" = "The input staged tree is not equivalent to a BN,
+            a minimal super-model is returned.",
+      "i" = "You can silence this worning by setting
+            {.code silent = TRUE} in {.fun stagedtrees::as_parentslist}"
+    ))
   }
   class(prnt_list) <- "parentslist"
   prnt_list

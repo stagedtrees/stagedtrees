@@ -89,20 +89,17 @@ stages_bj <-
               join_stages_unsafe(object, v, s1, s2) ## join the 2 stages
             finish <- FALSE # if joined the stages we are not finish
             if (trace > 1) {
-              message(
-                v, " joined stages: ", s1,
-                " and ", s2
-              )
+              cli::cli_text("{v}: joined stages: {c(s1,s2)}.")
             }
           }
         } ## end if there are more than 1 stage
       } ## end while
       if (trace > 0) {
-        message("backward join over ", v, " done")
+        cli::cli_text("backward join over {v} done.")
       }
     } ## end for over variables
     if (trace > 0) {
-      message("backward join done")
+      cli::cli_text("backward join done.")
     }
     object$call <- match.call()
     return(object)

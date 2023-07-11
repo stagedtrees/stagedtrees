@@ -51,6 +51,6 @@ This is useful for preserving structural zeroes and to speed-up
 computations.
 }
 \examples{
-start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
+start <- indep(PhDArticles[, 1:5], join_unobserved = TRUE)
 model <- stages_hc(start)
 }
