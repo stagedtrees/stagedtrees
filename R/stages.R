@@ -193,7 +193,8 @@ print.sevt.stgs <- function(x, ..., max = 5) {
 "[[.sevt.stgs" <- function(x, ...) {
   arg <- list(...)
   narg <- ...length()
-  if (narg == 1 && is.null(names(arg)) && length(arg[[1]]) == 1) {
+  if (narg == 1 && is.null(names(arg)) &&
+      length(arg[[1]]) == 1 && is.null(names(arg[[1]]))) {
     return(unclass(x)[[arg[[1]]]])
   } else {
     # assume ... is a path

@@ -21,6 +21,7 @@
 * improve specific checks for `sevt` objects.
 * fix minor coding style problems (some argument names have changed).
 * improve test coverage.
+* new return value of `stages` function and new indexing of stages via new dedicated class `sevt.stgs`.
 
 # 2.2.1
 
