@@ -22,6 +22,7 @@
 * fix minor coding style problems (some argument names have changed).
 * improve test coverage.
 * new return value of `stages` function and new indexing of stages via new dedicated class `sevt.stgs`.
+* use faster and unsafe functions internally, speedup in various functions (up to 10x).
 
 # 2.2.1
 
