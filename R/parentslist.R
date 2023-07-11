@@ -1,28 +1,28 @@
 #' Obtain the equivalent DAG as list of parents
-#' 
+#'
 #' Convert to the equivalent representation as list of parents.
 #' @param x an R object.
-#' @param ... additional parameters. 
-#' @details The output of this function is an object of class 
+#' @param ... additional parameters.
+#' @details The output of this function is an object of class
 #' \code{parentslist} which is one of the possible encoding for
 #' a directed graph. This is mainly an internal class and its
-#' specification can be changed in the future. 
-#' For example, now it may also include information on the 
-#' sample space of the variables and the context/partial/local 
+#' specification can be changed in the future.
+#' For example, now it may also include information on the
+#' sample space of the variables and the context/partial/local
 #' independences.
-#' 
-#' @return An object of class \code{parentslist} for which a 
+#'
+#' @return An object of class \code{parentslist} for which a
 #' print method exists.
-#' Basically a list with 
-#' one entries for each variable with fields: 
+#' Basically a list with
+#' one entries for each variable with fields:
 #' * \code{parents} The parents of the variable.
-#' * \code{context} Where context independences are detected. 
+#' * \code{context} Where context independences are detected.
 #' * \code{partial} Where partial independences are detected.
-#' * \code{local} Where no context/partial independences are detected, 
+#' * \code{local} Where no context/partial independences are detected,
 #'                but local independences are present.
 #' * \code{values} values for the variable.
-#' @seealso \code{\link{print.parentslist}} and 
-#' \code{\link{as.character.parentslist}} for the parenthesis-encoding of the 
+#' @seealso \code{\link{print.parentslist}} and
+#' \code{\link{as.character.parentslist}} for the parenthesis-encoding of the
 #' DAG structure and the asymmetric independences.
 #' @export
 as_parentslist <- function(x, ...){
@@ -61,10 +61,10 @@ as_parentslist.bn.fit <- function(x, order = NULL,  ...){
 #' @param silent if function should be silent.
 #' @details In `as_parentslist.sevt`, if a context-specific or a local-partial independence is detected
 #' a message is printed (if \code{silent = FALSE}) and the minimal super-model is returned.
-#' @examples 
+#' @examples
 #' model <- stages_hclust(full(Titanic), k = 2)
 #' pl <- as_parentslist(model)
-#' pl$Age 
+#' pl$Age
 #' @export
 as_parentslist.sevt <- function(x, silent = FALSE,...){
   check_sevt(x)
@@ -81,15 +81,15 @@ as_parentslist.sevt <- function(x, silent = FALSE,...){
     stgs <- x$stages[[i]]
     for (j in rev(seq(i))){
       splitd <- matrix(nrow = Ms[j], stgs)
-      cnts <- apply(splitd, MARGIN = 2, 
+      cnts <- apply(splitd, MARGIN = 2,
                     FUN = function(xx) length(unique(xx)))
       if (all(cnts == 1)){
-        ### it is not a parent      
+        ### it is not a parent
         stgs <- splitd[1,] ## just take the first since they are all the same
       }else{ ### it is a parent
         if (all(cnts == Ms[j])){
-          ### check for local partial independence 
-          sR <- sum(apply(splitd, MARGIN = 1, 
+          ### check for local partial independence
+          sR <- sum(apply(splitd, MARGIN = 1,
                           FUN = function(xx) length(unique(xx))))
           if (sR != length(unique(c(splitd)))){
             wrn <- TRUE
@@ -110,15 +110,18 @@ as_parentslist.sevt <- function(x, silent = FALSE,...){
         prn <- c(prn, Vs[j])
       }
     }
-    prnt_list[[Vs[i + 1]]] <- list(parents = prn, context = cntx, 
-                                   partial = prtl, local = lcl, 
+    prnt_list[[Vs[i + 1]]] <- list(parents = prn, context = cntx,
+                                   partial = prtl, local = lcl,
                                    stages = stgs,
                                    values = x$tree[[Vs[i + 1]]])
   }
   if (wrn && !silent){
-    message("Context specific and/or local partial independences detected.")
-    message("The input staged tree is not equivalent to a BN, 
-            the minimal super-model is returned.")
+    cli::cli_warn(c("Context specific and/or local
+                  partial independences detected.",
+                    "!" = "The input staged tree is not equivalent to a BN,
+            a minimal super-model is returned.",
+                    "i" = "You can silence this worning by setting
+                           {.code silent = TRUE} in {.fun stagedtrees::as_parentslist}"))
   }
   class(prnt_list) <- "parentslist"
   prnt_list
@@ -128,24 +131,24 @@ as_parentslist.sevt <- function(x, silent = FALSE,...){
 #' @param x an object of class \code{parentslist}.
 #' @param only_parents logical, if the basic DAG encoding is to be returned.
 #' @param ... additional arguments for compatibility.
-#' @return \code{as.character.parentslist} returns a string 
+#' @return \code{as.character.parentslist} returns a string
 #'         encoding the associated directed graph and eventually
 #'         the context specific independences.
-#'         The encoding is similar to the one returned by 
-#'         \code{modelstring} in package \pkg{bnlearn} 
-#'         and package \pkg{deal}. 
+#'         The encoding is similar to the one returned by
+#'         \code{modelstring} in package \pkg{bnlearn}
+#'         and package \pkg{deal}.
 #'         In particular, parents of a variable can be enclosed in:
-#' * \code{( )} if a partial (conditional) independence is present. 
-#' * \code{{ }} if a context specific independence is present. 
-#' * \code{< >} if no context specific and partial (conditional) 
-#'                      independences are present, but at least a 
-#'                      local independence is detected. 
-#'                      
-#' If a parent is not enclosed in parenthesis the dependence is full. 
-#'         
+#' * \code{( )} if a partial (conditional) independence is present.
+#' * \code{{ }} if a context specific independence is present.
+#' * \code{< >} if no context specific and partial (conditional)
+#'                      independences are present, but at least a
+#'                      local independence is detected.
+#'
+#' If a parent is not enclosed in parenthesis the dependence is full.
+#'
 #' If \code{only_parents = TRUE}, the simple DAG encoding as in \pkg{bnlearn}
-#' is returned. 
-#' @examples 
+#' is returned.
+#' @examples
 #' model <- stages_hclust(full(Titanic), k = 2)
 #' pl <- as_parentslist(model)
 #' pl
@@ -155,27 +158,27 @@ as_parentslist.sevt <- function(x, silent = FALSE,...){
 as.character.parentslist <- function(x, only_parents = FALSE, ...){
   if (only_parents){
     paste(sapply(seq_along(x), function(i) {
-      paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""), 
-            paste0(x[[i]]$parents, 
+      paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""),
+            paste0(x[[i]]$parents,
                    collapse = ":"), "]", sep = "")
-    }), collapse = "")  
+    }), collapse = "")
   }else{
     paste(sapply(seq_along(x), function(i) {
-      paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""), 
+      paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""),
             paste0(ifelse(x[[i]]$parents %in%   x[[i]]$partial, "(", ""),
                    ifelse(x[[i]]$parents %in%   x[[i]]$context, "{", ""),
                    ifelse(x[[i]]$parents %in%   x[[i]]$local, "<", ""),
-                   x[[i]]$parents, 
+                   x[[i]]$parents,
                    ifelse(x[[i]]$parents %in%   x[[i]]$local, ">", ""),
                    ifelse(x[[i]]$parents %in%   x[[i]]$context, "}", ""),
                    ifelse(x[[i]]$parents %in%   x[[i]]$partial, ")", ""),
                    collapse = ":"), "]", sep = "")
-    }), collapse = "") 
+    }), collapse = "")
   }
 }
 
 #' Print a parentslist object
-#' 
+#'
 #' Nice print of a parentslist object
 #' @param x an object of class \code{parentslist}.
 #' @param ... additional arguments for compatibility.
