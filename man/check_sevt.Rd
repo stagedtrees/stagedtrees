@@ -25,7 +25,7 @@ is_fitted_sevt(object)
 
 check_sevt(object, arg = rlang::caller_arg(object), call = rlang::caller_env())
 
-check_tree(tree, arg = rlang::caller_arg(object), call = rlang::caller_env())
+check_tree(tree, arg = rlang::caller_arg(tree), call = rlang::caller_env())
 
 check_stages(
   object,

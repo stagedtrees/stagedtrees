@@ -73,6 +73,7 @@ stages.sevt <- function(object) {
 }
 
 #' @rdname stages
+#' @param max integer, limit on the number of variables to print.
 #' @export
 print.sevt.stgs <- function(x, ..., max = 5) {
   x <- unclass(x)
@@ -126,7 +127,8 @@ print.sevt.stgs <- function(x, ..., max = 5) {
   } else {
     if (length(i) > 1) {
       cli::cli_abort(c(
-        "Only one variable can be selected when pecifing a path/context"
+        "Only one variable can be selected when specifing a context.",
+        "x" = "You've supplied {length(i)} variables as {.arg i}"
       ))
     }
     path <- unlist(list(...))
@@ -167,7 +169,8 @@ print.sevt.stgs <- function(x, ..., max = 5) {
   } else {
     if (length(i) > 1) {
       cli::cli_abort(c(
-        "Only one variable can be selected when specifing context"
+        "Only one variable can be selected when specifing a context.",
+        "x" = "You've supplied {length(i)} variables as {.arg i}"
       ))
     }
     path <- unlist(list(...))
@@ -194,14 +197,14 @@ print.sevt.stgs <- function(x, ..., max = 5) {
   arg <- list(...)
   narg <- ...length()
   if (narg == 1 && is.null(names(arg)) &&
-      length(arg[[1]]) == 1 && is.null(names(arg[[1]]))) {
+    length(arg[[1]]) == 1 && is.null(names(arg[[1]]))) {
     return(unclass(x)[[arg[[1]]]])
   } else {
     # assume ... is a path
     path <- unlist(arg)
     n <- length(path)
     tree <- attr(x, "tree")
-    if (n + 1 > length(tree)) {
+    if (n >= length(tree)) {
       cli::cli_abort(c(
         "Subscript out of bounds."
       ))
@@ -225,7 +228,8 @@ print.sevt.stgs <- function(x, ..., max = 5) {
       "x" = "You've supplied {.type {value}}."
     ))
   }
-  if (narg == 1 && is.null(names(arg)) && length(arg[[1]]) == 1) {
+  if (narg == 1 && is.null(names(arg)) &&
+      length(arg[[1]]) == 1  && is.null(names(arg[[1]]))) {
     check_scope(arg[[1]], x)
     x <- unclass(x)
     x[[arg[[1]]]][] <- value
@@ -234,7 +238,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
     # assume ... is a path
     path <- unlist(arg)
     n <- length(path)
-    if ((n + 1) > length(tree)) {
+    if (n >= length(tree)) {
       cli::cli_abort(c(
         "Subscript out of bounds."
       ))

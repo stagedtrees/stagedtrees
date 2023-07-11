@@ -34,6 +34,8 @@ stages(object) <- value
 
 \item{...}{a path or context in the event tree.}
 
+\item{max}{integer, limit on the number of variables to print.}
+
 \item{value}{the stages replacement}
 
 \item{i}{index of variables in the tree.}
