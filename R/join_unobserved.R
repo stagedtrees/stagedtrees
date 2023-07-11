@@ -54,18 +54,18 @@ join_unobserved <-
       object$stages[[v]][ix] <- new
       tot <- tot + sum(ix)
       if (trace > 1) {
-        message(v, " joined ", sum(ix), " situations")
+        cli::cli_text("{v}: joined {sum(ix)} situations.")
       }
     }
     if (trace > 0) {
-      message("joined a total of ", tot, " situations")
+      cli::cli_text("joined a total of {tot} situations.")
     }
     object$prob <- NULL
     object$ll <- NULL
     if (fit) {
       object <- sevt_fit(object, lambda = lambda)
       if (trace > 0) {
-        message("object fitted using lambda = ", lambda)
+        cli::cli_text("object fitted using lambda = {lambda}")
       }
     }
     object$name_unobserved <- c(object$name_unobserved, name) # concatenate names

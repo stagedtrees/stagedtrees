@@ -59,7 +59,8 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...) {
   if (is.null(values)) {
     values <- lapply(x, function(vv) {
       if (is.null(vv$values)) {
-        warning("Missing values for a variable, a binary variable is used", call. = FALSE)
+        cli::cli_warn(c("Missing values for
+                        variable {.value {vv}}, binary variable is assumed."))
         c(0, 1)
       } else {
         vv$values
@@ -69,7 +70,8 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...) {
     values <- sapply(names(x), function(nn) {
       if (is.null(values[[nn]])) {
         if (is.null(x[[nn]]$values)) {
-          warning("Missing values for a variable, a binary variable is used", call. = FALSE)
+          cli::cli_warn(c("Missing values for
+                        variable {.value {nn}}, binary variable is assumed."))
           c(0, 1)
         } else {
           x[[nn]]$values
@@ -90,21 +92,24 @@ as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...) {
   })
   # build stages info respecting conditional
   # independences depicted in the Bayesian network
-  for (i in 2:length(order)) {
-    # initialize stages for ith variable
-    stgs <- "1"
-    # build stages by iteratively expanding stages along tree
-    for (j in seq(i - 1)) {
-      if (order[j] %in% parents[[i]]) {
-        ## if  jth variable is a parent of ith expand different
-        ## stages for each value
-        stgs <- as.vector(sapply(stgs, function(x) paste0(x, values[[j]])))
-      } else {
-        ## otherwise replicate the same stages, since ith does not depend on jth
-        stgs <- as.vector(sapply(stgs, function(x) rep(x, length(values[[j]]))))
+  if (length(order) > 1) {
+    for (i in 2:length(order)) {
+      # initialize stages for ith variable
+      stgs <- "1"
+      # build stages by iteratively expanding stages along tree
+      for (j in seq(i - 1)) {
+        if (order[j] %in% parents[[i]]) {
+          # if  jth variable is a parent of ith expand different
+          # stages for each value
+          stgs <- as.vector(sapply(stgs, function(x) paste0(x, values[[j]])))
+        } else {
+          # otherwise replicate the same stages, since ith does not depend on jth
+          stgs <- as.vector(sapply(stgs,
+                                   function(x) rep(x, length(values[[j]]))))
+        }
       }
+      object$stages[[order[i]]] <- stgs
     }
-    object$stages[[order[i]]] <- stgs
   }
   object <- stndnaming(object)
   object

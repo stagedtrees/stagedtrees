@@ -136,7 +136,7 @@ plot.sevt <-
     if (is.null(col_edges)) {
       col_edges <- "black"
     }
-    M <- prod(sapply(x$tree[1:d], length))
+    M <- prod(vapply(x$tree[1:d], length, FUN.VALUE = 1))
     cex_nodes <- rep(cex_nodes, d)[1:d]
     cex_label_nodes <- rep(cex_label_nodes, d)[1:d]
     plot.window(
@@ -320,6 +320,7 @@ edge <-
 make_stages_col <- function(x, col = NULL,
                             ignore = x$name_unobserved,
                             limit = NULL) {
+  check_sevt(x)
   d <- min(length(x$tree), limit)
   nms <- names(x$tree)
   if (is.null(col)) {
@@ -365,7 +366,13 @@ make_stages_col <- function(x, col = NULL,
         col[[nm]]
       }, simplify = FALSE)
     } else {
-      stop("Irregular argument for col, please check sevt plotting documentation ?plot.sevt.")
+      cli::cli_abort(c(
+        "{.arg col} must be one of: {.val NULL}, {.val stages},
+        a function or a named list.",
+        "x" = "You've supplied {.type {col}}.",
+        "i" = "Check sevt plotting documentation
+               {.fun stagedtrees::plot.sevt}."
+      ))
     }
   }
   return(col)

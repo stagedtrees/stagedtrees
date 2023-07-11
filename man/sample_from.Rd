@@ -4,19 +4,19 @@
 \alias{sample_from}
 \title{Sample from a staged event tree}
 \usage{
-sample_from(object, nsim = 1, seed = NULL)
+sample_from(object, size = 1, seed = NULL)
 }
 \arguments{
 \item{object}{an object of class \code{sevt} with fitted probabilities.}
 
-\item{nsim}{number of observations to sample.}
+\item{size}{number of observations to sample.}
 
 \item{seed}{an object specifying if and how the random number generator
 should be initialized (‘seeded’). Either NULL or an integer
 that will be used in a call to set.seed.}
 }
 \value{
-A data frame containing \code{nsim} observations from the
+A data frame containing \code{size} observations from the
 variables in \code{object}.
 }
 \description{
@@ -24,7 +24,7 @@ Generate a random sample from the distribution encoded
 in a staged event tree object.
 }
 \details{
-It samples \code{nsim} observations according to
+It samples \code{size} observations according to
 the transition probabilities (\code{object$prob}) in the model.
 }
 \examples{

@@ -4,10 +4,10 @@
 \alias{sevt_simplify}
 \title{Simplify a staged tree model}
 \usage{
-sevt_simplify(model, fit = TRUE)
+sevt_simplify(object, fit = TRUE)
 }
 \arguments{
-\item{model}{an object of class \code{sevt}}
+\item{object}{an object of class \code{sevt}}
 
 \item{fit}{logical, if \code{TRUE} refit the model after simplification.}
 }

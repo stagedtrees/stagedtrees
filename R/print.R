@@ -14,14 +14,15 @@
 #' model <- full(DD, lambda = 1)
 #' print(model)
 print.sevt <- function(x, ...) {
-  cat(
+  check_sevt(x)
+  cli::cli_text(
     "Staged event tree",
-    ifelse(is_fitted_sevt(x), "(fitted) \n", "\n")
-  )
+    ifelse(is_fitted_sevt(x), " (fitted, lambda = {.value {x$lambda}})", "")
+    )
   ls <- vapply(x$tree, length, 1)
-  cat(paste(paste0(names(x$tree), "[", ls, "] "), collapse = "-> "), "\n")
+  cli::cat_line(paste(paste0(sevt_varnames(x), "[", ls, "] "), collapse = "-> "))
   if (!is.null(x$ll)) {
-    print(x$ll)
+    cli::cat_print(x$ll)
   }
   invisible(x)
 }

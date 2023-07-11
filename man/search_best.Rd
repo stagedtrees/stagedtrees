@@ -49,7 +49,7 @@ among all possible orders.
 model <- search_best(Titanic, alg = stages_kmeans)
 
 ## use df as search_criterion
-model1 <- search_best(Titanic, alg = stages_bhc, 
+model1 <- search_best(Titanic, alg = stages_bhc,
                       search_criterion = function(m) attr(logLik(m), "df"))
 }
 \references{

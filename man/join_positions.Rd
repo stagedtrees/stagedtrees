@@ -4,12 +4,12 @@
 \alias{join_positions}
 \title{join positions in a staged tree model}
 \usage{
-join_positions(model, v, s1, s2)
+join_positions(model, var, s1, s2)
 }
 \arguments{
 \item{model}{an object of class \code{sevt}.}
 
-\item{v}{the name of a variable in the model.}
+\item{var}{the name of a variable in the model.}
 
 \item{s1}{stage to join}
 
@@ -23,5 +23,5 @@ this functions works similarly to the \code{join_stages}
 function in the \code{stagedtrees} package, but it also joins
 downstream stages to make nodes with stages \code{s1,s2} in the same
 position. This function works properly only when downstream variables
-from \code{v} have full stages vectors.
+from \code{var} have full stages vectors.
 }

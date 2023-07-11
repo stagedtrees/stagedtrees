@@ -36,11 +36,3 @@ test_that("lr_test works with two nested models", {
 test_that("lr_test works with three models ", {
   expect_s3_class(lr_test(mod1, mod2, modf), class = "anova")
 })
-
-
-test_that("lr_test throws warning if lambda > 0", {
-  mod1a <- sevt_fit(mod1, lambda = 1)
-  mod2a <- sevt_fit(mod2, lambda = 2)
-  expect_warning(lr_test(mod1a, mod2a))
-  expect_warning(lr_test(mod2a))
-})

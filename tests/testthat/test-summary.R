@@ -15,7 +15,7 @@ sev_2 <- random_sevt(list(
 sev_1 <- sev_2
 sev_1$prob <- NULL
 
-sev_3 <- sevt_fit(sev_2, data = sample_from(sev_2, nsim = 100), lambda = 1)
+sev_3 <- sevt_fit(sev_2, data = sample_from(sev_2, size = 100), lambda = 1)
 
 test_that("summary.sevt no ctables no prob", {
   expect_visible(summary(sev_1))
@@ -55,6 +55,6 @@ test_that("summary.sevt is printed", {
   expect_output(print(summary(sev_1)))
   expect_output(print(summary(sev_2)))
   expect_output(print(summary(sev_3)))
-  
-  
+
+
 })

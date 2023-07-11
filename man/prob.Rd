@@ -43,7 +43,7 @@ data(Titanic)
 model <- full(Titanic, lambda = 1)
 samples <- expand.grid(model$tree[c(1, 4)])
 pr <- prob(model, samples)
-## probabilities sum up to one 
+## probabilities sum up to one
 sum(pr)
 ## print observations with probabilities
 print(cbind(samples, probability = pr))
@@ -51,12 +51,13 @@ print(cbind(samples, probability = pr))
 ## compute one probability
 prob(model, c(Class = "1st", Survived = "Yes"))
 
-## compute conditional probability 
+## compute conditional probability
 prob(model, c(Survived = "Yes"), conditional_on = c(Class = "1st"))
 
 ## compute conditional probabilities with different conditioning set
-prob(model, data.frame(Age = rep("Adult", 8)), 
-     conditional_on = expand.grid(model$tree[2:1])) 
-## the above should be the same as 
+prob(model, data.frame(Age = rep("Adult", 8)),
+  conditional_on = expand.grid(model$tree[2:1])
+)
+## the above should be the same as
 summary(model)$stages.info$Age
 }

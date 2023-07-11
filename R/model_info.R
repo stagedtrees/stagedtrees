@@ -4,7 +4,7 @@
 #' model.
 #' @param object an object of class \code{sevt}.
 #' @return A character vector.
-#' @keywords internal
+#' @export
 sevt_varnames <- function(object) {
   names(object$tree)
 }
@@ -16,7 +16,7 @@ sevt_varnames <- function(object) {
 #' in a staged event tree model.
 #' @param object An object of class \code{sevt}.
 #' @return integer, the number of variables.
-#' @keywords internal
+#' @export
 sevt_nvar <- function(object) {
   length(names(object$tree))
 }
@@ -27,7 +27,7 @@ sevt_nvar <- function(object) {
 #' Return the number of parameters of the model.
 #' @param x An object of class \code{sevt}.
 #' @return integer, degrees of freedom of the staged event tree.
-#' @keywords internal
+#' @export
 sevt_df <- function(x) {
   sum(c(1, vapply(
     x$stages,

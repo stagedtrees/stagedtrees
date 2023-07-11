@@ -23,7 +23,12 @@ make_ctables <- function(object, data, useNA = "ifany") {
   if (is.data.frame(data)) {
     data <- table(data[, order], dnn = order, useNA = useNA)
   }
-  stopifnot(is.table(data))
+  if (!is.table(data)){
+    cli::cli_abort(c(
+      "{.arg data} must be a {.cls table}",
+      "x" = "Supplied {.arg data} is a {.type {data}}."
+    ))
+  }
   ctables <- lapply(seq_along(order), function(i) {
     path <- order[i:1]
     tt <- apply(data, MARGIN = path, sum)

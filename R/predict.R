@@ -46,16 +46,16 @@ predict.sevt <-
            log = FALSE,
            ...) {
     check_sevt_prob(object)
-    vars <- names(object$tree)
-    if (!has_prob(object)) {
-      stop("Provide a staged event tree with probabilities")
-    }
+    vars <- sevt_varnames(object)
     if (is.null(newdata)) {
-      newdata <- object$ctables[[vars[length(vars)]]]
-      if (is.null(newdata)) {
-        stop("Nothing to predict, newdata argument is missing and data is not
-             attached to object")
+      if (!has_ctables(object)) {
+        cli::cli_abort(c(
+          "Observations are needed to obtain predictions.",
+          "x" = "You've not supplied {.arg newdata} and
+          the provided {.arg object} does not have attached {.field ctables}."
+        ))
       }
+      newdata <- object$ctables[[vars[length(vars)]]]
       newdata <- as.data.frame(newdata)
     } ## we are now sure we have newdata as a data.frame
     # we search now for wich variable we need to make predicitons
@@ -67,9 +67,7 @@ predict.sevt <-
         class <- vars[1]
       }
     }
-    if (!(class %in% vars)) {
-      stop("class is not one of the variable of the model")
-    }
+    check_var_in(class, object)
     if (is.null(newdata[[class]])) { ## we create a dummy variable
       newdata[[class]] <- NA
     }

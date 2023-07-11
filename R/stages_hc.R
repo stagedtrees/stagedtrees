@@ -3,7 +3,7 @@
 #' Greedy search of staged event trees with
 #' iterative moving of nodes between stages.
 #'
-#' @param object an object of class \code{sevt} with fitted probabilities and 
+#' @param object an object of class \code{sevt} with fitted probabilities and
 #' data, as returned by \code{full} or \code{sevt_fit}.
 #' @param score the score function to be maximized.
 #' @param max_iter the maximum number of iterations per variable.
@@ -15,19 +15,19 @@
 #' is printed (via \code{message}).
 #'
 #' @details For each variable node-moves that best increases the
-#' score are performed until no increase is possible. 
+#' score are performed until no increase is possible.
 #' A node-move is either changing the stage
 #' associate to a node or move the node to a new stage.
-#' 
-#' The `ignore` argument can be used to specify stages that should not 
-#' be affected during the search, that is left untouched. 
-#' This is useful for preserving structural zeroes and to speed-up 
-#' computations. 
+#'
+#' The `ignore` argument can be used to specify stages that should not
+#' be affected during the search, that is left untouched.
+#' This is useful for preserving structural zeroes and to speed-up
+#' computations.
 #'
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
+#' start <- indep(PhDArticles[, 1:5], join_unobserved = TRUE)
 #' model <- stages_hc(start)
 #' @export
 stages_hc <- function(object,
@@ -39,10 +39,10 @@ stages_hc <- function(object,
                       ignore = object$name_unobserved,
                       trace = 0) {
   check_sevt_fit(object)
-  if (is.null(scope)){
+  if (is.null(scope)) {
     scope <- sevt_varnames(object)[-1]
   }
-  stopifnot(all(scope %in% sevt_varnames(object)[-1]))
+  check_scope(scope, object)
   now_score <- score(object)
   for (v in scope) {
     done <- FALSE
@@ -79,25 +79,16 @@ stages_hc <- function(object,
       object <- temp
       now_score <- temp_score
       if ((trace > 1) && !done) {
-        message(
-          v, " moved ", ia, " from stage ", s1a, " to stage ",
-          s2a
-        )
+        cli::cli_text("{v}: moved {ia} from stage {s1a} to stage {s2a}.")
       }
     } ## end while
     if (trace > 0) {
-      message(v, " HC done")
+      cli::cli_text("HC over {v} done after {iter} iterations.")
     }
   } ## end for over variables
   if (trace > 0) {
-    message(
-      "HC over ",
-      v,
-      " done after ",
-      iter,
-      " iterations."
-    )
+    cli::cli_text("HC done")
   }
-  object$call <- sys.call()
+  object$call <- match.call()
   return(object)
 }

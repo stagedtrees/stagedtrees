@@ -17,9 +17,6 @@
 #' @export
 get_stage <- function(object, path) {
   check_sevt(object)
-  if (is.null(object$stages)) {
-    stop("object is not a staged tree (no stages found)")
-  }
   if (is.null(dim(path))) {
     find_stage(object, path)
   } else {
@@ -48,9 +45,7 @@ get_stage <- function(object, path) {
 #' @export
 get_path <- function(object, var, stage) {
   check_sevt(object)
-  if (!var %in% names(object$tree)) {
-    stop(var, " is not a variable in the model")
-  }
+  check_var_in(var, object)
 
   # list all paths
   paths <- expand.grid(object$tree[(which(var == sevt_varnames(object)) - 1):1],

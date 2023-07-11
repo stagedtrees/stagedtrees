@@ -269,9 +269,10 @@ as_igraph <- function(x, ignore = x$name_unobserved, ...) {
 #' @export
 as_igraph.sevt <- function(x, ignore = x$name_unobserved, ...) {
   if (!requireNamespace("igraph", quietly = TRUE)) {
-    stop("Package \"igraph\" is needed.",
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "Package {.pkg igraph} is needed.",
+      "x" = "Unable to load {.pkg igraph}."
+    ))
   }
   edges <- get_edges(x, ignore)
   vert <- get_vertices(x, ignore)
@@ -283,9 +284,10 @@ as_igraph.sevt <- function(x, ignore = x$name_unobserved, ...) {
 #' @export
 as_igraph.ceg <- function(x, ignore = x$name_unobserved, ...) {
   if (!requireNamespace("igraph", quietly = TRUE)) {
-    stop("Package \"igraph\" is needed for this function.",
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "Package {.pkg igraph} is needed.",
+      "x" = "Unable to load {.pkg igraph}."
+    ))
   }
   edges <- get_edges(x, ignore)
   vert <- get_vertices(x, ignore)

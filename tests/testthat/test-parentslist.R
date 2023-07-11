@@ -37,7 +37,7 @@ test_that("as_parentslist for sevt", {
 test_that("as_parentslist for sevt (non DAG)", {
   sev <- sev.f
   sev$stages$Z <- c("s1", "s2", "s2", "s1")
-  expect_message(p.i <- as_parentslist(sev))
+  expect_warning(p.i <- as_parentslist(sev))
   expect_silent(p.i <- as_parentslist(sev, silent = TRUE))
   expect_null(p.i$X$parents)
   expect_equal(p.i$Y$parents, "X")
@@ -55,7 +55,7 @@ test_that("as_parentslist for broken sevt should throw error", {
 
 sev <- stages_fbhc(full(PhDArticles))
 test_that("as_parentslist for more complex sevt", {
-  expect_message(pl <- as_parentslist(sev))
+  expect_warning(pl <- as_parentslist(sev))
   expect_null(pl$Articles$parents)
   expect_equal(
     pl$Prestige$parents,

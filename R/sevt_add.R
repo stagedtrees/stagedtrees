@@ -24,14 +24,17 @@
 sevt_add <- function(object, var, data, join_unobserved = TRUE,
                      useNA = "ifany") {
   check_sevt(object)
-  path <- names(object$tree)
+  path <- sevt_varnames(object)
   if (is.data.frame(data)) {
     data <- table(data[, c(path, var)], useNA = useNA)
     ll <- lapply(attr(data, "dimnames"), function(x) !is.na(x))
     data <- do.call("[", c(list(data), ll))
   }
   if (!is.table(data)) {
-    stop("Invalid data argument. Data must be a data.frame or a table obejct.")
+    cli::cli_abort(c(
+      "{.arg data} must be a data.frame or a table object.",
+      "x" = "You've supplied {.arg data} which is {.type {data}}."
+    ))
   }
   tt <- apply(data, MARGIN = c(path, var), sum)
   ctable <- ftable(tt,

@@ -30,7 +30,12 @@
 cid <- function(object1, object2, FUN = mean) {
   check_sevt(object1)
   check_sevt(object2)
-  stopifnot(is.function(FUN))
+  if (!is.function(FUN)) {
+    cli::cli_abort(c(
+      "Argument {.arg FUN} must be a function.",
+      "x" = "You've supplied {.arg FUN} which is {.type {FUN}}."
+    ))
+  }
   vs1 <- names(object1$tree)
   vs2 <- names(object2$tree)
   wrong <- list()
