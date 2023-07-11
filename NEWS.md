@@ -4,10 +4,10 @@
 * Functions for random generation of staged trees added.
 * Added new function `depsubtree` which build the dependency subtree.
 * New functions to translate `sevt` and `ceg` objects to graphs (edge lists and igraph).
-* fixed handling of NAs.
+* Fix #98; fixed handling of NAs.
 * fix bug on `plot.sevt` and on graph conversion methods
   when ignoring stage "1" which is assigned to root
-* `sevt_fit` earns the `scope` argument, it is now possible to do partial re-fit
+* Fix #80; `sevt_fit` earns the `scope` argument, it is now possible to do partial re-fit
    of staged tree models. Moreover, with the `compute_logLik` argument, the user
    can decide if the log-likelihood should be computed when fitting the model.
 * `stages_hclust` can now search the best cut of the hierarchical cluster with
@@ -16,7 +16,7 @@
 * `stages_simplebhc` implements a new stage structure search by iterative joining of positions, thus searching in the space of simple staged trees.
 * `sevt_simplify` return the simplified staged tree, that is a stage tree where positions and stages are equivalent.
 * fix problem with positions computation in `ceg` when model has 2 less variables.
-* use `cli` package for errors and warnings.
+* Fix #113; use `cli` package for errors and warnings.
 * improve arguments checks in various functions.
 * improve specific checks for `sevt` objects.
 * fix minor coding style problems (some argument names have changed).
