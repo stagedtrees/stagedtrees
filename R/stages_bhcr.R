@@ -52,13 +52,13 @@ stages_bhcr <-
             abs((try_score - now_score) / now_score) ## compute relative score increase
           now_score <- try_score
           if (trace > 1) {
-            message(paste(v, "joined stages: ", stgs[1], "and", stgs[2]))
+            cli::cli_text("{v}: joined stages {stgs}")
           }
         }
       }
     }
     if (trace > 0) {
-      message(paste("backward HC random done after", iter, "iteration"))
+      cli::cli_text("backward HC random done after {iter} iteration")
     }
     object$call <- match.call()
     object$score <- list(value = now_score, f = score)

@@ -27,7 +27,7 @@
 #' @return The final staged event tree obtained.
 #'
 #' @examples
-#' start <- indep(PhDArticles[,1:5], join_unobserved = TRUE)
+#' start <- indep(PhDArticles[, 1:5], join_unobserved = TRUE)
 #' model <- stages_hc(start)
 #' @export
 stages_hc <- function(object,
@@ -39,7 +39,7 @@ stages_hc <- function(object,
                       ignore = object$name_unobserved,
                       trace = 0) {
   check_sevt_fit(object)
-  if (is.null(scope)){
+  if (is.null(scope)) {
     scope <- sevt_varnames(object)[-1]
   }
   check_scope(scope, object)
@@ -79,24 +79,15 @@ stages_hc <- function(object,
       object <- temp
       now_score <- temp_score
       if ((trace > 1) && !done) {
-        message(
-          v, " moved ", ia, " from stage ", s1a, " to stage ",
-          s2a
-        )
+        cli::cli_text("{v}: moved {ia} from stage {s1a} to stage {s2a}.")
       }
     } ## end while
     if (trace > 0) {
-      message(v, " HC done")
+      cli::cli_text("HC over {v} done after {iter} iterations.")
     }
   } ## end for over variables
   if (trace > 0) {
-    message(
-      "HC over ",
-      v,
-      " done after ",
-      iter,
-      " iterations."
-    )
+    cli::cli_text("HC done")
   }
   object$call <- match.call()
   return(object)
