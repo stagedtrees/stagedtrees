@@ -72,7 +72,7 @@ check_sevt <- function(object, arg = rlang::caller_arg(object),
 #' @rdname check_sevt
 #' @param tree tree to be checked, a named list
 #' @keywords internal
-check_tree <- function(tree, arg = rlang::caller_arg(object),
+check_tree <- function(tree, arg = rlang::caller_arg(tree),
                        call = rlang::caller_env()) {
   if (is.null(names(tree))) {
     cli::cli_abort(c(

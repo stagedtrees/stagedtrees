@@ -1,6 +1,7 @@
 #' Print a staged event tree
 #'
 #' @param x an object of class \code{sevt}.
+#' @param max integer, limit on the numebr of variables to print.
 #' @param ... additional parameters (compatibility).
 #'
 #' @return An invisible copy of \code{x}.
