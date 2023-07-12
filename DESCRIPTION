@@ -35,8 +35,8 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/gherardovarando/stagedtrees
-BugReports: https://github.com/gherardovarando/stagedtrees/issues
+URL: https://github.com/stagedtrees/stagedtrees
+BugReports: https://github.com/stagedtrees/stagedtrees/issues
 Imports:
     stats,
     graphics,
