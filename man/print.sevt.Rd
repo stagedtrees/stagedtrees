@@ -4,12 +4,14 @@
 \alias{print.sevt}
 \title{Print a staged event tree}
 \usage{
-\method{print}{sevt}(x, ...)
+\method{print}{sevt}(x, ..., max = 5)
 }
 \arguments{
 \item{x}{an object of class \code{sevt}.}
 
 \item{...}{additional parameters (compatibility).}
+
+\item{max}{integer, limit on the numebr of variables to print.}
 }
 \value{
 An invisible copy of \code{x}.

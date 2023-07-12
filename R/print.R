@@ -1,6 +1,7 @@
 #' Print a staged event tree
 #'
 #' @param x an object of class \code{sevt}.
+#' @param max integer, limit on the numebr of variables to print.
 #' @param ... additional parameters (compatibility).
 #'
 #' @return An invisible copy of \code{x}.
@@ -13,16 +14,15 @@
 #' DD <- generate_xor_dataset(5, 100)
 #' model <- full(DD, lambda = 1)
 #' print(model)
-print.sevt <- function(x, ...) {
+print.sevt <- function(x, ..., max = 5) {
   check_sevt(x)
-  cli::cli_text(
+  cat(
     "Staged event tree",
-    ifelse(is_fitted_sevt(x), " (fitted, lambda = {.value {x$lambda}})", "")
+    ifelse(is_fitted_sevt(x), "(fitted)", ""), "\n"
     )
-  ls <- vapply(x$tree, length, 1)
-  cli::cat_line(paste(paste0(sevt_varnames(x), "[", ls, "] "), collapse = "-> "))
+  cat(tree_string(x$tree, max = max), "\n")
   if (!is.null(x$ll)) {
-    cli::cat_print(x$ll)
+    print(x$ll)
   }
   invisible(x)
 }

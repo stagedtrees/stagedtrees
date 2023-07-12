@@ -171,6 +171,8 @@ sevt.list <- function(x, full = FALSE, order = names(x)) {
   } else {
     evt$stages <- list()
   }
+  # assign class to stages structure
+  # class(evt$stages) <- "sevt.stgs"
   # assign class name
   class(evt) <- "sevt"
   # return staged tree object

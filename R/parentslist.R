@@ -25,17 +25,17 @@
 #' \code{\link{as.character.parentslist}} for the parenthesis-encoding of the
 #' DAG structure and the asymmetric independences.
 #' @export
-as_parentslist <- function(x, ...){
+as_parentslist <- function(x, ...) {
   UseMethod("as_parentslist", x)
 }
 
 #' @rdname as_parentslist
 #' @param order order of the variables, usually a topological order.
 #' @export
-as_parentslist.bn <- function(x, order = NULL, ...){
+as_parentslist.bn <- function(x, order = NULL, ...) {
   # if no order is provided from the user
   # then a topological order is used
-  if (is.null(order)){
+  if (is.null(order)) {
     order <- bnlearn::node.ordering(x)
   }
   plist <- lapply(x$nodes[order], function(n) list(parents = n$parents))
@@ -45,10 +45,10 @@ as_parentslist.bn <- function(x, order = NULL, ...){
 
 #' @rdname as_parentslist
 #' @export
-as_parentslist.bn.fit <- function(x, order = NULL,  ...){
+as_parentslist.bn.fit <- function(x, order = NULL, ...) {
   # if no order is provided from the user
   # then a topological order is used
-  if (is.null(order)){
+  if (is.null(order)) {
     order <- bnlearn::node.ordering(x)
   }
   plist <- lapply(x[order], function(n) list(parents = n$parents, values = dimnames(n$prob)[[1]]))
@@ -66,41 +66,46 @@ as_parentslist.bn.fit <- function(x, order = NULL,  ...){
 #' pl <- as_parentslist(model)
 #' pl$Age
 #' @export
-as_parentslist.sevt <- function(x, silent = FALSE,...){
+as_parentslist.sevt <- function(x, silent = FALSE, ...) {
   check_sevt(x)
   wrn <- FALSE
   Ms <- sapply(x$tree, length)
   Vs <- names(x$tree)
   prnt_list <- list()
   prnt_list[[Vs[1]]] <- list(parents = NULL, values = x$tree[[Vs[1]]])
-  for (i in seq_along(x$stages)) {
+  for (i in seq_along(x$tree[-1])) {
     prn <- character(0)
     cntx <- character(0)
     prtl <- character(0)
     lcl <- character(0)
-    stgs <- x$stages[[i]]
-    for (j in rev(seq(i))){
+    var <- Vs[i + 1]
+    stgs <- x$stages[[var]]
+    for (j in rev(seq(i))) {
       splitd <- matrix(nrow = Ms[j], stgs)
-      cnts <- apply(splitd, MARGIN = 2,
-                    FUN = function(xx) length(unique(xx)))
-      if (all(cnts == 1)){
+      cnts <- apply(splitd,
+        MARGIN = 2,
+        FUN = function(xx) length(unique(xx))
+      )
+      if (all(cnts == 1)) {
         ### it is not a parent
-        stgs <- splitd[1,] ## just take the first since they are all the same
-      }else{ ### it is a parent
-        if (all(cnts == Ms[j])){
+        stgs <- splitd[1, ] ## just take the first since they are all the same
+      } else { ### it is a parent
+        if (all(cnts == Ms[j])) {
           ### check for local partial independence
-          sR <- sum(apply(splitd, MARGIN = 1,
-                          FUN = function(xx) length(unique(xx))))
-          if (sR != length(unique(c(splitd)))){
+          sR <- sum(apply(splitd,
+            MARGIN = 1,
+            FUN = function(xx) length(unique(xx))
+          ))
+          if (sR != length(unique(c(splitd)))) {
             wrn <- TRUE
             lcl <- c(lcl, Vs[j])
           }
-        }else{
-          if (any(cnts == 1)){
+        } else {
+          if (any(cnts == 1)) {
             ## we at least one pure context indep.
             cntx <- c(cntx, Vs[j])
           }
-          if (any(cnts < Ms[j] & cnts > 1)){
+          if (any(cnts < Ms[j] & cnts > 1)) {
             prtl <- c(prtl, Vs[j])
           }
           wrn <- TRUE
@@ -110,18 +115,21 @@ as_parentslist.sevt <- function(x, silent = FALSE,...){
         prn <- c(prn, Vs[j])
       }
     }
-    prnt_list[[Vs[i + 1]]] <- list(parents = prn, context = cntx,
-                                   partial = prtl, local = lcl,
-                                   stages = stgs,
-                                   values = x$tree[[Vs[i + 1]]])
+    prnt_list[[Vs[i + 1]]] <- list(
+      parents = prn, context = cntx,
+      partial = prtl, local = lcl,
+      stages = stgs,
+      values = x$tree[[Vs[i + 1]]]
+    )
   }
-  if (wrn && !silent){
+  if (wrn && !silent) {
     cli::cli_warn(c("Context specific and/or local
                   partial independences detected.",
-                    "!" = "The input staged tree is not equivalent to a BN,
+      "!" = "The input staged tree is not equivalent to a BN,
             a minimal super-model is returned.",
-                    "i" = "You can silence this worning by setting
-                           {.code silent = TRUE} in {.fun stagedtrees::as_parentslist}"))
+      "i" = "You can silence this worning by setting
+            {.code silent = TRUE} in {.fun stagedtrees::as_parentslist}"
+    ))
   }
   class(prnt_list) <- "parentslist"
   prnt_list
@@ -155,24 +163,30 @@ as_parentslist.sevt <- function(x, silent = FALSE,...){
 #' as.character(pl)
 #' as.character(pl, only_parents = TRUE)
 #' @export
-as.character.parentslist <- function(x, only_parents = FALSE, ...){
-  if (only_parents){
+as.character.parentslist <- function(x, only_parents = FALSE, ...) {
+  if (only_parents) {
     paste(sapply(seq_along(x), function(i) {
       paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""),
-            paste0(x[[i]]$parents,
-                   collapse = ":"), "]", sep = "")
+        paste0(x[[i]]$parents,
+          collapse = ":"
+        ), "]",
+        sep = ""
+      )
     }), collapse = "")
-  }else{
+  } else {
     paste(sapply(seq_along(x), function(i) {
       paste("[", names(x)[i], ifelse(length(x[[i]]$parents) > 0, "|", ""),
-            paste0(ifelse(x[[i]]$parents %in%   x[[i]]$partial, "(", ""),
-                   ifelse(x[[i]]$parents %in%   x[[i]]$context, "{", ""),
-                   ifelse(x[[i]]$parents %in%   x[[i]]$local, "<", ""),
-                   x[[i]]$parents,
-                   ifelse(x[[i]]$parents %in%   x[[i]]$local, ">", ""),
-                   ifelse(x[[i]]$parents %in%   x[[i]]$context, "}", ""),
-                   ifelse(x[[i]]$parents %in%   x[[i]]$partial, ")", ""),
-                   collapse = ":"), "]", sep = "")
+        paste0(ifelse(x[[i]]$parents %in% x[[i]]$partial, "(", ""),
+          ifelse(x[[i]]$parents %in% x[[i]]$context, "{", ""),
+          ifelse(x[[i]]$parents %in% x[[i]]$local, "<", ""),
+          x[[i]]$parents,
+          ifelse(x[[i]]$parents %in% x[[i]]$local, ">", ""),
+          ifelse(x[[i]]$parents %in% x[[i]]$context, "}", ""),
+          ifelse(x[[i]]$parents %in% x[[i]]$partial, ")", ""),
+          collapse = ":"
+        ), "]",
+        sep = ""
+      )
     }), collapse = "")
   }
 }
@@ -183,7 +197,7 @@ as.character.parentslist <- function(x, only_parents = FALSE, ...){
 #' @param x an object of class \code{parentslist}.
 #' @param ... additional arguments for compatibility.
 #' @export
-print.parentslist <- function(x, ...){
+print.parentslist <- function(x, ...) {
   cat(" ", as.character.parentslist(x, ...))
   invisible(x)
 }

@@ -54,7 +54,7 @@
 sevt_simplify <- function(object, fit = TRUE) {
   check_sevt(object)
   tmp_ceg <- ceg(object)
-  oldstg <- stages(object)
+  oldstg <- object$stages
   object$stages <- sapply(names(oldstg), function(vv) {
     pp <- tmp_ceg$positions[[vv]]
     ix <- oldstg[[vv]] %in% object$name_unobserved

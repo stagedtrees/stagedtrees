@@ -1,16 +1,3 @@
-#' Set stage to path
-#'
-#' @param object an object of class \code{sevt}.
-#' @param path Vector of the path.
-#' @param stage stage to be assigned.
-#' @keywords internal
-set_stage <- function(object, path, stage) {
-  stage <- as.character(stage)
-  warning("NOT YET IMPLEMENTED")
-  ## TODO
-  return(object)
-}
-
 #' Join stages
 #'
 #' Join two stages in a staged event tree object, updating
@@ -37,7 +24,7 @@ join_stages <- function(object, var, s1, s2) {
   check_var_in(var, object)
   s1 <- as.character(s1)
   s2 <- as.character(s2)
-  st <- stages(object, var)
+  st <- object$stages[[var]]
   not_in <- c(s1, s2)[!(c(s1, s2) %in% st)]
   if (length(not_in) > 0) {
     cli::cli_abort(c(
@@ -157,7 +144,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 rename_stage <- function(object, var, stage, new) {
   check_sevt(object)
   check_var_in(var, object)
-  if (!stage %in% stages(object, var)) {
+  if (!stage %in% object$stages[[var]]) {
     cli::cli_abort(c(
       "{.arg stage} must be a valid stage for variable {.arg var} in
       {.arg object}.",
@@ -173,26 +160,4 @@ rename_stage <- function(object, var, stage, new) {
     object$prob[[var]][[stage]] <- NULL
   }
   return(object)
-}
-
-#' Stages of a variable
-#'
-#' Obtain the stages of a given variable in a staged event tree object.
-#' @param object an object of class \code{sevt}.
-#' @param var name of one variable in \code{object}.
-#' @return If \code{var} is specified, it returns a character vector with
-#'         stage names for the given variable
-#'         (that is \code{object$stages[[var]]}.
-#'         Otherwise, If \code{var} is not specified, \code{stages}
-#'         returns a list of character vectors containing the stages associated
-#'         to each variable in the model (that is \code{object$stages}).
-#' @export
-stages <- function(object, var = NULL) {
-  check_sevt(object)
-  if (is.null(var)) {
-    object$stages
-  } else {
-    check_var_in(var, object)
-    object$stages[[var]]
-  }
 }

@@ -56,7 +56,7 @@ a message is printed (if \code{silent = FALSE}) and the minimal super-model is r
 \examples{
 model <- stages_hclust(full(Titanic), k = 2)
 pl <- as_parentslist(model)
-pl$Age 
+pl$Age
 }
 \seealso{
 \code{\link{print.parentslist}} and
