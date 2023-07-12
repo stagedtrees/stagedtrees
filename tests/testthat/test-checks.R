@@ -170,52 +170,117 @@ test_that("check_same_tree fails if different order", {
   expect_error(check_same_tree(mod1, mod2))
 })
 
-test_that("check_var_in passes for all variables in object",{
+test_that("check_var_in passes for all variables in object", {
   mod <- random_sevt(list(
     A = c("a", "aa"),
     B = c("b", "bb", "bbb"),
     C = c("c", "cc", "ccc"),
     D = c("d", "dd")
   ))
-  for (v in sevt_varnames(mod)){
+  for (v in sevt_varnames(mod)) {
     expect_silent(check_var_in(v, mod))
   }
 })
 
-test_that("check_var_in fails for variables not in object",{
+test_that("check_var_in fails for variables not in object", {
   mod <- random_sevt(list(
     A = c("a", "aa"),
     B = c("b", "bb", "bbb"),
     C = c("c", "cc", "ccc"),
     D = c("d", "dd")
   ))
-  for (v in c("AA", "BB", "CC", "DD")){
+  for (v in c("AA", "BB", "CC", "DD")) {
     expect_error(check_var_in(v, mod))
   }
 })
 
-test_that("check_scope passes for all variables in object",{
+test_that("check_scope passes for all variables in object", {
   mod <- random_sevt(list(
     A = c("a", "aa"),
     B = c("b", "bb", "bbb"),
     C = c("c", "cc", "ccc"),
     D = c("d", "dd")
   ))
-  for (v in sevt_varnames(mod)){
+  for (v in sevt_varnames(mod)) {
     expect_silent(check_scope(v, mod))
   }
 })
 
-test_that("check_scope fails for variables not in object",{
+test_that("check_scope fails for variables not in object", {
   mod <- random_sevt(list(
     A = c("a", "aa"),
     B = c("b", "bb", "bbb"),
     C = c("c", "cc", "ccc"),
     D = c("d", "dd")
   ))
-  for (v in c("AA", "BB", "CC", "DD")){
+  for (v in c("AA", "BB", "CC", "DD")) {
     scope <- c(v, sevt_varnames(mod))
     expect_error(check_scope(v, mod))
     expect_error(check_scope(scope, mod))
+  }
+})
+
+test_that("check_scope works for tree as named list", {
+  mod <- random_sevt(list(
+    A = c("a", "aa"),
+    B = c("b", "bb", "bbb"),
+    C = c("c", "cc", "ccc"),
+    D = c("d", "dd")
+  ))
+  scope <- sample(sevt_varnames(mod), size = 2)
+  expect_silent(check_scope(scope, mod$tree))
+  expect_silent(check_scope(scope, mod$tree))
+})
+
+test_that("check_path works for good paths", {
+  mod <- random_sevt(list(
+    A = c("a", "aa"),
+    B = c("b", "bb", "bbb"),
+    C = c("c", "cc", "ccc"),
+    D = c("d", "dd")
+  ))
+  paths <- expand.grid(mod$tree[c(1, 2, 3)])
+  for (i in nrow(paths)) {
+    expect_silent(check_path(paths[i, ], mod$tree))
+  }
+})
+
+test_that("check_path fails if path too long", {
+  mod <- random_sevt(list(
+    A = c("a", "aa"),
+    B = c("b", "bb", "bbb"),
+    C = c("c", "cc", "ccc"),
+    D = c("d", "dd")
+  ))
+  expect_error(check_path(
+    c(A = "aa", A = "a", B = "bb", C = "c", D = "dd"),
+    mod$tree
+  ))
+})
+
+test_that("check_context fails if context too long", {
+  mod <- random_sevt(list(
+    A = c("a", "aa"),
+    B = c("b", "bb", "bbb"),
+    C = c("c", "cc", "ccc"),
+    D = c("d", "dd")
+  ))
+  expect_error(check_context(
+    c(A = "aa", A = "a", B = "bb", C = "c", D = "dd"),
+    "D", mod$tree
+  ))
+})
+
+
+test_that("check_context works for good xontext", {
+  mod <- random_sevt(list(
+    A = c("a", "aa"),
+    B = c("b", "bb", "bbb"),
+    C = c("c", "cc", "ccc"),
+    D = c("d", "dd")
+  ))
+  paths <- expand.grid(mod$tree[c(1, 2, 3)])
+  for (i in nrow(paths)) {
+    expect_silent(check_context(paths[i, ], "D", mod$tree))
   }
 })
