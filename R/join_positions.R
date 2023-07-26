@@ -51,7 +51,7 @@ join_positions <- function(model, var, s1, s2) {
     return(model)
   }
   for (j in (i + 1):length(model$tree)) {
-    w <- names(model$tree)[j]
+    w <- order[j]
     lv <- length(model$tree[[j - 1]])
     model$stages[[w]] <-
       vapply(model$stages[[order[j - 1]]], function(s) {

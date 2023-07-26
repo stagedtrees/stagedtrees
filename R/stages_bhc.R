@@ -56,7 +56,7 @@ stages_bhc <-
             for (j in 1:(i - 1)) {
               s2 <- stages[j]
               try <-
-                join_stages(object, v, s1, s2) ## join the 2 stages
+                join_stages_unsafe(object, v, s1, s2) ## join the 2 stages
               try_score <- score(try)
               if (try_score >= temp_score) {
                 temp <- try
