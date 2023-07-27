@@ -83,6 +83,7 @@ a specific context on the preceding variables.
 }
 
 \examples{
+# start with full model
 mod <- full(Titanic)
 
 # impose the context independence Survived indep Sex, Age | Class = 1st
@@ -95,9 +96,15 @@ stages(mod)["Survived", Class = "3rd"] <- stages(mod)["Survived", Class = "2nd"]
 stages(mod)["Age", Sex = "Female"] <- "S-female"
 stages(mod)["Age", Sex = "Male"] <- "S-male"
 
-# extract the stages of Survived
+# stages of Survived
 stages(mod)[["Survived"]]
 
+# stages of Survived and Age
 stages(mod)[c("Survived", "Age")]
+
+# stages of Survived in the context Class 2nd or 3rd
+stages(mod)["Survived", Class = c("2nd", "3rd")]
+
+# check independencies
 as_parentslist(mod)
 }

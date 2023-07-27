@@ -42,6 +42,7 @@
 #' a specific context on the preceding variables.
 #'
 #' @examples
+#' # start with full model
 #' mod <- full(Titanic)
 #'
 #' # impose the context independence Survived indep Sex, Age | Class = 1st
@@ -54,10 +55,16 @@
 #' stages(mod)["Age", Sex = "Female"] <- "S-female"
 #' stages(mod)["Age", Sex = "Male"] <- "S-male"
 #'
-#' # extract the stages of Survived
+#' # stages of Survived
 #' stages(mod)[["Survived"]]
 #'
+#' # stages of Survived and Age
 #' stages(mod)[c("Survived", "Age")]
+#'
+#' # stages of Survived in the context Class 2nd or 3rd
+#' stages(mod)["Survived", Class = c("2nd", "3rd")]
+#'
+#' # check independencies
 #' as_parentslist(mod)
 #' @export
 stages <- function(object) {
@@ -109,7 +116,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
   object$stages <- value
   check_stages(object)
   if (is_fitted_sevt(object)) {
-    if (isFALSE(tofit)){
+    if (isFALSE(tofit)) {
       erase_fit(object)
     } else {
       sevt_fit(object, scope = tofit)
