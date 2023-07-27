@@ -251,7 +251,7 @@ check_context <- function(x, var, tree) {
       preceedes some of the variables in the context."
     ))
   }
-  chk <- vapply(names(x), function(i) x[[i]] %in% tree[[i]], FUN.VALUE = TRUE)
+  chk <- vapply(names(x), function(i) all(x[[i]] %in% tree[[i]]), FUN.VALUE = TRUE)
   if (!all(chk)) {
     cli::cli_abort(c(
       "Invalid context, wrong levels."
