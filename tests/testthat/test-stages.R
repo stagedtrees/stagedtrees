@@ -92,7 +92,7 @@ test_that("stages()[[path]] fail if wrong path", {
   expect_error(stages(mod)[[c(L = "ll", M = "mm")]])
 })
 
-test_that("stages()[var, context] <- value", {
+test_that("stages()[var, context] <- value (no fit)", {
   mod <- sevt(list(
     "A" = c("a", "aa"),
     "B" = c("b", "bb", "bbb"),
@@ -103,6 +103,30 @@ test_that("stages()[var, context] <- value", {
   expect_silent(stages(mod)["C", A = "a", B = "bb"] <- "mystage3")
 })
 
+test_that("stages()[var, context] <- value (fitted)", {
+  mod <- random_sevt(list(
+    "A" = c("a", "aa"),
+    "B" = c("b", "bb", "bbb"),
+    "C" = c("c", "cc")
+  ))
+  mod <- sevt_fit(mod, sample_from(mod, 1000), lambda = 0)
+  expect_silent(stages(mod)["B", A = "a"] <- "mystage1")
+  expect_silent(stages(mod)["C", A = "a"] <- "mystage2")
+  expect_silent(stages(mod)["C", A = "a", B = "bb"] <- "mystage3")
+})
+
+test_that("stages()[var, context, fit = FALSE] <- value", {
+  mod <- random_sevt(list(
+    "A" = c("a", "aa"),
+    "B" = c("b", "bb", "bbb"),
+    "C" = c("c", "cc")
+  ))
+  mod <- sevt_fit(mod, sample_from(mod, 1000), lambda = 0)
+  expect_silent(stages(mod)["B", A = "a", fit = FALSE] <- "mystage1")
+  expect_null(mod$prob)
+  expect_silent(stages(mod)["C", A = "a", fit = FALSE] <- "mystage2")
+  expect_silent(stages(mod)["C", A = "a", B = "bb", fit = FALSE] <- "mystage3")
+})
 
 test_that("stages()[var, context] <- value fail if wrong context", {
   mod <- sevt(list(
@@ -113,6 +137,17 @@ test_that("stages()[var, context] <- value fail if wrong context", {
   expect_error(stages(mod)["B", B = "bb"] <- "mystage1")
   expect_error(stages(mod)["C", B = "a"] <- "mystage2")
   expect_error(stages(mod)["C", A = "a", B = "bb", C = "c"] <- "mystage3")
+})
+
+
+test_that("stages()[[path]] <- value", {
+  mod <- sevt(list(
+    "A" = c("a", "aa"),
+    "B" = c("b", "bb", "bbb"),
+    "C" = c("c", "cc")
+  ), full = TRUE)
+  expect_silent(stages(mod)[[A = "aa"]] <- "mystage1")
+  expect_equal(stages(mod)[[A = "aa"]], "mystage1")
 })
 
 

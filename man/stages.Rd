@@ -21,24 +21,27 @@ stages(object) <- value
 
 \method{[}{sevt.stgs}(x, i, ...)
 
-\method{[}{sevt.stgs}(x, i, ...) <- value
+\method{[}{sevt.stgs}(x, i, ..., fit = TRUE) <- value
 
 \method{[[}{sevt.stgs}(x, ...)
 
-\method{[[}{sevt.stgs}(x, ...) <- value
+\method{[[}{sevt.stgs}(x, ..., fit = TRUE) <- value
 }
 \arguments{
 \item{object}{an object of class \code{sevt}.}
 
-\item{x}{an object of class \code{sevt.stgs}.}
+\item{x}{an object of class \code{sevt.stgs}
+(obtained by \code{stages(object)}).}
 
 \item{...}{a path or context in the event tree.}
 
 \item{max}{integer, limit on the number of variables to print.}
 
-\item{value}{the stages replacement}
+\item{value}{the stages replacement value.}
 
 \item{i}{index of variables in the tree.}
+
+\item{fit}{logical, if TRUE (default) the model will be re-fitted.}
 }
 \value{
 For \code{stages()}: returns an object of class

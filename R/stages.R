@@ -3,6 +3,12 @@
 #' Functions to get or set the stages of an object of class
 #' \code{sevt}.
 #' @param object an object of class \code{sevt}.
+#' @param x an object of class \code{sevt.stgs}
+#'          (obtained by \code{stages(object)}).
+#' @param i index of variables in the tree.
+#' @param ... a path or context in the event tree.
+#' @param value the stages replacement value.
+#' @param fit logical, if TRUE (default) the model will be re-fitted.
 #' @return For \code{stages()}: returns an object of class
 #'         \code{sevt.stgs} which encode the stages of \code{object}.
 #'         Objects of class \code{sevt.stgs} have dedicated
@@ -93,7 +99,6 @@ print.sevt.stgs <- function(x, ..., max = 5) {
 
 
 #' @rdname stages
-#' @param value the stages replacement
 #' @export
 "stages<-" <- function(object, value) {
   check_sevt(object)
@@ -101,28 +106,26 @@ print.sevt.stgs <- function(x, ..., max = 5) {
   tofit <- attr(value, "_tofit")
   attr(value, "_tofit") <- NULL
   attr(value, "tree") <- NULL
-  # here do something fancier
   object$stages <- value
   check_stages(object)
   if (is_fitted_sevt(object)) {
-    # here do something fancier
-    sevt_fit(object, scope = tofit)
+    if (isFALSE(tofit)){
+      erase_fit(object)
+    } else {
+      sevt_fit(object, scope = tofit)
+    }
   } else {
     erase_fit(object)
   }
 }
 
 #' @rdname stages
-#' @param x an object of class \code{sevt.stgs}.
-#' @param i index of variables in the tree.
-#' @param ... a path or context in the event tree.
 #' @export
 "[.sevt.stgs" <- function(x, i, ...) {
   check_scope(i, x)
   narg <- ...length()
   if (narg == 0) {
     # we assume here i are  variables
-    # TODO
     return(unclass(x)[i])
   } else {
     if (length(i) > 1) {
@@ -131,7 +134,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
         "x" = "You've supplied {length(i)} variables as {.arg i}"
       ))
     }
-    path <- unlist(list(...))
+    path <- list(...)
     tree <- attr(x, "tree")
     check_context(path, i, tree)
     ixv <- which(i == names(tree))
@@ -148,7 +151,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
 
 #' @rdname stages
 #' @export
-"[<-.sevt.stgs" <- function(x, i, ..., value) {
+"[<-.sevt.stgs" <- function(x, i, ..., fit = TRUE, value) {
   check_scope(i, x)
   if (!is.character(value)) {
     cli::cli_abort(c(
@@ -165,7 +168,11 @@ print.sevt.stgs <- function(x, ..., max = 5) {
       s[] <- value
       return(s)
     })
-    attr(x, "_tofit") <- i
+    if (fit) {
+      attr(x, "_tofit") <- i
+    } else {
+      attr(x, "_tofit") <- FALSE
+    }
   } else {
     if (length(i) > 1) {
       cli::cli_abort(c(
@@ -173,7 +180,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
         "x" = "You've supplied {length(i)} variables as {.arg i}"
       ))
     }
-    path <- unlist(list(...))
+    path <- list(...)
     tree <- attr(x, "tree")
     check_context(path, i, tree)
     ixv <- which(i == names(tree))
@@ -185,7 +192,11 @@ print.sevt.stgs <- function(x, ..., max = 5) {
       tree_idx(cpath, tree)
     }, FUN.VALUE = 1)
     x[[i]][ixs] <- value
-    attr(x, "_tofit") <- i
+    if (fit) {
+      attr(x, "_tofit") <- i
+    } else {
+      attr(x, "_tofit") <- FALSE
+    }
   }
   class(x) <- "sevt.stgs"
   return(x)
@@ -218,7 +229,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
 
 #' @rdname stages
 #' @export
-"[[<-.sevt.stgs" <- function(x, ..., value) {
+"[[<-.sevt.stgs" <- function(x, ..., fit = TRUE, value) {
   arg <- list(...)
   narg <- ...length()
   tree <- attr(x, "tree")
@@ -229,11 +240,15 @@ print.sevt.stgs <- function(x, ..., max = 5) {
     ))
   }
   if (narg == 1 && is.null(names(arg)) &&
-      length(arg[[1]]) == 1  && is.null(names(arg[[1]]))) {
+    length(arg[[1]]) == 1 && is.null(names(arg[[1]]))) {
     check_scope(arg[[1]], x)
     x <- unclass(x)
     x[[arg[[1]]]][] <- value
-    attr(x, "_tofit") <- arg[[1]]
+    if (fit) {
+      attr(x, "_tofit") <- arg[[1]]
+    } else {
+      attr(x, "_tofit") <- FALSE
+    }
   } else {
     # assume ... is a path
     path <- unlist(arg)
@@ -247,8 +262,12 @@ print.sevt.stgs <- function(x, ..., max = 5) {
     # index the tree with path
     ix <- tree_idx(path, tree)
     x <- unclass(x)
-    x[[n + 1]][ix] <- value
-    attr(x, "_tofit") <- names(tree)[n + 1]
+    x[[names(tree)[n + 1]]][ix] <- value
+    if (fit) {
+      attr(x, "_tofit") <- names(tree)[n + 1]
+    } else {
+      attr(x, "_tofit") <- FALSE
+    }
   }
   class(x) <- "sevt.stgs"
   return(x)
