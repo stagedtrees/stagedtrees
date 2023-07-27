@@ -25,6 +25,8 @@
 * improve test coverage.
 * new return value of `stages` function and new indexing of stages via new dedicated class `sevt.stgs`.
 * use faster and unsafe functions internally, speedup in various functions (up to 10x).
+* implemented `stages_csbhc`, a new stages learning algorithm which iteratively add context specific independencies. Additionally functions
+`ci_matrices` and `join_all` have been added.
 
 # 2.2.1
 
