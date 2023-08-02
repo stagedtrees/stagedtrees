@@ -34,6 +34,7 @@ stages_csbhc <- function(object,
     scope <- sevt_varnames(object)[-1]
   }
   check_scope(scope, object)
+  vars <- names(object$tree)
   for (v in scope) {
     r <- 1
     iter <- 0
@@ -43,17 +44,21 @@ stages_csbhc <- function(object,
       temp <- object # clone the object
       temp_score <- now_score
       done <- TRUE
-      stages <- unique(object$stages[[v]])
+      sss <- object$stages[[v]]
+      stages <- unique(sss)
       stages <- stages[!(stages %in% ignore)]
       if (length(stages) > 1) {
-        mats <- ci_matrices(object, v)
+        #mats <- ci_matrices(object, v)
         ## try all matrices
-        for (i in 1:length(mats)) {
+        ix <- which(vars == v)
+        for (i in rev(seq_len(ix - 1))) {
+          mat <- matrix(sss,
+                        nrow = length(object$tree[[vars[i]]]))
           ## for each column
-          if (nrow(mats[[i]]) > 1) {
-            for (j in seq(ncol(mats[[i]]))) {
+          if (nrow(mat) > 1) {
+            for (j in seq_len(ncol(mat))) {
               ## join together stages in column j of mat i
-              try <- join_all(object, v, c(mats[[i]][, j]), ignore = ignore)
+              try <- join_all(object, v, c(mat[, j]), ignore = ignore)
               try_score <- score(try)
               if (try_score > temp_score) {
                 temp <- try
@@ -62,6 +67,7 @@ stages_csbhc <- function(object,
               }
             }
           }
+          sss <- c(t(mat))
         }
       } ## end if there are more than 1 stage
       object <- temp
