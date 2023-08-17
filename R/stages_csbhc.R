@@ -48,22 +48,29 @@ stages_csbhc <- function(object,
       stages <- unique(sss)
       stages <- stages[!(stages %in% ignore)]
       if (length(stages) > 1) {
-        #mats <- ci_matrices(object, v)
+        ## mats <- ci_matrices(object, v)
         ## try all matrices
         ix <- which(vars == v)
         for (i in rev(seq_len(ix - 1))) {
           mat <- matrix(sss,
                         nrow = length(object$tree[[vars[i]]]))
+          if (sum(duplicated(mat)) == (nrow(mat) - 1)) {
+            mat <- mat[1, , drop =  FALSE]
+          }
           ## for each column
           if (nrow(mat) > 1) {
-            for (j in seq_len(ncol(mat))) {
+            ix <- !duplicated(t(mat))
+            mat2 <- mat[, ix, drop = FALSE]
+            for (j in seq_len(ncol(mat2))) {
               ## join together stages in column j of mat i
-              try <- join_all(object, v, c(mat[, j]), ignore = ignore)
-              try_score <- score(try)
-              if (try_score > temp_score) {
-                temp <- try
-                temp_score <- try_score
-                done <- FALSE
+              if (length(unique(c(mat2[,j]))) > 1){
+                try <- join_all(object, v, c(mat2[, j]), ignore = ignore)
+                try_score <- score(try)
+                if (try_score > temp_score) {
+                  temp <- try
+                  temp_score <- try_score
+                  done <- FALSE
+                }
               }
             }
           }
