@@ -32,10 +32,6 @@ ci_matrices <- function(object, var) {
     return(out)
   } else {
     for (j in (i - 2):1) {
-      cnts <- apply(out[[vars[j + 1]]],
-                    MARGIN = 2,
-                    FUN = function(xx) length(unique(xx))
-      )
       if (sum(duplicated(out[[vars[j + 1]]])) == (nrow(out[[vars[j + 1]]]) - 1) ) {
         stgs <- out[[vars[j + 1]]][1,]
       } else {
