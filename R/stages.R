@@ -131,7 +131,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
         "x" = "You've supplied {length(i)} variables as {.arg i}"
       ))
     }
-    path <- unlist(list(...))
+    path <- list(...)
     tree <- attr(x, "tree")
     check_context(path, i, tree)
     ixv <- which(i == names(tree))
@@ -173,7 +173,7 @@ print.sevt.stgs <- function(x, ..., max = 5) {
         "x" = "You've supplied {length(i)} variables as {.arg i}"
       ))
     }
-    path <- unlist(list(...))
+    path <- list(...)
     tree <- attr(x, "tree")
     check_context(path, i, tree)
     ixv <- which(i == names(tree))
