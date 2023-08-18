@@ -32,8 +32,13 @@ ci_matrices <- function(object, var) {
     return(out)
   } else {
     for (j in (i - 2):1) {
+      if (sum(duplicated(out[[vars[j + 1]]])) == (nrow(out[[vars[j + 1]]]) - 1) ) {
+        stgs <- out[[vars[j + 1]]][1,]
+      } else {
+        stgs <- c(t(out[[vars[j + 1]]]))
+      }
       out[[vars[j]]] <-
-        matrix(c(t(out[[vars[j + 1]]])),
+        matrix(c(t(stgs)),
                nrow = length(object$tree[[vars[j]]]),
                dimnames = c(object$tree[vars[j]], context  = NULL))
     }
