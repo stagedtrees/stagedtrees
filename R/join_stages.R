@@ -85,3 +85,18 @@ join_stages_unsafe <- function(object, var, s1, s2) {
   }
   return(object)
 }
+
+#' @rdname join_stages
+#' @param stages a vector of stage names for variable \code{var}.
+#' @param ignore vector of stages which will be ignored and left untouched.
+#' @keywords internal
+join_all <- function(object, var, stages, ignore = NULL) {
+  stages <- unique(stages)
+  stages <- stages[!(stages %in% ignore)]
+  if (length(stages) <= 1)
+    return(object)
+  for (i in seq_along(stages)[-1]) {
+    object <- join_stages_unsafe(object, var, stages[1], stages[i])
+  }
+  return(object)
+}

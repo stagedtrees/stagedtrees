@@ -3,11 +3,14 @@
 \name{join_stages}
 \alias{join_stages}
 \alias{join_stages_unsafe}
+\alias{join_all}
 \title{Join stages}
 \usage{
 join_stages(object, var, s1, s2)
 
 join_stages_unsafe(object, var, s1, s2)
+
+join_all(object, var, stages, ignore = NULL)
 }
 \arguments{
 \item{object}{an object of class \code{sevt}.}
@@ -17,6 +20,10 @@ join_stages_unsafe(object, var, s1, s2)
 \item{s1}{first stage.}
 
 \item{s2}{second stage.}
+
+\item{stages}{a vector of stage names for variable \code{var}.}
+
+\item{ignore}{vector of stages which will be ignored and left untouched.}
 }
 \value{
 the staged event tree where \code{s1} and \code{s2} are joined.
