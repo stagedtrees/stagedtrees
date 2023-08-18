@@ -51,7 +51,7 @@
 
 #' Asym dataset
 #'
-#' Artificial dataset with observations from four variables 
+#' Artificial dataset with observations from four variables
 #' having a non-symmetrical conditional independence structure.
 #'
 #' @format A data frame with 1000 observations of 4 binary variables.
@@ -60,15 +60,57 @@
 "Asym"
 
 #' Hospital trajectories
-#'  
-#'  
-#' Generated dataset with observations from five variables (SEX, AGE,
-#' ICU, RSP, OUT) describing imaginary patients' trajectories 
-#' in a hospital. 
-#' 
-#' @format A data frame with 2000 observations of 5 variables.
-#' 
+#'
+#' @description Generated dataset with observations from five variables (SEX, AGE,
+#' ICU, RSP, OUT) describing imaginary patients' trajectories
+#' in a hospital.
+#'
+#'
+#' @format A data frame with 10000 observations of 5 variables.
+#'
 #' @source The data has been generated with the code in the Examples section.
-#' 
+#'
 #' @example data-raw/trajectories.R
 "trajectories"
+
+#' Trajectories of hospitalized SARS-CoV-2 patients
+#'
+#' @description Dataset with observations from four variables (Sex, Age,
+#' ICU, death) for 10000 simulated SARS-CoV-2 hospital patients.
+#'
+#' @details The data are simulated from an event tree where conditional
+#' probabilities for ICU and death are taken from the results of
+#' Lefrancq et al. (2021).
+#' Lefrancq et al. (2021) estimated such probabilities from data
+#' on patients, recorded in the
+#' SI-VIC database, who started their hospitalization between
+#' 13 March and 30 November 2020.
+#' Marginal probabilities of gender and
+#' probabilities of age given gender were instead
+#' obtained from the linked GitHub repository
+#' \url{https://github.com/noemielefrancq/Evolution-Outcomes-COVID19-France}.
+#'
+#'
+#' @format A data frame with 10000 observations of 4 variables.
+#' The variables and their levels are as follows:
+#' - Sex: Female, Male
+#' - Age: 0-39, 40-49, 50-59, 60-69, 70-79, 80+
+#' - ICU: yes, no
+#' - death: yes, no
+#'
+#' @source The data has been generated with the code in the Examples section.
+#'         Conditional probabilities were copied from the tables in the
+#'         Supplementary materials of Lefrancq et al. (2021).
+#' @references
+#' Leonelli, M. and Varando, G. (2023).
+#' Context-Specific Causal Discovery for Categorical Data Using Staged Trees.
+#' *Proceedings of The 26th International Conference on Artificial Intelligence and Statistics*, in *Proceedings of Machine Learning Research*
+#' 206:8871-8888 Available from https://proceedings.mlr.press/v206/leonelli23a.html.
+#'
+#' Lefrancq N., Paireau J., Hozé N., Courtejoie N., Yazdanpanah Y., Bouadma L. (2021).
+#' Evolution of outcomes for patients hospitalised during the first 9 months of
+#' the SARS-CoV-2 pandemic in France: A retrospective national surveillance
+#' data analysis.
+#' *The Lancet Regional Health - Europe*, 5:100087.
+#' @example data-raw/covid_patients.R
+"covid_patients"
