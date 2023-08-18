@@ -10,3 +10,4 @@ README_files
 ^\.github$
 ^CRAN-SUBMISSION$
 .pre-commit-config.yaml
+data-raw
