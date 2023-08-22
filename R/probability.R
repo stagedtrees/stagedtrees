@@ -12,7 +12,6 @@
 #' @keywords internal
 path_probability <-
   function(object, x, log = FALSE) {
-    check_sevt_prob(object)
     vs <- sevt_varnames(object)
     if (!is.null(names(x))) {
       # if it's a named vector just order it
@@ -83,13 +82,14 @@ path_probability <-
 #' )
 #' ## the above should be the same as
 #' summary(model)$stages.info$Age
+#' @importFrom matrixStats logSumExp
 #' @export
 prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   check_sevt_prob(object)
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
   }
-  p1 <- 1
+  p1 <- 0
   if (!is.null(conditional_on)) {
     if (is.vector(conditional_on) && !is.null(names(conditional_on))) {
       ## check if same names
@@ -103,7 +103,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
         ))
       }
       x <- cbind(x, as.data.frame(t(conditional_on)))
-      p1 <- prob(object, x = conditional_on, log = FALSE, na0 = na0)
+      p1 <- prob(object, x = conditional_on, log = TRUE, na0 = na0)
     } else if (is.data.frame(conditional_on)) {
       ## check if same names
       if (any(names(x) %in% names(conditional_on))) {
@@ -116,7 +116,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
         ))
       }
       x <- cbind(x, conditional_on)
-      p1 <- prob(object, x = conditional_on, log = FALSE, na0 = na0)
+      p1 <- prob(object, x = conditional_on, log = TRUE, na0 = na0)
     } else {
       cli::cli_abort(c(
         "{.arg conditional_on} must be {.value NULL},
@@ -137,24 +137,24 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   k <- which(var %in% var1[length(var1)])
   res <- vapply(
     1:n,
-    FUN.VALUE = 1,
+    FUN.VALUE = 1.0,
     FUN = function(i) {
       ll <- object$tree[1:k]
       ll[var1] <- vapply(x[i, var1], as.character, FUN.VALUE = "aaa")
-      sum(apply(
+      logSumExp(apply(
         expand.grid(ll),
         MARGIN = 1,
         FUN = function(xx) {
-          path_probability(object, as.character(xx), log = FALSE)
+          path_probability(object, as.character(xx), log = TRUE)
         }
       ), na.rm = TRUE)
     }
   )
-  res <- res / p1
+  res <- res - p1
   if (na0) res[is.na(res)] <- 0
   if (log) {
-    return(log(res))
-  } else {
     return(res)
+  } else {
+    return(exp(res))
   }
 }
