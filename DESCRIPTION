@@ -41,7 +41,8 @@ Imports:
     stats,
     graphics,
     cli,
-    rlang
+    rlang,
+    matrixStats
 Suggests:
     testthat (>= 3.0.0),
     bnlearn,
