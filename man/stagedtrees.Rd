@@ -3,6 +3,7 @@
 \docType{package}
 \name{stagedtrees}
 \alias{stagedtrees}
+\alias{stagedtrees-package}
 \title{Staged event trees.}
 \description{
 Algorithms to create, learn, fit and explore staged event tree models.
@@ -87,4 +88,23 @@ Conditional independence and chain event graphs.
 Thwaites P. A., Smith, J. Q.
 A new method for tackling asymmetric decision problems.
 \emph{International Journal of Approximate Reasoning}, vol. 88, pp. 624–639, 2017.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/stagedtrees/stagedtrees}
+  \item Report bugs at \url{https://github.com/stagedtrees/stagedtrees/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Gherardo Varando \email{gherardo.varando@gmail.com} (\href{https://orcid.org/0000-0002-6708-1103}{ORCID})
+
+Authors:
+\itemize{
+  \item Federico Carli
+  \item Manuele Leonelli (\href{https://orcid.org/0000-0002-2562-5192}{ORCID})
+  \item Eva Riccomagno
+}
+
 }
