@@ -82,7 +82,6 @@ path_probability <-
 #' )
 #' ## the above should be the same as
 #' summary(model)$stages.info$Age
-#' @importFrom matrixStats logSumExp
 #' @export
 prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   check_sevt_prob(object)
@@ -141,7 +140,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
     FUN = function(i) {
       ll <- object$tree[1:k]
       ll[var1] <- vapply(x[i, var1], as.character, FUN.VALUE = "aaa")
-      logSumExp(apply(
+      matrixStats::logSumExp(apply(
         expand.grid(ll),
         MARGIN = 1,
         FUN = function(xx) {
