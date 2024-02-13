@@ -4,6 +4,7 @@
 \name{stagedtrees}
 \alias{stagedtrees-package}
 \alias{stagedtrees}
+\alias{stagedtrees-package}
 \title{Staged event trees.}
 \description{
 Algorithms to create, learn, fit and explore staged event tree models.
