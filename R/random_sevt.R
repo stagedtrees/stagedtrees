@@ -64,10 +64,11 @@ random_sevt.parentslist <- function(x, q = 0.5, rfun = rexp) {
 #'          The random generated \code{sevt} will be
 #'          obtained by randomly joining stages starting
 #'          from the provided sevt object.
+#'
 #'          Stages (conditional) probabilities are sampled from
 #'          the corresponding probability simplex by generating
-#'          a vector with the  uder-defined function \code{rfun} and
-#'          sequentially normalizing to sum up to one.
+#'          a vector with the user-defined function \code{rfun} and
+#'          normalizing it to sum up to one.
 #'          Absolute value is applied to assure non-negativity.
 #'          The default \code{rfun = rexp} induces a uniform sampling
 #'          from the probability simplex.
