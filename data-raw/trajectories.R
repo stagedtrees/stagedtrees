@@ -88,3 +88,4 @@ model$prob$OUT <- list("UNOBS" = c("death" = NA, "survived" = NA),
 
 
 trajectories <- sample_from(model, 10000, seed = 1)
+usethis::use_data(trajectories, overwrite = TRUE)

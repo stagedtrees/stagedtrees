@@ -80,3 +80,4 @@ data_model$prob$death <- list(
 )
 
 covid_patients <- sample_from(data_model, 10000, seed = 123)
+usethis::use_data(covid_patients, overwrite = TRUE)
