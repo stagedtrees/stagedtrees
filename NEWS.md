@@ -1,9 +1,12 @@
-# dev
+# 2.3.0
 
+* Fix new package doc format.
 * Carli et al. 2022 JSS citation added in DESCRIPTION.
-* Functions for random generation of staged trees added.
+* Added functions for random generation of staged trees: `random_sevt` and
+`random_parentslist`.
 * Added new function `depsubtree` which build the dependency subtree.
-* New functions to translate `sevt` and `ceg` objects to graphs (edge lists and igraph).
+* New functions to translate `sevt` and `ceg`
+  objects to graphs (edge lists and igraph).
 * Fix #98; fixed handling of NAs.
 * fix bug on `plot.sevt` and on graph conversion methods
   when ignoring stage "1" which is assigned to root
@@ -15,18 +18,24 @@
 * `stages_hclust` can now search the best cut of the hierarchical cluster with
    respect to some `score` function to be maximized.
 * various minor fixes in colors specification for visualization functions.
-* `stages_simplebhc` implements a new stage structure search by iterative joining of positions, thus searching in the space of simple staged trees.
-* `sevt_simplify` return the simplified staged tree, that is a stage tree where positions and stages are equivalent.
-* fix problem with positions computation in `ceg` when model has less than two variables.
+* `stages_simplebhc` implements a new stage structure search by iterative
+  joining of positions, thus searching in the space of simple staged trees.
+* `sevt_simplify` return the simplified staged tree, that is a stage tree
+  where positions and stages are equivalent.
+* fix problem with positions computation in `ceg` when model has less
+  than two variables.
 * Fix #113; use `cli` package for errors and warnings.
 * improve arguments checks in various functions.
 * improve specific checks for `sevt` objects.
 * fix minor coding style problems (some argument names have changed).
 * improve test coverage.
-* new return value of `stages` function and new indexing of stages via new dedicated class `sevt.stgs`.
-* use faster and unsafe functions internally, speedup in various functions (up to 10x).
-* implemented `stages_csbhc`, a new stages learning algorithm which iteratively add context specific independencies. Additionally functions
-`ci_matrices` and `join_all` have been added.
+* new return value of `stages` function and new indexing of stages via
+  a new dedicated class `sevt.stgs`.
+* use faster and unsafe functions internally, speedup in
+  various functions (up to 10x).
+* implemented `stages_csbhc`, a new stages learning algorithm which
+  iteratively add context specific independencies.
+  Additionally functions `ci_matrices` and `join_all` have been added.
 
 # 2.2.1
 
