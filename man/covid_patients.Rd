@@ -18,6 +18,10 @@ The variables and their levels are as follows:
 The data has been generated with the code in the Examples section.
 Conditional probabilities were copied from the tables in the
 Supplementary materials of Lefrancq et al. (2021).
+Marginal probabilities of gender and
+probabilities of age given gender were instead
+obtained from the linked GitHub repository
+\url{https://github.com/noemielefrancq/Evolution-Outcomes-COVID19-France}.
 }
 \usage{
 covid_patients
@@ -34,10 +38,6 @@ Lefrancq et al. (2021) estimated such probabilities from data
 on patients, recorded in the
 SI-VIC database, who started their hospitalization between
 13 March and 30 November 2020.
-Marginal probabilities of gender and
-probabilities of age given gender were instead
-obtained from the linked GitHub repository
-\url{https://github.com/noemielefrancq/Evolution-Outcomes-COVID19-France}.
 }
 \examples{
 library(stagedtrees)
