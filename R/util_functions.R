@@ -32,7 +32,7 @@ uni_idx <- function(x, sep = "_") {
 #' Find maximum value
 #'
 #' @param x numerical, the log-probabilities.
-#' @param character the levels to be returned same length as x.
+#' @param levels the levels to be returned same length as x.
 #'
 #' @return factor.
 #' @keywords internal
