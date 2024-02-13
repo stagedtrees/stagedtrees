@@ -48,8 +48,7 @@
 #'  * Join two stages \code{\link{join_stages}}
 #'  * Join two positions \code{\link{join_positions}}
 #'  * Rename a stage \code{\link{rename_stage}}
-#'  
-#' @docType package
+#'
 #' @name stagedtrees
 #' @references
 #' Collazo R. A., Görgen C. and Smith J. Q.
@@ -75,4 +74,4 @@
 #' mf <- full(PhDArticles, join_unobserved = TRUE)
 #' mod <- stages_fbhc(mf)
 #' plot(mod)
-NULL
+"_PACKAGE"
