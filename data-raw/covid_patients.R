@@ -79,4 +79,5 @@ data_model$prob$death <- list(
   "24" = c(yes = 0.363, no = 1 - 0.363) # Male 80+ no-ICU
 )
 
-covid_patients <- sample_from(data_model, 10000, seed = 123)
+# covid_patients <- sample_from(data_model, 10000, seed = 123)
+# usethis::use_data(covid_patients, overwrite = TRUE)
