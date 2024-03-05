@@ -9,7 +9,7 @@ which_class(x, levels)
 \arguments{
 \item{x}{numerical, the log-probabilities.}
 
-\item{character}{the levels to be returned same length as x.}
+\item{levels}{the levels to be returned same length as x.}
 }
 \value{
 factor.

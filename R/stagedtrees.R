@@ -49,7 +49,6 @@
 #'  * Join two positions \code{\link{join_positions}}
 #'  * Rename a stage \code{\link{rename_stage}}
 #'
-#' @docType package
 #' @name stagedtrees
 #' @references
 #' Collazo R. A., Görgen C. and Smith J. Q.

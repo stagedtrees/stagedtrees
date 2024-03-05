@@ -2,8 +2,8 @@
 % Please edit documentation in R/stagedtrees.R
 \docType{package}
 \name{stagedtrees}
-\alias{stagedtrees}
 \alias{stagedtrees-package}
+\alias{stagedtrees}
 \title{Staged event trees.}
 \description{
 Algorithms to create, learn, fit and explore staged event tree models.
