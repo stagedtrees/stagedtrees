@@ -115,6 +115,10 @@ compare_stages <-
 
 
 #' @rdname compare_stages
+#' @param FUN a function that is used to aggregate the Hamming distance
+#'            for each variable. The default \code{sum} produces
+#'            the traditional Hamming distance.  Use \code{mean}
+#'            to obtain the normalized Hamming distance.
 #' @details
 #' \code{hamming_stages} finds a minimal set of nodes for which the associated stages
 #' should be changed to obtain equivalent structures. To do that, a maximum-weight bipartite
@@ -187,7 +191,7 @@ hamming_stages <- function(object1, object2, return_tree = FALSE, FUN = sum) {
     return(difftree)
   } else {
     sum(vapply(difftree, function(x) {
-      FUN(as.numeric(x), na.rm = TRUE)
+      FUN(as.numeric(x))
     }, FUN.VALUE = 1.0))
   }
 }

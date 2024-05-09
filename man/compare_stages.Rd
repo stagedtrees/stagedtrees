@@ -33,6 +33,11 @@ One of: \code{"naive"},
 \item{plot}{logical.}
 
 \item{...}{additional parameters to be passed to \code{\link{plot.sevt}}.}
+
+\item{FUN}{a function that is used to aggregate the Hamming distance
+for each variable. The default \code{sum} produces
+the traditional Hamming distance.  Use \code{mean}
+to obtain the normalized Hamming distance.}
 }
 \value{
 \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
