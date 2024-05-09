@@ -15,7 +15,7 @@ compare_stages(
   ...
 )
 
-hamming_stages(object1, object2, return_tree = FALSE)
+hamming_stages(object1, object2, return_tree = FALSE, FUN = sum)
 
 diff_stages(object1, object2)
 }
