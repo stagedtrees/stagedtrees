@@ -57,6 +57,7 @@ full.data.frame <- function(data, order = colnames(data),
                             name_unobserved = "UNOBSERVED") {
   object <- sevt(data, full = TRUE, order = order)
   object$ctables <- make_ctables(object, data)
+  object$data_raw <- data
   if (join_unobserved) {
     join_unobserved(object,
       fit = TRUE, name = name_unobserved, lambda = lambda
@@ -109,6 +110,7 @@ indep.data.frame <- function(data, order = colnames(data),
   model$lambda <- lambda
   # store contingency tables
   model$ctables <- make_ctables(model, data)
+  model$data_raw <- data
   if (join_unobserved) {
     return(join_unobserved(model, fit = TRUE, trace = 0, name = name_unobserved))
   }

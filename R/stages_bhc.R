@@ -12,7 +12,7 @@
 #'               by default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.
 #' @param trace if >0 increasingly amount of info
-#' is printed (via \code{message}).
+#' is printed (via \code{cli::cli_text}).
 #' @details For each variable the algorithm tries to join stages
 #' and moves to the best model that increases the score. When no
 #' increase is possible it moves to the next variable.
