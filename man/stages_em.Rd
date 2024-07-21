@@ -7,10 +7,10 @@
 stages_em(
   object,
   data = object$data_raw,
-  alg_em = stages_bhc,
+  stages_alg = stages_bhc,
   max_iter_em = 5,
   incremental = FALSE,
-  chain = FALSE,
+  chain_impute = FALSE,
   ...
 )
 }
@@ -21,7 +21,7 @@ or \code{\link{sevt_fit}}.}
 
 \item{data}{the data with missing values to be used in the EM algorithm.}
 
-\item{alg_em}{a function that performs stages structure estimation. Similar to
+\item{stages_alg}{a function that performs stages structure estimation. Similar to
 \code{\link{stages_bhc}} or \code{\link{stages_hclust}}.
 The function \code{alg} must accept the argument
 \code{scope}.}
@@ -34,7 +34,9 @@ previous step. If \code{FALSE}, at each iteration
 \code{alg_em} is initialized on the
 initial argument \code{object}.}
 
-\item{chain}{logical. If \code{TRUE} chain predictions are used to impute
+\item{chain_impute}{logical. If \code{TRUE} chain predictions
+(using the order of the variables in \code{object})
+are used to impute
 missing values. Otherwise, independent
 predictions for each missing values are used.}
 

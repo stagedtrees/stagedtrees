@@ -4,7 +4,7 @@
 \alias{impute}
 \title{impute data}
 \usage{
-impute(data, object, chain = FALSE)
+impute(data, object, chain_impute = FALSE)
 }
 \arguments{
 \item{data}{a data.frame}
