@@ -26,13 +26,19 @@ inclusions_stages <- function(object1, object2) {
   check_sevt(object1)
   check_sevt(object2)
   check_same_tree(object1, object2)
-  out <- rep(list(c()), length(object1$stages))
-  attr(out, "names") <- attr(object1$stages, "names")
-  out2 <- out
 
-  for (k in seq_along(object1$stages)) {
-    a <- object1$stages[[k]]
-    b <- object2$stages[[k]]
+
+  vars <- sevt_varnames(object1)
+  if (length(vars) <= 1){
+    return(NULL)
+  }
+  out <- rep(list(c()), length(vars) - 1)
+  names(out) <- vars[-1]
+  out2 <- out
+  for (k in seq_along(vars)[-1]) {
+    vark <- vars[k]
+    a <- object1$stages[[vark]]
+    b <- object2$stages[[vark]]
     unique_a <- unique(a)
     unique_b <- unique(b)
     out_a <- out_b <- rep(0, length(a))
@@ -49,43 +55,43 @@ inclusions_stages <- function(object1, object2) {
       )
     }
 
-    out[[k]] <- ifelse((out_a + out_b) == 2, 0, 1)
-    out2[[k]] <- data.frame("A" = rep(NA, length(out[[k]])),
-                            "B" =  rep(NA, length(out[[k]])),
-                            "C" = rep(NA, length(out[[k]])))
+    out[[vark]] <- ifelse((out_a + out_b) == 2, 0, 1)
+    out2[[vark]] <- data.frame("A" = rep(NA, length(out[[vark]])),
+                            "B" =  rep(NA, length(out[[vark]])),
+                            "C" = rep(NA, length(out[[vark]])))
 
     ord1 <- ord2 <- c()
 
-    for (i in seq_along(out[[k]])) {
-      out2[[k]][i, 1] <- object1$stages[[k]][i]
-      out2[[k]][i, 3] <- object2$stages[[k]][i]
-      if (out[[k]][i] == 0) {
-        out2[[k]][i, 2] <- "="
-        ord1 <- c(ord1, object1$stages[[k]][i])
-        ord2 <- c(ord2, object2$stages[[k]][i])
+    for (i in seq_along(out[[vark]])) {
+      out2[[vark]][i, 1] <- object1$stages[[vark]][i]
+      out2[[vark]][i, 3] <- object2$stages[[vark]][i]
+      if (out[[vark]][i] == 0) {
+        out2[[vark]][i, 2] <- "="
+        ord1 <- c(ord1, object1$stages[[vark]][i])
+        ord2 <- c(ord2, object2$stages[[vark]][i])
       }
-      else if (out[[k]][i] == 1) {
+      else if (out[[vark]][i] == 1) {
         if (out_a[i] == 1 & out_b[i] == 0) {
-          out2[[k]][i, 2] <- "<"
-          ord1 <- c(ord1, object1$stages[[k]][i])
-          ord2 <- c(ord2, object2$stages[[k]][i])
+          out2[[vark]][i, 2] <- "<"
+          ord1 <- c(ord1, object1$stages[[vark]][i])
+          ord2 <- c(ord2, object2$stages[[vark]][i])
         }
         if (out_a[i] == 0 & out_b[i] == 1) {
-          out2[[k]][i, 2] <- ">"
-          ord1 <- c(ord1, object1$stages[[k]][i])
-          ord2 <- c(ord2, object2$stages[[k]][i])
+          out2[[vark]][i, 2] <- ">"
+          ord1 <- c(ord1, object1$stages[[vark]][i])
+          ord2 <- c(ord2, object2$stages[[vark]][i])
         }
         if (out_a[i] == 0 & out_b[i] == 0) {
-          out2[[k]][i, 2] <- "!="
-          ord1 <- c(ord1, object1$stages[[k]][i])
-          ord2 <- c(ord2, object2$stages[[k]][i])
+          out2[[vark]][i, 2] <- "!="
+          ord1 <- c(ord1, object1$stages[[vark]][i])
+          ord2 <- c(ord2, object2$stages[[vark]][i])
         }
       }
     }
 
     # nice print
-    out2[[k]] <- unique(noquote(out2[[k]]))
-    colnames(out2[[k]]) <- c(deparse(substitute(object1)), "  ", deparse(substitute(object2)))
+    out2[[vark]] <- unique(noquote(out2[[vark]]))
+    colnames(out2[[vark]]) <- c(deparse(substitute(object1)), "  ", deparse(substitute(object2)))
   }
   return(out2)
 }

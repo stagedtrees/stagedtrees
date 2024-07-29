@@ -4,6 +4,18 @@ mod1 <- sevt(list("A" = c("a", "aa", "aaa"),
                   "D" = c("d", "dd")), full = TRUE)
 mod2 <- random_sevt(mod1)
 mod3 <- random_sevt(mod1)
+mod4 <- sevt(list("A" = c("a", "aa", "aaa"),
+                  "B" = c("b", "bb", "bbb"),
+                  "C" = c("c", "cc"),
+                  "D" = c("d", "dd")), full = TRUE)
+stages(mod4)["B", A = "a"] <- "2"
+
+
+test_that("inclusion_stages works properly", {
+  expect_silent(comparison <- inclusions_stages(mod1, mod4))
+  expect_silent(comparison <- inclusions_stages(mod2, mod4))
+  expect_silent(comparison <- inclusions_stages(mod3, mod4))
+})
 
 test_that("inclusion_stages works properly", {
   expect_silent(comparison <- inclusions_stages(mod2, mod3))
