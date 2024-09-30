@@ -68,22 +68,30 @@ predict.sevt <-
       }
     }
     check_var_in(class, object)
-    if (is.null(newdata[[class]])) { ## we create a dummy variable
-      newdata[[class]] <- NA
-    }
+    ## we create a dummy variable
+    newdata[[class]] <- NA
     class_idx <-
       (1:length(vars))[vars %in% class] # find class index in the order
     preds <- vars[!(vars %in% class)] # define the predictors
-    newdata <- newdata[, vars]
+    preds <- intersect(preds, colnames(newdata))
+    all_preds <- FALSE
+    if (setequal(setdiff(vars, preds), class)){ ## check if we have all predictors
+      newdata <- newdata[, vars]
+      all_preds <- TRUE
+    }
     pred <- t(apply(newdata, MARGIN = 1, function(x) {
       res <- array(
         dim = c(length(object$tree[[class]])),
         dimnames = list(object$tree[[class]])
       )
       for (cv in object$tree[[class]]) {
-        x[class_idx] <- cv
-        res[cv] <-
-          path_probability(object, x, log = TRUE)
+        x[class] <- cv
+        if (!any(is.na(x)) && all_preds){
+          res[cv] <-
+            path_probability(object, x, log = TRUE)
+        } else {
+          res[cv] <- prob(object, x[!is.na(x), drop = FALSE], log = TRUE)
+        }
       }
       res[is.nan(res)] <- -Inf
       return(res - log(sum(exp(res)))) ## normalize, that is conditional prob

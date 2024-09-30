@@ -1,3 +1,15 @@
+# dev
+
+* possible to skip checks in development.
+* `hamming_stages` earns a new argument `FUN` which specify how to aggregate across variables. The default `FUN = sum` produces the standard hamming distance between stages structures.
+* new function `copy_sevt` to copy objects of class sevt.
+* `predict` for `sevt` objects can now predict also with incomplete inputs (either NA or not provided).
+* some fixes in `prob`.
+* `sevt_fit`, `full` and `indep` add a new component to the sevt obejct, the field `data_raw` which stores the data used to fit the model. This is useful when missing data are present.
+* New stages learning algorithm for missing data, `stages_em` implements the structural EM algorithm for stages structure.
+* `sevt_fit_hem` implements the hard EM algorithm for parameter learning with missing data.
+
+
 # 2.3.0
 
 * Fix new package doc format.

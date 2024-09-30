@@ -91,31 +91,36 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   p1 <- 0
   if (!is.null(conditional_on)) {
     if (is.vector(conditional_on) && !is.null(names(conditional_on))) {
-      ## check if same names
-      if (any(names(x) %in% names(conditional_on))) {
-        cli::cli_abort(c(
-          "Variable names in {.arg x} and {.arg conditional_on}
+      if (length(conditional_on) > 0){
+        ## check if same names
+        if (any(names(x) %in% names(conditional_on))) {
+          cli::cli_abort(c(
+            "Variable names in {.arg x} and {.arg conditional_on}
           must be disjoint.",
-          "x" = "You've supplied {.arg x} and {.arg conditional_on} and both
+            "x" = "You've supplied {.arg x} and {.arg conditional_on} and both
                  have values for
                  {.field {intersect(names(x), names(conditional_on))}}."
-        ))
+          ))
+        }
+        x <- cbind(x, as.data.frame(t(conditional_on)), row.names = NULL)
+        p1 <- prob(object, x = conditional_on, log = TRUE, na0 = na0)
       }
-      x <- cbind(x, as.data.frame(t(conditional_on)))
-      p1 <- prob(object, x = conditional_on, log = TRUE, na0 = na0)
     } else if (is.data.frame(conditional_on)) {
-      ## check if same names
-      if (any(names(x) %in% names(conditional_on))) {
-        cli::cli_abort(c(
-          "Variable names in {.arg x} and {.arg conditional_on}
+      ## check if not empty
+      if (nrow(conditional_on) > 0 & ncol(conditional_on) > 0){
+        ## check if same names
+        if (any(names(x) %in% names(conditional_on))) {
+          cli::cli_abort(c(
+            "Variable names in {.arg x} and {.arg conditional_on}
           must be disjoint.",
-          "x" = "You've supplied {.arg x} and {.arg conditional_on} and both
+            "x" = "You've supplied {.arg x} and {.arg conditional_on} and both
                  have values for
                  {.field {intersect(names(x), names(conditional_on))}}."
-        ))
+          ))
+        }
+        x <- cbind(x, conditional_on, row.names = NULL)
+        p1 <- prob(object, x = conditional_on, log = TRUE, na0 = na0)
       }
-      x <- cbind(x, conditional_on)
-      p1 <- prob(object, x = conditional_on, log = TRUE, na0 = na0)
     } else {
       cli::cli_abort(c(
         "{.arg conditional_on} must be {.value NULL},
@@ -138,8 +143,16 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
     1:n,
     FUN.VALUE = 1.0,
     FUN = function(i) {
-      ll <- object$tree[1:k]
-      ll[var1] <- vapply(x[i, var1], as.character, FUN.VALUE = "aaa")
+      ll <- sapply(var[1:k], FUN = function(vv){
+        if (is.null(x[i, vv])){
+          return(object$tree[[vv]])
+        }
+        if(is.na(x[i, vv])){
+          return(object$tree[[vv]])
+        } else {
+          return(as.character(x[i, vv]))
+        }
+      }, simplify = FALSE)
       matrixStats::logSumExp(apply(
         expand.grid(ll),
         MARGIN = 1,

@@ -99,6 +99,7 @@ sevt_fit <- function(object,
       ))
     }
   }else{
+    object$data_raw <- data
     object$ctables <- make_ctables(object, data)
   }
   if (is.null(lambda)){

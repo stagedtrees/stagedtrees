@@ -43,6 +43,7 @@ is_fitted_sevt <- function(object) {
 #' @keywords internal
 check_sevt <- function(object, arg = rlang::caller_arg(object),
                        call = rlang::caller_env()) {
+  if (isTRUE(object$skip_checks)) return() ## skip checks
   if (!is.object(object) | !inherits(object, "sevt")) {
     cli::cli_abort(c(
       "{.arg {arg}} must be of class {.cls sevt}.",
@@ -89,6 +90,7 @@ check_tree <- function(tree, arg = rlang::caller_arg(tree),
 #' @keywords internal
 check_stages <- function(object, arg = rlang::caller_arg(object),
                          call = rlang::caller_env()) {
+  if (isTRUE(object$skip_checks)) return() ## skip checks
   if (is.null(names(object$stages)) && sevt_nvar(object) > 1) {
     cli::cli_abort(c(
       "{.arg {arg}} must be a valid object of class {.cls sevt}.",
@@ -104,6 +106,7 @@ check_stages <- function(object, arg = rlang::caller_arg(object),
 #' @keywords internal
 check_sevt_prob <- function(object, arg = rlang::caller_arg(object),
                             call = rlang::caller_env()) {
+  if (isTRUE(object$skip_checks)) return() ## skip checks
   check_sevt(object)
   if (!has_prob(object)) {
     cli::cli_abort(c(
@@ -121,6 +124,7 @@ check_sevt_prob <- function(object, arg = rlang::caller_arg(object),
 #' @keywords internal
 check_sevt_ctables <- function(object, arg = rlang::caller_arg(object),
                                call = rlang::caller_env()) {
+  if (isTRUE(object$skip_checks)) return() ## skip checks
   check_sevt(object)
   if (!has_ctables(object)) {
     cli::cli_abort(c(
@@ -136,6 +140,7 @@ check_sevt_ctables <- function(object, arg = rlang::caller_arg(object),
 #' @keywords internal
 check_sevt_fit <- function(object, arg = rlang::caller_arg(object),
                            call = rlang::caller_env()) {
+  if (isTRUE(object$skip_checks)) return() ## skip checks
   check_sevt_ctables(object, arg = arg, call = call)
   check_sevt_prob(object, arg = arg, call = call)
 }
@@ -154,8 +159,8 @@ check_same_tree <- function(object, object2, arg1 = rlang::caller_arg(object),
       "{.arg {arg1}} and {.arg {arg2}}
       must be defined over the same variables.",
       "x" = "You've supplied {.arg {arg1}}
-      over {.val {sevt_varnames(x)}} and
-      {.arg {arg2}} over {.var {sevt_varnames(y)}}."
+      over {.val {sevt_varnames(object)}} and
+      {.arg {arg2}} over {.var {sevt_varnames(object2)}}."
     ), call = call, arg1 = arg1, arg2 = arg2)
   }
 }

@@ -61,7 +61,7 @@ plot.ceg <- function(x, col = NULL,
   g <- as_igraph(x, ignore = ignore)
   igraph::V(g)$color <- ucol
   if (is.null(layout)){
-    layout = igraph::layout.sugiyama(g)$layout
+    layout = igraph::layout_with_sugiyama(g)$layout
     layout = layout[,2:1]
     layout[,1] <- -layout[,1]
   }
