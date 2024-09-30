@@ -3,11 +3,11 @@
 #' Fit a staged event tree with the hard Expectation-Maximization (EM) algorithm
 #'
 #' Estimate transition probabilities in a staged event tree from data containing
-#' missing data using the hard (imputed) Expectiation Maximization algorithm.
+#' missing data using the hard (imputed) Expectation-Maximization algorithm.
 #' @param object an object of class \code{\link{sevt}}.
 #' @param data data.frame with observations of
 #'             the variables in \code{object}.
-#' @param lambda smoothing parameter or pseudocount. Default (NULL) to
+#' @param lambda smoothing parameter. Default (NULL) to
 #'               lambda value stored in `object`. If no lambda value is
 #'               stored nor provided, 0 will be used with a warning.
 #' @param scope which variable should be fitted. The value will be passed to
@@ -22,7 +22,7 @@
 #' @return A fitted staged event tree,
 #'         See the return field of \code{\link{sevt_fit}}.
 #' @export
-sevt_fit_hem <- function(object,  data = object$data_raw,
+sevt_fit_em <- function(object,  data = object$data_raw,
                         lambda = NULL,
                         scope = NULL,
                         max_iter = 5, chain_impute = FALSE){
