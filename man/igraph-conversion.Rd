@@ -11,6 +11,7 @@
 \alias{as_igraph}
 \alias{as_igraph.sevt}
 \alias{as_igraph.ceg}
+\alias{as_igraph.parentslist}
 \title{\pkg{igraph} conversion}
 \usage{
 get_edges(x, ignore = x$name_unobserved, ...)
@@ -30,9 +31,12 @@ as_igraph(x, ignore = x$name_unobserved, ...)
 \method{as_igraph}{sevt}(x, ignore = x$name_unobserved, ...)
 
 \method{as_igraph}{ceg}(x, ignore = x$name_unobserved, ...)
+
+\method{as_igraph}{parentslist}(x, ...)
 }
 \arguments{
-\item{x}{an object of class \code{\link{sevt}} or \code{\link{ceg}}.}
+\item{x}{an object of class \code{\link{sevt}}, \code{\link{ceg}} or
+\code{parentslist}.}
 
 \item{ignore}{vector of stages which will be ignored and excluded,
 by default the name of the unobserved stages stored in
@@ -55,7 +59,7 @@ Obtain the graph representation of a staged tree or a CEG as
 an object from the \pkg{igraph} package.
 }
 \details{
-Functions to transalte the graph structure of a \code{\link{sevt}}
+Functions to translate the graph structure of a \code{\link{sevt}}
 or \code{\link{ceg}} object to a graph object from the
 \pkg{igraph} package.
 Additional functions that extract the edge lists

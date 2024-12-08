@@ -3,11 +3,13 @@
 #' Obtain the graph representation of a staged tree or a CEG as
 #' an object from the \pkg{igraph} package.
 #' @name igraph-conversion
-#' @param x an object of class \code{\link{sevt}} or \code{\link{ceg}}.
+#' @param x an object of class \code{\link{sevt}}, \code{\link{ceg}} or
+#' \code{parentslist}.
 #' @param ignore vector of stages which will be ignored and excluded,
 #'               by default the name of the unobserved stages stored in
 #'               `x$name_unobserved`.
-#' @details Functions to transalte the graph structure of a \code{\link{sevt}}
+#'
+#' @details Functions to translate the graph structure of a \code{\link{sevt}}
 #' or \code{\link{ceg}} object to a graph object from the
 #' \pkg{igraph} package.
 #' Additional functions that extract the edge lists
@@ -291,5 +293,36 @@ as_igraph.ceg <- function(x, ignore = x$name_unobserved, ...) {
   }
   edges <- get_edges(x, ignore)
   vert <- get_vertices(x, ignore)
+  igraph::graph_from_data_frame(edges, directed = TRUE, vertices = vert)
+}
+
+#' @rdname igraph-conversion
+#' @export
+as_igraph.parentslist <- function(x, ...){
+  vert <- data.frame(name = names(x))
+  edges <- data.frame(from = NA, to = NA, context = NA, partial = NA,
+                      local = NA, label = NA)
+  for (v in names(x)){
+    to <- v
+    if (!is.null(x[[v]]$parents)){
+      for (w in x[[v]]$parents){
+        from <- w
+        context <- w %in% x[[v]]$context
+        partial <- w %in% x[[v]]$partial
+        local <- w %in% x[[v]]$local
+        if (context & partial) label <- "context-partial"
+        else if (context) label <- "context"
+        else if (partial) label <- "partial"
+        else if (local) label <- "local"
+        else label <- "total"
+        edges <- rbind(edges, c(
+          from = from, to = to, context = context,
+          partial = partial, local = local, label = label
+        ))
+      }
+    }
+  }
+  edges <- edges[-1,]
+
   igraph::graph_from_data_frame(edges, directed = TRUE, vertices = vert)
 }
