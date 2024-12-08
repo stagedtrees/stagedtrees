@@ -27,12 +27,11 @@ The \code{parentslist} object is converted to an igraph object
 with \code{\link{as_igraph}} and then passed to \code{plot.igraph}.
 Additional arguments \code{...} are passed to the \pkg{igraph}
 plotting function, allowing customization.
-
-@examples
-\dontrun{
+}
+\examples{
+ \dontrun{
  model <- stages_bhc(full(Titanic))
  pl <- as_parentslist(model, silent = TRUE)
  plot(model, edge.label = NA)
  }
-@export
 }

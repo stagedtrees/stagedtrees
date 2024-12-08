@@ -9,13 +9,13 @@
 #'  Additional arguments \code{...} are passed to the \pkg{igraph}
 #'  plotting function, allowing customization.
 #'
-#'  @examples
-#' \dontrun{
+#' @examples
+#'  \dontrun{
 #'  model <- stages_bhc(full(Titanic))
 #'  pl <- as_parentslist(model, silent = TRUE)
 #'  plot(model, edge.label = NA)
 #'  }
-#'  @export
+#' @export
 plot.parentslist <- function(x, legend = TRUE, col = c("context" = "red",
                                         "context-partial" = "orange",
                                         "partial" = "blue",
