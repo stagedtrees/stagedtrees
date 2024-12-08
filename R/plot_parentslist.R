@@ -9,9 +9,8 @@
 #'  Additional arguments \code{...} are passed to the \pkg{igraph}
 #'  plotting function, allowing customization.
 #'
-#'
 #'  @examples
- #' \dontrun{
+#' \dontrun{
 #'  model <- stages_bhc(full(Titanic))
 #'  pl <- as_parentslist(model, silent = TRUE)
 #'  plot(model, edge.label = NA)
