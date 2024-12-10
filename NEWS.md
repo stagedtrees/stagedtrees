@@ -11,6 +11,8 @@
 * some fixes in `plot` related utilities.
 * functions to plot and handle ALDAGs: `as_igraph.parentslist` and `plot.parentslist` allowing easy plotting
 of ALDAGs.
+* function to find one or all topological order of a `parentslist` object.
+* some changes of internal functions of the `parentslist` class.
 
 
 # 2.3.0
