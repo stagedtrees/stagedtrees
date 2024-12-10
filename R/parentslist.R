@@ -30,30 +30,50 @@ as_parentslist <- function(x, ...) {
 }
 
 #' @rdname as_parentslist
+#' @details \code{parentslist()} is a simple wrapper of \code{as_parentslist.list()}.
+#' In particular \code{parentslist(...)} is equivalent to \code{as_parentslist(list(...))}.
+#' @export
+parentslist <- function(...){
+  as_parentslist.list(list(...))
+}
+
+#' @rdname as_parentslist
+#' @export
+as_parentslist.list <- function(x, ...){
+  order <- topo_sort_parentslist(x)
+  x <- x[order] ## order the list
+  class(x) <- "parentslist"
+  return(x)
+}
+
+#' @rdname as_parentslist
 #' @param order order of the variables, usually a topological order.
 #' @export
 as_parentslist.bn <- function(x, order = NULL, ...) {
+
+  ## create a list of parents
+  plist <- lapply(x$nodes, function(n) list(parents = n$parents))
   # if no order is provided from the user
   # then a topological order is used
-  if (is.null(order)) {
-    order <- bnlearn::node.ordering(x)
+  if (!is.null(order)) {
+    plist <- plist[order]
   }
-  plist <- lapply(x$nodes[order], function(n) list(parents = n$parents))
-  class(plist) <- "parentslist"
-  plist
+  as_parentslist.list(plist)
 }
 
 #' @rdname as_parentslist
 #' @export
 as_parentslist.bn.fit <- function(x, order = NULL, ...) {
+
+  ## create a list of parents
+  plist <- lapply(x, function(n) list(parents = n$parents, values = dimnames(n$prob)[[1]]))
+
   # if no order is provided from the user
   # then a topological order is used
-  if (is.null(order)) {
-    order <- bnlearn::node.ordering(x)
+  if (!is.null(order)) {
+    plist <- plist[order]
   }
-  plist <- lapply(x[order], function(n) list(parents = n$parents, values = dimnames(n$prob)[[1]]))
-  class(plist) <- "parentslist"
-  plist
+  as_parentslist.list(plist)
 }
 
 
@@ -200,4 +220,69 @@ as.character.parentslist <- function(x, only_parents = FALSE, ...) {
 print.parentslist <- function(x, ...) {
   cat(" ", as.character.parentslist(x, ...))
   invisible(x)
+}
+
+#' find roots in graphs
+#'
+#' @param x a graph encoded as list of parents.
+#' @return nodes with 0 incoming edges, that is with 0 in-degree.
+find_roots <- function(x){
+  vs <- names(x)
+  parents <- vapply(vs, function(v) sum(x[[v]]$parents %in% vs) == 0,
+                    FUN.VALUE = TRUE, USE.NAMES = TRUE)
+  names(which(parents))
+}
+
+#' Topological sorting of parentslist
+#'
+#' @param x an object of class \code{parentslist},
+#'          or more generally a list of nodes with parents information.
+#' @param all, logical if \code{TRUE} all topological orders will be generated with
+#'            function \code{all_topo_sort}.
+#' @details This function will return a topological order of the graph encoded in
+#' \code{x} if the graph is a DAG, otherwise a partial order will be returned.
+#' @export
+#' @examples
+#' pl <- list(A = list(), B = list(), C = list(parents = c("A", "B")),
+#' D = list(parents = c("C")),
+#' E = list(parents = c("A")),
+#' F = list(parents = c("B", "E")))
+#' topo_sort_parentslist(pl)
+topo_sort_parentslist <- function(x, all = FALSE){
+  if (all){
+    return(all_topo_sort(x))
+  }
+  L <- c()
+  S <- find_roots(x)
+  while (length(S) > 0){
+    v <- S[1]
+    S <- S[-1]
+    L <- c(L, v)
+    x[[v]] <- NULL
+    S <- find_roots(x)
+  }
+  return(L)
+}
+
+#' @rdname topo_sort_parentslist
+#'
+#' @returns a matrix where every row is a topological ordeing of the DAG.
+#' @details
+#' Object \code{x} should represent a DAG, otherwise if cycles are present,
+#' the output will not be complete orders of the graph.
+#' @export
+#' @examples
+#' pl <- list(A = list(), B = list(), C = list(parents = c("A", "B")),
+#' D = list(parents = c("C")),
+#' E = list(parents = c("A")),
+#' F = list(parents = c("B", "E")))
+#' all_topo_sort(pl)
+all_topo_sort <- function(x){
+  if (length(x) == 1) return(matrix(names(x), nrow = 1, ncol = 1))
+  S <- find_roots(x)
+  do.call("rbind" , lapply(S, function(v){
+    xx <- x
+    xx[[v]] <- NULL
+    cbind(c(v), all_topo_sort(xx))
+  }))
 }

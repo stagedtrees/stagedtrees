@@ -1,7 +1,8 @@
 #' igraph plotting of DAGs (parentslist)
 #'
 #' @param x an R object of calss \code{parentslist}.
-#' @param color specification for the edge types.
+#' @param col specification for the colors of the edge type.
+#' @param ... additional parameters passed to \code{plot.igraph}.
 #' @details This function is a simple wrapper around
 #'  \pkg{igraph}'s \code{plot.igraph}.
 #'  The \code{parentslist} object is converted to an igraph object
@@ -16,7 +17,7 @@
 #'  plot(model, edge.label = NA)
 #'  }
 #' @export
-plot.parentslist <- function(x, legend = TRUE, col = c("context" = "red",
+plot.parentslist <- function(x, col = c("context" = "red",
                                         "context-partial" = "orange",
                                         "partial" = "blue",
                                         "local" =  "purple",

@@ -6,7 +6,6 @@
 \usage{
 \method{plot}{parentslist}(
   x,
-  legend = TRUE,
   col = c(context = "red", `context-partial` = "orange", partial = "blue", local =
     "purple", total = "black"),
   ...
@@ -15,7 +14,9 @@
 \arguments{
 \item{x}{an R object of calss \code{parentslist}.}
 
-\item{color}{specification for the edge types.}
+\item{col}{specification for the colors of the edge type.}
+
+\item{...}{additional parameters passed to \code{plot.igraph}.}
 }
 \description{
 igraph plotting of DAGs (parentslist)
