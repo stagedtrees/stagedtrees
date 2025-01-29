@@ -25,7 +25,7 @@
 #' \code{\link{as.character.parentslist}} for the parenthesis-encoding of the
 #' DAG structure and the asymmetric independences.
 #' @export
-as_parentslist <- function(x, ...) {
+as_parentslist <- function(x, ...){
   UseMethod("as_parentslist", x)
 }
 
@@ -38,13 +38,13 @@ parentslist <- function(...){
 }
 
 #' @rdname as_parentslit
-as_parentslist.string(x, ...){
-  tokens = strsplit(strsplit(x, "\\[")[[1]][-1], 
+#' @export
+as_parentslist.string <- function(x, ...){
+  tokens <- strsplit(strsplit(x, "\\[")[[1]][-1],
                     "\\]")
   pls <- lapply(tokens, function(xxx){
     list(parents = strsplit(xxx, ":")[[1]])
   })
-  
 }
 
 #' @rdname as_parentslist
