@@ -8,6 +8,11 @@
 * `sevt_fit`, `full` and `indep` add a new component to the sevt obejct, the field `data_raw` which stores the data used to fit the model. This is useful when missing data are present.
 * New stages learning algorithm for missing data, `stages_em` implements the structural EM algorithm for stages structure.
 * `sevt_fit_hem` implements the hard EM algorithm for parameter learning with missing data.
+* some fixes in `plot` related utilities.
+* functions to plot and handle ALDAGs: `as_igraph.parentslist` and `plot.parentslist` allowing easy plotting
+of ALDAGs.
+* function to find one or all topological order of a `parentslist` object.
+* some changes of internal functions of the `parentslist` class.
 
 
 # 2.3.0

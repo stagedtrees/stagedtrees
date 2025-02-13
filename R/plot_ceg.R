@@ -46,7 +46,7 @@ plot.ceg <- function(x, col = NULL,
   }
   ### get colors as in plot.sevt
   col <- make_stages_col(x, col, ignore)
-  ### ssociate stages color to node of CEG
+  ### associate stages color to node of CEG
   col.pos <- lapply(seq_along(x$positions), function(i){
     upos <- unique(x$positions[[nms[i]]])
     ustag <- x$stages[[nms[i]]][sapply(upos, function(pp)
