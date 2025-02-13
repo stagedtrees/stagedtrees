@@ -7,6 +7,8 @@
 #' @param distance character, the distance measure to be used, either
 #'                 a possible `method` for \code{\link{dist}} or
 #'                 one of the following: \code{"totvar", "hellinger"}.
+#'                 Alternatively, a function which compute a distance
+#'                 matrix (see Details).
 #' @param ignore vector of stages which will be ignored and left untouched.
 #'               By default the name of the unobserved stages stored in
 #'               `object$name_unobserved`.
@@ -31,6 +33,8 @@
 #'          If \code{k} is \code{NA} for some variables, all
 #'          possible number of stages will be checked and the
 #'          one that maximize the \code{score} will be selected.
+#'          A custom distance can be passed as a function in argument \code{distance}.
+#'          This must resturn an object of class \code{"dist"} similarly to \code{\link{dist}}.
 #' @return A staged event tree object.
 #' @importFrom stats dist hclust cutree
 #' @examples
@@ -53,9 +57,9 @@ stages_hclust <-
              return(-BIC(x))
            }) {
     check_sevt_fit(object)
-    if (!is.character(distance)) {
+    if (!is.character(distance) & !is.function(distance)) {
       cli::cli_abort(c(
-        "{.arg distance} should be a character string.",
+        "{.arg distance} should be a character string or a function.",
         "x" = "You've supplied {.type {distance}}.",
         "i" = "Possible available distances are: {.val totvar},
         {.val hellinger} or any possible value for {.arg method} in
@@ -80,11 +84,15 @@ stages_hclust <-
       wch <- wch[!(wch %in% ignore)]
       pp <- t(as.matrix(as.data.frame(object$prob[[v]][wch])))
       rownames(pp) <- wch
-      M <- switch(distance,
-        "totvar" = 0.5 * dist(pp, method = "manhattan"),
-        "hellinger" = dist(sqrt(pp), method = "euclidean") / sqrt(2),
-        dist(pp, method = distance)
-      )
+      if (is.function(distance)){
+        M <- distance(pp)
+      }else{
+        M <- switch(distance,
+                    "totvar" = 0.5 * dist(pp, method = "manhattan"),
+                    "hellinger" = dist(sqrt(pp), method = "euclidean") / sqrt(2),
+                    dist(pp, method = distance)
+        )
+      }
       if (!is.na(k[v])) {
         groups <- cutree(hclust(M, method = method), k = min(k[v], attr(M, "Size")))
       } else {

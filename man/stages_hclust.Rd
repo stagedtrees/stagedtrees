@@ -23,7 +23,9 @@ data, as returned by \code{full} or \code{sevt_fit}.}
 
 \item{distance}{character, the distance measure to be used, either
 a possible \code{method} for \code{\link{dist}} or
-one of the following: \code{"totvar", "hellinger"}.}
+one of the following: \code{"totvar", "hellinger"}.
+Alternatively, a function which compute a distance
+matrix (see Details).}
 
 \item{k}{integer or (named) vector: number of clusters, that is stages per variable.
 Values will be recycled if needed. If \code{NA} (default) a search of
@@ -63,6 +65,8 @@ via the argument \code{k}.
 If \code{k} is \code{NA} for some variables, all
 possible number of stages will be checked and the
 one that maximize the \code{score} will be selected.
+A custom distance can be passed as a function in argument \code{distance}.
+This must resturn an object of class \code{"dist"} similarly to \code{\link{dist}}.
 }
 \examples{
 data("Titanic")
