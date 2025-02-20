@@ -82,6 +82,7 @@ stages_hclust <-
     for (v in scope) {
       wch <- names(object$prob[[v]])
       wch <- wch[!(wch %in% ignore)]
+      if (length(wch) < 2) next
       pp <- t(as.matrix(as.data.frame(object$prob[[v]][wch])))
       rownames(pp) <- wch
       if (is.function(distance)){
