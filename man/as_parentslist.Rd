@@ -2,12 +2,18 @@
 % Please edit documentation in R/parentslist.R
 \name{as_parentslist}
 \alias{as_parentslist}
+\alias{parentslist}
+\alias{as_parentslist.list}
 \alias{as_parentslist.bn}
 \alias{as_parentslist.bn.fit}
 \alias{as_parentslist.sevt}
 \title{Obtain the equivalent DAG as list of parents}
 \usage{
 as_parentslist(x, ...)
+
+parentslist(...)
+
+\method{as_parentslist}{list}(x, ...)
 
 \method{as_parentslist}{bn}(x, order = NULL, ...)
 
@@ -49,6 +55,9 @@ specification can be changed in the future.
 For example, now it may also include information on the
 sample space of the variables and the context/partial/local
 independences.
+
+\code{parentslist()} is a simple wrapper of \code{as_parentslist.list()}.
+In particular \code{parentslist(...)} is equivalent to \code{as_parentslist(list(...))}.
 
 In \code{as_parentslist.sevt}, if a context-specific or a local-partial independence is detected
 a message is printed (if \code{silent = FALSE}) and the minimal super-model is returned.
