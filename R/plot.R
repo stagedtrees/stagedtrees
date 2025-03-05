@@ -324,7 +324,8 @@ make_stages_col <- function(x, col = NULL,
   d <- min(length(x$tree), limit)
   nms <- names(x$tree)
   if (is.null(col)) {
-    col <- lapply(x$stages[nms[1:d]], function(stages) {
+    col <- sapply(nms[1:d], function(vv) {
+      stages <- x$stages[[vv]]
       if (is.null(stages)) {
         return(c("1" = "black"))
       }
@@ -333,9 +334,10 @@ make_stages_col <- function(x, col = NULL,
       vc <- seq_along(stages)
       names(vc) <- stages
       return(vc)
-    })
+    }, simplify = FALSE)
   } else if (is.function(col)) {
-    col <- lapply(x$stages[nms[1:d]], function(stages) {
+    col <- sapply(nms[1:d], function(vv) {
+      stages <- x$stages[[vv]]
       if (is.null(stages)) {
         ## this should be checked
         return(c("1" = "black"))
@@ -347,10 +349,11 @@ make_stages_col <- function(x, col = NULL,
         names(cs) <- unique(stages)[seq_along(cs)]
       }
       return(cs)
-    })
+    }, simplify = FALSE)
   } else if (length(col) == 1 && col == "stages") {
     if (col == "stages") {
-      col <- lapply(x$stages[nms[1:d]], function(stages) {
+      col <- sapply(nms[1:d], function(vv) {
+        stages <- x$stages[[vv]]
         if (is.null(stages)) {
           return(c("1" = 1))
         }
@@ -358,7 +361,7 @@ make_stages_col <- function(x, col = NULL,
         stages <- stages[!(stages %in% ignore)]
         names(stages) <- stages
         return(stages)
-      })
+      }, simplify = FALSE)
     }
   } else {
     if (is.list(col) && !is.null(names(col))) {

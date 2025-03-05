@@ -54,7 +54,7 @@ as_sevt.bn <- function(x, order = NULL, values = NULL, ...) {
 #' @export
 as_sevt.parentslist <- function(x, order = NULL, values = NULL, ...) {
   if (is.null(order)) {
-    order <- names(x)
+    order <- topo_sort_parentslist(x)
   }
   if (is.null(values)) {
     values <- lapply(x, function(vv) {

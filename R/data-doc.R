@@ -94,6 +94,7 @@
 #' - ICU: yes, no
 #' - death: yes, no
 #'
+#'
 #' @source The data has been generated with the code in the Examples section.
 #'         Conditional probabilities were copied from the tables in the
 #'         Supplementary materials of Lefrancq et al. (2021).
@@ -114,3 +115,42 @@
 #' *The Lancet Regional Health - Europe*, 5:100087.
 #' @example data-raw/covid_patients.R
 "covid_patients"
+
+
+#' Falls Intervention Dataset
+#'
+#' Data simulated by Shenvi et al. (2019) describing
+#' an intervention to reduce falls among
+#' the elderly.
+#'
+#' @format A data frame with 50000 observations of 6 binary variables.
+#'
+#' @details
+#'  As described in Walley et al (2023):
+#'  "Under this intervention, a certain proportion of individuals
+#'  aged over 65 would be assessed and classified as low or high risk.
+#'  Those assessed to be at a high risk are referred to a falls clinic for an
+#'  advanced assessment. All those who are referred,
+#'  50% of other high risk individuals, and 10% of low risk individuals
+#'  go on to receive treatment. It is assumed that those who are not assessed
+#'  receive neither referral nor treatment."
+#'
+#' @source The original data have been downloaded from the **cegpy**
+#' [github repository](https://github.com/g-walley/cegpy) and is also available
+#' as supplementary materials of Walley et al (2023).
+#' In the original data pairs of variables Housing-Assessment and
+#' Referred-Treatment are encoded in variables HousingAssessment and Treatment
+#' respectively. Function \code{colsplit} from package \pkg{reshape2} was
+#' used to split those variables.
+#'
+#' @references
+#' Walley G., Shenvi A., Strong P., Kobalczyk K. (2023),
+#' cegpy: Modelling with chain event graphs in Python,
+#' *Knowledge-Based Systems*, Volume 274.
+#'
+#' Shenvi, A., Smith, J.Q., Walton, R., Eldridge, S. (2019).
+#' Modelling with Non-stratified Chain Event Graphs.
+#' In: Argiento, R., Durante, D., Wade, S. (eds)
+#' *Bayesian Statistics and New Generations. BAYSM 2018*.
+#' Springer Proceedings in Mathematics & Statistics, vol 296.
+"falls_long"
