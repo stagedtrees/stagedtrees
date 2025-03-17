@@ -37,15 +37,6 @@ parentslist <- function(...){
   as_parentslist.list(list(...))
 }
 
-#' @rdname as_parentslit
-#' @export
-as_parentslist.string <- function(x, ...){
-  tokens <- strsplit(strsplit(x, "\\[")[[1]][-1],
-                    "\\]")
-  pls <- lapply(tokens, function(xxx){
-    list(parents = strsplit(xxx, ":")[[1]])
-  })
-}
 
 #' @rdname as_parentslist
 #' @export

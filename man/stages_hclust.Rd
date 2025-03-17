@@ -8,6 +8,7 @@ stages_hclust(
   object,
   distance = "totvar",
   k = NA,
+  max_k = Inf,
   method = "complete",
   ignore = object$name_unobserved,
   limit = length(object$tree),
@@ -33,6 +34,8 @@ the number of stage is performed with respect to the maximization of
 the \code{score} function. \code{NA} and integer can be mixed
 to fix the number of stage for some variables and use the
 score to select others.}
+
+\item{max_k}{integer, maximum number of stages to consider per variable.}
 
 \item{method}{the agglomeration method to be used in \code{\link{hclust}}.}
 

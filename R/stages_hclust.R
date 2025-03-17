@@ -18,6 +18,7 @@
 #'        the \code{score} function. \code{NA} and integer can be mixed
 #'        to fix the number of stage for some variables and use the
 #'        score to select others.
+#' @param max_k integer, maximum number of stages to consider per variable.
 #' @param method the agglomeration method to be used in \code{\link{hclust}}.
 #' @param limit the maximum number of variables to consider.
 #' @param scope names of the variables to consider.
@@ -49,6 +50,7 @@ stages_hclust <-
   function(object,
            distance = "totvar",
            k = NA,
+           max_k = Inf,
            method = "complete",
            ignore = object$name_unobserved,
            limit = length(object$tree),
@@ -95,10 +97,10 @@ stages_hclust <-
         )
       }
       if (!is.na(k[v])) {
-        groups <- cutree(hclust(M, method = method), k = min(k[v], attr(M, "Size")))
+        groups <- cutree(hclust(M, method = method), k = min(k[v], attr(M, "Size"), max_k))
       } else {
         hcres <- hclust(M, method = method)
-        res <- lapply(1:attr(M, "Size"), function(k) {
+        res <- lapply(1:min(attr(M, "Size"), max_k), function(k) {
           groups <- cutree(hcres, k = k)
           old <- object$stages[[v]]
           object2 <- object
