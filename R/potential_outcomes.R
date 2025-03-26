@@ -12,13 +12,14 @@
 #' potential_outcomes(model, "Survived", "Class", "pstree")
 #' @export
 potential_outcomes <- function(object, outcome, treatment,
-                               method = c("randomization", "pstree")){
-  check_sevt_fit(object)
+                               method = c("randomization", "pstree", "naive")){
+  check_sevt_prob(object)
   check_scope(c(outcome, treatment), object)
   method <- match.arg(method)
   object0 <- switch(method,
     randomization = randomize(object, treatment),
-    pstree = ps_tree(object, outcome, treatment)
+    pstree = ps_tree(object, outcome, treatment),
+    naive = object
   )
   xx <- c(NA)
   names(xx) <- outcome

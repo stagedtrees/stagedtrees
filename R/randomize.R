@@ -1,5 +1,4 @@
 randomize <- function(object, var, p = NULL, ignore = object$name_unobserved){
-  check_sevt_fit(object)
   check_scope(var, object)
   kk <- length(object$tree[[var]])
   if (is.null(p)){

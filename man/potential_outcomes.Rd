@@ -8,7 +8,7 @@ potential_outcomes(
   object,
   outcome,
   treatment,
-  method = c("randomization", "pstree")
+  method = c("randomization", "pstree", "naive")
 )
 }
 \arguments{
