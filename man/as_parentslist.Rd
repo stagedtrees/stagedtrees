@@ -3,6 +3,7 @@
 \name{as_parentslist}
 \alias{as_parentslist}
 \alias{parentslist}
+\alias{as_parentslist.string}
 \alias{as_parentslist.list}
 \alias{as_parentslist.bn}
 \alias{as_parentslist.bn.fit}
@@ -12,6 +13,8 @@
 as_parentslist(x, ...)
 
 parentslist(...)
+
+\method{as_parentslist}{string}(x, ...)
 
 \method{as_parentslist}{list}(x, ...)
 
