@@ -4,12 +4,7 @@
 \alias{potential_outcomes}
 \title{Potential Outcomes}
 \usage{
-potential_outcomes(
-  object,
-  outcome,
-  treatment,
-  method = c("randomization", "pstree", "naive")
-)
+potential_outcomes(object, outcome, treatment)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
@@ -17,15 +12,13 @@ potential_outcomes(
 \item{outcome}{the outcome variable.}
 
 \item{treatment}{the treatment variable.}
-
-\item{method}{string, either \code{"randomization"} or \code{"pstree"}.}
 }
 \value{
 a matrix with potential outcomes.
 }
 \description{
-Compute potential outcomes by either randomizing the treatment variable
-or via propensity score stratification.
+Compute potential outcomes by randomizing
+the treatment variable.
 }
 \examples{
 model <- full(Titanic) |> stages_bhc()
