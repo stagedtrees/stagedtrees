@@ -5,6 +5,7 @@ on:
     branches: [main, dev]
   pull_request:
     branches: [main, dev]
+  on: workflow_dispatch
 
 name: test-coverage
 
