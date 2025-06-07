@@ -2,9 +2,12 @@
 % Please edit documentation in R/potential_outcomes.R
 \name{potential_outcomes}
 \alias{potential_outcomes}
+\alias{randomize_sevt}
 \title{Potential Outcomes}
 \usage{
 potential_outcomes(object, outcome, treatment)
+
+randomize_sevt(object, treatment, p = NULL, ignore = object$name_unobserved)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
@@ -12,15 +15,30 @@ potential_outcomes(object, outcome, treatment)
 \item{outcome}{the outcome variable.}
 
 \item{treatment}{the treatment variable.}
+
+\item{p}{the probabilities of treatment}
+
+\item{ignore}{name of stages to be ignored}
 }
 \value{
 a matrix with potential outcomes.
 }
 \description{
 Compute potential outcomes by randomizing
-the treatment variable.
+the treatment variable on the given model.
+}
+\details{
+The \code{potential_outcome} function \emph{randomize}
+the treatment variable in
+the given staged event tree with the \code{randomize_sevt}
+function and then compute the conditional probabilities
+of the outcome variable given the values of the
+treatment variable.
+
+The \code{randomize_sevt} function builds the
+staged event tree associated with a randomized experiment over
 }
 \examples{
-model <- full(Titanic) |> stages_bhc()
-potential_outcomes(model, "Survived", "Class", "pstree")
+model <- stages_bhc(full(Titanic))
+potential_outcomes(model, "Survived", "Class")
 }
