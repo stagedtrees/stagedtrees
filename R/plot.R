@@ -344,7 +344,15 @@ make_stages_col <- function(x, col = NULL,
       }
       stages <- unique(stages)
       stages <- stages[!(stages %in% ignore)]
-      cs <- col(unique(stages))
+      if (length(formals(col)) == 0){
+        cs <- col()
+      }
+      if (length(formals(col)) == 1){
+        cs <- col(unique(stages))
+      }
+      if (length(formals(col)) > 1){
+        cs <- col(unique(stages), vv)
+      }
       if (is.null(names(cs))) {
         names(cs) <- unique(stages)[seq_along(cs)]
       }
