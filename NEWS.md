@@ -13,6 +13,8 @@
 of ALDAGs.
 * function to find one or all topological order of a `parentslist` object.
 * some changes of internal functions of the `parentslist` class.
+* `make_stages_col` accept now as `col` a function of 0, 1, or 2 arguments 
+   (it is checked with `length(formals(col))``). 
 
 
 # 2.3.0
