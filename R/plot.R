@@ -328,7 +328,7 @@ make_stages_col <- function(x, col = NULL,
     col <- sapply(nms[1:d], function(vv) {
       stages <- x$stages[[vv]]
       if (is.null(stages)) {
-        return(c("1" = "black"))
+        return(NULL)
       }
       stages <- unique(stages)
       stages <- stages[!(stages %in% ignore)]
@@ -339,23 +339,21 @@ make_stages_col <- function(x, col = NULL,
   } else if (is.function(col)) {
     col <- sapply(nms[1:d], function(vv) {
       stages <- x$stages[[vv]]
-      if (is.null(stages)) {
-        ## this should be checked
-        return(c("1" = "black"))
+      if (!is.null(stages)) {
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% ignore)]
       }
-      stages <- unique(stages)
-      stages <- stages[!(stages %in% ignore)]
       if (length(formals(col)) == 0){
         cs <- col()
       }
       if (length(formals(col)) == 1){
-        cs <- col(unique(stages))
+        cs <- col(stages)
       }
       if (length(formals(col)) > 1){
-        cs <- col(unique(stages), vv)
+        cs <- col(stages, vv)
       }
       if (is.null(names(cs))) {
-        names(cs) <- unique(stages)[seq_along(cs)]
+        names(cs) <- stages[seq_along(cs)]
       }
       return(cs)
     }, simplify = FALSE)
@@ -378,8 +376,12 @@ make_stages_col <- function(x, col = NULL,
         singles <- names(which(table(stages) == 1))
         stages <- unique(stages)
         stages <- stages[!(stages %in% c(ignore, singles))]
-        vc <- seq_along(stages)
-        names(vc) <- stages
+        if (length(stages) > 0){
+          vc <- seq_along(stages)
+          names(vc) <- stages
+        } else {
+          vc <- NULL
+        }
         return(vc)
       }, simplify = FALSE)
       if (isclassic){
