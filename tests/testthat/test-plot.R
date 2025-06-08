@@ -66,3 +66,11 @@ test_that("make_stages_col with function", {
   expect_length(cols, 8)
   expect_silent(plot(mod, col = cols))
 })
+
+
+test_that("make_stages_col classic", {
+  expect_silent(cols <- make_stages_col(mod, col = "classic"))
+  expect_type(cols, "list")
+  expect_length(cols, 8)
+  expect_silent(plot(mod, col = cols))
+})
