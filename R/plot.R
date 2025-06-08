@@ -371,7 +371,8 @@ make_stages_col <- function(x, col = NULL,
         names(stages) <- stages
         return(stages)
       }, simplify = FALSE)
-    } else if (col == "classic"){
+    } else if (startsWith(col, "classic")){
+      isclassic <- col == "classic"
       col <- sapply(nms[1:d], function(vv) {
         stages <- x$stages[[vv]]
         singles <- names(which(table(stages) == 1))
@@ -381,6 +382,14 @@ make_stages_col <- function(x, col = NULL,
         names(vc) <- stages
         return(vc)
       }, simplify = FALSE)
+      if (isclassic){
+        tot <- seq_along(unlist(col))
+        for (i in seq_along(col)){
+          kci <- length(col[[i]])
+          col[[i]][] <- head(tot, n = kci)
+          if (kci > 0) tot <- tot[-(1:kci)]
+        }
+      }
     }
   } else {
     if (is.list(col) && !is.null(names(col))) {
@@ -390,6 +399,7 @@ make_stages_col <- function(x, col = NULL,
     } else {
       cli::cli_abort(c(
         "{.arg col} must be one of: {.val NULL}, {.val stages},
+        {.val classic},
         a function or a named list.",
         "x" = "You've supplied {.type {col}}.",
         "i" = "Check sevt plotting documentation
