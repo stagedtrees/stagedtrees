@@ -33,6 +33,8 @@
 #'        will be used as colors;
 #'        a function that takes
 #'        as input a vector of stages and output the corresponding colors.
+#'        the character \code{"classic"} for the classical coloring, where
+#'        singleton stages are not colored.
 #'        Check the provided examples.
 #'        The function \code{make_stages_col} is used internally
 #'        and \code{make_stages_col(x, NULL)} or \code{make_stages_col(x, "stages")}
@@ -54,7 +56,6 @@
 #'         \code{text} and \code{plot.window}.
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
-#'
 #' @examples
 #'
 #' data("PhDArticles")
@@ -358,7 +359,7 @@ make_stages_col <- function(x, col = NULL,
       }
       return(cs)
     }, simplify = FALSE)
-  } else if (length(col) == 1 && col == "stages") {
+  } else if (length(col) == 1) {
     if (col == "stages") {
       col <- sapply(nms[1:d], function(vv) {
         stages <- x$stages[[vv]]
@@ -369,6 +370,16 @@ make_stages_col <- function(x, col = NULL,
         stages <- stages[!(stages %in% ignore)]
         names(stages) <- stages
         return(stages)
+      }, simplify = FALSE)
+    } else if (col == "classic"){
+      col <- sapply(nms[1:d], function(vv) {
+        stages <- x$stages[[vv]]
+        singles <- names(which(table(stages) == 1))
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% c(ignore, singles))]
+        vc <- seq_along(stages)
+        names(vc) <- stages
+        return(vc)
       }, simplify = FALSE)
     }
   } else {
