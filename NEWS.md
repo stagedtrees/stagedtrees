@@ -25,7 +25,10 @@
    (it is checked with `length(formals(col))``). 
 * function `potential_outcomes` to compute the probability of an outcome 
   variable given intervention on a treatment.
-
+* new method for coloring in `make_satges_col` or `plot.sevt`. If `col = classic` 
+  the "classical" coloring of stages is generated, where singleton stages are not 
+  assign a color and where stages across different levels are assigned different 
+  colors.
 
 # 2.3.0
 
