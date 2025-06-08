@@ -81,13 +81,13 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   verts <- get_vertices(x, ignore = ignore)
 
   col <- make_stages_col(x, col, ignore = ignore)
-  col <- lapply(col, function(cc) {
-    if (all(is.numeric(cc))) {
-      sapply(cc, function(ccc) palette()[ccc])
-    } else {
-      cc
-    }
-  })
+  #col <- lapply(col, function(cc) {
+  #  if (all(is.numeric(cc))) {
+  #    sapply(cc, function(ccc) palette()[ccc])
+  #  } else {
+  #    cc
+  #  }
+  #})
 
   if (is.null(layout)) {
     layout <- igraph::layout_with_sugiyama(as_igraph(x, ignore = ignore))$layout
@@ -111,7 +111,7 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   cat(paste0("\\begin{tikzpicture}[auto, scale=", scale, ",\n"), file = file)
 
   nodestyle <- "\t%s/.style={%s,inner sep=%s,minimum size=%s,draw,%s,%s,fill=%s,text=%s},\n"
-  c1 <- col2rgb(col[[1]][[1]])
+  c1 <- col2rgb(ifelse(is.null(col[[1]][1]), "white", col[[1]][1]))
   c1 <- sprintf("{rgb,255:red,%s; green,%s; blue,%s}", c1[1], c1[2], c1[3])
   cat2(sprintf(
     nodestyle,
@@ -126,7 +126,7 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   ))
   for (v in names(x$tree[-1])) {
     for (s in unique(x$stages[[v]])) {
-      c1 <- col2rgb(col[[v]][s])
+      c1 <- col2rgb(ifelse(is.null(col[[v]][s]), "white", col[[v]][s]))
       c1 <- sprintf("{rgb,255:red,%s; green,%s; blue,%s}", c1[1], c1[2], c1[3])
       cat2(sprintf(
         nodestyle, paste(v, s, sep = "_"),
@@ -191,3 +191,4 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
 .escape <- function(xx){
   gsub("(\\$|\\_)", "\\\\\\1", xx)
 }
+

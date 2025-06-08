@@ -32,3 +32,8 @@ test_that("write_tikz with stages col", {
 test_that("write_tikz works for ceg", {
   expect_output(write_tikz(ceg(model)))
 })
+
+test_that("write_tikz works with partial col", {
+  model$stages$C <- paste0(1:6)
+  expect_output(write_tikz(model, col = "classic"))
+})

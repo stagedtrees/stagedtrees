@@ -371,7 +371,7 @@ make_stages_col <- function(x, col = NULL,
       }, simplify = FALSE)
     } else if (startsWith(col, "classic")){
       isclassic <- col == "classic"
-      col <- sapply(nms[1:d], function(vv) {
+      col <- sapply(nms[2:d], function(vv) {
         stages <- x$stages[[vv]]
         singles <- names(which(table(stages) == 1))
         stages <- unique(stages)
