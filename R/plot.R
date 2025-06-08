@@ -386,8 +386,10 @@ make_stages_col <- function(x, col = NULL,
         tot <- seq_along(unlist(col))
         for (i in seq_along(col)){
           kci <- length(col[[i]])
-          col[[i]][] <- head(tot, n = kci)
-          if (kci > 0) tot <- tot[-(1:kci)]
+          if (kci > 0){
+            col[[i]][] <- tot[(1:kci)]
+            tot <- tot[-(1:kci)]
+          }
         }
       }
     }
