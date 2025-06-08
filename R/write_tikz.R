@@ -146,7 +146,7 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
 
 
   for (i in 1:nrow(verts)) {
-    vert <- verts[i, "name"]
+    vert <- .fix_n(verts[i, "name"])
     var <- verts[i, "var"]
     stage <- verts[i, "stage"]
     label <- node_label(verts[i, , drop = FALSE])
@@ -156,30 +156,38 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
       cat2(sprintf(
         "\t\\node [leaf] (%s) at (%f, %f)\t{%s};\n",
         # var,
-        vert, layout[i, 1], layout[i, 2], label
+        vert, layout[i, 1], layout[i, 2], .escape(label)
       ))
     } else {
       ## drawing vertices
       cat2(sprintf(
         "\t\\node [%s_%s] (%s) at (%f, %f)\t{%s};\n",
         var, stage,
-        vert, layout[i, 1], layout[i, 2], label
+        vert, layout[i, 1], layout[i, 2], .escape(label)
       ))
     }
   }
   cat2("\n")
   for (i in 1:nrow(edgs)) {
-    from <- edgs[i, "from"]
-    to <- edgs[i, "to"]
+    from <- .fix_n(edgs[i, "from"])
+    to <- .fix_n(edgs[i, "to"])
     label <- edge_label(edgs[i, , drop = FALSE])
     opt <- paste(edge_label_options(edgs[i, , drop = FALSE]),
       collapse = ","
     )
     cat2(sprintf(
       "\t\\draw[->] (%s) -- node [%s]{%s} (%s);\n",
-      from, opt, label, to
+      from, opt, .escape(label), to
     ))
   }
 
   cat2("\\end{tikzpicture}\n")
+}
+
+.fix_n <- function(xx){
+  gsub("(\\.|\\_)+", "-",  make.names(xx))
+}
+
+.escape <- function(xx){
+  gsub("(\\$|\\_)", "\\\\\\1", xx)
 }
