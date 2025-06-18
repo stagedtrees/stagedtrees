@@ -72,6 +72,8 @@ the character \code{"stages"}, in which case the stage names
 will be used as colors;
 a function that takes
 as input a vector of stages and output the corresponding colors.
+the character \code{"classic"} for the classical coloring, where
+singleton stages are not colored.
 Check the provided examples.
 The function \code{make_stages_col} is used internally
 and \code{make_stages_col(x, NULL)} or \code{make_stages_col(x, "stages")}

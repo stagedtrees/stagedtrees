@@ -8,6 +8,9 @@ on:
 
 name: test-coverage
 
+env:
+   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
