@@ -1,19 +1,34 @@
 # dev
 
 * possible to skip checks in development.
-* `hamming_stages` earns a new argument `FUN` which specify how to aggregate across variables. The default `FUN = sum` produces the standard hamming distance between stages structures.
+* `hamming_stages` earns a new argument `FUN` which specify how to aggregate 
+   across variables. The default `FUN = sum` produces the standard hamming 
+   distance between stages structures.
 * new function `copy_sevt` to copy objects of class sevt.
-* `predict` for `sevt` objects can now predict also with incomplete inputs (either NA or not provided).
+* `predict` for `sevt` objects can now predict also with
+   incomplete inputs (either NA or not provided).
 * some fixes in `prob`.
-* `sevt_fit`, `full` and `indep` add a new component to the sevt obejct, the field `data_raw` which stores the data used to fit the model. This is useful when missing data are present.
-* New stages learning algorithm for missing data, `stages_em` implements the structural EM algorithm for stages structure.
-* `sevt_fit_hem` implements the hard EM algorithm for parameter learning with missing data.
+* `sevt_fit`, `full` and `indep` add a new component to the sevt obejct,
+   the field `data_raw` which stores the data used to fit the model.
+   This is useful when missing data are present.
+* New stages learning algorithm for missing data, `stages_em` implements
+  the structural EM algorithm for stages structure.
+* `sevt_fit_hem` implements the hard EM algorithm for parameter
+  learning with missing data.
 * some fixes in `plot` related utilities.
-* functions to plot and handle ALDAGs: `as_igraph.parentslist` and `plot.parentslist` allowing easy plotting
-of ALDAGs.
+* functions to plot and handle ALDAGs:
+  `as_igraph.parentslist` and `plot.parentslist`
+  allowing easy plotting of ALDAGs.
 * function to find one or all topological order of a `parentslist` object.
 * some changes of internal functions of the `parentslist` class.
-
+* `make_stages_col` accept now as `col` a function of 0, 1, or 2 arguments 
+   (it is checked with `length(formals(col))``). 
+* function `potential_outcomes` to compute the probability of an outcome 
+  variable given intervention on a treatment.
+* new method for coloring in `make_satges_col` or `plot.sevt`. If `col = classic` 
+  the "classical" coloring of stages is generated, where singleton stages are not 
+  assign a color and where stages across different levels are assigned different 
+  colors.
 
 # 2.3.0
 

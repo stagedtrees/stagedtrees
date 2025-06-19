@@ -142,6 +142,11 @@ print.sevt.stgs <- function(x, ..., max = 5) {
       ))
     }
     path <- list(...)
+    if (narg == 1){ ## check if ... is a context
+      if (!is.null(names(path[[1]]))){
+        path <- path[[1]]
+      }
+    }
     tree <- attr(x, "tree")
     check_context(path, i, tree)
     ixv <- which(i == names(tree))
@@ -188,6 +193,11 @@ print.sevt.stgs <- function(x, ..., max = 5) {
       ))
     }
     path <- list(...)
+    if (narg == 1){ ## check if ... is a context
+      if (!is.null(names(path[[1]]))){
+        path <- path[[1]]
+      }
+    }
     tree <- attr(x, "tree")
     check_context(path, i, tree)
     ixv <- which(i == names(tree))

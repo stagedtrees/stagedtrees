@@ -8,6 +8,9 @@ on:
 
 name: test-coverage
 
+env:
+   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
@@ -44,7 +47,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-test-failures
           path: ${{ runner.temp }}/package

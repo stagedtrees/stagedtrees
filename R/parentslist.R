@@ -37,7 +37,6 @@ parentslist <- function(...){
   as_parentslist.list(list(...))
 }
 
-
 #' @rdname as_parentslist
 #' @export
 as_parentslist.list <- function(x, ...){

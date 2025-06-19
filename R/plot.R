@@ -33,6 +33,8 @@
 #'        will be used as colors;
 #'        a function that takes
 #'        as input a vector of stages and output the corresponding colors.
+#'        the character \code{"classic"} for the classical coloring, where
+#'        singleton stages are not colored.
 #'        Check the provided examples.
 #'        The function \code{make_stages_col} is used internally
 #'        and \code{make_stages_col(x, NULL)} or \code{make_stages_col(x, "stages")}
@@ -54,7 +56,6 @@
 #'         \code{text} and \code{plot.window}.
 #' @export
 #' @importFrom graphics lines plot.new plot.window title
-#'
 #' @examples
 #'
 #' data("PhDArticles")
@@ -327,7 +328,7 @@ make_stages_col <- function(x, col = NULL,
     col <- sapply(nms[1:d], function(vv) {
       stages <- x$stages[[vv]]
       if (is.null(stages)) {
-        return(c("1" = "black"))
+        return(NULL)
       }
       stages <- unique(stages)
       stages <- stages[!(stages %in% ignore)]
@@ -338,19 +339,25 @@ make_stages_col <- function(x, col = NULL,
   } else if (is.function(col)) {
     col <- sapply(nms[1:d], function(vv) {
       stages <- x$stages[[vv]]
-      if (is.null(stages)) {
-        ## this should be checked
-        return(c("1" = "black"))
+      if (!is.null(stages)) {
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% ignore)]
       }
-      stages <- unique(stages)
-      stages <- stages[!(stages %in% ignore)]
-      cs <- col(unique(stages))
+      if (length(formals(col)) == 0){
+        cs <- col()
+      }
+      if (length(formals(col)) == 1){
+        cs <- col(stages)
+      }
+      if (length(formals(col)) > 1){
+        cs <- col(stages, vv)
+      }
       if (is.null(names(cs))) {
-        names(cs) <- unique(stages)[seq_along(cs)]
+        names(cs) <- stages[seq_along(cs)]
       }
       return(cs)
     }, simplify = FALSE)
-  } else if (length(col) == 1 && col == "stages") {
+  } else if (length(col) == 1) {
     if (col == "stages") {
       col <- sapply(nms[1:d], function(vv) {
         stages <- x$stages[[vv]]
@@ -362,6 +369,31 @@ make_stages_col <- function(x, col = NULL,
         names(stages) <- stages
         return(stages)
       }, simplify = FALSE)
+    } else if (startsWith(col, "classic")){
+      isclassic <- col == "classic"
+      col <- sapply(nms[2:d], function(vv) {
+        stages <- x$stages[[vv]]
+        singles <- names(which(table(stages) == 1))
+        stages <- unique(stages)
+        stages <- stages[!(stages %in% c(ignore, singles))]
+        if (length(stages) > 0){
+          vc <- seq_along(stages)
+          names(vc) <- stages
+        } else {
+          vc <- NULL
+        }
+        return(vc)
+      }, simplify = FALSE)
+      if (isclassic){
+        tot <- seq_along(unlist(col))
+        for (i in seq_along(col)){
+          kci <- length(col[[i]])
+          if (kci > 0){
+            col[[i]][] <- tot[(1:kci)]
+            tot <- tot[-(1:kci)]
+          }
+        }
+      }
     }
   } else {
     if (is.list(col) && !is.null(names(col))) {
@@ -371,6 +403,7 @@ make_stages_col <- function(x, col = NULL,
     } else {
       cli::cli_abort(c(
         "{.arg col} must be one of: {.val NULL}, {.val stages},
+        {.val classic},
         a function or a named list.",
         "x" = "You've supplied {.type {col}}.",
         "i" = "Check sevt plotting documentation
