@@ -8,6 +8,7 @@ stages_hclust(
   object,
   distance = "totvar",
   k = NA,
+  max_k = Inf,
   method = "complete",
   ignore = object$name_unobserved,
   limit = length(object$tree),
@@ -23,7 +24,9 @@ data, as returned by \code{full} or \code{sevt_fit}.}
 
 \item{distance}{character, the distance measure to be used, either
 a possible \code{method} for \code{\link{dist}} or
-one of the following: \code{"totvar", "hellinger"}.}
+one of the following: \code{"totvar", "hellinger"}.
+Alternatively, a function which compute a distance
+matrix (see Details).}
 
 \item{k}{integer or (named) vector: number of clusters, that is stages per variable.
 Values will be recycled if needed. If \code{NA} (default) a search of
@@ -31,6 +34,8 @@ the number of stage is performed with respect to the maximization of
 the \code{score} function. \code{NA} and integer can be mixed
 to fix the number of stage for some variables and use the
 score to select others.}
+
+\item{max_k}{integer, maximum number of stages to consider per variable.}
 
 \item{method}{the agglomeration method to be used in \code{\link{hclust}}.}
 
@@ -63,6 +68,8 @@ via the argument \code{k}.
 If \code{k} is \code{NA} for some variables, all
 possible number of stages will be checked and the
 one that maximize the \code{score} will be selected.
+A custom distance can be passed as a function in argument \code{distance}.
+This must resturn an object of class \code{"dist"} similarly to \code{\link{dist}}.
 }
 \examples{
 data("Titanic")

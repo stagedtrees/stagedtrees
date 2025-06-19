@@ -39,16 +39,6 @@ parentslist <- function(...){
 
 #' @rdname as_parentslist
 #' @export
-as_parentslist.string <- function(x, ...){
-  tokens <- strsplit(strsplit(x, "\\[")[[1]][-1],
-                    "\\]")
-  pls <- lapply(tokens, function(xxx){
-    list(parents = strsplit(xxx, ":")[[1]])
-  })
-}
-
-#' @rdname as_parentslist
-#' @export
 as_parentslist.list <- function(x, ...){
   order <- topo_sort_parentslist(x)
   x <- x[order] ## order the list
