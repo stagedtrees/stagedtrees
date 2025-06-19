@@ -75,6 +75,11 @@ stages_hclust <-
         "x" = "You've supplied {.type {k}}."
       ))
     }
+    if (!requireNamespace("fastcluster", quietly = TRUE)) {
+      hclu <- fastcluster::hclust
+    }else{
+      hclu <- hclust
+    }
     if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
     check_scope(scope, object)
     if (is.null(names(k))) {
@@ -97,9 +102,9 @@ stages_hclust <-
         )
       }
       if (!is.na(k[v])) {
-        groups <- cutree(hclust(M, method = method), k = min(k[v], attr(M, "Size"), max_k))
+        groups <- cutree(hclu(M, method = method), k = min(k[v], attr(M, "Size"), max_k))
       } else {
-        hcres <- hclust(M, method = method)
+        hcres <- hclu(M, method = method)
         res <- lapply(1:min(attr(M, "Size"), max_k), function(k) {
           groups <- cutree(hcres, k = k)
           old <- object$stages[[v]]

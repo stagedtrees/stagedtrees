@@ -13,7 +13,7 @@
    This is useful when missing data are present.
 * New stages learning algorithm for missing data, `stages_em` implements
   the structural EM algorithm for stages structure.
-* `sevt_fit_hem` implements the hard EM algorithm for parameter
+* `sevt_fit_em` implements the hard EM algorithm for parameter
   learning with missing data.
 * some fixes in `plot` related utilities.
 * functions to plot and handle ALDAGs:
@@ -25,10 +25,13 @@
    (it is checked with `length(formals(col))``). 
 * function `potential_outcomes` to compute the probability of an outcome 
   variable given intervention on a treatment.
-* new method for coloring in `make_satges_col` or `plot.sevt`. If `col = classic` 
+* new method for coloring in `make_stages_col` or `plot.sevt`. If `col = classic` 
   the "classical" coloring of stages is generated, where singleton stages are not 
   assign a color and where stages across different levels are assigned different 
   colors.
+* `stages_hclust` will now use the `hclust` implementation in the
+   **fastcluster** package, if available. 
+* `stages_hclust` accepts now a custom function as distance.
 
 # 2.3.0
 
