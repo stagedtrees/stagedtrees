@@ -17,6 +17,8 @@
 #' @param edge_label a function that produces edge labels.
 #' @param edge_label_options a function that produces edge label options.
 #' @param scale for the tikzfigure.
+#' @param normalize_layout logical, if \code{TRUE} layout positions are normalized,
+#' see also \code{xlim}.
 #' @param xlim \code{NULL} or a two dimensional vector, if not \code{NULL}
 #'        layout positions in the x-axis are scaled to the \code{xlim} interval.
 #' @param ylim same as \code{xlim} for the y-axis.

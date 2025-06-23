@@ -85,6 +85,9 @@ by default the name of the unobserved stages stored in \code{x$name_unobserved}.
 
 \item{scale}{for the tikzfigure.}
 
+\item{normalize_layout}{logical, if \code{TRUE} layout positions are normalized,
+see also \code{xlim}.}
+
 \item{xlim}{\code{NULL} or a two dimensional vector, if not \code{NULL}
 layout positions in the x-axis are scaled to the \code{xlim} interval.}
 
