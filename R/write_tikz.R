@@ -116,7 +116,9 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   cat(paste0("\\begin{tikzpicture}[auto, scale=", scale, ",\n"), file = file)
 
   nodestyle <- "\t%s/.style={%s,inner sep=%s,minimum size=%s,draw,%s,%s,fill=%s,text=%s},\n"
-  c1 <- col2rgb(ifelse(is.null(col[[1]][1]), "white", col[[1]][1]))
+  v1 <- names(x$tree)[1]
+  s11 <- stages(x)[[v1]]
+  c1 <- col2rgb(ifelse(is.null(col[[v1]][s11]), "white", col[[v1]][s11]))
   c1 <- sprintf("{rgb,255:red,%s; green,%s; blue,%s}", c1[1], c1[2], c1[3])
   cat2(sprintf(
     nodestyle,
