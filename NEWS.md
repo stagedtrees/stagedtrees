@@ -29,6 +29,7 @@
   the "classical" coloring of stages is generated, where singleton stages are not 
   assign a color and where stages across different levels are assigned different 
   colors.
+* `write_tikz` has now `xlim` and `ylim` parameters.
 
 # 2.3.0
 

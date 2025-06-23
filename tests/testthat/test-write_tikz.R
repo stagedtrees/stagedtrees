@@ -15,13 +15,15 @@ test_that("write_tikz", {
 
 test_that("write_tikz with layout", {
   layout <- igraph::layout_as_tree(as_igraph(model))
-  expect_output(write_tikz(model, layout = layout, normalize_layout = FALSE))
+  expect_output(write_tikz(model, layout = layout, xlim = NULL, ylim = NULL,
+                           normalize_layout = TRUE))
 })
 
 
 test_that("write_tikz with layout and no ignore", {
   layout <- igraph::layout_as_tree(as_igraph(model, ignore = FALSE))
-  expect_output(write_tikz(model, layout = layout, normalize_layout = FALSE, ignore = FALSE))
+  expect_output(write_tikz(model, layout = layout, xlim = NULL,
+                           ylim = NULL, ignore = FALSE))
 })
 
 test_that("write_tikz with stages col", {

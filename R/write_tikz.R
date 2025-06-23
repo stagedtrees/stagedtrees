@@ -17,8 +17,9 @@
 #' @param edge_label a function that produces edge labels.
 #' @param edge_label_options a function that produces edge label options.
 #' @param scale for the tikzfigure.
-#' @param normalize_layout a logical value. If \code{TRUE}
-#'        layout positions are scaled to the \code{[0,1]} interval.
+#' @param xlim \code{NULL} or a two dimensional vector, if not \code{NULL}
+#'        layout positions in the x-axis are scaled to the \code{xlim} interval.
+#' @param ylim same as \code{xlim} for the y-axis.
 #' @param node_shape the shape to be used for nodes.
 #' @param node_inner_sep the \code{inner sep} parameter.
 #' @param node_minimum_size the \code{minimum size} parameter for the nodes.
@@ -47,6 +48,8 @@ write_tikz <- function(x, layout = NULL, file = "",
                        },
                        scale = 10,
                        normalize_layout = TRUE,
+                       xlim = c(0,1),
+                       ylim = c(0,1),
                        node_shape = "circle",
                        node_inner_sep = "1mm",
                        node_minimum_size = "0.3cm",
@@ -71,6 +74,8 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
                             },
                             scale = 10,
                             normalize_layout = TRUE,
+                            xlim = c(0,1),
+                            ylim = c(0,1),
                             node_shape = "circle",
                             node_inner_sep = "1mm",
                             node_minimum_size = "0.3cm",
@@ -81,13 +86,6 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   verts <- get_vertices(x, ignore = ignore)
 
   col <- make_stages_col(x, col, ignore = ignore)
-  #col <- lapply(col, function(cc) {
-  #  if (all(is.numeric(cc))) {
-  #    sapply(cc, function(ccc) palette()[ccc])
-  #  } else {
-  #    cc
-  #  }
-  #})
 
   if (is.null(layout)) {
     layout <- igraph::layout_with_sugiyama(as_igraph(x, ignore = ignore))$layout
@@ -98,11 +96,18 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
   if (is.function(layout)) {
     layout <- layout(as_igraph(x, ignore = ignore))
   }
-
-  if (normalize_layout) {
-    layout[, 1] <- (layout[, 1] - min(layout[, 1])) /
+  if (normalize_layout){
+    if (is.null(xlim)) xlim <- c(0,1)
+    if (is.null(ylim)) ylim <- c(0,1)
+  }
+  if (length(xlim) >= 2){
+    layout[, 1] <- xlim[1] +
+      (xlim[2] - xlim[1]) * (layout[, 1] - min(layout[, 1])) /
       (max(layout[, 1]) - min(layout[, 1]))
-    layout[, 2] <- (layout[, 2] - min(layout[, 2])) /
+  }
+  if (length(ylim) >= 2) {
+    layout[, 2] <- ylim[1] +
+      (ylim[2] - ylim[1]) * (layout[, 2] - min(layout[, 2])) /
       (max(layout[, 2]) - min(layout[, 2]))
   }
 
