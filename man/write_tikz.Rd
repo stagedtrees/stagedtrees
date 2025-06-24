@@ -22,6 +22,8 @@ write_tikz(
  },
   scale = 10,
   normalize_layout = TRUE,
+  xlim = c(0, 1),
+  ylim = c(0, 1),
   node_shape = "circle",
   node_inner_sep = "1mm",
   node_minimum_size = "0.3cm",
@@ -47,6 +49,8 @@ write_tikz(
  },
   scale = 10,
   normalize_layout = TRUE,
+  xlim = c(0, 1),
+  ylim = c(0, 1),
   node_shape = "circle",
   node_inner_sep = "1mm",
   node_minimum_size = "0.3cm",
@@ -81,8 +85,13 @@ by default the name of the unobserved stages stored in \code{x$name_unobserved}.
 
 \item{scale}{for the tikzfigure.}
 
-\item{normalize_layout}{a logical value. If \code{TRUE}
-layout positions are scaled to the \code{[0,1]} interval.}
+\item{normalize_layout}{logical, if \code{TRUE} layout positions are normalized,
+see also \code{xlim}.}
+
+\item{xlim}{\code{NULL} or a two dimensional vector, if not \code{NULL}
+layout positions in the x-axis are scaled to the \code{xlim} interval.}
+
+\item{ylim}{same as \code{xlim} for the y-axis.}
 
 \item{node_shape}{the shape to be used for nodes.}
 
