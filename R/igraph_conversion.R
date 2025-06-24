@@ -217,9 +217,10 @@ get_edges.ceg <- function(x, ignore = x$name_unobserved, ...) {
   for (p1 in unique(pos[[v]])) {
     if (!(p1 %in% allignore)) {
       for (label in x$tree[[v]]) {
+        ix <- min(which(pos[[v]] %in% p1))
         edges <- rbind(edges, c(
           from = p1, to = "END", label = label,
-          stage = "END", var = v
+          stage = x$stages[[v]][ix], var = v
         ))
       }
     }
