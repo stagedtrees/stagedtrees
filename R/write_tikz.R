@@ -16,6 +16,7 @@
 #' @param node_label a function that produces nodes labels.
 #' @param edge_label a function that produces edge labels.
 #' @param edge_label_options a function that produces edge label options.
+#' @param edge_options a function that produces edge options.
 #' @param scale for the tikzfigure.
 #' @param normalize_layout logical, if \code{TRUE} layout positions are normalized,
 #' see also \code{xlim}.
@@ -46,7 +47,10 @@ write_tikz <- function(x, layout = NULL, file = "",
                          ifelse(is.na(edge$label), "", edge$label)
                        },
                        edge_label_options = function(edge) {
-                         return("sloped")
+                         "sloped"
+                       },
+                       edge_options = function(edge) {
+                         ""
                        },
                        scale = 10,
                        normalize_layout = TRUE,
@@ -72,7 +76,10 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
                               ifelse(is.na(edge$label), "", edge$label)
                             },
                             edge_label_options = function(edge) {
-                              return("sloped")
+                              "sloped"
+                            },
+                            edge_options = function(edge) {
+                              ""
                             },
                             scale = 10,
                             normalize_layout = TRUE,
@@ -181,12 +188,14 @@ write_tikz.sevt <- function(x, layout = NULL, file = "",
     from <- .fix_n(edgs[i, "from"])
     to <- .fix_n(edgs[i, "to"])
     label <- edge_label(edgs[i, , drop = FALSE])
-    opt <- paste(edge_label_options(edgs[i, , drop = FALSE]),
+    label_opt <- paste(edge_label_options(edgs[i, , drop = FALSE]),
       collapse = ","
     )
+    opt <- paste(edge_options(edgs[i, , drop = FALSE]),
+                 collapse = ",")
     cat2(sprintf(
-      "\t\\draw[->] (%s) -- node [%s]{%s} (%s);\n",
-      from, opt, .escape(label), to
+      "\t\\draw[->] (%s) to[%s] node [%s]{%s} (%s);\n",
+      from, opt, label_opt, .escape(label), to
     ))
   }
 
