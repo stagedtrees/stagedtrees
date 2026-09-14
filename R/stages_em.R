@@ -44,8 +44,9 @@ stages_em <- function(object, data = object$data_raw, stages_alg = stages_bhc,
     }
   }
   object$em <- list()
+  data_c <- data  # fallback when max_iter_em = 0: final fit uses original data
   start <- copy_sevt(object, c("lambda", "name_unobserved", "em"))
-  for(i in 1:max_iter_em){
+  for(i in seq_len(max_iter_em)){
     data_c <- impute(data = data, object = object, chain_impute = chain_impute)
     if (incremental){
       start <- sevt_fit(object, data = data_c)
