@@ -31,6 +31,34 @@
   colors.
 * `write_tikz` has now `xlim` and `ylim` parameters, also an 
    `edge_options` argument.
+* Bug fixes (code review):
+  * `$stages` is now consistently indexed by variable name throughout
+    the codebase, preventing silent mis-indexing when the root entry
+    is absent or stages are reordered (C1).
+  * `prob()` now returns `NA` (with a warning) when conditioning on a
+    zero-probability event instead of propagating `NaN` (C2).
+  * `rename_stage()` now aborts with an informative error when the new
+    name already exists as a stage, preventing silent overwrite of its
+    probability vector; a no-op rename (new == old) is handled cheaply (C3).
+  * `indep.data.frame()` and `full.data.frame()` now use complete cases
+    consistent with `make_ctables`, and store probabilities as plain
+    named numeric vectors rather than `table`/`array` objects (C6).
+  * `make_ctables()` now passes `drop = FALSE` when subsetting
+    contingency tables, preventing silent dimension collapse for variables
+    with a single observed level (A-B1).
+  * `sample_from()`, `stndnaming()`, `sevt_fit_em()`, `stages_em()`,
+    `tree_indexing()`, `probdist`, and `lr_test` now use `seq_len()` /
+    `seq_along()` instead of `1:n`, preventing erroneous double-iteration
+    on zero- or one-element inputs (B-B1, A-B2, A-B3, A-B4, B-B5, B-B6, B-B7).
+  * `stages_em()` no longer leaves `data_c` uninitialised when
+    `max_iter_em = 0` (B-B5).
+  * `stages_bhcr()` now returns early on single-variable models (B-B2).
+  * `stages_hclust()` now skips clustering when only one non-ignored
+    stage remains for a variable (B-B3).
+  * `split_stage_random()` now uses `scope` when re-fitting after a
+    split, avoiding a full refit (A-B6).
+  * `join_unobserved()` now deduplicates `name_unobserved` (A-B5).
+  * Build artifacts (`*.tar.gz`, `*.Rcheck/`) added to `.gitignore`.
 
 # 2.3.0
 
