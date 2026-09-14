@@ -40,3 +40,8 @@ test_that("full does not crash when a variable has exactly one level (A-B1)", {
   expect_s3_class(m, "sevt")
   expect_true(has_ctables(m))
 })
+
+test_that("stages()[[character(0)]] does not crash (A-B4)", {
+  m <- full(data.frame(A = factor(c("a", "b")), B = factor(c("x", "y"))), lambda = 1)
+  expect_no_error(stages(m)[[character(0)]])
+})

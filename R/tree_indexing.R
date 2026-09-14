@@ -13,7 +13,7 @@
 tree_idx <- function(path, tree, complete = FALSE) {
   k <- length(path)
   ls <- sapply(tree, length)
-  is <- vapply(1:k, FUN = function(i) {
+  is <- vapply(seq_len(k), FUN = function(i) {
     (1:ls[i])[tree[[i]] %in% path[i]]
   }, FUN.VALUE = 1)
   if (k <= 1) {

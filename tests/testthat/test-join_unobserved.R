@@ -28,3 +28,9 @@ test_that("join.unobserved (NAs)", {
   ll2 <- logLik(mod)
   expect_equal(ll1, ll2)
 })
+
+test_that("join_unobserved does not grow name_unobserved on repeated calls (A-B5)", {
+  m <- full(generate_random_dataset(3, 30), lambda = 1, join_unobserved = FALSE)
+  for (i in 1:20) m <- join_unobserved(m, name = "UNOBSERVED")
+  expect_equal(length(m$name_unobserved), 1L)
+})

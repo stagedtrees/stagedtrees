@@ -89,7 +89,7 @@ probdist.cd <- function(x, y) {
 distance_mat_stages <- function(x, distance = probdist.kl) {
   d <- length(x)
   M <- matrix(nrow = d, ncol = d, 0)
-  for (i in 1:d) {
+  for (i in seq_len(d)) {
     for (j in 1:i) {
       M[i, j] <- distance(x[[i]], x[[j]])
     }

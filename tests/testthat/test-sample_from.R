@@ -67,3 +67,9 @@ test_that("sample_from works on 1-variable model (B-B1)", {
   expect_equal(ncol(s), 1L)
   expect_equal(nrow(s), 5L)
 })
+
+test_that("stndnaming works on 1-variable model (A-B3)", {
+  m <- full(data.frame(X = factor(c("a", "b", "a"))), lambda = 1)
+  expect_no_error(stndnaming(m))
+  expect_s3_class(stndnaming(m), "sevt")
+})

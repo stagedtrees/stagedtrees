@@ -41,7 +41,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
     object$stages[[var]][ix] <- label
     if (is_fitted_sevt(object)) {
       # re-fit the model
-      object <- sevt_fit(object, lambda = object$lambda)
+      object <- sevt_fit(object, scope = var)
     }
   }
   return(object)

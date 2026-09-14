@@ -56,7 +56,7 @@ lr_test <- function(object, ...) {
     check_same_tree(object, object2, call = call)
     # check nested models
     incl_st <- inclusions_stages(object, object2)
-    for (i in 1:length(incl_st)) {
+    for (i in seq_along(incl_st)) {
       if (any(incl_st[[i]][, 2] %in% c("!=", "<"))) {
         cli::cli_abort(c(
           "{.fun stagedtrees::lr_test} requires nested models.",
