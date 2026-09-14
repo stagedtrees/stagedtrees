@@ -59,3 +59,11 @@ test_that("sampling from a non sevt object shoudl throw error", {
   class(mod) <- "ajsjhhsajh"
   expect_error(sample_from(mod, 10))
 })
+
+test_that("sample_from works on 1-variable model (B-B1)", {
+  m <- full(data.frame(X = factor(c("a", "b", "a"))), lambda = 1)
+  expect_no_error(sample_from(m, size = 5))
+  s <- sample_from(m, size = 5)
+  expect_equal(ncol(s), 1L)
+  expect_equal(nrow(s), 5L)
+})
