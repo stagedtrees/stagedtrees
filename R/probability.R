@@ -140,7 +140,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   # index of last variable that appears in x
   k <- which(var %in% var1[length(var1)])
   res <- vapply(
-    1:n,
+    seq_len(n),
     FUN.VALUE = 1.0,
     FUN = function(i) {
       ll <- sapply(var[1:k], FUN = function(vv){

@@ -127,3 +127,10 @@ test_that("prob should raise error conditional_on is not data.frame, vector or N
   expect_error(prob(sev, c(X4 = "-1"), conditional_on = "1"))
   expect_error(prob(sev, data.frame(X4 = c("-1", "1")), conditional_on = 1))
 })
+
+test_that("prob: 0-row data frame returns numeric(0), not an error (B-B4)", {
+  m <- full(Titanic, lambda = 1)
+  empty <- data.frame(Class = character(0), Survived = character(0))
+  expect_no_error(prob(m, empty))
+  expect_equal(length(prob(m, empty)), 0L)
+})
