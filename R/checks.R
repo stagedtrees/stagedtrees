@@ -91,7 +91,8 @@ check_tree <- function(tree, arg = rlang::caller_arg(tree),
 check_stages <- function(object, arg = rlang::caller_arg(object),
                          call = rlang::caller_env()) {
   if (isTRUE(object$skip_checks)) return() ## skip checks
-  if (is.null(names(object$stages)) && sevt_nvar(object) > 1) {
+  vars <- sevt_varnames(object)
+  if (is.null(names(object$stages)) && length(vars) > 1) {
     cli::cli_abort(c(
       "{.arg {arg}} must be a valid object of class {.cls sevt}.",
       "i" = "An object of class {.cls sevt} must have
@@ -99,6 +100,28 @@ check_stages <- function(object, arg = rlang::caller_arg(object),
       "x" = "You've supplied {.arg {arg}} where the {.field stages}
       component is not named."
     ), call = call, arg = arg)
+  }
+  # names of stages must be a subset of variable names
+  bad_names <- setdiff(names(object$stages), vars)
+  if (length(bad_names) > 0) {
+    cli::cli_abort(c(
+      "{.arg {arg}} has {.field stages} entries with unknown variable names.",
+      "x" = "{.val {bad_names}} are not variables in {.arg {arg}}."
+    ), call = call, arg = arg)
+  }
+  # each stages vector must have the right length for its variable
+  n_sit <- 1L
+  for (j in seq_along(vars)[-1]) {
+    v <- vars[j]
+    n_sit <- n_sit * length(object$tree[[vars[j - 1L]]])
+    s <- object$stages[[v]]
+    if (!is.null(s) && length(s) != n_sit) {
+      cli::cli_abort(c(
+        "{.arg {arg}} has a {.field stages} entry of wrong length.",
+        "x" = "stages[[{.val {v}}]] has length {length(s)};
+               expected {n_sit} (one entry per situation)."
+      ), call = call, arg = arg)
+    }
   }
 }
 

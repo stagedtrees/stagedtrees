@@ -212,11 +212,13 @@ diff_stages <- function(object1, object2) {
   check_sevt(object1)
   check_sevt(object2)
   check_same_tree(object1, object2)
-  out <- rep(list(c()), length(object1$stages))
-  attr(out, "names") <- attr(object1$stages, "names")
-  for (k in seq_along(object1$stages)) {
-    a <- object1$stages[[k]]
-    b <- object2$stages[[k]]
+  vars <- sevt_varnames(object1)
+  non_root <- vars[-1]
+  out <- vector("list", length(non_root))
+  names(out) <- non_root
+  for (v in non_root) {
+    a <- object1$stages[[v]]
+    b <- object2$stages[[v]]
     unique_a <- unique(a)
     unique_b <- unique(b)
     out_a <- out_b <- rep(0, length(a))
@@ -233,7 +235,7 @@ diff_stages <- function(object1, object2) {
       )
     }
     # stages exactly equal have sign(out_a) + sign(out_b) == 2.
-    out[[k]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 0, 1)
+    out[[v]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 0, 1)
   }
   return(out)
 }
