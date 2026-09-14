@@ -78,6 +78,44 @@ test_that("prob should raise error if x and conditional_on has same names", {
   expect_error(prob(sev, data.frame(X4 = c("-1", "1")), conditional_on = con))
 })
 
+test_that("prob: conditioning on zero-prob event returns NA with warning, not 1 (C2)", {
+  data(Titanic)
+  # lambda=0 so P(Crew, Child) = 0 (no crew children in Titanic data)
+  m <- full(Titanic, lambda = 0)
+  cond <- c(Class = "Crew", Age = "Child")
+  expect_equal(prob(m, cond), 0)  # joint query still returns 0
+
+  # conditional on impossible event -> NA + warning, not 1
+  expect_warning(
+    p_yes <- prob(m, c(Survived = "Yes"), conditional_on = cond, na0 = FALSE),
+    regexp = "zero-probability"
+  )
+  expect_true(is.na(p_yes))
+
+  expect_warning(
+    p_no <- prob(m, c(Survived = "No"), conditional_on = cond, na0 = FALSE),
+    regexp = "zero-probability"
+  )
+  expect_true(is.na(p_no))
+
+  # with na0 = TRUE (default) zero-prob conditioning is STILL NA (not 0 or 1)
+  expect_warning(
+    p_default <- prob(m, c(Survived = "Yes"), conditional_on = cond),
+    regexp = "zero-probability"
+  )
+  expect_true(is.na(p_default))
+
+  # vectorised data.frame conditioning: only impossible rows become NA
+  cond_df <- data.frame(Class = c("Crew", "1st"), Age = c("Child", "Adult"))
+  expect_warning(
+    pv <- prob(m, data.frame(Survived = c("Yes", "Yes")),
+               conditional_on = cond_df, na0 = FALSE),
+    regexp = "zero-probability"
+  )
+  expect_true(is.na(pv[1]))
+  expect_false(is.na(pv[2]))
+})
+
 test_that("prob should raise error conditional_on is not data.frame, vector or NULL", {
   ### this first check is just to check that an error is not from something else
   expect_length(prob(sev, c(X4 = "-1"), conditional_on = c(X1 = "1")), 1)
