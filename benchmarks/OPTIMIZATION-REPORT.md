@@ -233,7 +233,30 @@ still selects the original per-candidate path. Measured **6.0×** on a
 models (guarding the `>=` tie-break) and that each score's `full` and `delta`
 views agree.
 
-Items 2–5 are **not** applied — still investigation plus prototypes.
+**Items 2 and 3 are implemented.** `tree_idx` now uses `lengths()`, `match()`
+and a walked stride instead of `sapply(tree, length)`, `%in%` and a per-position
+`prod()`; `join_stages_unsafe` uses indexed assignment instead of `ifelse`.
+Both keep their signatures, so no caller changed. Measured against the
+baselines in section 1:
+
+| call | before | after | |
+|---|---|---|---|
+| `sample_from(20000)`, 8 vars | 16.045 s | 9.495 s | 1.7× |
+| `sample_from(5000)`, 6 vars | 2.063 s | 0.940 s | 2.2× |
+| `predict(2000 rows)` | 1.951 s | 0.704 s | 2.8× |
+| `prob(5000 rows)` | 4.229 s | 3.705 s | 1.14× |
+
+`prob` moves least, as expected: `find_stage` was only 22 % of it, and the
+`[.data.frame` (24.65 %) and `expand.grid` (18.14 %) costs are untouched —
+that is item 5, still open.
+
+One regression was caught by the existing suite during this work: the rewritten
+`tree_idx` indexed `path[[k]]` with `k = 0` for an empty path, where the old
+code returned `NA` via `is[1]` on an empty vector. Exhaustive path testing had
+missed it because `expand.grid` never yields a zero-length path. Fixed, and
+`stages(m)[[character(0)]]` is now covered directly.
+
+Items 4 and 5 are **not** applied — still investigation plus prototypes.
 
 ---
 

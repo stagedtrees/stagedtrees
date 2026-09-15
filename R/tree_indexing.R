@@ -12,22 +12,34 @@
 #' @keywords internal
 tree_idx <- function(path, tree, complete = FALSE) {
   k <- length(path)
-  ls <- sapply(tree, length)
-  is <- vapply(seq_len(k), FUN = function(i) {
-    (1:ls[i])[tree[[i]] %in% path[i]]
-  }, FUN.VALUE = 1)
-  if (k <= 1) {
-    return(is[1])
+  if (k == 0L) {
+    return(NA_real_)
   }
-  if (complete) {
-    sum(vapply(1:(k - 1), FUN = function(i) {
-      prod(ls[(i + 1):(k)])
-    }, FUN.VALUE = 1) * is[1:(k - 1)]) + is[k]
-  } else {
-    sum(vapply(1:(k - 1), FUN = function(i) {
-      prod(ls[(i + 1):(k)])
-    }, FUN.VALUE = 1) * (is[1:(k - 1)] - 1)) + is[k]
+  ls <- lengths(tree)
+  ## walk the path from the deepest level up, accumulating the stride
+  ## (prod of the level sizes below) instead of recomputing it per position
+  idx <- 0
+  if (k > 1) {
+    stride <- 1
+    for (i in (k - 1):1) {
+      stride <- stride * ls[[i + 1]]
+      m <- match(path[[i]], tree[[i]])
+      if (is.na(m)) stop_unknown_level(path[[i]], names(tree)[i])
+      idx <- idx + (if (complete) m else m - 1) * stride
+    }
   }
+  m <- match(path[[k]], tree[[k]])
+  if (is.na(m)) stop_unknown_level(path[[k]], names(tree)[k])
+  idx + m
+}
+
+#' @keywords internal
+#' @noRd
+stop_unknown_level <- function(value, var) {
+  cli::cli_abort(c(
+    "{.arg path} contains a value which is not a level of {.val {var}}.",
+    "x" = "You've supplied {.val {value}}."
+  ), call = NULL)
 }
 
 
@@ -42,7 +54,7 @@ tree_idx <- function(path, tree, complete = FALSE) {
 find_stage <- function(object, path) {
   k <- length(path)
   ix <- tree_idx(path = path, tree = object$tree)
-  l <- length(object$stages[[sevt_varnames(object)[k + 1]]])
   ### stages can be defined in a reduced vector
-  return(object$stages[[sevt_varnames(object)[k + 1]]][(ix - 1) %% l + 1])
+  stages <- object$stages[[sevt_varnames(object)[k + 1]]]
+  return(stages[(ix - 1) %% length(stages) + 1])
 }

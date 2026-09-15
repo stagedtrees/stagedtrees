@@ -48,6 +48,11 @@
    log-likelihood and degrees of freedom, without building a candidate
    model for every move, which is about 6 times faster. Passing `score` as
    a function, as before, is still supported and returns the same result.
+* internal speedups in `tree_idx` and `join_stages_unsafe`, which no longer
+   recompute values that are fixed for a given model. `sample_from` is about
+   twice as fast and `predict` about three times; `tree_idx` now reports an
+   informative error, instead of a cryptic one, when a path contains a value
+   which is not a level of the corresponding variable.
 * `write_tikz` has now `xlim` and `ylim` parameters, also an 
    `edge_options` argument.
 * Bug fixes (code review):
