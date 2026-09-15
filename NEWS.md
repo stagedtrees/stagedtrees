@@ -59,6 +59,15 @@
     split, avoiding a full refit (A-B6).
   * `join_unobserved()` now deduplicates `name_unobserved` (A-B5).
   * Build artifacts (`*.tar.gz`, `*.Rcheck/`) added to `.gitignore`.
+  * `diff_stages()` inner loops replaced `ifelse()` side-effect pattern
+    with `if/else` for clarity and correctness.
+  * `compare_stages()` now errors with an informative message when an
+    unknown `method` is supplied, instead of silently falling back to naive.
+  * `cid()` no longer includes the root variable in `$wrong` output,
+    making it consistent with `hamming_stages()` and `diff_stages()`.
+  * `hamming_stages()` and `cid()` documentation updated to state that
+    `FUN = mean` yields a result in [0, p−1] (sum of per-variable means),
+    not a value in [0, 1].
 
 # 2.3.0
 
