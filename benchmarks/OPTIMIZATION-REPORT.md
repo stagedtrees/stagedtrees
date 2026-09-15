@@ -224,14 +224,24 @@ shipping compiled code on CRAN.
 
 ## Status
 
-**Item 1 is implemented** on this branch for `stages_bhc` only. `score` now
-accepts `"BIC"` (default) or `"AIC"` and takes the scalar path; a function
-still selects the original per-candidate path. Measured **6.0×** on a
-121-situation model, with identical stages, log-likelihood and score value.
-`R/scores.R` holds the registry so further scores are a single entry, and
-`tests/testthat/test-scores.R` asserts the two paths agree across 25 random
-models (guarding the `>=` tie-break) and that each score's `full` and `delta`
-views agree.
+**Item 1 is implemented** on this branch, and the interface it originally
+shipped with was withdrawn. The first version let `score` be either a string
+naming a predefined score (`"BIC"` or `"AIC"`, taking the fast scalar path)
+or a function (taking the original per-candidate path), with an `R/scores.R`
+registry behind it. Measured 6.0× on a 121-situation model, identical stages,
+log-likelihood and score value — but it bought speed only for users willing
+to give up the generality of the argument, and it added a registry to the
+public interface.
+
+The design that replaced it keeps `score` an ordinary function and is faster:
+**select** the candidate merge by log-likelihood alone, which is
+score-independent, then **accept or reject** that one candidate with the
+user's score. Valid because every pairwise merge changes the degrees of
+freedom by exactly `k - 1`, so the score cannot reorder the candidates.
+`R/scores.R` and the registry are gone; `join_ll_delta()` in `R/join_stages.R`
+is the pure-R oracle, and `tests/testthat/test-scores.R` asserts the compiled
+selection agrees with it — including on perfectly balanced data, where every
+candidate delta ties and the `>=` tie-break decides the model.
 
 **Items 2 and 3 are implemented.** `tree_idx` now uses `lengths()`, `match()`
 and a walked stride instead of `sapply(tree, length)`, `%in%` and a per-position
