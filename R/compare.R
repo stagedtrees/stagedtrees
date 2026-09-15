@@ -223,16 +223,12 @@ diff_stages <- function(object1, object2) {
     unique_b <- unique(b)
     out_a <- out_b <- rep(0, length(a))
     for (i in seq_along(unique_a)) {
-      ifelse((length(unique(b[which(a == unique_a[i])])) == 1),
-        out_a[which(a == unique_a[i])] <- 1,
-        out_a[which(a == unique_a[i])] <- 0
-      )
+      idx <- a == unique_a[i]
+      if (length(unique(b[idx])) == 1) out_a[idx] <- 1
     }
     for (i in seq_along(unique_b)) {
-      ifelse((length(unique(a[which(b == unique_b[i])])) == 1),
-        out_b[which(b == unique_b[i])] <- 1,
-        out_b[which(b == unique_b[i])] <- 0
-      )
+      idx <- b == unique_b[i]
+      if (length(unique(a[idx])) == 1) out_b[idx] <- 1
     }
     # stages exactly equal have sign(out_a) + sign(out_b) == 2.
     out[[v]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 0, 1)
