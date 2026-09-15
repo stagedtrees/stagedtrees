@@ -1,64 +1,169 @@
 "version","workload","size","rep","seconds"
-"v2","full","2000obs x 4var x 3lv",1,0.0389999999999999
+"v2","full","2000obs x 4var x 3lv",1,0.00700000000000001
 "v2","sevt_fit","2000obs x 4var x 3lv",1,0.002
-"v2","stages_bhc","2000obs x 4var x 3lv",1,0.132
-"v2","stages_hclust","2000obs x 4var x 3lv (default)",1,0.0790000000000002
-"v2","sample_from","2000obs x 4var x 3lv (n=2000)",1,0.194
-"v2","prob","2000obs x 4var x 3lv (1000 rows)",1,0.727
-"v2","predict","2000obs x 4var x 3lv (1000 rows)",1,0.215
-"v2","full","2000obs x 5var x 3lv",1,0.00800000000000001
-"v2","sevt_fit","2000obs x 5var x 3lv",1,0.00300000000000011
-"v2","stages_bhc","2000obs x 5var x 3lv",1,1.8
-"v2","stages_hclust","2000obs x 5var x 3lv (default)",1,0.452
-"v2","sample_from","2000obs x 5var x 3lv (n=2000)",1,0.254
-"v2","prob","2000obs x 5var x 3lv (1000 rows)",1,0.748
-"v2","predict","2000obs x 5var x 3lv (1000 rows)",1,0.300000000000001
-"v2","full","2000obs x 6var x 3lv",1,0.0169999999999995
-"v2","sevt_fit","2000obs x 6var x 3lv",1,0.0080000000000009
-"v2","stages_bhc","2000obs x 6var x 3lv",1,46.726
-"v2","stages_hclust","2000obs x 6var x 3lv (default)",1,2.921
-"v2","sample_from","2000obs x 6var x 3lv (n=2000)",1,0.292999999999999
-"v2","prob","2000obs x 6var x 3lv (1000 rows)",1,0.722999999999999
-"v2","predict","2000obs x 6var x 3lv (1000 rows)",1,0.341000000000001
-"v2","full","2000obs x 4var x 3lv",2,0.044
+"v2","stages_bhc","2000obs x 4var x 3lv",1,0.00700000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",1,0.191
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",1,0.15
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",1,0.757
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",1,0.186
+"v2","full","2000obs x 5var x 3lv",1,0.00699999999999967
+"v2","sevt_fit","2000obs x 5var x 3lv",1,0.00299999999999967
+"v2","stages_bhc","2000obs x 5var x 3lv",1,0.0340000000000003
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",1,0.349
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",1,0.208
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",1,0.688
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",1,0.233000000000001
+"v2","full","2000obs x 6var x 3lv",1,0.0150000000000006
+"v2","sevt_fit","2000obs x 6var x 3lv",1,0.00599999999999934
+"v2","stages_bhc","2000obs x 6var x 3lv",1,0.42
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",1,2.482
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",1,0.269
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",1,0.669
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",1,0.318
+"v2","full","2000obs x 4var x 3lv",2,0.00700000000000001
 "v2","sevt_fit","2000obs x 4var x 3lv",2,0.002
-"v2","stages_bhc","2000obs x 4var x 3lv",2,0.119
-"v2","stages_hclust","2000obs x 4var x 3lv (default)",2,0.0720000000000001
-"v2","sample_from","2000obs x 4var x 3lv (n=2000)",2,0.181
-"v2","prob","2000obs x 4var x 3lv (1000 rows)",2,0.657
-"v2","predict","2000obs x 4var x 3lv (1000 rows)",2,0.203
+"v2","stages_bhc","2000obs x 4var x 3lv",2,0.00700000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",2,0.179
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",2,0.144
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",2,0.637
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",2,0.179
 "v2","full","2000obs x 5var x 3lv",2,0.00700000000000012
-"v2","sevt_fit","2000obs x 5var x 3lv",2,0.00300000000000011
-"v2","stages_bhc","2000obs x 5var x 3lv",2,1.587
-"v2","stages_hclust","2000obs x 5var x 3lv (default)",2,0.431
-"v2","sample_from","2000obs x 5var x 3lv (n=2000)",2,0.242999999999999
-"v2","prob","2000obs x 5var x 3lv (1000 rows)",2,0.685
-"v2","predict","2000obs x 5var x 3lv (1000 rows)",2,0.276
-"v2","full","2000obs x 6var x 3lv",2,0.016
+"v2","sevt_fit","2000obs x 5var x 3lv",2,0.00299999999999967
+"v2","stages_bhc","2000obs x 5var x 3lv",2,0.0329999999999999
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",2,0.337
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",2,0.197
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",2,0.644
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",2,0.233
+"v2","full","2000obs x 6var x 3lv",2,0.0150000000000006
 "v2","sevt_fit","2000obs x 6var x 3lv",2,0.00800000000000001
-"v2","stages_bhc","2000obs x 6var x 3lv",2,43.516
-"v2","stages_hclust","2000obs x 6var x 3lv (default)",2,2.63500000000001
-"v2","sample_from","2000obs x 6var x 3lv (n=2000)",2,0.268999999999998
-"v2","prob","2000obs x 6var x 3lv (1000 rows)",2,0.646999999999998
-"v2","predict","2000obs x 6var x 3lv (1000 rows)",2,0.306000000000004
-"v2","full","2000obs x 4var x 3lv",3,0.0369999999999999
+"v2","stages_bhc","2000obs x 6var x 3lv",2,0.404000000000001
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",2,2.342
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",2,0.252000000000001
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",2,0.628
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",2,0.285
+"v2","full","2000obs x 4var x 3lv",3,0.00700000000000001
 "v2","sevt_fit","2000obs x 4var x 3lv",3,0.002
-"v2","stages_bhc","2000obs x 4var x 3lv",3,0.117
-"v2","stages_hclust","2000obs x 4var x 3lv (default)",3,0.0740000000000001
-"v2","sample_from","2000obs x 4var x 3lv (n=2000)",3,0.182
-"v2","prob","2000obs x 4var x 3lv (1000 rows)",3,0.662
-"v2","predict","2000obs x 4var x 3lv (1000 rows)",3,0.203
-"v2","full","2000obs x 5var x 3lv",3,0.00700000000000012
-"v2","sevt_fit","2000obs x 5var x 3lv",3,0.00299999999999967
-"v2","stages_bhc","2000obs x 5var x 3lv",3,1.584
-"v2","stages_hclust","2000obs x 5var x 3lv (default)",3,0.422
-"v2","sample_from","2000obs x 5var x 3lv (n=2000)",3,0.239
-"v2","prob","2000obs x 5var x 3lv (1000 rows)",3,0.696
-"v2","predict","2000obs x 5var x 3lv (1000 rows)",3,0.28
-"v2","full","2000obs x 6var x 3lv",3,0.016
-"v2","sevt_fit","2000obs x 6var x 3lv",3,0.00700000000000056
-"v2","stages_bhc","2000obs x 6var x 3lv",3,43.824
-"v2","stages_hclust","2000obs x 6var x 3lv (default)",3,2.732
-"v2","sample_from","2000obs x 6var x 3lv (n=2000)",3,0.276000000000003
-"v2","prob","2000obs x 6var x 3lv (1000 rows)",3,0.660999999999994
-"v2","predict","2000obs x 6var x 3lv (1000 rows)",3,0.320999999999998
+"v2","stages_bhc","2000obs x 4var x 3lv",3,0.0069999999999999
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",3,0.193
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",3,0.146
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",3,0.64
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",3,0.204
+"v2","full","2000obs x 5var x 3lv",3,0.00599999999999978
+"v2","sevt_fit","2000obs x 5var x 3lv",3,0.00200000000000022
+"v2","stages_bhc","2000obs x 5var x 3lv",3,0.0319999999999996
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",3,0.326
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",3,0.202
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",3,0.66
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",3,0.223999999999999
+"v2","full","2000obs x 6var x 3lv",3,0.0140000000000002
+"v2","sevt_fit","2000obs x 6var x 3lv",3,0.00600000000000023
+"v2","stages_bhc","2000obs x 6var x 3lv",3,0.396000000000001
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",3,2.215
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",3,0.253
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",3,0.628
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",3,0.284000000000001
+"v2","full","2000obs x 4var x 3lv",4,0.00800000000000001
+"v2","sevt_fit","2000obs x 4var x 3lv",4,0.001
+"v2","stages_bhc","2000obs x 4var x 3lv",4,0.00800000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",4,0.204
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",4,0.147
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",4,0.663
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",4,0.181
+"v2","full","2000obs x 5var x 3lv",4,0.00599999999999978
+"v2","sevt_fit","2000obs x 5var x 3lv",4,0.00200000000000022
+"v2","stages_bhc","2000obs x 5var x 3lv",4,0.036
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",4,0.343
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",4,0.195
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",4,0.67
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",4,0.223
+"v2","full","2000obs x 6var x 3lv",4,0.0139999999999993
+"v2","sevt_fit","2000obs x 6var x 3lv",4,0.00600000000000023
+"v2","stages_bhc","2000obs x 6var x 3lv",4,0.396
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",4,2.205
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",4,0.255999999999999
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",4,0.703000000000001
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",4,0.295000000000002
+"v2","full","2000obs x 4var x 3lv",5,0.00799999999999995
+"v2","sevt_fit","2000obs x 4var x 3lv",5,0.002
+"v2","stages_bhc","2000obs x 4var x 3lv",5,0.00700000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",5,0.194
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",5,0.149
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",5,0.712
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",5,0.196
+"v2","full","2000obs x 5var x 3lv",5,0.00700000000000012
+"v2","sevt_fit","2000obs x 5var x 3lv",5,0.00300000000000011
+"v2","stages_bhc","2000obs x 5var x 3lv",5,0.0340000000000003
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",5,0.362
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",5,0.213
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",5,0.68
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",5,0.241
+"v2","full","2000obs x 6var x 3lv",5,0.0140000000000002
+"v2","sevt_fit","2000obs x 6var x 3lv",5,0.00600000000000023
+"v2","stages_bhc","2000obs x 6var x 3lv",5,0.413
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",5,2.363
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",5,0.259
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",5,0.657999999999999
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",5,0.295999999999999
+"v2","full","2000obs x 4var x 3lv",6,0.00699999999999995
+"v2","sevt_fit","2000obs x 4var x 3lv",6,0.002
+"v2","stages_bhc","2000obs x 4var x 3lv",6,0.00700000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",6,0.191
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",6,0.152
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",6,0.696
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",6,0.182
+"v2","full","2000obs x 5var x 3lv",6,0.00699999999999967
+"v2","sevt_fit","2000obs x 5var x 3lv",6,0.00299999999999967
+"v2","stages_bhc","2000obs x 5var x 3lv",6,0.0410000000000004
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",6,0.368
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",6,0.213
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",6,0.669
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",6,0.244
+"v2","full","2000obs x 6var x 3lv",6,0.0149999999999997
+"v2","sevt_fit","2000obs x 6var x 3lv",6,0.00600000000000023
+"v2","stages_bhc","2000obs x 6var x 3lv",6,0.41
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",6,2.391
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",6,0.266999999999999
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",6,0.675000000000001
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",6,0.304
+"v2","full","2000obs x 4var x 3lv",7,0.00700000000000001
+"v2","sevt_fit","2000obs x 4var x 3lv",7,0.002
+"v2","stages_bhc","2000obs x 4var x 3lv",7,0.00800000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",7,0.197
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",7,0.152
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",7,0.719
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",7,0.189
+"v2","full","2000obs x 5var x 3lv",7,0.00700000000000012
+"v2","sevt_fit","2000obs x 5var x 3lv",7,0.00199999999999978
+"v2","stages_bhc","2000obs x 5var x 3lv",7,0.0349999999999997
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",7,0.361
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",7,0.203
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",7,0.684
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",7,0.246
+"v2","full","2000obs x 6var x 3lv",7,0.0150000000000006
+"v2","sevt_fit","2000obs x 6var x 3lv",7,0.00599999999999934
+"v2","stages_bhc","2000obs x 6var x 3lv",7,0.415
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",7,2.412
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",7,0.266
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",7,0.683
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",7,0.302999999999999
+"v2","full","2000obs x 4var x 3lv",8,0.00700000000000001
+"v2","sevt_fit","2000obs x 4var x 3lv",8,0.003
+"v2","stages_bhc","2000obs x 4var x 3lv",8,0.00800000000000001
+"v2","stages_hclust","2000obs x 4var x 3lv (default)",8,0.183
+"v2","sample_from","2000obs x 4var x 3lv (n=2000)",8,0.143
+"v2","prob","2000obs x 4var x 3lv (1000 rows)",8,0.65
+"v2","predict","2000obs x 4var x 3lv (1000 rows)",8,0.173
+"v2","full","2000obs x 5var x 3lv",8,0.00700000000000012
+"v2","sevt_fit","2000obs x 5var x 3lv",8,0.00300000000000011
+"v2","stages_bhc","2000obs x 5var x 3lv",8,0.032
+"v2","stages_hclust","2000obs x 5var x 3lv (default)",8,0.326
+"v2","sample_from","2000obs x 5var x 3lv (n=2000)",8,0.192
+"v2","prob","2000obs x 5var x 3lv (1000 rows)",8,0.622
+"v2","predict","2000obs x 5var x 3lv (1000 rows)",8,0.228
+"v2","full","2000obs x 6var x 3lv",8,0.0139999999999993
+"v2","sevt_fit","2000obs x 6var x 3lv",8,0.00600000000000023
+"v2","stages_bhc","2000obs x 6var x 3lv",8,0.393
+"v2","stages_hclust","2000obs x 6var x 3lv (default)",8,2.225
+"v2","sample_from","2000obs x 6var x 3lv (n=2000)",8,0.252
+"v2","prob","2000obs x 6var x 3lv (1000 rows)",8,0.681999999999999
+"v2","predict","2000obs x 6var x 3lv (1000 rows)",8,0.286999999999999
