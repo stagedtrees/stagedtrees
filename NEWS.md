@@ -32,6 +32,16 @@
 * `stages_hclust` will now use the `hclust` implementation in the
    **fastcluster** package, if available. 
 * `stages_hclust` accepts now a custom function as distance.
+* `stages_hclust` earns the arguments `max_k`, to limit the number of
+   stages considered when `k = NA`, and `first_max`, to stop the search
+   at the first local maximum of the score instead of searching globally.
+   The scores computed during the search are stored in the `scores`
+   component of the returned object.
+* removed `as_parentslist.string`. The method was non-functional: it could
+   never be dispatched to (character vectors have implicit class
+   `character`, not `string`), it did not parse the `[A][B|A]` encoding
+   produced by `as.character.parentslist`, and it returned an unnamed,
+   unclassed list rather than a `parentslist` object.
 * `write_tikz` has now `xlim` and `ylim` parameters, also an 
    `edge_options` argument.
 * Bug fixes (code review):
