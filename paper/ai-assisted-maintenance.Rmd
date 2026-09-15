@@ -13,7 +13,7 @@ abstract: >
   event tree models. Over a single extended session the agent identified 14
   latent defects, all reproduced before being reported, and applied a series
   of performance changes that leave the package's central fitting routine
-  20.8 times faster and its structure-search algorithm 5.9 times faster, with
+  17.7 times faster and its structure-search algorithm 5.5 times faster, with
   output verified identical. We give equal weight to the agent's failures:
   it introduced a regression caught only by the package's existing test
   suite, proposed an "obvious" optimisation that would have silently changed
@@ -189,12 +189,14 @@ if (have_bench && "speedup" %in% names(wide)) {
 }
 ```
 
-The two smallest workloads (`full` at 5000 observations, and
-`stages_hclust`) run in well under a tenth of a second; they are retained to
-show that nothing regressed, not as evidence of improvement. The v1 column
-is not expected to differ from v0, since no performance work had been done
-at that point; Section \ref{sec:artefact} describes what happened when we
-believed otherwise.
+All seven of the larger workloads improve with $p < 0.001$ on a paired test
+over repetitions. The two smallest (`full` at 5000 observations, and
+`stages_hclust`) run in well under a tenth of a second and show no change
+($p = 0.86$ and $p = 0.61$); they are retained to show that nothing
+regressed, not as evidence of improvement. The v1 column is not expected to
+differ from v0, since no performance work had been done at that point;
+Section \ref{sec:artefact} describes what happened when we believed
+otherwise.
 
 Profiling, rather than intuition, directed every optimisation. Three
 findings dominated.
@@ -316,18 +318,53 @@ name-based indexing at all.
 
 The error surfaced only because an unrelated question — whether name-based
 indexing was costly enough to warrant redesign — prompted a direct
-comparison. Re-measured with versions interleaved across repetitions, eight
-repetitions each:
+comparison.
 
-| | v0 | v1 |
-|---|---|---|
-| median | 1.983 s | 1.944 s |
-| mean (sd) | 1.977 (0.080) | 1.925 (0.104) |
+```{r artefact-table, results = "asis"}
+if (have_bench) {
+  ks <- unique(paste(bench$workload, bench$size))
+  rows <- lapply(ks, function(k) {
+    d <- bench[paste(bench$workload, bench$size) == k, ]
+    w <- reshape(d[, c("version", "rep", "seconds")], idvar = "rep",
+                 timevar = "version", direction = "wide")
+    tt <- stats::t.test(w$seconds.v1, w$seconds.v0, paired = TRUE)
+    data.frame(Workload = k,
+               `Change` = sprintf("%+.1f%%",
+                 100 * (median(w$seconds.v1) / median(w$seconds.v0) - 1)),
+               `Absolute` = sprintf("%+.4f s",
+                 median(w$seconds.v1) - median(w$seconds.v0)),
+               p = tt$p.value, check.names = FALSE)
+  })
+  tab <- do.call(rbind, rows)
+  tab$`p (Holm)` <- sprintf("%.3f", stats::p.adjust(tab$p, method = "holm"))
+  tab$p <- sprintf("%.4f", tab$p)
+  print(knitr::kable(tab, row.names = FALSE, booktabs = TRUE,
+    caption = paste("v1 against v0, paired by repetition. No performance",
+      "work separates these versions, so differences are not expected.",
+      "Holm correction over the nine tests.")))
+}
+```
 
-The difference is $-2.0\%$, a Welch test gives $p = 0.28$, and the 95%
-confidence interval on the difference, $[-0.152, +0.048]$ seconds,
-comfortably contains zero. Profiles of the two versions are structurally
-identical. There was never an effect to explain.
+Re-measured with the versions interleaved across repetitions, the two
+functions named in the retracted paragraph are firmly null: `predict()`
+differs by $+0.8\%$ ($p = 0.69$) and `prob()` by $+0.6\%$ ($p = 0.24$).
+Profiles of the two versions are structurally identical. The 13.7% was an
+artefact, and the mechanism invented for it described functions that were
+never affected.
+
+One workload does differ. `full()` on the smallest input is 30.4% slower in
+v1, and this survives correction for the nine comparisons
+($p_{\text{Holm}} = 0.003$). The absolute difference is 19 milliseconds on
+a 62 millisecond call, which is consistent with the correctness fixes
+having added fixed per-call cost that is only visible when the call is
+short — but we have not established that, and say so rather than supplying
+a second mechanism on the strength of a second unexplained number. It is
+noted here as an open observation.
+
+That the surviving effect is on a workload the original claim never
+mentioned, while both workloads it did name are null, is the point. The
+agent's account was not an exaggeration of a real signal; it was
+independent of the data.
 
 We draw two lessons. The first is mundane and well known outside software
 benchmarking: block on the nuisance variable, or randomise against it.
@@ -437,7 +474,7 @@ verification discipline that made this work trustworthy.
 # Conclusion
 
 An LLM agent working on a released CRAN package reproduced 14 latent
-defects and produced verified-identical speed-ups of up to 20.8 times on
+defects and produced verified-identical speed-ups of up to 17.7 times on
 the package's most-used code path, while the correctness fixes themselves
 imposed a measurable slowdown on two query functions that the optimisation
 work subsequently recovered. It also introduced four behavioural
