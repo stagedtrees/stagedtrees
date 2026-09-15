@@ -71,12 +71,10 @@ compare_stages <-
       ),
       hamming = hamming_stages(object1, object2, return_tree = TRUE),
       stages = diff_stages(object1, object2),
-      sapply(names(object1$tree)[-1],
-        function(v) {
-          as.numeric(object1$stages[[v]] != object2$stages[[v]])
-        },
-        USE.NAMES = TRUE
-      )
+      cli::cli_abort(c(
+        "Unknown {.arg method} {.val {method}}.",
+        "i" = "Must be one of {.val naive}, {.val hamming}, or {.val stages}."
+      ))
     )
     # root is always ok
     tmp <- list()
