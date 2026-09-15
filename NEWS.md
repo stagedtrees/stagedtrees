@@ -53,6 +53,11 @@
    twice as fast and `predict` about three times; `tree_idx` now reports an
    informative error, instead of a cryptic one, when a path contains a value
    which is not a level of the corresponding variable.
+* `find_stage` earns an optional `var` argument naming the variable the path
+   leads to, so callers looping over paths can hoist the variable names out
+   of the loop instead of having them recomputed on every call. `sample_from`
+   and `prob` do so, and additionally reuse the per-variable probability list
+   across samples: `sample_from` is about 13% faster and `predict` about 7%.
 * `sevt_fit` groups the situations of each variable in a single pass instead
    of scanning the stages vector once per stage, which was quadratic when
    stages are many, as in a full model. `expand_prob` builds its tables in one

@@ -49,12 +49,19 @@ stop_unknown_level <- function(value, var) {
 #' no checking is done.
 #' @param object a staged event tree object.
 #' @param path vector of the path.
+#' @param var name of the variable the path leads to, that is the
+#'            \code{length(path) + 1}-th variable of \code{object}. Optional;
+#'            when supplied it is used directly instead of being derived from
+#'            \code{object}, which saves recomputing the variable names on
+#'            every call. Callers that invoke \code{find_stage} in a loop
+#'            should hoist \code{\link{sevt_varnames}} out of the loop and
+#'            pass the name.
 #' @return the stage name corresponding of the path.
 #' @keywords internal
-find_stage <- function(object, path) {
-  k <- length(path)
+find_stage <- function(object, path, var = NULL) {
   ix <- tree_idx(path = path, tree = object$tree)
+  if (is.null(var)) var <- sevt_varnames(object)[length(path) + 1L]
   ### stages can be defined in a reduced vector
-  stages <- object$stages[[sevt_varnames(object)[k + 1]]]
+  stages <- object$stages[[var]]
   return(stages[(ix - 1) %% length(stages) + 1])
 }

@@ -78,3 +78,26 @@ test_that("tree_idx returns NA for an empty path (A-B4)", {
   expect_identical(tree_idx(character(0), tr), NA_real_)
   expect_no_error(tree_idx(character(0), tr))
 })
+
+test_that("find_stage var argument matches the derived name", {
+  # var is a performance shortcut for callers that already know the variable;
+  # it must agree with what find_stage would derive for itself
+  set.seed(51)
+  d <- as.data.frame(lapply(1:5, function(i)
+    factor(sample(letters[1:3], 300, replace = TRUE))),
+    col.names = paste0("V", 1:5))
+  for (ju in c(TRUE, FALSE)) {
+    m <- full(d, lambda = 1, join_unobserved = ju)
+    vars <- sevt_varnames(m)
+    for (k in seq_len(length(vars) - 1L)) {
+      paths <- expand.grid(m$tree[seq_len(k)], stringsAsFactors = FALSE)
+      for (r in seq_len(nrow(paths))) {
+        p <- as.character(unlist(paths[r, , drop = FALSE]))
+        expect_identical(
+          find_stage(m, p, var = vars[k + 1L]),
+          find_stage(m, p)
+        )
+      }
+    }
+  }
+})

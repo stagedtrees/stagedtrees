@@ -59,20 +59,25 @@ sample_from <- function(object, size = 1, seed = NULL) {
     )
   # sequentially sample the other variables
   for (i in seq_len(p)[-1]) {
-    for (j in 1:size) {
+    ## everything here is fixed for the whole sweep over samples, so look it
+    ## up once rather than once per sample
+    vi <- vars[i]
+    probs_i <- object$prob[[vi]]
+    lvls_i <- object$tree[[vi]]
+    unobserved <- object$name_unobserved
+    for (j in seq_len(size)) {
       if (is.na(S[j, i - 1])) {
         S[j, i] <- NA
       } else {
         # find the corresponding stage
-        stage <- find_stage(object, S[j, 1:(i - 1)])
-        if (stage %in% object$name_unobserved |
-          NA %in% object$prob[[vars[i]]][[stage]]) {
+        stage <- find_stage(object, S[j, 1:(i - 1)], var = vi)
+        if (stage %in% unobserved | NA %in% probs_i[[stage]]) {
           S[j, i] <- NA
         } else {
           # sample from the conditional prob of the stage
-          S[j, i] <- sample(object$tree[[vars[i]]],
+          S[j, i] <- sample(lvls_i,
             size = 1,
-            prob = object$prob[[vars[i]]][[stage]]
+            prob = probs_i[[stage]]
           )
         }
       }

@@ -21,8 +21,9 @@ path_probability <-
     l <- log(object$prob[[vs[1]]][[1]][x[1]])
     if (length(x) > 1) {
       for (i in 2:length(x)) {
-        # get corresponding stage
-        s <- find_stage(object, x[1:(i - 1)])
+        # get corresponding stage; vs[i] is the variable the path leads to,
+        # so pass it rather than have find_stage re-derive the names
+        s <- find_stage(object, x[1:(i - 1)], var = vs[i])
         # and add log-prob
         l <- l + log(object$prob[[vs[i]]][[s]][x[i]])
       }
