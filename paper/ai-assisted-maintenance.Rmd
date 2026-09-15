@@ -234,12 +234,39 @@ of freedom alone, and both change by an amount computable in closed form
 from the two probability vectors being merged, candidates can be scored
 without building anything.
 
-This required an interface decision. The `score` argument is user-supplied
-and receives a whole model, so the fast path cannot be applied
-unconditionally. The resolution was to let `score` be *either* a string
-naming a predefined score (`"BIC"`, the new default, or `"AIC"`) or a
-function; strings take the incremental path, functions retain the original
-behaviour exactly. Users who supply custom scores are unaffected.
+This required an interface decision, and the first resolution was the
+wrong one. The `score` argument is user-supplied and receives a whole
+model, so a closed-form fast path cannot be applied to an arbitrary score.
+The agent proposed letting `score` be *either* a string naming a predefined
+score (`"BIC"` or `"AIC"`) or a function, with strings taking the fast path
+and functions retaining the original behaviour. That works, but it buys
+speed only for users who give up the generality of the argument, and it
+adds a registry of predefined scores to the public interface.
+
+The maintainer proposed a better decomposition: *select* the candidate by
+log-likelihood alone, which is score-independent and cheap, then *accept or
+reject* that single candidate with the user's score. This is valid because
+every pairwise merge reduces the degrees of freedom by exactly $k-1$, where
+$k$ is the number of levels of the variable. Candidates therefore differ
+only in log-likelihood, and any score that is increasing in the
+log-likelihood at fixed complexity — which includes AIC, BIC and every
+penalised-likelihood score in common use — ranks them identically. The
+score is evaluated once per accepted step rather than once per candidate,
+the argument stays an ordinary function, and the registry disappears. The
+documentation states the one assumption this makes, so that a score
+inspecting the stage structure itself rather than the fitted log-likelihood
+and dimension is known to fall outside the guarantee.
+
+The same decomposition extends to the forward search, `stages_hc()`, with
+one complication: moving a single situation between stages changes the
+degrees of freedom by $-(k-1)$, $0$, or $+(k-1)$ depending on whether the
+move dissolves its source stage, leaves both stages populated, or creates a
+new one. Candidates are therefore not comparable by log-likelihood across
+those three cases. Grouping them by the change in degrees of freedom
+restores comparability within each group, and scoring the best
+representative of each of the three groups — at most three score
+evaluations per step instead of one per candidate — recovers the same
+result.
 
 **Index computation recomputed model-invariant quantities.** The function
 mapping a root-to-leaf path to an integer index recomputed the vector of
@@ -249,22 +276,98 @@ cumulative product using a quadratic pattern.
 
 ## What Rcpp was, and was not, worth
 
-Because the package contains no compiled code, we measured whether it
-should. A no-op compiled function called from R costs approximately 3
+The package originally contained no compiled code, so we measured whether
+it should. A no-op compiled function called from R costs approximately 3
 microseconds on the test machine. This exceeds the work done by any of the
 individual helper functions identified above: a C++ implementation of the
 path-index function measured 2.70 microseconds against 12 microseconds for
 an optimised R implementation — a fourfold gain that would purchase a
 `src/` directory, a `LinkingTo` dependency and a permanent cross-platform
-build burden.
+build burden, and which we declined.
 
 The calculus inverts when an entire loop moves into C rather than a single
-function. Generating 20,000 sampled paths over 8 variables in one call
-took 0.007 seconds against 16.0 seconds for the R implementation, because
-the per-call overhead is paid once instead of 160,000 times. The
-actionable rule is *port loops, not leaves*, and on that basis we
-implemented none of it: the pure-R changes captured enough of the
-available gain that compiled code was not justified.
+function, because the per-call overhead is then paid once instead of once
+per iteration. The actionable rule is *port loops, not leaves*. Applying it,
+we ported the candidate-selection loops of the two search functions —
+the only two places where the loop is both hot and closed-form — and left
+every leaf function in R.
+
+The two kernels compute, for each candidate merge or move, the change in
+log-likelihood it would produce, and return only the best candidate; R
+retains the model manipulation, the scoring, the acceptance decision and
+the entire user-facing interface. The table below gives the result for the
+installed package. The gains are two orders of magnitude,
+and change what is feasible rather than merely what is fast: backward
+hill-climbing over seven variables did not complete within ten minutes
+before and takes about eight seconds after.
+
+```{r compiled-table, echo = FALSE, results = "asis"}
+cf <- "../benchmarks/results/compiled.csv"
+capf <- "../benchmarks/results/compiled-cap.txt"
+if (file.exists(cf)) {
+  cd <- read.csv(cf, stringsAsFactors = FALSE)
+  cap <- if (file.exists(capf)) as.numeric(read.csv(capf)$cap[1]) else NA
+  wide <- reshape(cd[, c("version", "fun", "p", "seconds")],
+                  idvar = c("fun", "p"), timevar = "version",
+                  direction = "wide")
+  fmt <- function(x) ifelse(is.na(x), sprintf("> %g", cap), sprintf("%.3f", x))
+  ratio <- ifelse(is.na(wide$seconds.rver), "--",
+                  sprintf("%.0f", wide$seconds.rver / wide$seconds.cver))
+  tab <- data.frame(Function = wide$fun, Variables = wide$p,
+                    R = fmt(wide$seconds.rver), C = fmt(wide$seconds.cver),
+                    Ratio = ratio)
+  tab <- tab[order(tab$Function, tab$Variables), ]
+  names(tab) <- c("Function", "Variables", "pure R (s)", "compiled (s)",
+                  "speed-up")
+  print(knitr::kable(tab, row.names = FALSE, booktabs = TRUE,
+    caption = paste("Elapsed time before and after the compiled selection",
+      "kernels, 5000 observations and 3 levels per variable, with the",
+      "package installed at the default optimisation level. Entries marked",
+      sprintf("> %g did not complete within that many seconds.", cap))))
+} else {
+  cat("_Compiled-kernel results not found; run",
+      "`benchmarks/run-compiled.sh` first._\n")
+}
+```
+
+Two findings from this port generalise beyond the package.
+
+**Measure the installed package, not the development load.** The agent's
+first end-to-end figures for the kernels were produced under
+`pkgload::load_all()`, which is how the package is loaded during
+development. `load_all()` compiles with the debug flags, `-O0`; `R CMD
+INSTALL` uses `-O2`. Head-to-head on identical inputs producing identical
+answers, the same kernel took 11.80 ms under `load_all()` and 3.02 ms
+compiled normally, a factor of 3.90. Every compiled measurement taken
+during development was therefore understating the result users would see,
+and the benchmark harness of Section \ref{sec:method} had to be changed to
+install each version under test rather than load it. The direction of this
+error is benign — it understates rather than overstates — but the magnitude
+is large enough to invert a decision about whether a port is worth making.
+
+**Rewriting in C changes the arithmetic, not just the speed.** R's `sum()`
+accumulates in extended precision; C `double` does not. The first kernel
+disagreed with its R oracle on which merge to select. The proximate fix was
+to accumulate in `long double`, which restored agreement at roughly four
+times the cost. The actual defect, however, was not accumulation error but
+*catastrophic cancellation*: the delta was being formed as the difference
+of two large, nearly equal log-likelihoods, so when the true difference is
+zero — two stages with identical probability vectors, which balanced data
+produces readily — the result is pure rounding residue, and that residue
+decides the comparison. Summing the per-level differences in a single pass
+removes the cancellation rather than out-precisioning it. Over 72 sweeps
+against an extended-precision reference: `long double` 12.21 ms with no
+disagreements, plain `double` formed as two sums 3.09 ms with one
+disagreement, and the fused single sum 3.19 ms with no disagreements. The
+numerically better formulation is also, here, the fast one.
+
+The tie-breaking rule is a related trap. R's `which.max`-style loops in
+this package use `>=`, so the last of several tied candidates wins; the
+first C implementation used `>`, so the first won. On balanced data all 28
+candidate pairs for a variable can carry an identical delta, and the two
+rules then select different models — a difference that no test on random
+data would have exposed, and that surfaced only because the maintainer
+asked what happens under an arbitrary score.
 
 # Where the agent was wrong {#sec:failures}
 
@@ -536,10 +639,16 @@ therefore unknown, and counting them conflates a silent EM-iteration bug
 with a redundant loop.
 
 **Generalisation.** One package, one domain, one agent, one session. The
-codebase is mid-sized, pure R, and has an unusually well-defined numerical
-contract, which makes identity-based verification straightforward. Packages
-with stochastic output, compiled code, or side effects would not permit the
-verification discipline that made this work trustworthy.
+codebase is mid-sized and has an unusually well-defined numerical contract,
+which makes identity-based verification straightforward. Packages with
+stochastic output or substantial side effects would not permit the same
+discipline. Compiled code is a partial exception rather than a flat
+obstacle: the kernels added here were verified against a pure-R oracle
+retained in the package for that purpose, which worked, but it required
+writing the oracle first and it exposed a class of divergence — floating
+point differences in the last bits, deciding a comparison between near-tied
+candidates — that has no analogue in R-to-R refactoring. Identity is the
+right standard within one arithmetic; across two it has to be argued for.
 
 # Conclusion
 
