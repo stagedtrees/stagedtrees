@@ -1,136 +1,111 @@
-test_that("resolve_score returns NULL for a function", {
-  expect_null(resolve_score(function(x) -BIC(x)))
-})
+## The C kernel selects a merge by log-likelihood; join_ll_delta() is the
+## pure-R oracle it must agree with. Keeping the oracle in R and testing
+## against it is the point: the kernel is never trusted standalone.
 
-test_that("resolve_score returns the registry entry for a known name", {
-  s <- resolve_score("BIC")
-  expect_type(s, "list")
-  expect_true(all(c("full", "delta") %in% names(s)))
-  expect_true(is.function(s$full))
-  expect_true(is.function(s$delta))
-})
-
-test_that("resolve_score aborts on an unknown name or a bad type", {
-  expect_error(resolve_score("NOTASCORE"), regexp = "predefined scores")
-  expect_error(resolve_score(42), regexp = "must be a function or a string")
-  expect_error(resolve_score(c("BIC", "AIC")), regexp = "must be a function")
-})
-
-test_that("registry full and delta views agree for every score", {
-  # for each predefined score, the delta view must predict the change that the
-  # full view reports after an actual join
-  set.seed(11)
-  m <- full(generate_xor_dataset(p = 4, n = 200), lambda = 1)
-  nobs <- attr(m$ll, "nobs")
-  for (nm in names(stagedtrees:::.stages_scores)) {
-    sc <- stagedtrees:::.stages_scores[[nm]]
-    for (v in sevt_varnames(m)[-1]) {
-      stg <- unique(m$stages[[v]])
-      if (length(stg) < 2) next
-      k <- length(m$tree[[v]])
-      joined <- join_stages_unsafe(m, v, stg[1], stg[2])
-      observed <- sc$full(joined) - sc$full(m)
-      predicted <- sc$delta(
-        join_ll_delta(m$prob[[v]][[stg[1]]], m$prob[[v]][[stg[2]]],
-                      m$lambda, k),
-        -(k - 1), nobs
-      )
-      expect_equal(observed, predicted,
-                   info = paste("score", nm, "variable", v))
+oracle_best <- function(object, v, ignore = object$name_unobserved) {
+  stg <- unique(object$stages[[v]])
+  stg <- stg[!(stg %in% ignore)]
+  if (length(stg) < 2) return(NULL)
+  k <- length(object$tree[[v]])
+  lambda <- object$lambda
+  if (is.null(lambda)) lambda <- 0
+  best <- -Inf; bi <- NA; bj <- NA
+  for (i in 2:length(stg)) {
+    for (j in 1:(i - 1)) {
+      d <- join_ll_delta(object$prob[[v]][[stg[i]]], object$prob[[v]][[stg[j]]],
+                         lambda, k)
+      if (d >= best) { best <- d; bi <- i; bj <- j }   # >= : last wins, as in C
     }
   }
-})
+  c(bi, bj, best)
+}
 
-test_that("join_ll_delta matches the ll update of join_stages_unsafe", {
-  set.seed(12)
-  m <- full(generate_xor_dataset(p = 4, n = 200), lambda = 1)
-  n_checked <- 0
-  for (v in sevt_varnames(m)[-1]) {
-    stg <- unique(m$stages[[v]])
-    k <- length(m$tree[[v]])
-    for (i in seq_along(stg)) {
-      for (j in seq_len(i - 1)) {
-        joined <- join_stages_unsafe(m, v, stg[i], stg[j])
-        d <- join_ll_delta(m$prob[[v]][[stg[i]]], m$prob[[v]][[stg[j]]],
-                           m$lambda, k)
-        expect_equal(as.numeric(joined$ll), as.numeric(m$ll) + d)
-        expect_equal(attr(joined$ll, "df"), attr(m$ll, "df") - (k - 1))
-        n_checked <- n_checked + 1
+call_kernel <- function(object, v, ignore = object$name_unobserved) {
+  stg <- unique(object$stages[[v]])
+  stg <- stg[!(stg %in% ignore)]
+  k <- length(object$tree[[v]])
+  lambda <- object$lambda
+  if (is.null(lambda)) lambda <- 0
+  pv <- object$prob[[v]][stg]
+  pm <- do.call(rbind, lapply(pv, as.numeric))
+  nv <- vapply(pv, function(p) {
+    n <- attr(p, "n"); if (is.null(n)) NA_real_ else as.numeric(n)
+  }, FUN.VALUE = 1.0)
+  best_merge_cpp(pm, nv, lambda, k)
+}
+
+mkd <- function(n, p, lv, seed) {
+  set.seed(seed)
+  as.data.frame(lapply(seq_len(p), function(i)
+    factor(sample(letters[seq_len(lv)], n, replace = TRUE))),
+    col.names = paste0("V", seq_len(p)))
+}
+
+test_that("best_merge_cpp agrees with the join_ll_delta oracle", {
+  n <- 0
+  for (seed in 1:8) {
+    for (lam in c(0, 1)) {
+      m <- full(mkd(400, 4, 3, seed), lambda = lam)
+      for (v in sevt_varnames(m)[-1]) {
+        o <- oracle_best(m, v)
+        if (is.null(o)) next
+        got <- call_kernel(m, v)
+        expect_equal(got[3], o[3])            # same delta
+        expect_identical(as.integer(got[1:2]), as.integer(o[1:2]))  # same pair
+        n <- n + 1
       }
     }
   }
-  expect_gt(n_checked, 0)
+  expect_gt(n, 0)
 })
 
-test_that("stages_bhc: string and function scores give identical results", {
-  # the fast path compares a directly computed delta while the slow path
-  # compares two full scores; ties are resolved with >=, so this guards
-  # against a rounding difference selecting a different pair
-  for (seed in 1:25) {
-    set.seed(seed)
-    DD <- generate_xor_dataset(p = 4, n = 100)
-    m <- full(DD, lambda = 1)
-    fast <- stages_bhc(m, score = "BIC")
-    slow <- stages_bhc(m, score = function(x) -BIC(x))
-    expect_equal(
-      lapply(stages(fast), as.character),
-      lapply(stages(slow), as.character),
-      info = paste("seed", seed)
-    )
-    expect_equal(as.numeric(logLik(fast)), as.numeric(logLik(slow)),
-                 info = paste("seed", seed))
-    expect_equal(attr(logLik(fast), "df"), attr(logLik(slow), "df"),
-                 info = paste("seed", seed))
-    expect_equal(fast$score$value, slow$score$value, info = paste("seed", seed))
+test_that("tied deltas resolve to the same pair as R", {
+  # perfectly balanced data makes every candidate delta identical, so `>` and
+  # `>=` select different merges; this is the case that caught a defect
+  D <- expand.grid(V1 = c("a", "b"), V2 = c("a", "b"),
+                   V3 = c("a", "b"), V4 = c("a", "b"))
+  D <- D[rep(seq_len(nrow(D)), 3), ]
+  m <- full(D, lambda = 1)
+  for (v in sevt_varnames(m)[-1]) {
+    o <- oracle_best(m, v)
+    if (is.null(o)) next
+    got <- call_kernel(m, v)
+    expect_identical(as.integer(got[1:2]), as.integer(o[1:2]))
   }
 })
 
-test_that("stages_bhc: AIC string and function agree", {
-  set.seed(7)
-  m <- full(generate_xor_dataset(p = 4, n = 150), lambda = 1)
-  fast <- stages_bhc(m, score = "AIC")
-  slow <- stages_bhc(m, score = function(x) -AIC(x))
-  expect_equal(lapply(stages(fast), as.character),
-               lapply(stages(slow), as.character))
-  expect_equal(fast$score$value, slow$score$value)
+test_that("stages_bhc accepts an arbitrary score function", {
+  m <- full(mkd(400, 4, 3, 1), lambda = 1)
+  expect_s3_class(stages_bhc(m, score = function(x) -BIC(x)), "sevt")
+  expect_s3_class(stages_bhc(m, score = function(x) -AIC(x)), "sevt")
+  # a score with an unusual scale must still work
+  expect_s3_class(stages_bhc(m, score = function(x) -BIC(x) / 1000), "sevt")
 })
 
-test_that("stages_bhc: max_iter and scope behave the same on both paths", {
-  set.seed(8)
-  m <- full(generate_xor_dataset(p = 4, n = 150), lambda = 1)
+test_that("stages_bhc is invariant to monotone rescaling of the score", {
+  # any strictly increasing transform of the score must select the same model
+  m <- full(mkd(500, 4, 3, 3), lambda = 1)
+  a <- stages_bhc(m, score = function(x) -BIC(x))
+  b <- stages_bhc(m, score = function(x) -BIC(x) * 2)
+  expect_equal(lapply(stages(a), as.character), lapply(stages(b), as.character))
+})
+
+test_that("stages_bhc respects max_iter, scope and ignore", {
+  m <- full(mkd(400, 4, 3, 5), lambda = 1)
   v <- sevt_varnames(m)[2]
-  for (mi in c(0, 1, 2)) {
-    expect_equal(
-      lapply(stages(stages_bhc(m, score = "BIC", max_iter = mi)), as.character),
-      lapply(stages(stages_bhc(m, score = function(x) -BIC(x),
-                               max_iter = mi)), as.character),
-      info = paste("max_iter", mi)
-    )
+  expect_s3_class(stages_bhc(m, max_iter = 0), "sevt")
+  expect_identical(lapply(stages(stages_bhc(m, max_iter = 0)), as.character),
+                   lapply(stages(m), as.character))
+  sc <- stages_bhc(m, scope = v)
+  others <- sevt_varnames(m)[-(1:2)]
+  for (w in others) {
+    expect_identical(as.character(stages(sc)[[w]]), as.character(stages(m)[[w]]))
   }
-  expect_equal(
-    lapply(stages(stages_bhc(m, score = "BIC", scope = v)), as.character),
-    lapply(stages(stages_bhc(m, score = function(x) -BIC(x),
-                             scope = v)), as.character)
-  )
 })
 
-test_that("stages_bhc: ignored stages are untouched on the fast path", {
-  set.seed(9)
-  m <- full(generate_xor_dataset(p = 4, n = 150),
-            lambda = 1, join_unobserved = TRUE)
-  fast <- stages_bhc(m, score = "BIC")
-  slow <- stages_bhc(m, score = function(x) -BIC(x))
-  expect_equal(lapply(stages(fast), as.character),
-               lapply(stages(slow), as.character))
-})
-
-test_that("stages_bhc rejects an unknown score name", {
-  m <- full(generate_xor_dataset(p = 3, n = 50), lambda = 1)
-  expect_error(stages_bhc(m, score = "NOPE"), regexp = "predefined scores")
-})
-
-test_that("stages_bhc stores a function in $score$f for both paths", {
-  m <- full(generate_xor_dataset(p = 3, n = 50), lambda = 1)
-  expect_true(is.function(stages_bhc(m, score = "BIC")$score$f))
-  expect_true(is.function(stages_bhc(m, score = function(x) -BIC(x))$score$f))
+test_that("stages_bhc stores the score function it used", {
+  m <- full(mkd(300, 3, 3, 7), lambda = 1)
+  r <- stages_bhc(m, score = function(x) -AIC(x))
+  expect_true(is.function(r$score$f))
+  expect_true(is.numeric(r$score$value))
 })

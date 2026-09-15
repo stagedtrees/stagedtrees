@@ -6,7 +6,9 @@
 \usage{
 stages_bhc(
   object,
-  score = "BIC",
+  score = function(x) {
+     return(-BIC(x))
+ },
   max_iter = Inf,
   scope = NULL,
   ignore = object$name_unobserved,
@@ -17,10 +19,7 @@ stages_bhc(
 \item{object}{an object of class \code{sevt} with fitted probabilities and
 data, as returned by \code{full} or \code{sevt_fit}.}
 
-\item{score}{the score to be maximized. Either a string naming one of the
-predefined scores, \code{"BIC"} (default) or \code{"AIC"},
-or a function taking a \code{sevt} object and returning a
-numeric value. See Details.}
+\item{score}{the score function to be maximized.}
 
 \item{max_iter}{the maximum number of iterations per variable.}
 
@@ -45,20 +44,21 @@ For each variable the algorithm tries to join stages
 and moves to the best model that increases the score. When no
 increase is possible it moves to the next variable.
 
-When \code{score} is given as a string, candidate joins are scored from the
-change they induce in log-likelihood and degrees of freedom, without
-building the candidate model. This is equivalent to, and appreciably faster
-than, evaluating the score on each candidate: on a model with 243
-situations it is roughly seven times faster, and the saving grows with the
-number of stages. Passing an equivalent function, for example
-\code{function(x) -BIC(x)}, is still supported and yields the same result,
-but requires fitting every candidate and is therefore slower.
+The candidate merge is selected by log-likelihood alone, which is done in
+compiled code, and \code{score} is then evaluated once on that candidate to
+decide whether to accept it. This is possible because every pairwise merge
+changes the degrees of freedom by the same amount, so candidates differ only
+in their log-likelihood and any score that prefers a higher log-likelihood at
+equal complexity ranks them identically. Scores outside that class -- ones
+that inspect the stage structure itself rather than the fitted
+log-likelihood and dimension -- may select a different model than an
+exhaustive search over the score would.
 }
 \examples{
 DD <- generate_xor_dataset(p = 4, n = 100)
 model <- stages_bhc(full(DD), trace = 2)
 summary(model)
 
-## a score can also be given as a function, at the cost of speed
-model2 <- stages_bhc(full(DD), score = function(x) -BIC(x))
+## any score function can be used, at no cost to speed
+model2 <- stages_bhc(full(DD), score = function(x) -AIC(x))
 }

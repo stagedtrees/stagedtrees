@@ -20,3 +20,6 @@ paper/*.out
 paper/RJwrapper.*
 paper/ai-assisted-maintenance.bib
 paper/ai-assisted-maintenance.R
+src/*.o
+src/*.so
+src/*.dll
