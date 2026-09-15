@@ -86,6 +86,39 @@ join_stages_unsafe <- function(object, var, s1, s2) {
   return(object)
 }
 
+#' Log-likelihood change from joining two stages
+#'
+#' Compute the change in log-likelihood that \code{\link{join_stages_unsafe}}
+#' would produce, without building the modified \code{sevt} object.
+#' @param p1 probability vector of the first stage.
+#' @param p2 probability vector of the second stage.
+#' @param lambda the smoothing parameter.
+#' @param k the number of levels of the variable.
+#' @details This must stay numerically identical to the log-likelihood update
+#' performed in \code{\link{join_stages_unsafe}}; the two are exercised against
+#' each other in the package tests. The change in degrees of freedom is not
+#' returned because it is always \code{-(k - 1)}.
+#' @return a numeric scalar, the change in log-likelihood.
+#' @keywords internal
+join_ll_delta <- function(p1, p2, lambda, k) {
+  n1 <- attr(p1, "n")
+  n2 <- attr(p2, "n")
+  if (is.null(n1) || is.na(n1)) n1 <- 1
+  if (is.null(n2) || is.na(n2)) n2 <- 1
+  c1 <- p1
+  c1[is.na(c1)] <- 0
+  ct1 <- c1 * (n1 + lambda * k) - lambda
+  c2 <- p2
+  c2[is.na(c2)] <- 0
+  ct2 <- c2 * (n2 + lambda * k) - lambda
+  dll <- sum(ct2[ct2 > 0] * log(p2[ct2 > 0])) +
+    sum(ct1[ct1 > 0] * log(p1[ct1 > 0]))
+  np <- ct2 + ct1 + lambda
+  np <- np / sum(np)
+  ctn <- ct1 + ct2
+  -dll + sum(ctn[ctn > 0] * log(np[ctn > 0]))
+}
+
 #' @rdname join_stages
 #' @param stages a vector of stage names for variable \code{var}.
 #' @param ignore vector of stages which will be ignored and left untouched.

@@ -42,6 +42,12 @@
    `character`, not `string`), it did not parse the `[A][B|A]` encoding
    produced by `as.character.parentslist`, and it returned an unnamed,
    unclassed list rather than a `parentslist` object.
+* `stages_bhc` accepts now the `score` argument as a string naming a
+   predefined score, either `"BIC"` (the new default) or `"AIC"`. In that
+   case candidate joins are scored from the change they induce in
+   log-likelihood and degrees of freedom, without building a candidate
+   model for every move, which is about 6 times faster. Passing `score` as
+   a function, as before, is still supported and returns the same result.
 * `write_tikz` has now `xlim` and `ylim` parameters, also an 
    `edge_options` argument.
 * Bug fixes (code review):

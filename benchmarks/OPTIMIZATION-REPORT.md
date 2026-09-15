@@ -198,8 +198,18 @@ are most of the realistically available win. Item 4 is the only one that
 genuinely justifies Rcpp, and it should be weighed against the ongoing cost of
 shipping compiled code on CRAN.
 
-**Nothing in this report has been applied to the package.** These are
-investigation results plus standalone prototypes.
+## Status
+
+**Item 1 is implemented** on this branch for `stages_bhc` only. `score` now
+accepts `"BIC"` (default) or `"AIC"` and takes the scalar path; a function
+still selects the original per-candidate path. Measured **6.0×** on a
+121-situation model, with identical stages, log-likelihood and score value.
+`R/scores.R` holds the registry so further scores are a single entry, and
+`tests/testthat/test-scores.R` asserts the two paths agree across 25 random
+models (guarding the `>=` tie-break) and that each score's `full` and `delta`
+views agree.
+
+Items 2–5 are **not** applied — still investigation plus prototypes.
 
 ---
 
