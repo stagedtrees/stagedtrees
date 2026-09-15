@@ -183,18 +183,23 @@ against it. So:
 > gain that buys a compiler toolchain, a `src/` directory, `LinkingTo: Rcpp`,
 > and a permanent CRAN build-and-maintenance burden across platforms.
 
-The picture changes completely when the **whole loop** moves into C. Generating
-20 000 samples × 8 variables in a single `.Call`:
+The picture changes completely when the **whole loop** moves into C, because
+the ~3 µs overhead is then paid once instead of once per iteration.
 
-```
-sample_paths_cpp    0.007 s total   (0.35 us/sample)
-```
+> **The 2300× figure previously reported here is withdrawn.** It compared
+> `sample_from`'s 16.045 s against 0.007 s for `sample_paths_cpp` in
+> `05-rcpp-overhead.R`, but that prototype is not doing `sample_from`'s work:
+> it is handed `probs <- matrix(0.25, ...)` (uniform probabilities) and
+> `stage_of <- matrix(0L, ...)` (every situation in stage zero), and it has no
+> handling of unobserved stages or of `NA`. A ratio between two different
+> computations is not a speed-up. No replacement number is quoted here because
+> none has been measured against a faithful prototype.
 
-versus `sample_from`'s **16.045 s** — roughly **2300×**, because the ~3 µs
-overhead is paid once instead of 160 000 times.
-
-**So the rule is: port loops, never leaves.** The only two places in this package
-with that shape:
+The rule itself survives, and is now supported by code that shipped rather
+than by a prototype: the selection loops of `stages_bhc` and `stages_hc`
+moved into C and gained 52–720× at sizes both versions can run, with the
+pure-R versions failing to finish at all beyond those (see
+`results/compiled.csv`). Places in this package with the same shape:
 
 1. **`sample_from`** — the per-sample × per-variable descent. One `.Call` taking
    the stride vector, a stage-index matrix and a probability matrix, returning
@@ -214,7 +219,7 @@ with that shape:
 | 1 | BHC scores candidates from scalars (Finding A) | **7.4×** on `stages_bhc` | low — verified identical on 29 403 pairs | no |
 | 2 | `tree_idx` precomputed strides + `lengths`/`match` | **5.4×**, feeds `sample_from`/`prob` | low — pure refactor | no |
 | 3 | `ifelse` → indexed assign; hoist `$` lookups | 4× on that line | trivial | no |
-| 4 | `sample_from` whole loop in C | ~2300× on that call | high — new toolchain | **yes** |
+| 4 | `sample_from` whole loop in C | unmeasured (see Finding C) | high — new toolchain | maybe |
 | 5 | `prob` row loop: matrix input first, then maybe C | TBD | medium | maybe |
 
 Items 1–3 are pure R, need no new dependency, and should be done first — they

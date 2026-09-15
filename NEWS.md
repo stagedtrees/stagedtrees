@@ -47,10 +47,10 @@
    log-likelihood alone in compiled code, and `score` is evaluated once on
    that candidate to accept or reject it. This is valid because every
    pairwise merge changes the degrees of freedom by the same amount, so the
-   score cannot reorder the candidates. On 2000 observations over 3-level
-   variables the search takes 42.9s at six variables before the change and
-   1.2s after; seven variables did not complete in ten minutes before and
-   takes 23s now. The package now contains compiled code and requires
+   score cannot reorder the candidates. On 5000 observations over 3-level
+   variables the search takes 291.6s at six variables before the change and
+   0.41s after; seven variables did not complete within ten minutes before
+   and takes 8.2s now. The package now contains compiled code and requires
    **Rcpp**.
 * `stages_hc` is dramatically faster and its `score` argument is unchanged.
    It previously refit the model and recomputed the full log-likelihood for
@@ -58,12 +58,20 @@
    closed form in compiled code. Because a move can add a stage, remove one,
    or neither, candidates are grouped by their change in degrees of freedom
    and `score` is evaluated on the best of each group -- at most three
-   evaluations per sweep instead of one per candidate. On 400 observations
-   over four 3-level variables the search takes about 20s before the change
-   and 0.3s after. The selected model is the same: over 36 models spanning
+   evaluations per sweep instead of one per candidate. On 5000 observations
+   over 3-level variables the search takes 16.2s at four variables before the
+   change and 0.13s after; five variables did not complete within ten minutes
+   before and takes 1.0s now. The selected model is the same: over 36 models
+   spanning
    seeds, smoothing and model shapes, the stage partition, log-likelihood and
    degrees of freedom are identical. Stage *labels* can differ, since moves
    are taken in a different order.
+* `stages_hclust` no longer pays a one-off 0.125s cost on the first call in a
+   session. The check for whether **fastcluster** is available used
+   `rlang::is_installed`, which is that expensive the first time it runs;
+   `requireNamespace` costs 0.003s and loads the namespace that is used
+   immediately afterwards in any case. At four variables, where the whole
+   search takes 0.07s, this had tripled the cost of a first call.
 * internal speedups in `tree_idx` and `join_stages_unsafe`, which no longer
    recompute values that are fixed for a given model. `sample_from` is about
    twice as fast and `predict` about three times; `tree_idx` now reports an

@@ -296,10 +296,11 @@ The two kernels compute, for each candidate merge or move, the change in
 log-likelihood it would produce, and return only the best candidate; R
 retains the model manipulation, the scoring, the acceptance decision and
 the entire user-facing interface. The table below gives the result for the
-installed package. The gains are two orders of magnitude,
-and change what is feasible rather than merely what is fast: backward
+installed package. The gains reach nearly three orders of magnitude, and
+change what is feasible rather than merely what is fast: backward
 hill-climbing over seven variables did not complete within ten minutes
-before and takes about eight seconds after.
+before and takes about eight seconds after, and forward hill-climbing did
+not complete at five variables, where it now takes one second.
 
 ```{r compiled-table, echo = FALSE, results = "asis"}
 cf <- "../benchmarks/results/compiled.csv"
@@ -311,7 +312,9 @@ if (file.exists(cf)) {
                   idvar = c("fun", "p"), timevar = "version",
                   direction = "wide")
   fmt <- function(x) ifelse(is.na(x), sprintf("> %g", cap), sprintf("%.3f", x))
-  ratio <- ifelse(is.na(wide$seconds.rver), "--",
+  ## a capped cell gives a LOWER bound on the ratio, not a missing value
+  ratio <- ifelse(is.na(wide$seconds.rver),
+                  sprintf("> %.0f", cap / wide$seconds.cver),
                   sprintf("%.0f", wide$seconds.rver / wide$seconds.cver))
   tab <- data.frame(Function = wide$fun, Variables = wide$p,
                     R = fmt(wide$seconds.rver), C = fmt(wide$seconds.cver),

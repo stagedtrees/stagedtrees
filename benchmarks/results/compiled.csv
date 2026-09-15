@@ -1,0 +1,15 @@
+"version","fun","p","nobs","lv","seconds"
+"rver","stages_bhc",4,5000,3,0.363
+"cver","stages_bhc",4,5000,3,0.00700000000000001
+"rver","stages_bhc",5,5000,3,9.432
+"cver","stages_bhc",5,5000,3,0.041
+"rver","stages_bhc",6,5000,3,291.592
+"cver","stages_bhc",6,5000,3,0.405
+"rver","stages_bhc",7,5000,3,NA
+"cver","stages_bhc",7,5000,3,8.206
+"rver","stages_hc",4,5000,3,16.219
+"cver","stages_hc",4,5000,3,0.129
+"rver","stages_hc",5,5000,3,NA
+"cver","stages_hc",5,5000,3,1.036
+"rver","stages_hc",6,5000,3,NA
+"cver","stages_hc",6,5000,3,7.786
