@@ -12,3 +12,4 @@ README_files
 .pre-commit-config.yaml
 data-raw
 ^benchmarks$
+^paper$

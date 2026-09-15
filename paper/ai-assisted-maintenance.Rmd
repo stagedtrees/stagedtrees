@@ -1,0 +1,411 @@
+---
+title: "Agent-Assisted Defect Detection and Optimisation in an R Package: A Case Study on stagedtrees"
+author:
+  - name: Gherardo Varando
+    affiliation: Universitat de València
+    email: gherardo.varando@uv.es
+abstract: >
+  Large language model agents are increasingly proposed for software
+  maintenance, but published evidence is dominated by synthetic benchmarks
+  rather than sustained work on real, released software. We report a case
+  study in which an LLM agent (Claude, Anthropic) reviewed and optimised
+  **stagedtrees**, a CRAN package of roughly 6,800 lines implementing staged
+  event tree models. Over a single extended session the agent identified 14
+  latent defects, all reproduced before being reported, and applied a series
+  of performance changes that leave the package's central fitting routine
+  20.8 times faster and its structure-search algorithm 5.9 times faster, with
+  output verified identical. A version-to-version benchmark also shows the
+  correctness fixes carrying a measurable cost of their own — two query
+  functions became 8 to 14 per cent slower before any optimisation was
+  attempted — a trade-off that the usual framing of such work obscures.
+  We give equal weight to the agent's failures:
+  it introduced a regression caught only by the package's existing test
+  suite, proposed an "obvious" optimisation that would have silently changed
+  a stored attribute's type, omitted a namespace import, and — most
+  instructively — made confident but incorrect claims about which functions
+  mattered, which no automated check could have caught and which were
+  corrected by the maintainer's domain knowledge. We argue that the
+  distinction between these two failure classes is the central practical
+  finding: mechanical verification reliably catches behavioural regressions,
+  but judgements about *relevance* remain irreducibly human.
+output:
+  rticles::rjournal_article:
+    keep_tex: true
+bibliography: references.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+options(stringsAsFactors = FALSE)
+
+bench_dir <- Sys.getenv("BENCH_DIR", unset = "../benchmarks/results")
+have_bench <- dir.exists(bench_dir) &&
+  length(list.files(bench_dir, pattern = "^bench-v[0-9]+\\.csv$")) >= 2
+
+if (have_bench) {
+  files <- list.files(bench_dir, pattern = "^bench-v[0-9]+\\.csv$", full.names = TRUE)
+  bench <- do.call(rbind, lapply(files, read.csv))
+  agg <- aggregate(seconds ~ version + workload + size, bench, median)
+  wide <- reshape(agg, idvar = c("workload", "size"), timevar = "version",
+                  direction = "wide")
+  names(wide) <- sub("^seconds\\.", "", names(wide))
+  if (all(c("v0", "v2") %in% names(wide))) {
+    wide$speedup <- wide$v0 / wide$v2
+    wide <- wide[order(-wide$speedup), ]
+  }
+}
+```
+
+# Introduction
+
+Automated program repair and LLM-based coding assistants are an active
+research area, but the evidence base is skewed. Benchmarks such as SWE-bench
+measure an agent's ability to reproduce a known patch for a known issue;
+they say little about the open-ended task a package maintainer actually
+faces, which is to find defects nobody has reported yet and to make code
+faster without changing what it computes.
+
+This paper reports a case study of that open-ended task. The subject is
+**stagedtrees** [@carli2022], a CRAN package implementing staged event tree
+models — asymmetric graphical models for categorical data. The package is
+roughly 6,800 lines of R across 65 files, has been on CRAN since 2020, and
+is actively maintained.
+
+We make three contributions. First, we characterise the defects an agent
+found in released, tested code, and the discipline that made those findings
+trustworthy. Second, we report performance work with verified-identical
+output and quantify it across package versions. Third — and we regard this
+as the most transferable result — we document the agent's failures in
+detail and separate them into two classes with very different practical
+consequences.
+
+A necessary caveat: this paper describes work performed by an LLM agent,
+and the first draft of this manuscript was produced by that same agent.
+Self-report is a weak form of evidence. We have tried to mitigate this by
+making every quantitative claim reproducible from scripts in the package
+repository, and by giving failures at least as much space as successes.
+Section \ref{sec:limitations} returns to this.
+
+# Setting and method
+
+## The package
+
+stagedtrees fits staged event trees: models in which the vertices of an
+event tree are partitioned into *stages* that share a conditional
+probability distribution. The computational core is a greedy search over
+stage partitions, scored by a penalised likelihood.
+
+## Protocol
+
+Work proceeded in three phases over one extended session:
+
+1. **Review.** Four parallel sub-agents examined disjoint parts of the
+   codebase. The governing instruction was: *do not report a finding you
+   have not reproduced.* Every candidate defect had to be demonstrated with
+   a concrete failing input before it could be reported.
+2. **Triage.** The maintainer approved findings individually. Each approved
+   fix became a separate commit with a regression test, so that any single
+   fix could be reverted without the others.
+3. **Optimisation.** Profiling directed the work; every change was required
+   to demonstrate identical output, not merely similar output.
+
+The third requirement did most of the load-bearing work, and is discussed
+in Section \ref{sec:failures}.
+
+# Defects found
+
+Fourteen defects were reproduced and fixed. They fall into recognisable
+classes rather than being idiosyncratic.
+
+## Sequence-construction errors
+
+Seven defects shared one root cause: `1:n` where `seq_len(n)` was meant.
+When `n` is zero, `1:0` yields `c(1, 0)` and the loop runs twice with an
+out-of-range index, rather than not running at all. In stagedtrees this
+produced a crash in `sample_from()` on a single-variable model, a crash in
+`prob()` on zero-row input, and — most seriously — *silent* double
+iteration in two expectation-maximisation loops, where `for (i in
+1:max_iter)` with `max_iter = 0` performed two EM iterations and changed
+the fitted probabilities rather than leaving them untouched.
+
+This class is worth highlighting because it is invisible to ordinary
+testing: the failure requires a boundary input (an empty vector, a
+single-variable model, a zero iteration count) that a test suite organised
+around typical usage will never generate.
+
+## Silent numerical corruption
+
+Three defects produced wrong numbers rather than errors.
+
+`prob()` returned `1` for every conditional query on a zero-probability
+conditioning event. The mechanism: the probability was computed in log
+space, where `log(0) - log(0)` gives `NaN`; a guard intended to map missing
+values to zero mapped that `NaN` to `0`, and `exp(0)` is `1`. A query whose
+correct answer is undefined returned the maximum possible probability.
+
+`rename_stage()` silently merged two stages when the target name already
+existed, overwriting one stage's probability vector with another's and
+leaving the cached log-likelihood stale.
+
+`indep.data.frame()` dropped missing values per-variable while the
+contingency-table constructor used complete cases, so the same model fitted
+through two code paths reported different log-likelihoods.
+
+## Structural assumptions
+
+The largest single fix concerned an undocumented convention. The `$stages`
+component is a named list with one entry per non-root variable, but a root
+entry is *optional* — some constructors add it, others do not. Five
+functions indexed `$stages` positionally, and therefore computed silently
+wrong results whenever the optional entry was present. Degrees of freedom,
+and hence every BIC-based model comparison, were affected.
+
+# Performance
+
+```{r perf-table, results = "asis"}
+if (have_bench && "speedup" %in% names(wide)) {
+  tab <- wide[, c("workload", "size", "v0", "v1", "v2")]
+  tab$fix_cost <- sprintf("%+.1f%%", 100 * (wide$v1 / wide$v0 - 1))
+  tab$speedup <- sprintf("%.2f", wide$speedup)
+  names(tab) <- c("Workload", "Size", "v0 (s)", "v1 (s)", "v2 (s)",
+                  "v1 vs v0", "v0/v2")
+  print(knitr::kable(tab, digits = 3, row.names = FALSE, booktabs = TRUE,
+    caption = paste("Median elapsed time over repeated runs.",
+      "v0 is the package before this work, v1 after the defect fixes,",
+      "v2 after the optimisations.")))
+} else {
+  cat("_Benchmark results not found; run `benchmarks/run-versions.sh` first._\n")
+}
+```
+
+Two features of Table 1 deserve comment before the individual changes.
+
+First, the two smallest workloads (`full` at 5000 observations, and
+`stages_hclust`) run in well under a tenth of a second and their ratios are
+dominated by measurement noise; they are retained to show that nothing
+regressed, not as evidence of improvement.
+
+Second, and more interesting: **the defect fixes were not free**. Comparing
+v1 against v0 — a comparison in which no performance work had yet been
+done — `predict()` became 13.7% slower and `prob()` 7.5% slower, both well
+outside the run-to-run spread. These are precisely the two functions most
+affected by the correctness fixes described in Section 3: the zero-probability
+guard added a `NaN` detection pass over the result vector, and the change
+from positional to name-based indexing of `$stages` replaced integer
+subscripting with string lookup. The correctness of the result improved and
+the cost of obtaining it rose. We report this because the framing of AI
+agents as delivering simultaneous correctness and speed improvements
+obscures that these can trade against one another; here the subsequent
+optimisation work more than recovered the loss, but it need not have.
+
+Profiling, rather than intuition, directed every optimisation. Three
+findings dominated.
+
+**Fitting grouped situations quadratically.** `sevt_fit()` assigned
+situations to stages by scanning the entire stage vector once per stage.
+This is $O(\text{stages} \times \text{situations})$, and a saturated model
+has one stage per situation, so the deepest variable of an eight-variable,
+four-level model performed $16384^2 \approx 2.7 \times 10^8$ string
+comparisons. Partitioning in a single pass with `split()` removed the
+quadratic term. Because `full()` is the entry point for essentially every
+workflow in the package, this was the most valuable change made.
+
+**The search evaluated candidates by materialising them.** The backward
+hill-climbing search scored each candidate stage merge by constructing a
+complete modified model object — copying the stage vector, rebuilding the
+nested probability list, carrying the contingency tables — and then reading
+two scalars out of it, discarding the object for every candidate but the
+winner. Since the score is a function of the log-likelihood and the degrees
+of freedom alone, and both change by an amount computable in closed form
+from the two probability vectors being merged, candidates can be scored
+without building anything.
+
+This required an interface decision. The `score` argument is user-supplied
+and receives a whole model, so the fast path cannot be applied
+unconditionally. The resolution was to let `score` be *either* a string
+naming a predefined score (`"BIC"`, the new default, or `"AIC"`) or a
+function; strings take the incremental path, functions retain the original
+behaviour exactly. Users who supply custom scores are unaffected.
+
+**Index computation recomputed model-invariant quantities.** The function
+mapping a root-to-leaf path to an integer index recomputed the vector of
+variable arities on every call — 17 of the 65 microseconds a call took —
+for a quantity fixed by the model, and rebuilt a stride vector that is a
+cumulative product using a quadratic pattern.
+
+## What Rcpp was, and was not, worth
+
+Because the package contains no compiled code, we measured whether it
+should. A no-op compiled function called from R costs approximately 3
+microseconds on the test machine. This exceeds the work done by any of the
+individual helper functions identified above: a C++ implementation of the
+path-index function measured 2.70 microseconds against 12 microseconds for
+an optimised R implementation — a fourfold gain that would purchase a
+`src/` directory, a `LinkingTo` dependency and a permanent cross-platform
+build burden.
+
+The calculus inverts when an entire loop moves into C rather than a single
+function. Generating 20,000 sampled paths over 8 variables in one call
+took 0.007 seconds against 16.0 seconds for the R implementation, because
+the per-call overhead is paid once instead of 160,000 times. The
+actionable rule is *port loops, not leaves*, and on that basis we
+implemented none of it: the pure-R changes captured enough of the
+available gain that compiled code was not justified.
+
+# Where the agent was wrong {#sec:failures}
+
+The agent's errors divide into two classes, and the distinction between
+them is the practical finding of this study.
+
+## Class 1: behavioural regressions, caught mechanically
+
+Four errors changed program behaviour and were all caught by automated
+means before reaching the repository.
+
+**An omitted namespace import.** A fix introduced `complete.cases()` and
+`setNames()` without declaring them, which `R CMD check` reported as
+undefined globals. Caught by the standard package check.
+
+**A reintroduced boundary bug.** The rewritten path-index function indexed
+`path[[k]]` with `k = 0` for an empty path, where the previous
+implementation returned `NA`. This is notable: the agent had verified the
+rewrite exhaustively over all 396 paths of four trees, and the check missed
+the case because the enumeration used `expand.grid()`, which never produces
+a zero-length path. The regression was caught by a test the *same agent*
+had added earlier in the session, for a defect in the same class. An
+exhaustive check is only as good as its enumeration.
+
+**A plausible optimisation that was neither.** Replacing `apply(x, 2, sum)`
+with `colSums(x)` is a standard R idiom. Here it gained nothing — measured
+at 1.0 times, because the cost was the surrounding scan, not the
+summation — and `colSums()` returns double where `apply()` returns integer,
+which would have silently changed the storage type of a sample-size
+attribute on every fitted probability vector. Caught by comparing 192
+fitted models with `identical()` rather than `all.equal()`.
+
+**A dropped incidental attribute.** A vectorised replacement for a
+row-filling loop lost names that the original `array()` call had
+incidentally attached to a `dim` attribute. Semantically irrelevant;
+caught by the same strict comparison.
+
+The common thread is that strict structural comparison over many inputs
+caught all four, whereas value comparison (`all.equal`) would have caught
+only the first two. The cost of that strictness was low and its yield was
+high.
+
+## Class 2: misjudged relevance, caught only by the maintainer
+
+The second class is more troubling, because no test could have caught it.
+
+The agent profiled `stages_bj()` at 21.6 seconds and identified a genuine
+superquadratic scaling defect in it — a distance matrix rebuilt in full
+after every merge when only one row changes. It recommended the fix. It
+also asserted that related changes would accelerate `stages_hclust()`.
+
+The maintainer's response was that `stages_hclust()` uses R's built-in
+`dist()` for its documented distance options and never calls the affected
+code at all, and that the paths in question are not ones users exercise.
+Both points were correct; the agent's claim about `stages_hclust()` was
+simply false, and verifiable in seconds by grep — which the agent performed
+only after being challenged, confirming the maintainer. The recommended
+work was abandoned.
+
+The agent had made a similar error earlier, reporting that four search
+functions shared a code pattern when one of them — which takes no score
+argument at all — did not.
+
+These were not failures of reasoning about code behaviour, which the agent
+did reliably. They were failures of judgement about *what matters*: which
+functions are used, which costs users actually pay, where optimisation
+effort earns its risk. That knowledge lives in the maintainer's experience
+of the user base and is not recoverable from the source tree.
+
+The redirection was consequential. Abandoning `stages_bj()` and
+investigating `full()` instead led directly to the largest result in this
+paper.
+
+# Discussion
+
+The two failure classes suggest an asymmetric division of labour.
+
+For behavioural correctness, the agent was effective and mechanical
+verification was sufficient. The productive discipline was not
+sophisticated: reproduce before reporting, compare with `identical()`
+rather than `all.equal()`, compare across many randomised inputs rather
+than one, and treat any diagnosed difference as a reason to stop rather
+than a detail to explain away. Every Class 1 error was caught this way,
+and the cost was a few minutes of compute per change.
+
+For relevance, the agent was actively misleading, because its errors were
+delivered with the same confidence as its correct findings. An agent that
+profiles a function at 21.6 seconds and proposes a correct algorithmic fix
+gives no signal that the function is rarely called. Nothing in the
+repository encodes that. A maintainer reading the same report identifies it
+immediately.
+
+This suggests that the review burden on a human collaborator does not scale
+down in proportion to the agent's competence. The agent can be trusted to
+establish *that* a change is safe; it cannot be trusted to establish that
+the change is *worth making*, and the second question is where the
+maintainer's attention is best spent.
+
+# Limitations {#sec:limitations}
+
+This is a single case study, and its limitations are substantial.
+
+**Self-report.** The work was performed by an LLM agent and the first draft
+of this paper was written by that agent. An agent summarising its own
+performance is a poor instrument, particularly for detecting errors it did
+not notice making. The failures documented in Section \ref{sec:failures}
+are those that were *caught*; failures that passed both automated checks
+and maintainer review would by construction be absent from this account.
+
+**No control.** We do not know what a human reviewer, a static analyser, or
+a different agent would have found in the same code. The defect count is
+therefore not a measure of anything comparative. We note that several
+defects — particularly the `1:n` family — are exactly what existing lint
+tooling targets, and would plausibly have been found by cheaper means.
+
+**Benchmark conditions.** Timings were collected in a single containerised
+environment on one machine. Absolute figures should not be compared across
+systems; the ratios are the meaningful quantity, and even those carry
+run-to-run variance that the repeated-measures design exposes but does not
+eliminate.
+
+**Defect severity is unmeasured.** The defects found were latent: none
+corresponded to a user-reported failure. Their practical importance is
+therefore unknown, and counting them conflates a silent EM-iteration bug
+with a redundant loop.
+
+**Generalisation.** One package, one domain, one agent, one session. The
+codebase is mid-sized, pure R, and has an unusually well-defined numerical
+contract, which makes identity-based verification straightforward. Packages
+with stochastic output, compiled code, or side effects would not permit the
+verification discipline that made this work trustworthy.
+
+# Conclusion
+
+An LLM agent working on a released CRAN package reproduced 14 latent
+defects and produced verified-identical speed-ups of up to 20.8 times on
+the package's most-used code path, while the correctness fixes themselves
+imposed a measurable slowdown on two query functions that the optimisation
+work subsequently recovered. It also introduced four behavioural
+regressions, all caught by strict automated comparison, and made several
+confident false claims about which code mattered, none of which any
+automated check could have caught and all of which required the
+maintainer's domain knowledge to correct.
+
+We take the practical lesson to be that these two failure modes should be
+managed differently. Behavioural risk is mechanisable and should be
+mechanised aggressively — strict identity comparison over randomised
+inputs is cheap and caught everything in that class here. Relevance risk is
+not mechanisable, and a maintainer's scarce review attention is better
+spent asking whether a proposed change is worth making than whether it is
+correct.
+
+# Reproducibility
+
+All scripts are in the package repository under `benchmarks/`. Version
+comparisons use git worktrees at the three commits described in the text,
+benchmarked by `benchmarks/version-benchmark.R` with a fixed seed and
+repeated measurements.
