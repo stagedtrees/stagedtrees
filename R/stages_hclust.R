@@ -90,11 +90,16 @@ stages_hclust <-
         "x" = "You've supplied {.type {k}}."
       ))
     }
-    if (!rlang::is_installed("fastcluster")) {
-      hclu <- stats::hclust
-    }else{
-      ## if fastcluster is available, use it
+    ## requireNamespace, not rlang::is_installed: the latter costs ~0.125s the
+    ## first time it is called in a session (0.001s after), which is paid on
+    ## the first stages_hclust call and dominates the whole search on small
+    ## models. requireNamespace answers the question we actually have -- can
+    ## this namespace be loaded -- and loads it, which the fastcluster::hclust
+    ## below needs anyway.
+    if (requireNamespace("fastcluster", quietly = TRUE)) {
       hclu <- fastcluster::hclust
+    } else {
+      hclu <- stats::hclust
     }
     if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
     check_scope(scope, object)
