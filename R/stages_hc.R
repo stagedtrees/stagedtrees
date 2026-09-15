@@ -47,37 +47,51 @@ stages_hc <- function(object,
   for (v in scope) {
     done <- FALSE
     iter <- 0
+    lambda <- object$lambda
+    if (is.null(lambda)) lambda <- 0
     while (!done & iter < max_iter) {
       iter <- iter + 1
-      temp <- object # clone the object
-      temp_score <- now_score # clone the score
+      done <- TRUE
       stages <- object$stages[[v]]
       ustages <- unique(stages)
       newname <- new_label(c(ustages, ignore))
       ustages <- ustages[!(ustages %in% ignore)]
-      done <- TRUE
-      for (j in seq_along(ustages)) {
-        s1 <- ustages[j]
-        idx <- (seq_along(stages))[stages == s1]
-        for (i in idx) {
-          try <- object
-          for (s2 in c(ustages[-j], newname)) {
-            try$stages[[v]][i] <- s2
-            try <- sevt_fit(try, scope = v)
-            try_score <- score(try)
-            if (try_score > temp_score) {
-              temp <- try
-              temp_score <- try_score
-              ia <- i # just to message it if verbose
-              s1a <- s1
-              s2a <- s2
-              done <- FALSE
-            }
-          }
+      if (length(ustages) < 1) break
+      ## Candidates are ranked by log-likelihood in compiled code, but grouped
+      ## by their change in degrees of freedom first: a move to a new stage
+      ## always fits better, so log-likelihood alone would always pick one.
+      ## Within a group the degrees of freedom are fixed, so the score cannot
+      ## reorder candidates and needs evaluating only on the group's best.
+      ct <- as.matrix(object$ctables[[v]])
+      storage.mode(ct) <- "double"
+      asg <- match(stages, ustages) - 1L
+      asg[is.na(asg)] <- -1L
+      cand <- best_move_cpp(ct, as.integer(asg), length(ustages), lambda)
+      ## every representative is scored against the UNMODIFIED object and only
+      ## the best is applied; the candidate indices refer to the current stage
+      ## structure and are stale the moment a move is taken
+      temp <- NULL
+      temp_score <- now_score
+      for (r in seq_len(nrow(cand))) {
+        i <- cand[r, 1]
+        s2 <- if (cand[r, 2] == 0) newname else ustages[cand[r, 2]]
+        try <- object
+        try$stages[[v]][i] <- s2
+        try <- sevt_fit(try, scope = v)
+        try_score <- score(try)
+        if (try_score > temp_score) {
+          temp <- try
+          temp_score <- try_score
+          ia <- i
+          s1a <- stages[i]
+          s2a <- s2
         }
-      } ## end for over stages
-      object <- temp
-      now_score <- temp_score
+      }
+      if (!is.null(temp)) {
+        object <- temp
+        now_score <- temp_score
+        done <- FALSE
+      }
       if ((trace > 1) && !done) {
         cli::cli_text("{v}: moved {ia} from stage {s1a} to stage {s2a}.")
       }

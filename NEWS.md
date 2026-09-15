@@ -52,6 +52,18 @@
    1.2s after; seven variables did not complete in ten minutes before and
    takes 23s now. The package now contains compiled code and requires
    **Rcpp**.
+* `stages_hc` is dramatically faster and its `score` argument is unchanged.
+   It previously refit the model and recomputed the full log-likelihood for
+   every candidate move; the change each move causes is now computed in
+   closed form in compiled code. Because a move can add a stage, remove one,
+   or neither, candidates are grouped by their change in degrees of freedom
+   and `score` is evaluated on the best of each group -- at most three
+   evaluations per sweep instead of one per candidate. On 400 observations
+   over four 3-level variables the search takes about 20s before the change
+   and 0.3s after. The selected model is the same: over 36 models spanning
+   seeds, smoothing and model shapes, the stage partition, log-likelihood and
+   degrees of freedom are identical. Stage *labels* can differ, since moves
+   are taken in a different order.
 * internal speedups in `tree_idx` and `join_stages_unsafe`, which no longer
    recompute values that are fixed for a given model. `sample_from` is about
    twice as fast and `predict` about three times; `tree_idx` now reports an

@@ -24,9 +24,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// best_move_cpp
+NumericMatrix best_move_cpp(NumericMatrix ct, IntegerVector asg, int nstage, double lambda);
+RcppExport SEXP _stagedtrees_best_move_cpp(SEXP ctSEXP, SEXP asgSEXP, SEXP nstageSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type ct(ctSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type asg(asgSEXP);
+    Rcpp::traits::input_parameter< int >::type nstage(nstageSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(best_move_cpp(ct, asg, nstage, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stagedtrees_best_merge_cpp", (DL_FUNC) &_stagedtrees_best_merge_cpp, 4},
+    {"_stagedtrees_best_move_cpp", (DL_FUNC) &_stagedtrees_best_move_cpp, 4},
     {NULL, NULL, 0}
 };
 
