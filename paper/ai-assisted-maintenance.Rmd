@@ -32,6 +32,14 @@ output:
   rticles::rjournal_article:
     keep_tex: true
 bibliography: references.bib
+header-includes:
+  - \usepackage{longtable}
+  - \usepackage{booktabs}
+  - \usepackage{array}
+  - \usepackage{calc}
+  # the RJournal template omits the table macros pandoc emits
+  - \providecommand{\real}[1]{#1}
+  - \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 ---
 
 ```{r setup, include = FALSE}
@@ -333,6 +341,10 @@ if (have_bench) {
     d <- bench[paste(bench$workload, bench$size) == k, ]
     w <- reshape(d[, c("version", "rep", "seconds")], idvar = "rep",
                  timevar = "version", direction = "wide")
+    ## a workload missing from a version means the result set is incomplete
+    ## or mixes runs; refuse to tabulate rather than report a partial row
+    if (!all(c("seconds.v0", "seconds.v1") %in% names(w))) return(NULL)
+    if (sum(stats::complete.cases(w$seconds.v0, w$seconds.v1)) < 3) return(NULL)
     tt <- stats::t.test(w$seconds.v1, w$seconds.v0, paired = TRUE)
     data.frame(Workload = k,
                `Change` = sprintf("%+.1f%%",
@@ -341,7 +353,7 @@ if (have_bench) {
                  median(w$seconds.v1) - median(w$seconds.v0)),
                p = tt$p.value, check.names = FALSE)
   })
-  tab <- do.call(rbind, rows)
+  tab <- do.call(rbind, rows[!vapply(rows, is.null, TRUE)])
   tab$`p (Holm)` <- sprintf("%.3f", stats::p.adjust(tab$p, method = "holm"))
   tab$p <- sprintf("%.4f", tab$p)
   print(knitr::kable(tab, row.names = FALSE, booktabs = TRUE,

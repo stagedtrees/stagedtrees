@@ -8,3 +8,15 @@ tests/testthat/Rplots.pdf
 *.tar.gz
 *.Rcheck/
 
+
+# paper build artefacts
+paper/*.pdf
+paper/*.tex
+paper/*.log
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/RJwrapper.*
+paper/ai-assisted-maintenance.bib
+paper/ai-assisted-maintenance.R
