@@ -23,7 +23,7 @@ STAGE="$WT/compiled.csv"
 mkdir -p "$OUT"
 
 RVER=0e3c152
-CVER=6703428
+CVER=07e14af
 
 cleanup() {
   for v in rver cver; do
