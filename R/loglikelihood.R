@@ -4,6 +4,9 @@
 #' @param object an fitted object of class \code{sevt}.
 #' @param ... additional parameters (compatibility).
 #' @return An object of class \code{\link{logLik}}.
+#' @details The \code{df} attribute is computed by \code{\link{sevt_df}}.
+#' It counts all distinct stage labels, including those with zero
+#' observations; see \code{\link{join_unobserved}} for details.
 #' @importFrom stats logLik
 #' @export
 #' @examples
@@ -32,18 +35,7 @@ logLik.sevt <- function(object, ...) {
     },
     FUN.VALUE = 1
   ))
-  attr(ll, "df") <-
-    sum(c(1, vapply(
-      object$stages[ vars[-1] ],
-      FUN = function(x) {
-        length(unique(x))
-      },
-      FUN.VALUE = 1
-    )) *
-      (vapply(
-        object$tree,
-        FUN = length, FUN.VALUE = 1
-      ) - 1)) ## compute the degree of freedom
+  attr(ll, "df") <- sevt_df(object)
   attr(ll, "nobs") <- sum(object$ctables[[vars[1]]])
   class(ll) <- "logLik"
   return(ll)

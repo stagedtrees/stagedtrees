@@ -30,6 +30,7 @@ stages_bhcr <-
            max_iter = 100,
            trace = 0) {
     check_sevt_fit(object)
+    if (sevt_nvar(object) < 2L) return(object)
     now_score <- score(object)
     r <- 1
     iter <- 0

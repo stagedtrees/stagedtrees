@@ -71,12 +71,10 @@ compare_stages <-
       ),
       hamming = hamming_stages(object1, object2, return_tree = TRUE),
       stages = diff_stages(object1, object2),
-      sapply(names(object1$tree)[-1],
-        function(v) {
-          as.numeric(object1$stages[[v]] != object2$stages[[v]])
-        },
-        USE.NAMES = TRUE
-      )
+      cli::cli_abort(c(
+        "Unknown {.arg method} {.val {method}}.",
+        "i" = "Must be one of {.val naive}, {.val hamming}, or {.val stages}."
+      ))
     )
     # root is always ok
     tmp <- list()
@@ -117,8 +115,12 @@ compare_stages <-
 #' @rdname compare_stages
 #' @param FUN a function that is used to aggregate the Hamming distance
 #'            for each variable. The default \code{sum} produces
-#'            the traditional Hamming distance.  Use \code{mean}
-#'            to obtain the normalized Hamming distance.
+#'            the traditional Hamming distance (range: 0 to total number of
+#'            non-root situations). Use \code{mean} to obtain a per-variable
+#'            normalised Hamming distance: each variable contributes a value
+#'            in \eqn{[0, 1]}, and these are summed across variables, so the
+#'            result lies in \eqn{[0, p-1]} where \eqn{p} is the number of
+#'            variables.
 #' @details
 #' \code{hamming_stages} finds a minimal set of nodes for which the associated stages
 #' should be changed to obtain equivalent structures. To do that, a maximum-weight bipartite
@@ -126,9 +128,10 @@ compare_stages <-
 #' Hungarian method implemented in the \code{solve_LSAP} function of the \pkg{clue}
 #' package.
 #' \code{hamming_stages} requires the package \code{clue}.
-#' @return \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
-#' number of situations where the stage should be changed to obtain the same
-#' models. If \code{return_tree = TRUE} a stages-like structure showing which
+#' @return \code{hamming_stages}: if \code{return_tree = FALSE}, a numeric value
+#' summarising the minimum number of situations where the stage should be changed
+#' to obtain equivalent models (aggregated via \code{FUN}, see above).
+#' If \code{return_tree = TRUE} a stages-like structure showing which
 #' situations should be modified to obtain the same models.
 #' @export
 hamming_stages <- function(object1, object2, return_tree = FALSE, FUN = sum) {
@@ -212,28 +215,26 @@ diff_stages <- function(object1, object2) {
   check_sevt(object1)
   check_sevt(object2)
   check_same_tree(object1, object2)
-  out <- rep(list(c()), length(object1$stages))
-  attr(out, "names") <- attr(object1$stages, "names")
-  for (k in seq_along(object1$stages)) {
-    a <- object1$stages[[k]]
-    b <- object2$stages[[k]]
+  vars <- sevt_varnames(object1)
+  non_root <- vars[-1]
+  out <- vector("list", length(non_root))
+  names(out) <- non_root
+  for (v in non_root) {
+    a <- object1$stages[[v]]
+    b <- object2$stages[[v]]
     unique_a <- unique(a)
     unique_b <- unique(b)
     out_a <- out_b <- rep(0, length(a))
     for (i in seq_along(unique_a)) {
-      ifelse((length(unique(b[which(a == unique_a[i])])) == 1),
-        out_a[which(a == unique_a[i])] <- 1,
-        out_a[which(a == unique_a[i])] <- 0
-      )
+      idx <- a == unique_a[i]
+      if (length(unique(b[idx])) == 1) out_a[idx] <- 1
     }
     for (i in seq_along(unique_b)) {
-      ifelse((length(unique(a[which(b == unique_b[i])])) == 1),
-        out_b[which(b == unique_b[i])] <- 1,
-        out_b[which(b == unique_b[i])] <- 0
-      )
+      idx <- b == unique_b[i]
+      if (length(unique(a[idx])) == 1) out_b[idx] <- 1
     }
     # stages exactly equal have sign(out_a) + sign(out_b) == 2.
-    out[[k]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 0, 1)
+    out[[v]] <- ifelse((sign(out_a) + sign(out_b)) == 2, 0, 1)
   }
   return(out)
 }

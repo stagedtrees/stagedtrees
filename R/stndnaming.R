@@ -32,7 +32,7 @@ stndnaming <- function(object, uniq = FALSE,
                        ignore = object$name_unobserved) {
   var <- names(object$tree)
   start <- 0
-  for (i in 2:length(var)) {
+  for (i in seq_along(var)[-1]) {
     v <- var[i]
     old <- unique(object$stages[[v]])
     old <- old[!(old %in% ignore)]

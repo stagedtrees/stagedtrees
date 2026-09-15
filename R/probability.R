@@ -140,7 +140,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   # index of last variable that appears in x
   k <- which(var %in% var1[length(var1)])
   res <- vapply(
-    1:n,
+    seq_len(n),
     FUN.VALUE = 1.0,
     FUN = function(i) {
       ll <- sapply(var[1:k], FUN = function(vv){
@@ -163,7 +163,21 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
     }
   )
   res <- res - p1
-  if (na0) res[is.na(res)] <- 0
+  # NaN arises from log(0) - log(0), i.e. conditioning on a zero-probability
+  # event. This is undefined; return NA per entry with a warning. na0 converts
+  # other NAs (unknown levels, numerical issues) to 0, but not these.
+  zero_cond <- is.nan(res)
+  if (any(zero_cond)) {
+    cli::cli_warn(
+      "Conditioning on a zero-probability event; \\
+       returning {.val NA} for the affected \\
+       {sum(zero_cond)} entr{?y/ies}."
+    )
+    res[zero_cond] <- NA_real_
+  }
+  if (na0) res[is.na(res) & !zero_cond] <- 0
+  # always NA for undefined entries, even when na0 = TRUE
+  res[zero_cond] <- NA_real_
   if (log) {
     return(res)
   } else {

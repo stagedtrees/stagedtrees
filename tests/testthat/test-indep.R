@@ -13,6 +13,36 @@ test_that("test indep model", {
   expect_true(compare_stages(sev1, sev2))
 })
 
+test_that("indep.data.frame complete-cases matches indep.table with NAs (C6)", {
+  set.seed(1)
+  dat <- data.frame(
+    A = c("a", "a", "b", "b", NA),
+    B = c("x", "y", "x", "y", "x"),
+    stringsAsFactors = FALSE
+  )
+  m_table <- indep(table(dat), join_unobserved = FALSE)
+  m_df    <- indep(dat,        join_unobserved = FALSE)
+
+  # logLikelihoods must agree (same complete-case counts)
+  expect_equal(as.numeric(logLik(m_df)), as.numeric(logLik(m_table)),
+               tolerance = 1e-8)
+
+  # prob entries must be plain named numerics (no dim), matching table path
+  expect_null(dim(m_df$prob$A[["1"]]))
+  expect_null(dim(m_df$prob$B[["1"]]))
+  expect_equal(m_df$prob$A[["1"]], m_table$prob$A[["1"]], tolerance = 1e-8)
+})
+
+test_that("indep.data.frame prob entries are plain named numeric, not table/array (C6)", {
+  dat <- data.frame(A = c("a","b","a"), B = c("x","y","x"),
+                    stringsAsFactors = FALSE)
+  m <- indep(dat, join_unobserved = FALSE)
+  expect_null(dim(m$prob$A[["1"]]))
+  expect_null(dim(m$prob$B[["1"]]))
+  expect_named(m$prob$A[["1"]])
+  expect_named(m$prob$B[["1"]])
+})
+
 test_that("test indep model (NA)", {
   N <- sample(100:200, size = 1)
   ns <- sample(5:15, size = 3)

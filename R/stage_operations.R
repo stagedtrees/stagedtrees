@@ -41,7 +41,7 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
     object$stages[[var]][ix] <- label
     if (is_fitted_sevt(object)) {
       # re-fit the model
-      object <- sevt_fit(object, lambda = object$lambda)
+      object <- sevt_fit(object, scope = var)
     }
   }
   return(object)
@@ -54,12 +54,13 @@ split_stage_random <- function(object, var, stage, p = 0.5) {
 #' @param var name of a variable in \code{object}.
 #' @param stage name of the stage to be renamed.
 #' @param new new name for the stage.
-#' @details No internal checks are performed and as side effect
-#' stages can be joined, if e.g. \code{new} is equal to the name
-#' of a stage for variable \code{var}.
+#' @details Renames a stage without merging. If \code{new} already exists
+#' as a stage for variable \code{var}, an error is raised because renaming
+#' onto an existing stage would silently overwrite its probability vector
+#' with incorrect values. To merge two stages use \code{\link{join_stages}}.
 #'
-#' @return a staged event tree object where stages \code{stage}
-#' have been renamed to \code{new}.
+#' @return a staged event tree object where stage \code{stage} has been
+#' renamed to \code{new}.
 #' @export
 rename_stage <- function(object, var, stage, new) {
   check_sevt(object)
@@ -72,6 +73,14 @@ rename_stage <- function(object, var, stage, new) {
       variable {.value {var}} in {.arg object}."
     ))
   }
+  if (new != stage && new %in% object$stages[[var]]) {
+    cli::cli_abort(c(
+      "Stage {.val {new}} already exists for variable {.val {var}}.",
+      "i" = "Renaming onto an existing stage would silently overwrite its
+      probability vector. Use {.fun stagedtrees::join_stages} to merge stages."
+    ))
+  }
+  if (new == stage) return(object)
   # set new label
   object$stages[[var]][object$stages[[var]] %in% stage] <- new
   # if staged tree has prob move it to the new-label
@@ -79,5 +88,6 @@ rename_stage <- function(object, var, stage, new) {
     object$prob[[var]][[new]] <- object$prob[[var]][[stage]]
     object$prob[[var]][[stage]] <- NULL
   }
+  object$ll <- NULL
   return(object)
 }

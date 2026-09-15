@@ -86,7 +86,9 @@ depsubtree <- function(object, var, other_stages = c("NA", "indep", "full")) {
   )
   if (other == "NA") {
     st$stages <- lapply(st$stages, function(x) rep(NA, length(x)))
-    st$stages[[sevt_varnames(st)[1]]] <- NA
+    # Do NOT add a root entry: it is optional per the C1 convention and
+    # inserting it here would append it at the end of the list (out of tree
+    # order), breaking any consumer that relies on positional ordering.
   }
   st$stages[[var]] <- pl[[var]]$stages
   ## TODO: if has_prob then save relevant probabilities
