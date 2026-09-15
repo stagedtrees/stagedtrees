@@ -50,7 +50,15 @@ workloads <- list(
   list(name = "stages_bhc", size = "2000x5x3",
        setup = function() full(mkdata(2000, 5, 3), lambda = 1),
        run = function(m) stages_bhc(m)),
-  list(name = "stages_hclust", size = "2000x6x3",
+  ## the DEFAULT call searches over k, refitting per candidate, and costs
+  ## ~20x the fixed-k call. Benchmarking stages_hclust(m, k = 3) measures a
+  ## path users rarely take and reported no change where the default gained
+  ## 27%. Workloads must reflect default usage; the fixed-k call is kept
+  ## alongside only for contrast.
+  list(name = "stages_hclust", size = "2000x6x3 (default, searches k)",
+       setup = function() full(mkdata(2000, 6, 3), lambda = 1),
+       run = function(m) stages_hclust(m)),
+  list(name = "stages_hclust_k3", size = "2000x6x3 (fixed k)",
        setup = function() full(mkdata(2000, 6, 3), lambda = 1),
        run = function(m) stages_hclust(m, k = 3)),
   list(name = "sample_from", size = "20000x8x4",
