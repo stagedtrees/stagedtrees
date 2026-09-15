@@ -13,7 +13,7 @@ abstract: >
   event tree models. Over a single extended session the agent identified 14
   latent defects, all reproduced before being reported, and applied a series
   of performance changes that leave the package's central fitting routine
-  17.7 times faster and its structure-search algorithm 5.5 times faster, with
+  17.3 times faster and its structure-search algorithm 5.4 times faster, with
   output verified identical. We give equal weight to the agent's failures:
   it introduced a regression caught only by the package's existing test
   suite, proposed an "obvious" optimisation that would have silently changed
@@ -23,7 +23,7 @@ abstract: >
   fluent mechanistic terms, a performance difference that a corrected
   experimental design showed did not exist, and once by benchmarking a
   non-default invocation of a heavily used function and so reporting no
-  change where its actual usage had improved by 27%. We argue that the
+  change where its actual usage had improved by a quarter. We argue that the
   practical finding is a distinction by how failures are caught: mechanical
   verification reliably catches behavioural regressions, whereas judgements
   about relevance, the representativeness of a benchmark, and explanations
@@ -392,14 +392,31 @@ remarking in passing which algorithms users actually run.
 The benchmark exercised `stages_hclust(m, k = 3)`, fixing the number of
 stages. The function's default is `k = NA`, under which it searches over
 the number of stages, refitting the model once per candidate. That default
-path costs roughly twenty times as much as the fixed-`k` call, and it is
-the path that benefits from the fitting improvements. Measured with
-versions interleaved, four repetitions:
+path costs roughly thirty times as much as the fixed-`k` call, and it is
+the path that benefits from the fitting improvements. Both are now measured
+as part of the benchmark, and the contrast is stark:
 
-| call | v0 | v2 | change | $p$ |
-|---|---|---|---|---|
-| `stages_hclust(m, k = 3)` | 0.177 s | 0.173 s | $-2.3\%$ | 0.47 |
-| `stages_hclust(m)` (default) | 4.006 s | 2.923 s | $\mathbf{-27.0\%}$ | 0.012 |
+```{r hclust-table, results = "asis"}
+if (have_bench) {
+  hk <- grep("hclust", unique(paste(bench$workload, bench$size)), value = TRUE)
+  rows <- lapply(hk, function(k) {
+    d <- bench[paste(bench$workload, bench$size) == k, ]
+    w <- reshape(d[, c("version", "rep", "seconds")], idvar = "rep",
+                 timevar = "version", direction = "wide")
+    tt <- stats::t.test(w$seconds.v2, w$seconds.v0, paired = TRUE)
+    data.frame(Call = sub(" 2000x6x3", "", k),
+               v0 = sprintf("%.3f s", median(w$seconds.v0)),
+               v2 = sprintf("%.3f s", median(w$seconds.v2)),
+               Change = sprintf("%+.1f%%",
+                 100 * (median(w$seconds.v2) / median(w$seconds.v0) - 1)),
+               p = sprintf("%.4f", tt$p.value), check.names = FALSE)
+  })
+  print(knitr::kable(do.call(rbind, rows), row.names = FALSE, booktabs = TRUE,
+    caption = paste("stages\\_hclust under its default and with k fixed.",
+      "Only the default was affected by the optimisation work, and only",
+      "the default is what users call.")))
+}
+```
 
 The benchmark had therefore reported "no change" for one of the two
 algorithms the maintainer identifies as most used, while its default
@@ -527,7 +544,7 @@ verification discipline that made this work trustworthy.
 # Conclusion
 
 An LLM agent working on a released CRAN package reproduced 14 latent
-defects and produced verified-identical speed-ups of up to 17.7 times on
+defects and produced verified-identical speed-ups of up to 17.3 times on
 the package's most-used code path, while the correctness fixes themselves
 imposed a measurable slowdown on two query functions that the optimisation
 work subsequently recovered. It also introduced four behavioural
