@@ -33,50 +33,65 @@ mkdata <- function(n, p, lv, seed = 1) {
   )
 }
 
-## each entry: setup() is untimed, run(x) is timed
-workloads <- list(
-  list(name = "full", size = "5000x6x3",
-       setup = function() mkdata(5000, 6, 3),
-       run = function(d) full(d, lambda = 1)),
-  list(name = "full", size = "20000x8x4",
-       setup = function() mkdata(20000, 8, 4),
-       run = function(d) full(d, lambda = 1)),
-  list(name = "full_nojoin", size = "20000x8x4",
-       setup = function() mkdata(20000, 8, 4),
-       run = function(d) full(d, lambda = 1, join_unobserved = FALSE)),
-  list(name = "sevt_fit", size = "20000x8x4",
-       setup = function() full(mkdata(20000, 8, 4), lambda = 1, join_unobserved = FALSE),
-       run = function(m) sevt_fit(m)),
-  list(name = "stages_bhc", size = "2000x5x3",
-       setup = function() full(mkdata(2000, 5, 3), lambda = 1),
-       run = function(m) stages_bhc(m)),
-  ## the DEFAULT call searches over k, refitting per candidate, and costs
-  ## ~20x the fixed-k call. Benchmarking stages_hclust(m, k = 3) measures a
-  ## path users rarely take and reported no change where the default gained
-  ## 27%. Workloads must reflect default usage; the fixed-k call is kept
-  ## alongside only for contrast.
-  list(name = "stages_hclust", size = "2000x6x3 (default, searches k)",
-       setup = function() full(mkdata(2000, 6, 3), lambda = 1),
-       run = function(m) stages_hclust(m)),
-  list(name = "stages_hclust_k3", size = "2000x6x3 (fixed k)",
-       setup = function() full(mkdata(2000, 6, 3), lambda = 1),
-       run = function(m) stages_hclust(m, k = 3)),
-  list(name = "sample_from", size = "20000x8x4",
-       setup = function() full(mkdata(20000, 8, 4), lambda = 1),
-       run = function(m) sample_from(m, 20000)),
-  list(name = "predict", size = "2000rows",
-       setup = function() {
-         d <- mkdata(5000, 6, 3)
-         list(m = full(d, lambda = 1), d = d[seq_len(2000), ])
-       },
-       run = function(x) predict(x$m, x$d)),
-  list(name = "prob", size = "5000rows",
-       setup = function() {
-         d <- mkdata(20000, 8, 4)
-         list(m = full(d, lambda = 1), d = d[seq_len(5000), 1:4])
-       },
-       run = function(x) prob(x$m, x$d))
-)
+## Workloads sweep the MODEL DIMENSION rather than fixing one size per
+## function. A single arbitrary size per function is how an earlier version
+## of this file ranked sample_from as the dominant cost: it was handed 20000
+## samples on an 8-variable model while stages_bhc got a 5-variable one. On a
+## common model the order inverts, because the functions scale in different
+## variables entirely -- stages_bhc in situations squared (so lv^(2(p-1))),
+## sample_from linearly in the number of samples drawn. Sweeping p makes that
+## visible instead of letting workload choice decide the answer.
+##
+## p = 7 is deliberately absent: stages_bhc does not complete there in
+## reasonable time, which is itself a reported result.
+
+PS <- c(4L, 5L, 6L)          # variables
+NOBS <- 2000L                # observations
+LV <- 3L                     # levels per variable
+NSAMP <- 2000L               # draws for sample_from
+NROW <- 1000L                # rows for prob / predict
+
+workloads <- list()
+add <- function(name, size, setup, run) {
+  workloads[[length(workloads) + 1L]] <<-
+    list(name = name, size = size, setup = setup, run = run)
+}
+
+for (p in PS) {
+  local({
+    p <- p
+    dim <- sprintf("%dobs x %dvar x %dlv", NOBS, p, LV)
+    add("full", dim,
+        function() mkdata(NOBS, p, LV),
+        function(d) full(d, lambda = 1))
+    add("sevt_fit", dim,
+        function() full(mkdata(NOBS, p, LV), lambda = 1, join_unobserved = FALSE),
+        function(m) sevt_fit(m))
+    add("stages_bhc", dim,
+        function() full(mkdata(NOBS, p, LV), lambda = 1),
+        function(m) stages_bhc(m))
+    ## the DEFAULT searches over k, refitting per candidate; it costs ~30x the
+    ## fixed-k call and is what users actually invoke
+    add("stages_hclust", paste(dim, "(default)"),
+        function() full(mkdata(NOBS, p, LV), lambda = 1),
+        function(m) stages_hclust(m))
+    add("sample_from", paste(dim, sprintf("(n=%d)", NSAMP)),
+        function() full(mkdata(NOBS, p, LV), lambda = 1),
+        function(m) sample_from(m, NSAMP))
+    add("prob", paste(dim, sprintf("(%d rows)", NROW)),
+        function() {
+          d <- mkdata(NOBS, p, LV)
+          list(m = full(d, lambda = 1), d = d[seq_len(NROW), seq_len(min(4L, p))])
+        },
+        function(x) prob(x$m, x$d))
+    add("predict", paste(dim, sprintf("(%d rows)", NROW)),
+        function() {
+          d <- mkdata(NOBS, p, LV)
+          list(m = full(d, lambda = 1), d = d[seq_len(NROW), ])
+        },
+        function(x) predict(x$m, x$d))
+  })
+}
 
 rows <- list()
 for (w in workloads) {
