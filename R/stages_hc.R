@@ -24,6 +24,19 @@
 #' This is useful for preserving structural zeroes and to speed-up
 #' computations.
 #'
+#' Candidate moves are ranked by log-likelihood alone, which is done in
+#' compiled code, and `score` is then evaluated only on the best candidate of
+#' each kind of move. A move can dissolve its source stage, leave both stages
+#' populated, or create a new stage, changing the degrees of freedom by
+#' `-(k-1)`, `0` or `+(k-1)` respectively, where `k` is the number of levels
+#' of the variable; candidates are therefore grouped by that change, within
+#' which they differ only in log-likelihood. Any score that prefers a higher
+#' log-likelihood at equal complexity ranks them identically, so at most three
+#' score evaluations per step suffice. Scores outside that class -- ones that
+#' inspect the stage structure itself rather than the fitted log-likelihood
+#' and dimension -- may select a different model than an exhaustive search
+#' over the score would.
+#'
 #' @return The final staged event tree obtained.
 #'
 #' @examples
