@@ -8,6 +8,8 @@ stages_hclust(
   object,
   distance = "totvar",
   k = NA,
+  max_k = Inf,
+  first_max = FALSE,
   method = "complete",
   ignore = object$name_unobserved,
   limit = length(object$tree),
@@ -23,14 +25,24 @@ data, as returned by \code{full} or \code{sevt_fit}.}
 
 \item{distance}{character, the distance measure to be used, either
 a possible \code{method} for \code{\link{dist}} or
-one of the following: \code{"totvar", "hellinger"}.}
+one of the following: \code{"totvar", "hellinger"}.
+Alternatively, a function which compute a distance
+matrix (see Details).}
 
 \item{k}{integer or (named) vector: number of clusters, that is stages per variable.
 Values will be recycled if needed. If \code{NA} (default) a search of
 the number of stage is performed with respect to the maximization of
 the \code{score} function. \code{NA} and integer can be mixed
 to fix the number of stage for some variables and use the
-score to select others.}
+score to select others. If \code{k=NA} the maximum number of stages
+to consider can be set with the \code{max_k} argument.}
+
+\item{max_k}{integer, maximum number of stages to consider per variable.}
+
+\item{first_max}{logical, if \code{TRUE} and \code{k=NA} for at least
+some variables, the first local maximum with respect to
+the number of stages is returned (default to \code{FALSE}
+equivalent to a global search).}
 
 \item{method}{the agglomeration method to be used in \code{\link{hclust}}.}
 
@@ -60,9 +72,21 @@ of stages (\code{k}).
 A different number of stages for the different variables
 in the model can be specified by supplying a (named) vector
 via the argument \code{k}.
-If \code{k} is \code{NA} for some variables, all
-possible number of stages will be checked and the
-one that maximize the \code{score} will be selected.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{     If \code{k} is \code{NA} for some variables, all
+     possible number of stages (until \code{max_k}) will be checked
+     and the one that maximize the \code{score} will be selected.
+     If \code{first_max = TRUE} the search for the number of stages
+     will stop at the first local maximum encountered.
+
+     A custom distance can be passed as a function in argument \code{distance}.
+     This must return an object of class \code{"dist"} similarly to
+     \code{\link{dist}}.
+
+     The function \code{\link{hclust}} was used originally, now
+     if \pkg{\link{fastcluster}} is available the function
+     \code{\link{fastcluster::hclust}} is used.
+}\if{html}{\out{</div>}}
 }
 \examples{
 data("Titanic")
