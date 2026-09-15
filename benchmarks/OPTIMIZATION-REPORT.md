@@ -90,8 +90,32 @@ stage pairs** of a 6-variable model: **0 mismatches** in both `ll` and `df`.
 This is **not** an Rcpp candidate. The arithmetic operates on vectors of length
 `k` (2–5 elements). The cost is R-level allocation, not computation.
 
-Applies to `stages_bhc`, `stages_fbhc`, `stages_bj`, `stages_bhcr` — all four
-use the same `join_stages_unsafe`-per-candidate pattern.
+How far this generalises, having since read all of them:
+
+| function | score-based | `join_stages_unsafe` per candidate | delta applies |
+|---|---|---|---|
+| `stages_bhc` | yes | yes | yes — implemented |
+| `stages_fbhc` | yes | yes, until the first improvement | yes |
+| `stages_bhcr` | yes | only on *rejected* moves | marginal |
+| `stages_bj` | **no** | **no — accepted joins only** | no |
+| `stages_simplebhc` | yes | uses `join_positions` | no |
+| `stages_hclust` | yes | real `sevt_fit(scope = v)` refit | no |
+
+`stages_bj` takes no `score` at all — it picks pairs from a distance matrix
+against a threshold and joins only what it accepts, so it never pays the
+per-candidate cost. `stages_bhcr` evaluates a single random pair per iteration
+and assigns it on acceptance, so only rejected moves waste a copy, bounded by
+`max_iter` (default 100).
+
+`stages_fbhc` is the only other real candidate. It uses first-improvement
+(`break` out of both loops on the first improving pair) rather than
+best-improvement, so a shared helper would have to parameterise the search
+policy. Judged not worth it for now: it would fold the verified `stages_bhc`
+path into a shared abstraction to serve one lightly-used second caller.
+
+`stages_simplebhc` joins *positions*, which cascades to descendant variables,
+so the change is not a local function of `(p1, p2)` and would need its own
+derivation.
 
 Two cheap sub-fixes inside `join_stages_unsafe` regardless:
 - `ifelse(is.na(p1), 0, p1)` → `c1 <- p1; c1[is.na(c1)] <- 0` — **8.0 → 2.0 µs**
