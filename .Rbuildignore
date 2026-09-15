@@ -11,3 +11,4 @@ README_files
 ^CRAN-SUBMISSION$
 .pre-commit-config.yaml
 data-raw
+^benchmarks$
