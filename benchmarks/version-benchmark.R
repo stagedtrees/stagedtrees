@@ -1,17 +1,27 @@
-## Benchmark one stagedtrees source tree.
+## Benchmark one stagedtrees source tree, for one repetition.
 ##
-## Usage:  Rscript version-benchmark.R <path-to-package-source> <label> <out.csv>
+## Usage:  Rscript version-benchmark.R <pkg-source> <label> <out.csv> <rep>
 ##
-## Runs a fixed set of workloads with a fixed seed so results are comparable
-## across versions. Every workload is repeated and both the median and the
-## full set of timings are recorded, so variance is visible rather than
-## hidden behind a single number.
+## Performs ONE repetition of each workload and appends to <out.csv>. The
+## caller is expected to vary the version in the inner loop and the
+## repetition in the outer loop, so that the versions are interleaved in
+## time -- see run-versions.sh.
+##
+## This matters. An earlier version of this script took a repetition count
+## and ran every repetition of one version before moving to the next. Any
+## drift in machine performance over the run (thermal, noisy neighbours,
+## page cache) is then confounded with the version, and appears as a
+## spurious version effect. That design produced an apparent 13.7% slowdown
+## in predict() between two versions whose relevant code paths are
+## identical; interleaved measurement put the difference at -2.0% with a
+## 95% confidence interval straddling zero. Keep the versions interleaved.
 
 args <- commandArgs(trailingOnly = TRUE)
 pkg <- args[[1]]
 label <- args[[2]]
 out <- args[[3]]
-reps <- if (length(args) >= 4) as.integer(args[[4]]) else 5L
+rep_id <- if (length(args) >= 4) as.integer(args[[4]]) else 1L
+reps <- 1L
 
 suppressMessages(pkgload::load_all(pkg, quiet = TRUE))
 
@@ -81,12 +91,16 @@ for (w in workloads) {
   }
   rows[[length(rows) + 1L]] <- data.frame(
     version = label, workload = w$name, size = w$size,
-    rep = seq_len(reps), seconds = ts, stringsAsFactors = FALSE
+    rep = rep_id, seconds = ts, stringsAsFactors = FALSE
   )
-  message(sprintf("  %-14s %-12s median %8.3fs  (min %.3f max %.3f)",
-                  w$name, w$size, median(ts), min(ts), max(ts)))
+  message(sprintf("  %-14s %-12s %8.3fs", w$name, w$size, ts[1]))
 }
 
 res <- do.call(rbind, rows)
-write.csv(res, out, row.names = FALSE)
-message("wrote ", out)
+## append, so the caller can interleave versions across repetitions
+if (file.exists(out)) {
+  write.table(res, out, sep = ",", row.names = FALSE, col.names = FALSE,
+              append = TRUE, qmethod = "double")
+} else {
+  write.csv(res, out, row.names = FALSE)
+}

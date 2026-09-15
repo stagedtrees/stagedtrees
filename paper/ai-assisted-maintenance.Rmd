@@ -14,20 +14,17 @@ abstract: >
   latent defects, all reproduced before being reported, and applied a series
   of performance changes that leave the package's central fitting routine
   20.8 times faster and its structure-search algorithm 5.9 times faster, with
-  output verified identical. A version-to-version benchmark also shows the
-  correctness fixes carrying a measurable cost of their own — two query
-  functions became 8 to 14 per cent slower before any optimisation was
-  attempted — a trade-off that the usual framing of such work obscures.
-  We give equal weight to the agent's failures:
+  output verified identical. We give equal weight to the agent's failures:
   it introduced a regression caught only by the package's existing test
   suite, proposed an "obvious" optimisation that would have silently changed
-  a stored attribute's type, omitted a namespace import, and — most
-  instructively — made confident but incorrect claims about which functions
-  mattered, which no automated check could have caught and which were
-  corrected by the maintainer's domain knowledge. We argue that the
-  distinction between these two failure classes is the central practical
-  finding: mechanical verification reliably catches behavioural regressions,
-  but judgements about *relevance* remain irreducibly human.
+  a stored attribute's type, omitted a namespace import, made confident but
+  incorrect claims about which functions mattered, and — most instructively —
+  produced a fluent mechanistic explanation for a performance difference
+  that a corrected experimental design later showed did not exist. We argue
+  that the practical finding is a distinction between failure classes:
+  mechanical verification reliably catches behavioural regressions, whereas
+  judgements about relevance, and explanations offered for unverified
+  measurements, remain the reviewer's responsibility.
 output:
   rticles::rjournal_article:
     keep_tex: true
@@ -52,6 +49,20 @@ if (have_bench) {
   if (all(c("v0", "v2") %in% names(wide))) {
     wide$speedup <- wide$v0 / wide$v2
     wide <- wide[order(-wide$speedup), ]
+  }
+  ## Versions are interleaved across repetitions, so a paired comparison on
+  ## repetition is legitimate. Report an interval rather than a point ratio:
+  ## the v1-vs-v0 contrast in particular must not be read off a bare median.
+  ci_ratio <- function(wl, a, b) {
+    d <- bench[bench$workload == wl, ]
+    w <- reshape(d[, c("version", "rep", "seconds")], idvar = "rep",
+                 timevar = "version", direction = "wide")
+    x <- w[[paste0("seconds.", a)]]; y <- w[[paste0("seconds.", b)]]
+    ok <- stats::complete.cases(x, y)
+    if (sum(ok) < 3) return(NULL)
+    tt <- stats::t.test(y[ok], x[ok], paired = TRUE)
+    list(ratio = median(y[ok]) / median(x[ok]), p = tt$p.value,
+         lo = tt$conf.int[1], hi = tt$conf.int[2], n = sum(ok))
   }
 }
 ```
@@ -178,25 +189,12 @@ if (have_bench && "speedup" %in% names(wide)) {
 }
 ```
 
-Two features of Table 1 deserve comment before the individual changes.
-
-First, the two smallest workloads (`full` at 5000 observations, and
-`stages_hclust`) run in well under a tenth of a second and their ratios are
-dominated by measurement noise; they are retained to show that nothing
-regressed, not as evidence of improvement.
-
-Second, and more interesting: **the defect fixes were not free**. Comparing
-v1 against v0 — a comparison in which no performance work had yet been
-done — `predict()` became 13.7% slower and `prob()` 7.5% slower, both well
-outside the run-to-run spread. These are precisely the two functions most
-affected by the correctness fixes described in Section 3: the zero-probability
-guard added a `NaN` detection pass over the result vector, and the change
-from positional to name-based indexing of `$stages` replaced integer
-subscripting with string lookup. The correctness of the result improved and
-the cost of obtaining it rose. We report this because the framing of AI
-agents as delivering simultaneous correctness and speed improvements
-obscures that these can trade against one another; here the subsequent
-optimisation work more than recovered the loss, but it need not have.
+The two smallest workloads (`full` at 5000 observations, and
+`stages_hclust`) run in well under a tenth of a second; they are retained to
+show that nothing regressed, not as evidence of improvement. The v1 column
+is not expected to differ from v0, since no performance work had been done
+at that point; Section \ref{sec:artefact} describes what happened when we
+believed otherwise.
 
 Profiling, rather than intuition, directed every optimisation. Three
 findings dominated.
@@ -292,6 +290,59 @@ The common thread is that strict structural comparison over many inputs
 caught all four, whereas value comparison (`all.equal`) would have caught
 only the first two. The cost of that strictness was low and its yield was
 high.
+
+## Class 1b: a fabricated result, from the measurement itself {#sec:artefact}
+
+One error belongs in this class only partly, and is the one we find most
+instructive, because the flawed artefact was the *experiment* rather than
+the code.
+
+An earlier version of the benchmark harness in this paper ran every
+repetition of one version before proceeding to the next. Machine
+performance is not stationary over a run of tens of minutes — thermal
+behaviour, competing load on shared infrastructure, page-cache state all
+drift — and under a version-blocked design that drift is confounded with
+the version under test.
+
+The result was an apparent 13.7% slowdown in `predict()` and 7.5% in
+`prob()` between v0 and v1, with tight, non-overlapping ranges across five
+repetitions. The agent accepted this, and wrote a paragraph of this paper
+explaining it: the zero-probability guard had added a detection pass, and
+the change from positional to name-based indexing had replaced integer
+subscripting with string lookup. Both mechanisms are real features of the
+diff. Neither explanation was checked against the diff before being
+written, and the second is simply false — the relevant function contains no
+name-based indexing at all.
+
+The error surfaced only because an unrelated question — whether name-based
+indexing was costly enough to warrant redesign — prompted a direct
+comparison. Re-measured with versions interleaved across repetitions, eight
+repetitions each:
+
+| | v0 | v1 |
+|---|---|---|
+| median | 1.983 s | 1.944 s |
+| mean (sd) | 1.977 (0.080) | 1.925 (0.104) |
+
+The difference is $-2.0\%$, a Welch test gives $p = 0.28$, and the 95%
+confidence interval on the difference, $[-0.152, +0.048]$ seconds,
+comfortably contains zero. Profiles of the two versions are structurally
+identical. There was never an effect to explain.
+
+We draw two lessons. The first is mundane and well known outside software
+benchmarking: block on the nuisance variable, or randomise against it.
+The harness now interleaves versions, and carries a comment recording why.
+
+The second is specific to agent-assisted work. The agent's failure was not
+the flawed design — that is an ordinary methodological slip — but the
+readiness to explain the artefact. Presented with a number, it produced a
+fluent, plausible, partly false mechanism for it within seconds, and that
+explanation is materially more persuasive than the evidence warranted. An
+agent that generates hypotheses cheaply will generate them for noise as
+readily as for signal, and the resulting prose carries no marker
+distinguishing the two. The discipline that protects code — verify the
+claim against the artefact before asserting it — applies verbatim to
+measurement, and was not applied here until prompted.
 
 ## Class 2: misjudged relevance, caught only by the maintainer
 
