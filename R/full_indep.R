@@ -100,6 +100,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' DD <- generate_xor_dataset(4, 100)
 #' model <- indep(DD, lambda = 1)
 #' model
+#' @importFrom stats complete.cases setNames
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
                              join_unobserved = TRUE, lambda = 0,
@@ -114,6 +115,8 @@ indep.data.frame <- function(data, order = colnames(data),
   if (join_unobserved) {
     return(join_unobserved(model, fit = TRUE, trace = 0, name = name_unobserved))
   }
+  # use complete cases only, consistent with make_ctables
+  data_cc <- data[complete.cases(data[order]), , drop = FALSE]
   # create empty probability list
   model$prob <- list()
   # extract names of variables
@@ -122,30 +125,33 @@ indep.data.frame <- function(data, order = colnames(data),
   model$ll <- 0
   # iterate for each variable
   for (v in var) {
-    # extract the table of the given variable
-    ctab <- table(data[[v]])
+    # extract the marginal counts from complete cases
+    ctab <- table(data_cc[[v]])
+    # ensure all levels from tree are present (in tree order)
+    lvls <- model$tree[[v]]
+    ctab <- ctab[lvls]
+    names(ctab) <- lvls
+    ctab[is.na(ctab)] <- 0L
     # obtain sums of cases
     n <- sum(ctab)
     # compute probability table prob = (ctab + lambda)/sum(ctab + lambda)
-    model$prob[[v]] <- list("1" = ctab + lambda)
-    model$prob[[v]][["1"]] <-
-      model$prob[[v]][["1"]] / sum(model$prob[[v]][["1"]])
+    raw <- ctab + lambda
+    p <- setNames(as.numeric(raw / sum(raw)), lvls)
     # store sample size
-    attr(model$prob[[v]][["1"]], "n") <- n
+    attr(p, "n") <- n
+    model$prob[[v]] <- list("1" = p)
     # compute where prob > 0
     ix <- ctab > 0
-    # set appropriate class (get rid of table formatting)
-    class(model$prob[[v]][["1"]]) <- "numeric"
     # update loglik
     model$ll <-
-      model$ll + sum(ctab[ix] * log(model$prob[[v]][["1"]][ix]))
+      model$ll + sum(ctab[ix] * log(p[ix]))
   }
   # finish setting up loglik
   # store degrees of freedom
   attr(model$ll, "df") <-
     sum(vapply(model$tree, length, FUN.VALUE = 1) - 1)
   # store number of obs
-  attr(model$ll, "nobs") <- nrow(data)
+  attr(model$ll, "nobs") <- nrow(data_cc)
   # set logLik class
   class(model$ll) <- "logLik"
   return(model)

@@ -58,7 +58,7 @@ sample_from <- function(object, size = 1, seed = NULL) {
       prob = object$prob[[vars[1]]][[1]]
     )
   # sequentially sample the other variables
-  for (i in 2:p) {
+  for (i in seq_len(p)[-1]) {
     for (j in 1:size) {
       if (is.na(S[j, i - 1])) {
         S[j, i] <- NA

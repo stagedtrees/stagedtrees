@@ -68,6 +68,6 @@ join_unobserved <-
         cli::cli_text("object fitted using lambda = {lambda}")
       }
     }
-    object$name_unobserved <- c(object$name_unobserved, name) # concatenate names
+    object$name_unobserved <- unique(c(object$name_unobserved, name))
     return(object)
   }

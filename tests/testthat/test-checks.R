@@ -101,6 +101,21 @@ test_that("check_stages fails if no named stages", {
   expect_error(check_stages(model_, arg = "a", call = match.call()))
 })
 
+test_that("check_stages C1: rejects unknown variable name in stages", {
+  model_ <- model
+  model_$stages[["BADNAME"]] <- "1"
+  expect_error(check_stages(model_, arg = "a"),
+               regexp = "unknown variable")
+})
+
+test_that("check_stages C1: rejects stages vector of wrong length", {
+  model_ <- model
+  v <- sevt_varnames(model_)[2]     # first non-root variable
+  model_$stages[[v]] <- c("1")      # should have length k1, not 1
+  expect_error(check_stages(model_, arg = "a"),
+               regexp = "wrong length")
+})
+
 test_that("check_sevt_prob fails if no prob", {
   model_ <- model
   expect_silent(check_sevt_prob(model_))

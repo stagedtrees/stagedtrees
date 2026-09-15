@@ -80,6 +80,10 @@ stages_hclust <-
       wch <- wch[!(wch %in% ignore)]
       pp <- t(as.matrix(as.data.frame(object$prob[[v]][wch])))
       rownames(pp) <- wch
+      if (nrow(pp) <= 1L) {
+        object <- sevt_fit(object, scope = v)
+        next
+      }
       M <- switch(distance,
         "totvar" = 0.5 * dist(pp, method = "manhattan"),
         "hellinger" = dist(sqrt(pp), method = "euclidean") / sqrt(2),

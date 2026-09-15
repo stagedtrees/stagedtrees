@@ -50,7 +50,7 @@ sevt_fit_em <- function(object,  data = object$data_raw,
     }
   }
   object$fit_em  <- list()
-  for(i in 1:max_iter){
+  for(i in seq_len(max_iter)){
     data_c <- impute(data = data, object = object, chain_impute = chain_impute)
     object <- sevt_fit(object, data = data_c, scope = scope, lambda = lambda, compute_logLik = FALSE)
     object$fit_em$iter <- i

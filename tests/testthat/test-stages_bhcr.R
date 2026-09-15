@@ -18,3 +18,9 @@ test_that("bhcr", {
   ll2 <- logLik(mod)
   expect_equal(ll1, ll2)
 })
+
+test_that("stages_bhcr returns input unchanged on 1-variable model (B-B2)", {
+  m <- full(data.frame(X = factor(c("a", "b", "a"))), lambda = 1)
+  expect_no_error(stages_bhcr(m, max_iter = 5))
+  expect_equal(stages_bhcr(m, max_iter = 5), m)
+})
