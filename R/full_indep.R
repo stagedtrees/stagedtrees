@@ -100,6 +100,7 @@ indep.table <- function(data, order = names(dimnames(data)),
 #' DD <- generate_xor_dataset(4, 100)
 #' model <- indep(DD, lambda = 1)
 #' model
+#' @importFrom stats complete.cases setNames
 #' @export
 indep.data.frame <- function(data, order = colnames(data),
                              join_unobserved = TRUE, lambda = 0,
