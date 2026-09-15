@@ -61,10 +61,12 @@ join_stages_unsafe <- function(object, var, s1, s2) {
     if (is.null(object$lambda)) {
       object$lambda <- 0
     }
-    ct1 <-
-      ifelse(is.na(p1), 0, p1) * (n1 + object$lambda * k) - object$lambda
-    ct2 <-
-      ifelse(is.na(p2), 0, p2) * (n2 + object$lambda * k) - object$lambda
+    c1 <- p1
+    c1[is.na(c1)] <- 0
+    ct1 <- c1 * (n1 + object$lambda * k) - object$lambda
+    c2 <- p2
+    c2[is.na(c2)] <- 0
+    ct2 <- c2 * (n2 + object$lambda * k) - object$lambda
     dll <-
       sum(ct2[ct2 > 0] * log(p2[ct2 > 0])) +
       sum(ct1[ct1 > 0] * log(p1[ct1 > 0]))
