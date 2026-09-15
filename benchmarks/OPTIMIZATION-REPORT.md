@@ -256,7 +256,41 @@ code returned `NA` via `is[1]` on an empty vector. Exhaustive path testing had
 missed it because `expand.grid` never yields a zero-length path. Fixed, and
 `stages(m)[[character(0)]]` is now covered directly.
 
+**A later pass found the largest win of all, in `full()`/`sevt_fit`** — which
+matters more than anything above because `full()` is the entry point for
+essentially every workflow.
+
+`sevt_fit` grouped situations by scanning the whole stages vector once per
+stage (`ix <- object$stages[[v]] == s` inside `lapply(stages, ...)`). That is
+O(stages x situations), and a full model has one stage per situation: 16 384 x
+16 384 = 268 M comparisons for the deepest variable of an 8-variable,
+4-level model. `split()` partitions in one pass.
+
+Note that swapping `apply(., 2, sum)` for `colSums` gained **nothing** (1.0x)
+— the scan was the whole cost — and `colSums` returns double where `apply`
+returns integer, silently changing the type of `attr(, "n")`. `apply` was
+therefore kept.
+
+`expand_prob` filled its ftable one row at a time (16 384 iterations for the
+same variable); stacking the per-stage probabilities once and selecting a row
+per situation is 65x on that function alone.
+
+| call | before | after | |
+|---|---|---|---|
+| `sevt_fit` (given ctables) | 6.486 s | 0.440 s | **14.7×** |
+| `full(join_unobserved = FALSE)` | 9.616 s | 1.190 s | **8.1×** |
+| `full()` default | 4.094 s | 1.134 s | **3.6×** |
+
+Equivalence checked with `identical()` over 192 models — lambda 0 and 1,
+`join_unobserved` both ways, with and without NAs, full and hclust-staged
+models, four shapes. Two differences were caught this way and fixed: the
+`colSums` type change above, and `expand_prob` losing the (incidental) names
+on the `dim` attribute that `array(dim = c(prod(...), dims[i]))` produced.
+
 Items 4 and 5 are **not** applied — still investigation plus prototypes.
+Section 3's `stages_bj` findings were also left alone: `probdist.*` and
+`distance_mat_stages` are reached only from `stages_bj`, which is not a
+commonly used entry point.
 
 ---
 

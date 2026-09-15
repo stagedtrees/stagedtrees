@@ -53,6 +53,12 @@
    twice as fast and `predict` about three times; `tree_idx` now reports an
    informative error, instead of a cryptic one, when a path contains a value
    which is not a level of the corresponding variable.
+* `sevt_fit` groups the situations of each variable in a single pass instead
+   of scanning the stages vector once per stage, which was quadratic when
+   stages are many, as in a full model. `expand_prob` builds its tables in one
+   vectorised step rather than a row at a time. Fitting is several times
+   faster: on 20000 observations over 8 variables with 4 levels, `full` goes
+   from about 4s to about 1s.
 * `write_tikz` has now `xlim` and `ylim` parameters, also an 
    `edge_options` argument.
 * Bug fixes (code review):
