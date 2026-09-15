@@ -1,6 +1,14 @@
-## Benchmark one stagedtrees source tree, for one repetition.
+## Benchmark one installed stagedtrees version, for one repetition.
 ##
-## Usage:  Rscript version-benchmark.R <pkg-source> <label> <out.csv> <rep>
+## Usage:  Rscript version-benchmark.R <lib-dir> <label> <out.csv> <rep>
+##
+## <lib-dir> is a library directory into which the version under test has
+## already been installed with R CMD INSTALL. It is NOT a source tree, and
+## pkgload::load_all() must not be used here: load_all compiles with the
+## debug flags (-O0), while R CMD INSTALL uses -O2, and the difference on
+## this package's compiled kernels is about 3.9x. Benchmarking a load_all
+## tree measures unoptimised object code and understates every version that
+## carries src/.
 ##
 ## Performs ONE repetition of each workload and appends to <out.csv>. The
 ## caller is expected to vary the version in the inner loop and the
@@ -17,13 +25,17 @@
 ## 95% confidence interval straddling zero. Keep the versions interleaved.
 
 args <- commandArgs(trailingOnly = TRUE)
-pkg <- args[[1]]
+lib <- args[[1]]
 label <- args[[2]]
 out <- args[[3]]
 rep_id <- if (length(args) >= 4) as.integer(args[[4]]) else 1L
 reps <- 1L
 
-suppressMessages(pkgload::load_all(pkg, quiet = TRUE))
+.libPaths(c(lib, .libPaths()))
+suppressMessages(library(stagedtrees))
+## fail loudly rather than silently benchmarking whatever else is installed
+stopifnot(identical(normalizePath(dirname(getNamespaceInfo("stagedtrees", "path"))),
+                    normalizePath(lib)))
 
 mkdata <- function(n, p, lv, seed = 1) {
   set.seed(seed)
@@ -43,7 +55,10 @@ mkdata <- function(n, p, lv, seed = 1) {
 ## visible instead of letting workload choice decide the answer.
 ##
 ## p = 7 is deliberately absent: stages_bhc does not complete there in
-## reasonable time, which is itself a reported result.
+## reasonable time in v0 or v1, which is itself a reported result. It is
+## feasible in v2 (about 8 s), but including a size only one version can run
+## would leave nothing to compare it against, so the p=7 figure is reported
+## separately rather than through this sweep.
 
 PS <- c(4L, 5L, 6L)          # variables
 NOBS <- 2000L                # observations
