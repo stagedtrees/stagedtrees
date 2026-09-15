@@ -115,8 +115,12 @@ compare_stages <-
 #' @rdname compare_stages
 #' @param FUN a function that is used to aggregate the Hamming distance
 #'            for each variable. The default \code{sum} produces
-#'            the traditional Hamming distance.  Use \code{mean}
-#'            to obtain the normalized Hamming distance.
+#'            the traditional Hamming distance (range: 0 to total number of
+#'            non-root situations). Use \code{mean} to obtain a per-variable
+#'            normalised Hamming distance: each variable contributes a value
+#'            in \eqn{[0, 1]}, and these are summed across variables, so the
+#'            result lies in \eqn{[0, p-1]} where \eqn{p} is the number of
+#'            variables.
 #' @details
 #' \code{hamming_stages} finds a minimal set of nodes for which the associated stages
 #' should be changed to obtain equivalent structures. To do that, a maximum-weight bipartite
@@ -124,9 +128,10 @@ compare_stages <-
 #' Hungarian method implemented in the \code{solve_LSAP} function of the \pkg{clue}
 #' package.
 #' \code{hamming_stages} requires the package \code{clue}.
-#' @return \code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
-#' number of situations where the stage should be changed to obtain the same
-#' models. If \code{return_tree = TRUE} a stages-like structure showing which
+#' @return \code{hamming_stages}: if \code{return_tree = FALSE}, a numeric value
+#' summarising the minimum number of situations where the stage should be changed
+#' to obtain equivalent models (aggregated via \code{FUN}, see above).
+#' If \code{return_tree = TRUE} a stages-like structure showing which
 #' situations should be modified to obtain the same models.
 #' @export
 hamming_stages <- function(object1, object2, return_tree = FALSE, FUN = sum) {
