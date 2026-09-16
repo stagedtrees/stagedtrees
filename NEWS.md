@@ -66,6 +66,17 @@
    seeds, smoothing and model shapes, the stage partition, log-likelihood and
    degrees of freedom are identical. Stage *labels* can differ, since moves
    are taken in a different order.
+* `predict` is substantially faster for observations with no missing
+   predictor. The walk down the tree for every candidate class value is now
+   done in compiled code for all such rows in one call, while rows with a
+   missing predictor keep the previous path, since those require summing over
+   the missing variable's levels. On 1000 observations of a 6-variable model
+   with 3 levels, `predict` takes 0.134s before the change and 0.0021s after.
+* `predict` returned a transposed result when the class variable had a single
+   level: `apply` yields a vector rather than a matrix in that case, so
+   `prob = TRUE` gave a 1 by n matrix instead of n by 1, and `prob = FALSE`
+   collapsed the whole of `newdata` to a single value -- an integer index
+   rather than a class label. It now returns one prediction per observation.
 * `stages_hclust` no longer pays a one-off 0.125s cost on the first call in a
    session. The check for whether **fastcluster** is available used
    `rlang::is_installed`, which is that expensive the first time it runs;
