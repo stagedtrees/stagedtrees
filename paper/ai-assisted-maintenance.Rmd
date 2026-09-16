@@ -12,18 +12,24 @@ abstract: >
   **stagedtrees**, a CRAN package of roughly 6,800 lines implementing staged
   event tree models. Over a single extended session the agent identified 14
   latent defects, all reproduced before being reported, and applied a series
-  of performance changes that leave the package's central fitting routine
-  17.3 times faster and its structure-search algorithm 5.4 times faster, with
-  output verified identical. We give equal weight to the agent's failures:
-  it introduced a regression caught only by the package's existing test
-  suite, proposed an "obvious" optimisation that would have silently changed
-  a stored attribute's type, omitted a namespace import, made confident but
-  incorrect claims about which functions mattered, and — most instructively —
-  failed twice at measurement rather than at code: once by explaining, in
-  fluent mechanistic terms, a performance difference that a corrected
-  experimental design showed did not exist, and once by benchmarking a
-  non-default invocation of a heavily used function and so reporting no
-  change where its actual usage had improved by a quarter. We argue that the
+  of performance changes with output verified identical: the package's
+  central fitting routine and its query paths are several times faster, and
+  its two structure-search algorithms, whose candidate selection moved into
+  compiled code, are faster by two to nearly three orders of magnitude —
+  turning model sizes that did not complete in ten minutes into searches of a
+  few seconds. We give equal weight to the agent's failures: it introduced a
+  regression caught only by the package's existing test suite, proposed an
+  "obvious" optimisation that would have silently changed a stored
+  attribute's type, omitted a namespace import, made confident but incorrect
+  claims about which functions mattered, and — most instructively — failed
+  repeatedly at measurement rather than at code: it explained in fluent
+  mechanistic terms a performance difference that a corrected experimental
+  design showed did not exist; it benchmarked a non-default invocation of a
+  heavily used function and so reported no change where its actual usage had
+  improved; it quoted a 2300-fold speed-up from a prototype that was not
+  computing what the function it was compared against computes; and it
+  measured compiled code through a development loader that compiles without
+  optimisation, understating its own result fourfold. We argue that the
   practical finding is a distinction by how failures are caught: mechanical
   verification reliably catches behavioural regressions, whereas judgements
   about relevance, the representativeness of a benchmark, and explanations
@@ -75,6 +81,33 @@ if (have_bench) {
     list(ratio = median(y[ok]) / median(x[ok]), p = tt$p.value,
          lo = tt$conf.int[1], hi = tt$conf.int[2], n = sum(ok))
   }
+
+  ## Per-cell paired contrast with a Holm correction across the whole sweep.
+  ## The narrative below is computed from this rather than written out, so a
+  ## re-run cannot leave the prose asserting a result the data no longer
+  ## shows -- which is exactly what happened to an earlier draft.
+  contrast <- function(a, b) {
+    bench$key <- paste(bench$workload, bench$size)
+    rows <- lapply(split(bench, bench$key), function(sdf) {
+      x <- sdf[sdf$version == a, ]; y <- sdf[sdf$version == b, ]
+      x <- x[order(x$rep), "seconds"]; y <- y[order(y$rep), "seconds"]
+      if (length(x) != length(y) || length(x) < 3) return(NULL)
+      pv <- if (all(x == y)) 1 else stats::t.test(y, x, paired = TRUE)$p.value
+      data.frame(workload = sdf$workload[1], size = sdf$size[1],
+                 a = median(x), b = median(y), p = pv)
+    })
+    out <- do.call(rbind, rows)
+    out$holm <- stats::p.adjust(out$p, "holm")
+    out$pct <- 100 * (out$b / out$a - 1)
+    out[order(out$pct), ]
+  }
+  cmp02 <- contrast("v0", "v2")
+  cmp01 <- contrast("v0", "v1")
+  n_better <- sum(cmp02$holm < 0.05 & cmp02$pct < 0)
+  n_cells <- nrow(cmp02)
+  n_flat <- n_cells - sum(cmp02$holm < 0.05)
+  best <- cmp02[which.min(cmp02$pct), ]
+  fix_sig <- cmp01[cmp01$holm < 0.05, ]
 }
 ```
 
@@ -203,14 +236,57 @@ if (have_bench && "speedup" %in% names(wide)) {
 }
 ```
 
-All seven of the larger workloads improve with $p < 0.001$ on a paired test
-over repetitions. The two smallest (`full` at 5000 observations, and
-`stages_hclust`) run in well under a tenth of a second and show no change
-($p = 0.86$ and $p = 0.61$); they are retained to show that nothing
-regressed, not as evidence of improvement. The v1 column is not expected to
-differ from v0, since no performance work had been done at that point;
-Section \ref{sec:artefact} describes what happened when we believed
-otherwise.
+```{r perf-prose, results = "asis"}
+if (have_bench && exists("cmp02")) {
+  cat(sprintf(
+"Of the %d workload/size cells, %d improve with a Holm-corrected $p < 0.05$
+on a paired test over repetitions, and %d show no significant change. The
+unchanged cells are the smallest ones, where a single call takes a few
+milliseconds and the clock resolution dominates; they are retained to show
+that nothing regressed, not as evidence of improvement. The largest effect
+is `%s` at %s, from %.2f s to %.3f s.
+
+",
+    nrow(cmp02), sum(cmp02$holm < 0.05 & cmp02$pct < 0),
+    nrow(cmp02) - sum(cmp02$holm < 0.05),
+    best$workload, sub(" \\(.*", "", best$size), best$a, best$b))
+
+  sig <- cmp01[cmp01$holm < 0.05, ]
+  if (nrow(sig) == 0) {
+    cat("The v1 column is not expected to differ from v0, since no
+performance work had been done at that point, and after correcting for
+multiple comparisons none of the cells does.
+
+")
+  } else {
+    cat(sprintf(
+"The v1 column is not expected to differ from v0, since no performance work
+had been done at that point. After correcting for multiple comparisons
+%d of the %d cells nonetheless %s: %s. Section \\ref{sec:artefact} describes
+what happened when we drew conclusions from an uncorrected contrast of this
+kind.
+
+",
+      nrow(sig), nrow(cmp01), if (nrow(sig) == 1) "does" else "do",
+      paste(sprintf("`%s` at %s (%+.0f%%)", sig$workload,
+                    sub(" \\(.*", "", sig$size), sig$pct), collapse = "; ")))
+  }
+}
+```
+
+The single large v1 effect is worth dwelling on, because its cause is not in
+the code under test. `stages_hclust` checked whether **fastcluster** was
+available using `rlang::is_installed()`, which costs about 0.125 s the first
+time it is called in an R session and 0.001 s thereafter. An interactive user
+pays that once and never notices it. The benchmark runs every measurement in
+a fresh process, so it paid the cost on every repetition — and because the
+cost is a constant, it swamped the four-variable model, where the entire
+search takes 0.07 s, while vanishing into the noise of the six-variable one,
+where the search takes 3 s. What looked like a size-dependent algorithmic
+regression was a fixed session-startup cost, visible only because of how the
+measurement was structured. Replacing the call with `requireNamespace()`,
+which costs 0.003 s and loads the namespace that is used on the next line in
+any case, removes it.
 
 Profiling, rather than intuition, directed every optimisation. Three
 findings dominated.
@@ -343,7 +419,7 @@ INSTALL` uses `-O2`. Head-to-head on identical inputs producing identical
 answers, the same kernel took 11.80 ms under `load_all()` and 3.02 ms
 compiled normally, a factor of 3.90. Every compiled measurement taken
 during development was therefore understating the result users would see,
-and the benchmark harness of Section \ref{sec:method} had to be changed to
+and the benchmark harness had to be changed to
 install each version under test rather than load it. The direction of this
 error is benign — it understates rather than overstates — but the magnitude
 is large enough to invert a decision about whether a port is worth making.
@@ -656,14 +732,26 @@ right standard within one arithmetic; across two it has to be argued for.
 # Conclusion
 
 An LLM agent working on a released CRAN package reproduced 14 latent
-defects and produced verified-identical speed-ups of up to 17.3 times on
-the package's most-used code path, while the correctness fixes themselves
-imposed a measurable slowdown on two query functions that the optimisation
-work subsequently recovered. It also introduced four behavioural
-regressions, all caught by strict automated comparison, and made several
-confident false claims about which code mattered, none of which any
-automated check could have caught and all of which required the
-maintainer's domain knowledge to correct.
+defects and produced verified-identical speed-ups across the package's
+most-used code paths, reaching two to nearly three orders of magnitude on
+the structure-search algorithms once their candidate selection moved into
+compiled code. It also introduced four behavioural regressions, all caught
+by strict automated comparison, and made several confident false claims
+about which code mattered, none of which any automated check could have
+caught and all of which required the maintainer's domain knowledge to
+correct.
+
+The most persistent failures were not in the code but in the measurements
+taken of it. Four separate times a number was produced that was
+wrong not because the arithmetic was wrong but because the experiment
+answered a different question than the one being asked: a version-blocked
+design that confounded machine drift with the version under test; a
+benchmark of a non-default invocation; a prototype that omitted the work it
+was being credited with doing; and a development-time loader that compiles
+without optimisation. Each was caught by re-measuring rather than by
+reasoning, and one of them — a fixed session-startup cost that the
+harness paid once per repetition — masqueraded convincingly as a
+size-dependent algorithmic regression.
 
 We take the practical lesson to be that these two failure modes should be
 managed differently. Behavioural risk is mechanisable and should be
