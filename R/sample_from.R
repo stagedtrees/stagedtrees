@@ -57,6 +57,11 @@ sample_from <- function(object, size = 1, seed = NULL) {
       size = size,
       prob = object$prob[[vars[1]]][[1]]
     )
+  ## The situation each sample has reached is carried down the tree rather
+  ## than recomputed from its path at every variable, exactly as
+  ## path_probability does: idx_j = (idx_{j-1} - 1) * ls_j + m_j. A sample
+  ## whose path has already failed carries NA, which propagates.
+  idx <- match(S[, vars[1]], object$tree[[vars[1]]])
   # sequentially sample the other variables
   for (i in seq_len(p)[-1]) {
     ## everything here is fixed for the whole sweep over samples, so look it
@@ -65,23 +70,31 @@ sample_from <- function(object, size = 1, seed = NULL) {
     probs_i <- object$prob[[vi]]
     lvls_i <- object$tree[[vi]]
     unobserved <- object$name_unobserved
-    for (j in seq_len(size)) {
-      if (is.na(S[j, i - 1])) {
-        S[j, i] <- NA
-      } else {
-        # find the corresponding stage
-        stage <- find_stage(object, S[j, 1:(i - 1)], var = vi)
-        if (stage %in% unobserved | NA %in% probs_i[[stage]]) {
-          S[j, i] <- NA
-        } else {
-          # sample from the conditional prob of the stage
-          S[j, i] <- sample(lvls_i,
-            size = 1,
-            prob = probs_i[[stage]]
-          )
-        }
+    st <- as.character(object$stages[[vi]])
+    stage <- st[(idx - 1) %% length(st) + 1]
+    ## a stage that was never observed, or whose probabilities are missing,
+    ## cannot be sampled from and yields NA -- as does a path already failed
+    na_stage <- names(probs_i)[vapply(probs_i, anyNA, logical(1))]
+    bad <- is.na(stage) | stage %in% unobserved | stage %in% na_stage
+    out <- rep(NA_character_, size)
+    ok <- which(!bad)
+    if (length(ok) > 0) {
+      ## Draw every sample sitting in a stage with one call, instead of one
+      ## call per sample. sample() rebuilds its lookup tables on each call, so
+      ## the per-sample version paid that `size` times per variable. This
+      ## changes which values a given seed produces; the distribution is the
+      ## same, since repeating sample(x, 1, prob = p) is the same as drawing
+      ## with replacement in one go.
+      for (g in split(ok, stage[ok])) {
+        out[g] <- sample(lvls_i,
+          size = length(g),
+          replace = TRUE,
+          prob = probs_i[[stage[g[1]]]]
+        )
       }
     }
+    S[, i] <- out
+    if (i < p) idx <- (idx - 1) * length(lvls_i) + match(out, lvls_i)
   }
   S <- as.data.frame(S)
   for (i in 1:p) {

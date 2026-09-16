@@ -66,6 +66,13 @@
    seeds, smoothing and model shapes, the stage partition, log-likelihood and
    degrees of freedom are identical. Stage *labels* can differ, since moves
    are taken in a different order.
+* `sample_from` draws every observation sitting in the same stage with one
+   call instead of one call per observation, and carries the situation index
+   down the tree rather than recomputing it from each observation's path.
+   Drawing 20000 observations from an 8-variable model with 3 levels takes
+   3.84s before the change and 0.069s after. **This changes which values a
+   given seed produces**: the distribution is unchanged, but code relying on
+   the exact sample from a fixed seed will see different values.
 * `prob` no longer reads its query one cell at a time, and no longer builds a
    grid of completions for observations that have nothing to complete. Together
    with the `path_probability` change below, computing 1000 probabilities from
