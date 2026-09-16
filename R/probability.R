@@ -19,13 +19,34 @@ path_probability <-
     }
     # start computing the log probability with first variable
     l <- log(object$prob[[vs[1]]][[1]][x[1]])
-    if (length(x) > 1) {
-      for (i in 2:length(x)) {
-        # get corresponding stage; vs[i] is the variable the path leads to,
-        # so pass it rather than have find_stage re-derive the names
-        s <- find_stage(object, x[1:(i - 1)], var = vs[i])
-        # and add log-prob
-        l <- l + log(object$prob[[vs[i]]][[s]][x[i]])
+    n <- length(x)
+    if (n > 1) {
+      tree <- object$tree
+      prob <- object$prob
+      stages <- object$stages
+      ## The situation index is a mixed-radix number with the last variable
+      ## varying fastest, so extending a path by one variable is one
+      ## multiply-add: idx_j = (idx_{j-1} - 1) * ls_j + m_j. Carrying it along
+      ## the walk replaces a find_stage() per depth, each of which had
+      ## tree_idx() rebuild the index from the start of the path and recompute
+      ## lengths(tree). That was quadratic in the path length: seven variables
+      ## cost 21 match() calls and six lengths() calls per path, where six and
+      ## one suffice.
+      v <- vs[[1]]
+      idx <- match(x[[1]], tree[[v]])
+      if (is.na(idx)) stop_unknown_level(x[[1]], v)
+      for (i in 2:n) {
+        vi <- vs[[i]]
+        st <- stages[[vi]]
+        s <- st[(idx - 1) %% length(st) + 1]
+        l <- l + log(prob[[vi]][[s]][x[i]])
+        if (i < n) {
+          m <- match(x[[i]], tree[[vi]])
+          ## tree_idx names the offending value and variable; match() alone
+          ## would return NA and let it travel silently into log()
+          if (is.na(m)) stop_unknown_level(x[[i]], vi)
+          idx <- (idx - 1) * length(tree[[vi]]) + m
+        }
       }
     }
     # return log prob or prob as requested

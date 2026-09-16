@@ -194,3 +194,69 @@ test_that("a fully observed path through an unobserved stage reduces to -Inf", {
     expect_equal(as.vector(got), 0)
   }
 })
+
+## path_probability carries the situation index along the walk rather than
+## rebuilding it at each depth. The index is a mixed-radix number with the last
+## variable varying fastest, so it extends by one multiply-add:
+## idx_j = (idx_{j-1} - 1) * ls_j + m_j. These pin that it agrees with deriving
+## it from scratch, and that the error behaviour at the edges is unchanged.
+
+test_that("the carried index agrees with deriving it per depth", {
+  ## the oracle is the previous formulation: one find_stage() per depth, each
+  ## rebuilding the index from the start of the path
+  oracle <- function(object, x) {
+    vs <- sevt_varnames(object)
+    if (!is.null(names(x))) x <- x[vs]
+    l <- log(object$prob[[vs[1]]][[1]][x[1]])
+    if (length(x) > 1) {
+      for (i in 2:length(x)) {
+        s <- stagedtrees:::find_stage(object, x[1:(i - 1)], var = vs[i])
+        l <- l + log(object$prob[[vs[i]]][[s]][x[i]])
+      }
+    }
+    l
+  }
+  n <- 0
+  for (seed in 1:3) {
+    set.seed(seed)
+    ## deliberately unequal numbers of levels: with equal ones a wrong radix
+    ## can still produce the right index
+    d <- data.frame(
+      A = factor(sample(c("a", "b"), 400, TRUE)),
+      B = factor(sample(c("x", "y", "z"), 400, TRUE)),
+      C = factor(sample(c("p", "q"), 400, TRUE)),
+      D = factor(sample(c("u", "v", "w"), 400, TRUE))
+    )
+    for (m in list(full(d, lambda = 1), stages_bhc(full(d, lambda = 1)))) {
+      paths <- expand.grid(m$tree, stringsAsFactors = FALSE)
+      for (r in seq_len(nrow(paths))) {
+        xx <- as.character(unlist(paths[r, ]))
+        for (k in seq_along(xx)) {          # every prefix, not just full paths
+          expect_identical(stagedtrees:::path_probability(m, xx[1:k], log = TRUE),
+                           oracle(m, xx[1:k]))
+          n <- n + 1
+        }
+      }
+    }
+  }
+  expect_gt(n, 0)
+})
+
+test_that("an unknown level is named where the index needs it, NA where it does not", {
+  set.seed(31)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 200, TRUE)),
+    B = factor(sample(c("x", "y"), 200, TRUE)),
+    C = factor(sample(c("p", "q"), 200, TRUE))
+  )
+  m <- full(d, lambda = 1)
+  ## positions that feed the index must report which value and which variable
+  expect_error(stagedtrees:::path_probability(m, c("zz", "x", "p")), "A")
+  expect_error(stagedtrees:::path_probability(m, c("a", "zz", "p")), "B")
+  ## the last position is only ever a name lookup into the probability vector,
+  ## so it yields NA rather than an error -- as it did before the index was
+  ## carried, and a check hoisted out of the loop would wrongly start erroring
+  expect_true(is.na(stagedtrees:::path_probability(m, c("a", "x", "zz"))))
+  expect_true(is.na(stagedtrees:::path_probability(m, c("zz"))))
+  expect_true(is.na(stagedtrees:::path_probability(m, c("a", "zz"))))
+})
