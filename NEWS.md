@@ -80,17 +80,25 @@
 * `predict` groups the observations that are missing a predictor by which
    variables those are, and computes each group in one call rather than one
    call per observation per class value.
-* the effect of these and the other changes below, measured end to end
-   against the previous release on 1000 rows of a 6-variable model with 3
-   levels fitted to 2000 observations:
+* the combined effect of all the changes in this release, measured end to end
+   against the previous one. Models are fitted to 2000 observations; queries
+   are 1000 rows of a 6-variable model with 3 levels. The per-change figures
+   elsewhere in these notes each compare against the state just before that
+   change, so they do not add up to these.
 
-   |                                  | before | after  |
-   |----------------------------------|--------|--------|
-   | `prob`, complete observations    | 1.164s | 0.007s |
-   | `prob`, one variable missing     | 1.739s | 0.010s |
-   | `predict`, complete observations | 0.960s | 0.022s |
-   | `predict`, a fifth missing one   | 2.802s | 0.028s |
-   | `predict`, all missing one       | 9.886s | 0.058s |
+   |                                       | before  | after  |
+   |---------------------------------------|---------|--------|
+   | `full()`, 10 variables, 4 levels      | 21.509s | 0.340s |
+   | `full()`, 11 variables, 4 levels       | 89.131s | 1.553s |
+   | `stages_hclust`, 7 variables           | 27.655s | 4.526s |
+   | `prob`, complete observations          | 1.148s  | 0.007s |
+   | `prob`, one variable missing           | 1.651s  | 0.009s |
+   | `prob`, two variables missing          | 3.371s  | 0.012s |
+   | `predict(prob = TRUE)`, complete       | 0.881s  | 0.002s |
+   | `predict()`, complete                  | 0.908s  | 0.016s |
+   | `predict()`, a fifth missing one       | 2.731s  | 0.025s |
+   | `predict()`, all missing one           | 10.035s | 0.048s |
+   | `sample_from`, 20000 draws, 8 variables| 11.833s | 0.076s |
 * `path_probability` carries the situation index down the path instead of
    rebuilding it at every depth, which was quadratic in the number of
    variables. `predict` on 1000 observations of a 6-variable model takes 0.29s
