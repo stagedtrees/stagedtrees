@@ -25,6 +25,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// path_lp_cpp
+NumericVector path_lp_cpp(IntegerMatrix codes, IntegerVector ls, List stagemap, List probs);
+RcppExport SEXP _stagedtrees_path_lp_cpp(SEXP codesSEXP, SEXP lsSEXP, SEXP stagemapSEXP, SEXP probsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type codes(codesSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type ls(lsSEXP);
+    Rcpp::traits::input_parameter< List >::type stagemap(stagemapSEXP);
+    Rcpp::traits::input_parameter< List >::type probs(probsSEXP);
+    rcpp_result_gen = Rcpp::wrap(path_lp_cpp(codes, ls, stagemap, probs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // best_merge_cpp
 NumericVector best_merge_cpp(NumericMatrix pm, NumericVector nvec, double lambda, int k);
 RcppExport SEXP _stagedtrees_best_merge_cpp(SEXP pmSEXP, SEXP nvecSEXP, SEXP lambdaSEXP, SEXP kSEXP) {
@@ -56,6 +70,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stagedtrees_predict_lp_cpp", (DL_FUNC) &_stagedtrees_predict_lp_cpp, 5},
+    {"_stagedtrees_path_lp_cpp", (DL_FUNC) &_stagedtrees_path_lp_cpp, 4},
     {"_stagedtrees_best_merge_cpp", (DL_FUNC) &_stagedtrees_best_merge_cpp, 4},
     {"_stagedtrees_best_move_cpp", (DL_FUNC) &_stagedtrees_best_move_cpp, 4},
     {NULL, NULL, 0}

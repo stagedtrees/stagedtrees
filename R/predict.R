@@ -1,3 +1,35 @@
+#' Flatten a model for the compiled path kernels
+#'
+#' Internal helper.
+#' @param object an object of class \code{sevt} with fitted probabilities.
+#' @param vars the variables to cover, a prefix of the tree order.
+#' @return a list with \code{ls} (levels per variable), \code{stagemap}
+#'         (situation index to stage row, per variable) and \code{probs}
+#'         (a stage-by-level probability matrix per variable).
+#' @details The stage map for a variable depends only on the variables before
+#'          it, so taking a prefix of the tree order is enough for callers that
+#'          work with partial paths.
+#' @keywords internal
+sevt_flat <- function(object, vars) {
+  p <- length(vars)
+  stagemap <- vector("list", p)
+  probs <- vector("list", p)
+  for (j in seq_len(p)) {
+    v <- vars[j]
+    pv <- object$prob[[v]]
+    pm <- do.call(rbind, lapply(pv, as.numeric))
+    dimnames(pm) <- NULL
+    probs[[j]] <- pm
+    stagemap[[j]] <- if (j == 1) {
+      1L
+    } else {
+      match(as.character(object$stages[[v]]), names(pv))
+    }
+  }
+  list(ls = vapply(object$tree[vars], length, 1L),
+       stagemap = stagemap, probs = probs)
+}
+
 #' Class-conditional log-probabilities for fully observed rows
 #'
 #' Internal helper for \code{\link{predict.sevt}}.
@@ -17,28 +49,16 @@
 predict_lp_fast <- function(object, newdata, class, vars) {
   p <- length(vars)
   cpos <- match(class, vars)
-  stagemap <- vector("list", p)
-  probs <- vector("list", p)
-  for (j in seq_len(p)) {
-    v <- vars[j]
-    pv <- object$prob[[v]]
-    pm <- do.call(rbind, lapply(pv, as.numeric))
-    dimnames(pm) <- NULL
-    probs[[j]] <- pm
-    stagemap[[j]] <- if (j == 1) {
-      1L
-    } else {
-      match(as.character(object$stages[[v]]), names(pv))
-    }
-  }
+  flat <- sevt_flat(object, vars)
+  stagemap <- flat$stagemap
+  probs <- flat$probs
   codes <- matrix(1L, nrow = nrow(newdata), ncol = p)
   for (j in seq_len(p)) {
     if (j == cpos) next            # overwritten by each candidate class level
     v <- vars[j]
     codes[, j] <- match(as.character(newdata[[v]]), object$tree[[v]])
   }
-  predict_lp_cpp(codes, vapply(object$tree[vars], length, 1L),
-                 stagemap, probs, cpos)
+  predict_lp_cpp(codes, flat$ls, stagemap, probs, cpos)
 }
 
 #' Predict method for staged event tree
@@ -140,23 +160,32 @@ predict.sevt <-
                                       class, vars)
     }
     if (any(!fast)) {
-      pred[!fast, ] <- t(apply(newdata[!fast, , drop = FALSE], MARGIN = 1, function(x) {
-        res <- array(
-          dim = c(length(object$tree[[class]])),
-          dimnames = list(object$tree[[class]])
-        )
-        for (cv in object$tree[[class]]) {
-          x[class] <- cv
-          if (!any(is.na(x)) && all_preds){
-            res[cv] <-
-              path_probability(object, x, log = TRUE)
-          } else {
-            res[cv] <- prob(object, x[!is.na(x), drop = FALSE], log = TRUE)
-          }
-        }
-        res[is.nan(res)] <- -Inf
-        return(res - log(sum(exp(res)))) ## normalize, that is conditional prob
-      }))
+      ## These rows need prob() to sum over the levels of whatever they are
+      ## missing. They are grouped by which variables that is, so a group drops
+      ## the same columns and every one of its rows, for every candidate class
+      ## value, goes to prob() in a single call. Calling prob() once per row per
+      ## class value instead pays its setup -- flattening the model for the
+      ## kernel among it -- once per call rather than once per group.
+      slow <- which(!fast)
+      nd <- newdata[slow, , drop = FALSE]
+      namat <- is.na(nd)
+      namat[, class] <- FALSE     # the class column is supplied, never missing
+      pat <- apply(namat, 1, function(z) paste0(as.integer(z), collapse = ""))
+      for (g in split(seq_along(slow), pat)) {
+        keep <- !namat[g[1], ]
+        sub <- nd[g, keep, drop = FALSE]
+        sub[] <- lapply(sub, as.character)
+        big <- do.call(rbind, lapply(cls_lvl, function(cv) {
+          z <- sub
+          z[[class]] <- cv
+          z
+        }))
+        lp <- matrix(prob(object, big, log = TRUE),
+                     nrow = length(g), ncol = length(cls_lvl))
+        lp[is.nan(lp)] <- -Inf
+        ## normalise per row, as the per-row version did
+        pred[slow[g], ] <- lp - log(rowSums(exp(lp)))
+      }
     }
     if (prob) {
       if (log) {

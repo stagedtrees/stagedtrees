@@ -99,3 +99,69 @@ NumericMatrix predict_lp_cpp(IntegerMatrix codes, IntegerVector ls,
   }
   return out;
 }
+
+// Log-probability of each complete path, for a matrix of level codes.
+//
+// codes    : n x k integer level codes (1-based), tree order, k a prefix of
+//            the variables. Every entry must be a real level: the caller
+//            enumerates the completions of anything that was missing.
+// ls, stagemap, probs : as for predict_lp_cpp, truncated to the same prefix.
+//
+// The accumulation mirrors path_probability() term by term, including how it
+// treats absent probabilities: log(NA) is NA and NA + anything is NA, so a
+// path through a stage with missing probabilities is NA rather than -Inf. A
+// probability of exactly zero gives -Inf and stays there, which is different
+// and must not be conflated with it.
+// [[Rcpp::export]]
+NumericVector path_lp_cpp(IntegerMatrix codes, IntegerVector ls,
+                          List stagemap, List probs) {
+  int n = codes.nrow(), p = codes.ncol();
+  if (ls.size() < p || stagemap.size() < p || probs.size() < p)
+    stop("ls, stagemap and probs must cover every column of codes");
+
+  std::vector<IntegerVector> sm(p);
+  std::vector<NumericMatrix> pr(p);
+  for (int j = 0; j < p; j++) {
+    sm[j] = as<IntegerVector>(stagemap[j]);
+    pr[j] = as<NumericMatrix>(probs[j]);
+    if (pr[j].ncol() != ls[j])
+      stop("probability matrix for variable %d has the wrong number of levels",
+           j + 1);
+  }
+  for (int j = 0; j < p; j++) {
+    for (int i = 0; i < n; i++) {
+      int lev = codes(i, j);
+      if (IntegerMatrix::is_na(lev) || lev < 1 || lev > ls[j])
+        stop("level code out of range for variable %d", j + 1);
+    }
+    for (int t = 0; t < sm[j].size(); t++) {
+      int st = sm[j][t];
+      if (IntegerVector::is_na(st) || st < 1 || st > pr[j].nrow())
+        stop("stage index out of range for variable %d", j + 1);
+    }
+  }
+
+  NumericVector out(n);
+  for (int i = 0; i < n; i++) {
+    double lp = 0.0;
+    long idx = 0;
+    bool na = false, nan = false;
+    for (int j = 0; j < p; j++) {
+      int lev = codes(i, j);
+      int stage;
+      if (j == 0) {
+        stage = 1;
+      } else {
+        long m = sm[j].size();
+        stage = sm[j][((idx - 1) % m + m) % m];
+      }
+      double pv = pr[j](stage - 1, lev - 1);
+      if (ISNA(pv)) na = true;
+      else if (ISNAN(pv)) nan = true;
+      else lp += std::log(pv);
+      idx = (j == 0) ? lev : (idx - 1) * ls[j] + lev;
+    }
+    out[i] = na ? NA_REAL : (nan ? R_NaN : lp);
+  }
+  return out;
+}

@@ -74,10 +74,19 @@
    given seed produces**: the distribution is unchanged, but code relying on
    the exact sample from a fixed seed will see different values.
 * `prob` no longer reads its query one cell at a time, and no longer builds a
-   grid of completions for observations that have nothing to complete. Together
-   with the `path_probability` change below, computing 1000 probabilities from
-   a 6-variable model with 3 levels takes 0.91s before these changes and 0.04s
-   after.
+   grid of completions for observations that have nothing to complete.
+   Observations that do have missing values now have their completions
+   enumerated and evaluated in compiled code, rather than one at a time in R.
+   Computing 1000 probabilities from a 6-variable model with 3 levels takes
+   0.91s before these changes and 0.007s after when the observations are
+   complete, and 0.57s before and 0.010s after when each is missing one
+   variable.
+* `predict` groups the observations that are missing a predictor by which
+   variables those are, and computes each group in one call rather than one
+   call per observation per class value. With a fifth of the observations
+   missing a predictor, `predict` on 1000 rows of a 6-variable model takes
+   0.57s before the change and 0.025s after; when all of them are missing one,
+   2.65s before and 0.051s after.
 * `path_probability` carries the situation index down the path instead of
    rebuilding it at every depth, which was quadratic in the number of
    variables. `predict` on 1000 observations of a 6-variable model takes 0.29s

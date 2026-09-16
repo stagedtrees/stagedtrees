@@ -172,34 +172,68 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
                dimnames = list(NULL, vk))
   for (vv in intersect(vk, colnames(x))) xm[, vv] <- as.character(x[, vv])
   lvls <- object$tree[vk]
-  res <- vapply(
-    seq_len(n),
-    FUN.VALUE = 1.0,
-    FUN = function(i) {
-      row <- xm[i, ]
-      miss <- is.na(row)
-      if (!any(miss)) {
-        ## Nothing to sum over, so the grid of completions is a single path.
-        ## expand.grid() built a data.frame per row to hold it, and apply()
-        ## walked it; both are skipped here. logSumExp is kept even for the
-        ## one term: it maps a NA to -Inf under na.rm, which is what the
-        ## callers below distinguish from NA when na0 is FALSE.
-        return(matrixStats::logSumExp(
-          path_probability(object, as.character(row), log = TRUE),
-          na.rm = TRUE
-        ))
-      }
-      ll <- as.list(row)
-      ll[miss] <- lvls[miss]
-      matrixStats::logSumExp(apply(
-        expand.grid(ll),
-        MARGIN = 1,
-        FUN = function(xx) {
-          path_probability(object, as.character(xx), log = TRUE)
+  nk <- length(vk)
+
+  ## Level codes. NA in `codes` means either a value to marginalise over or a
+  ## value that is not a level of its variable at all; the two are different
+  ## and only the first can be handed to the kernel.
+  codes <- matrix(NA_integer_, nrow = n, ncol = nk)
+  for (j in seq_len(nk)) codes[, j] <- match(xm[, j], lvls[[j]])
+  missing_val <- is.na(xm)
+  unknown_val <- is.na(codes) & !missing_val
+
+  res <- numeric(n)
+  ## A value that is not a level of its variable keeps the original path. That
+  ## path raises a named error when the value sits anywhere the situation index
+  ## depends on, and yields -Inf at the last variable, where it is only a name
+  ## lookup; reproducing that split in compiled code would be all cost and no
+  ## benefit for a case that should not arise.
+  odd <- which(rowSums(unknown_val) > 0)
+  for (i in odd) {
+    row <- xm[i, ]
+    mi <- missing_val[i, ]
+    ll <- as.list(row)
+    ll[mi] <- lvls[mi]
+    res[i] <- matrixStats::logSumExp(apply(
+      expand.grid(ll), MARGIN = 1,
+      FUN = function(xx) path_probability(object, as.character(xx), log = TRUE)
+    ), na.rm = TRUE)
+  }
+
+  rest <- if (length(odd) > 0) seq_len(n)[-odd] else seq_len(n)
+  if (length(rest) > 0) {
+    flat <- sevt_flat(object, vk)
+    ## Rows are grouped by which variables they are missing, so that one group
+    ## shares the same set of completions. Every completion of every row in the
+    ## group goes to the kernel in a single call, and the sum over a row's
+    ## completions is taken afterwards. The completions are laid out in
+    ## expand.grid's order -- first variable varying fastest -- because
+    ## logSumExp over the same values in a different order need not give the
+    ## same last bits.
+    pat <- apply(missing_val[rest, , drop = FALSE], 1, function(z)
+      paste0(as.integer(z), collapse = ""))
+    for (g in split(rest, pat)) {
+      mpos <- which(missing_val[g[1], ])
+      if (length(mpos) == 0) {
+        lp <- path_lp_cpp(codes[g, , drop = FALSE], flat$ls,
+                          flat$stagemap, flat$probs)
+        ## logSumExp of one term is that term, and of a lone NA is -Inf
+        res[g] <- ifelse(is.na(lp), -Inf, lp)
+      } else {
+        comb <- as.matrix(expand.grid(lapply(flat$ls[mpos], seq_len)))
+        ncomb <- nrow(comb)
+        blk <- codes[g, , drop = FALSE][rep(seq_along(g), each = ncomb), ,
+                                        drop = FALSE]
+        blk[, mpos] <- comb[rep(seq_len(ncomb), times = length(g)), ,
+                            drop = FALSE]
+        lp <- path_lp_cpp(blk, flat$ls, flat$stagemap, flat$probs)
+        for (t in seq_along(g)) {
+          res[g[t]] <- matrixStats::logSumExp(
+            lp[((t - 1) * ncomb + 1):(t * ncomb)], na.rm = TRUE)
         }
-      ), na.rm = TRUE)
+      }
     }
-  )
+  }
   res <- res - p1
   # NaN arises from log(0) - log(0), i.e. conditioning on a zero-probability
   # event. This is undefined; return NA per entry with a warning. na0 converts

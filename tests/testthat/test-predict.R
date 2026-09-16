@@ -138,3 +138,41 @@ test_that("a class with a single level gives one prediction per observation", {
   expect_length(cl, 10L)
   expect_identical(as.character(cl), rep("a", 10))
 })
+
+test_that("rows missing different variables are grouped without mixing them up", {
+  ## the fallback groups rows by which variables they are missing and sends
+  ## each group to prob() in one call; a row must land in the right group and
+  ## come back in its original position. The oracle is prob(), not predict().
+  set.seed(71)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 500, TRUE)),
+    B = factor(sample(c("x", "y"), 500, TRUE)),
+    C = factor(sample(c("p", "q"), 500, TRUE)),
+    D = factor(sample(c("u", "v"), 500, TRUE))
+  )
+  m <- full(d, lambda = 1)
+  vs <- sevt_varnames(m)
+  q <- d[1:10, vs]
+  q[c(1L, 4L), "B"] <- NA                 # one pattern
+  q[c(2L, 7L), "C"] <- NA                 # another
+  q[9L, c("B", "C")] <- NA                # a third
+  got <- predict(m, newdata = q, class = "A", prob = TRUE, log = TRUE)
+
+  want <- t(vapply(seq_len(nrow(q)), function(i) {
+    x <- unlist(lapply(q[i, vs], as.character))
+    names(x) <- vs
+    res <- vapply(m$tree$A, function(cv) {
+      x[["A"]] <- cv
+      prob(m, as.data.frame(t(x[!is.na(x)]), stringsAsFactors = FALSE),
+           log = TRUE)
+    }, 1.0)
+    res[is.nan(res)] <- -Inf
+    res - log(sum(exp(res)))
+  }, numeric(length(m$tree$A))))
+
+  expect_equal(unname(got), unname(want))
+  expect_false(any(is.na(got)))
+  ## rows 3, 5, 6, 8, 10 are complete and took the compiled path; they must
+  ## agree with the same oracle
+  expect_equal(unname(got[c(3, 5, 6, 8, 10), ]), unname(want[c(3, 5, 6, 8, 10), ]))
+})

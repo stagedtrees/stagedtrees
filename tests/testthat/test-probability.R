@@ -260,3 +260,113 @@ test_that("an unknown level is named where the index needs it, NA where it does 
   expect_true(is.na(stagedtrees:::path_probability(m, c("zz"))))
   expect_true(is.na(stagedtrees:::path_probability(m, c("a", "zz"))))
 })
+
+## Rows with missing values have their completions enumerated and sent to a
+## compiled kernel in one call, then summed per row. The order of the
+## completions, the NA rules and the treatment of values that are not levels
+## at all all have to survive that.
+
+test_that("path_lp_cpp agrees with path_probability on complete paths", {
+  set.seed(61)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 500, TRUE)),
+    B = factor(sample(c("x", "y", "z"), 500, TRUE)),
+    C = factor(sample(c("p", "q"), 500, TRUE)),
+    D = factor(sample(c("u", "v", "w"), 500, TRUE))
+  )
+  n <- 0
+  for (m in list(full(d, lambda = 1), stages_bhc(full(d, lambda = 1)))) {
+    vs <- sevt_varnames(m)
+    for (k in seq_along(vs)) {                  # prefixes as well as full paths
+      vk <- vs[seq_len(k)]
+      paths <- expand.grid(m$tree[vk], stringsAsFactors = FALSE)
+      codes <- as.matrix(mapply(function(col, v) match(col, m$tree[[v]]),
+                                paths, vk))
+      storage.mode(codes) <- "integer"
+      flat <- stagedtrees:::sevt_flat(m, vk)
+      got <- stagedtrees:::path_lp_cpp(codes, flat$ls, flat$stagemap, flat$probs)
+      want <- vapply(seq_len(nrow(paths)), function(r)
+        stagedtrees:::path_probability(m, as.character(unlist(paths[r, ])),
+                                       log = TRUE), 1.0)
+      expect_equal(got, want)
+      n <- n + length(got)
+    }
+  }
+  expect_gt(n, 0)
+})
+
+test_that("several missing variables are marginalised jointly", {
+  set.seed(62)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 500, TRUE)),
+    B = factor(sample(c("x", "y", "z"), 500, TRUE)),
+    C = factor(sample(c("p", "q"), 500, TRUE)),
+    D = factor(sample(c("u", "v"), 500, TRUE))
+  )
+  m <- full(d, lambda = 1)
+  q <- d[1:4, ]
+  q$B <- NA
+  q$C <- NA
+  ## summing over B and C explicitly must give the same as leaving them out
+  explicit <- vapply(seq_len(nrow(q)), function(i) {
+    tot <- 0
+    for (b in levels(d$B)) for (cc in levels(d$C)) {
+      tot <- tot + prob(m, data.frame(
+        A = d$A[i], B = factor(b, levels(d$B)),
+        C = factor(cc, levels(d$C)), D = d$D[i]
+      ))
+    }
+    tot
+  }, 1.0)
+  expect_equal(as.vector(prob(m, q)), explicit)
+})
+
+test_that("a value that is not a level errors where the index needs it", {
+  ## these rows keep the original path rather than going to the kernel, so the
+  ## split between an error and -Inf has to be preserved exactly
+  set.seed(63)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 200, TRUE)),
+    B = factor(sample(c("x", "y"), 200, TRUE)),
+    C = factor(sample(c("p", "q"), 200, TRUE))
+  )
+  m <- full(d, lambda = 1)
+  q <- function(a, b, cc) data.frame(A = a, B = b, C = cc, stringsAsFactors = FALSE)
+  expect_error(prob(m, q("zz", "x", "p")), "A")
+  expect_error(prob(m, q("a", "zz", "p")), "B")
+  expect_error(prob(m, q("zz", NA, "p")), "A")
+  ## the last variable is only a name lookup, so an unknown value is -Inf there
+  expect_equal(as.vector(prob(m, q("a", "x", "zz"), log = TRUE)), -Inf)
+  expect_equal(as.vector(prob(m, q("a", NA, "zz"), log = TRUE)), -Inf)
+})
+
+test_that("completions are summed in expand.grid order", {
+  ## logSumExp over the same values in a different order gives the same number
+  ## to within rounding but not the same last bits, so the order the kernel is
+  ## fed has to match the order the R implementation used. expect_identical,
+  ## not expect_equal: a reordering is invisible to the latter.
+  set.seed(64)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 400, TRUE)),
+    B = factor(sample(c("x", "y", "z"), 400, TRUE)),
+    C = factor(sample(c("p", "q"), 400, TRUE)),
+    D = factor(sample(c("u", "v", "w"), 400, TRUE))
+  )
+  m <- full(d, lambda = 1)
+  vs <- sevt_varnames(m)
+  q <- d[1:6, vs]
+  q[, "B"] <- NA
+  q[2:3, "D"] <- NA
+  got <- prob(m, q, log = TRUE)
+
+  want <- vapply(seq_len(nrow(q)), function(i) {
+    row <- unlist(lapply(q[i, vs], as.character))
+    ll <- as.list(row)
+    mi <- is.na(row)
+    ll[mi] <- m$tree[vs][mi]
+    matrixStats::logSumExp(apply(expand.grid(ll), MARGIN = 1, function(xx)
+      stagedtrees:::path_probability(m, as.character(xx), log = TRUE)),
+      na.rm = TRUE)
+  }, 1.0)
+  expect_identical(as.vector(got), want)
+})

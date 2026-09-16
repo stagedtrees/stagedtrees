@@ -5,6 +5,10 @@ predict_lp_cpp <- function(codes, ls, stagemap, probs, class_pos) {
     .Call(`_stagedtrees_predict_lp_cpp`, codes, ls, stagemap, probs, class_pos)
 }
 
+path_lp_cpp <- function(codes, ls, stagemap, probs) {
+    .Call(`_stagedtrees_path_lp_cpp`, codes, ls, stagemap, probs)
+}
+
 #' Best pairwise stage merge, by log-likelihood
 #'
 #' @param pm stage-by-level matrix of probabilities.
