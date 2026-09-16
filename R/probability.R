@@ -140,20 +140,36 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   var1 <- var[var %in% colnames(x)]
   # index of last variable that appears in x
   k <- which(var %in% var1[length(var1)])
+  vk <- var[1:k]
+  ## Pull the query into a character matrix once. The loop below otherwise
+  ## reads x cell by cell, and `[.data.frame` dispatches, builds a one-row
+  ## frame and throws it away for every variable of every row: a third of this
+  ## function's time went there. A variable of the model that is absent from x
+  ## is left as NA, which is how the cell-by-cell version treated it -- x[i, vv]
+  ## returns NULL for a missing column, and both mean "unobserved".
+  xm <- matrix(NA_character_, nrow = n, ncol = length(vk),
+               dimnames = list(NULL, vk))
+  for (vv in intersect(vk, colnames(x))) xm[, vv] <- as.character(x[, vv])
+  lvls <- object$tree[vk]
   res <- vapply(
     seq_len(n),
     FUN.VALUE = 1.0,
     FUN = function(i) {
-      ll <- sapply(var[1:k], FUN = function(vv){
-        if (is.null(x[i, vv])){
-          return(object$tree[[vv]])
-        }
-        if(is.na(x[i, vv])){
-          return(object$tree[[vv]])
-        } else {
-          return(as.character(x[i, vv]))
-        }
-      }, simplify = FALSE)
+      row <- xm[i, ]
+      miss <- is.na(row)
+      if (!any(miss)) {
+        ## Nothing to sum over, so the grid of completions is a single path.
+        ## expand.grid() built a data.frame per row to hold it, and apply()
+        ## walked it; both are skipped here. logSumExp is kept even for the
+        ## one term: it maps a NA to -Inf under na.rm, which is what the
+        ## callers below distinguish from NA when na0 is FALSE.
+        return(matrixStats::logSumExp(
+          path_probability(object, as.character(row), log = TRUE),
+          na.rm = TRUE
+        ))
+      }
+      ll <- as.list(row)
+      ll[miss] <- lvls[miss]
       matrixStats::logSumExp(apply(
         expand.grid(ll),
         MARGIN = 1,

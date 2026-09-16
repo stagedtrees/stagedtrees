@@ -134,3 +134,63 @@ test_that("prob: 0-row data frame returns numeric(0), not an error (B-B4)", {
   expect_no_error(prob(m, empty))
   expect_equal(length(prob(m, empty)), 0L)
 })
+
+## prob() now reads the query through a character matrix built once, and takes
+## a short path for rows with no missing values. Two behaviours distinguish
+## that path from the general one and are pinned here.
+
+test_that("a model variable absent from x is treated as unobserved", {
+  ## x[i, vv] returns NULL for a column a data.frame does not have, which the
+  ## row loop read as "sum over every level of that variable". Leaving a gap
+  ## in the middle of the variable order must therefore marginalise it, not
+  ## error and not silently drop it.
+  set.seed(21)
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), 400, TRUE)),
+    B = factor(sample(c("x", "y"), 400, TRUE)),
+    C = factor(sample(c("p", "q"), 400, TRUE))
+  )
+  m <- full(d, lambda = 1)
+  gap <- d[1:5, c("A", "C")]
+  ## marginalising B by omission equals summing over its levels explicitly
+  explicit <- vapply(seq_len(5), function(i) {
+    sum(vapply(levels(d$B), function(b) {
+      prob(m, data.frame(A = d$A[i], B = factor(b, levels(d$B)), C = d$C[i]))
+    }, 1.0))
+  }, 1.0)
+  expect_equal(as.vector(prob(m, gap)), explicit)
+})
+
+test_that("a fully observed path through an unobserved stage reduces to -Inf", {
+  ## The row loop reduces each row with logSumExp(..., na.rm = TRUE). An
+  ## unobserved situation carries NA probabilities, so path_probability()
+  ## returns NA for a path through it, and na.rm turns that into -Inf. A short
+  ## path returning the log-probability directly would yield NA instead, which
+  ## na0 = FALSE would then preserve all the way out.
+  set.seed(23)
+  n <- 300
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), n, TRUE)),
+    B = factor(sample(c("x", "y"), n, TRUE)),
+    C = factor(sample(c("p", "q"), n, TRUE))
+  )
+  d <- d[!(d$A == "a" & d$B == "y"), ]   # situation (a, y) never occurs
+  m <- full(d, lambda = 0, join_unobserved = TRUE)
+  expect_true(m$name_unobserved %in% as.character(stages(m)$C))
+  expect_true(all(is.na(m$prob$C[[m$name_unobserved]])))
+
+  q <- data.frame(A = factor("a", c("a", "b")),
+                  B = factor("y", c("x", "y")),
+                  C = factor("p", c("p", "q")))
+  ## the path itself is NA ...
+  expect_true(is.na(stagedtrees:::path_probability(m, c("a", "y", "p"), log = TRUE)))
+  ## ... but prob() reports -Inf on the log scale and 0 on the natural one,
+  ## whether or not na0 is asked to convert NAs
+  expect_equal(as.vector(prob(m, q, log = TRUE, na0 = FALSE)), -Inf)
+  expect_equal(as.vector(prob(m, q, log = TRUE, na0 = TRUE)), -Inf)
+  for (n0 in c(TRUE, FALSE)) {
+    got <- prob(m, q, na0 = n0)
+    expect_false(is.na(got))
+    expect_equal(as.vector(got), 0)
+  }
+})
