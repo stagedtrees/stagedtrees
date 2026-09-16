@@ -8,3 +8,7 @@ tests/testthat/Rplots.pdf
 *.tar.gz
 *.Rcheck/
 
+
+src/*.o
+src/*.so
+src/*.dll

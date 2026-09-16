@@ -21,12 +21,13 @@ expand_prob <- function(object) {
       # let's take care of the other variables
       ## we will create manually the ftable
       ## the dimension are the same as path (-1 for the column)
-      ft <- array(dim = c(prod(dims[1:(i - 1)]), dims[i]))
-      for (j in 1:(dim(ft)[1])) {
-        ## fill the ftable
-        jstage <- object$stages[[vars[i]]][j]
-        ft[j, ] <- object$prob[[vars[i]]][[jstage]]
-      }
+      ## stack the per-stage probabilities once and select a row per
+      ## situation, rather than filling the table one row at a time
+      pp <- do.call(rbind, object$prob[[vars[i]]])
+      ft <- pp[object$stages[[vars[i]]], , drop = FALSE]
+      dimnames(ft) <- NULL
+      ## keep the dim exactly as array() produced it, names included
+      dim(ft) <- c(prod(dims[1:(i - 1)]), dims[i])
       attr(ft, "row.vars") <- object$tree[vars[1:(i - 1)]]
       attr(ft, "col.vars") <- object$tree[vars[i]]
       class(ft) <- "ftable"

@@ -1,3 +1,26 @@
+#' Relabel situations by their stage's cluster
+#'
+#' Internal helper for \code{\link{stages_hclust}}.
+#' @param stages the stage vector to write into.
+#' @param old the stage vector the clustering was computed from.
+#' @param groups integer cluster membership, named by stage.
+#' @return \code{stages} with every situation whose \code{old} stage appears
+#'         in \code{groups} relabelled to that stage's cluster number.
+#'         Situations whose stage is absent from \code{groups} -- the ignored
+#'         ones -- are left untouched.
+#' @details Looking each situation's stage up in \code{groups} once replaces a
+#'          loop that ran \code{old \%in\% names(which(groups == s))} for
+#'          every cluster, scanning the whole situation vector each time. The
+#'          search repeats that for every candidate number of clusters, so the
+#'          cost was quadratic in the number of stages.
+#' @keywords internal
+relabel_by_group <- function(stages, old, groups) {
+  g <- groups[old]
+  keep <- !is.na(g)
+  stages[keep] <- as.character(g[keep])
+  stages
+}
+
 #' Learn a staged tree with hierarchical clustering
 #'
 #' Build a stage event tree with \code{k} stages for each variable by
@@ -90,11 +113,16 @@ stages_hclust <-
         "x" = "You've supplied {.type {k}}."
       ))
     }
-    if (!rlang::is_installed("fastcluster")) {
-      hclu <- stats::hclust
-    }else{
-      ## if fastcluster is available, use it
+    ## requireNamespace, not rlang::is_installed: the latter costs ~0.125s the
+    ## first time it is called in a session (0.001s after), which is paid on
+    ## the first stages_hclust call and dominates the whole search on small
+    ## models. requireNamespace answers the question we actually have -- can
+    ## this namespace be loaded -- and loads it, which the fastcluster::hclust
+    ## below needs anyway.
+    if (requireNamespace("fastcluster", quietly = TRUE)) {
       hclu <- fastcluster::hclust
+    } else {
+      hclu <- stats::hclust
     }
     if (is.null(scope)) scope <- sevt_varnames(object)[2:limit]
     check_scope(scope, object)
@@ -126,9 +154,7 @@ stages_hclust <-
         groups <- cutree(hcres, k = min(k[v],attr(M, "Size"), max_k))
         ### assign stages
         old <- object$stages[[v]]
-        for (s in 1:k[v]) {
-          object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
-        }
+        object$stages[[v]] <- relabel_by_group(object$stages[[v]], old, groups)
         object <- sevt_fit(object, scope = v)
       } else {
         ## search the k that maximize the score
@@ -137,9 +163,8 @@ stages_hclust <-
         for (kk in 1:min(attr(M, "Size"), max_k)){
           groups <- cutree(hcres, k = kk)
           new_object <- object
-          for (s in 1:kk) {
-            new_object$stages[[v]][old %in% names(which(groups == s))] <- paste0(s)
-          }
+          new_object$stages[[v]] <- relabel_by_group(new_object$stages[[v]],
+                                                     old, groups)
           new_object <- sevt_fit(new_object, scope = v)
           new_score <- score(new_object)
           scores[[v]][kk] <- new_score

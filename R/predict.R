@@ -1,3 +1,66 @@
+#' Flatten a model for the compiled path kernels
+#'
+#' Internal helper.
+#' @param object an object of class \code{sevt} with fitted probabilities.
+#' @param vars the variables to cover, a prefix of the tree order.
+#' @return a list with \code{ls} (levels per variable), \code{stagemap}
+#'         (situation index to stage row, per variable) and \code{probs}
+#'         (a stage-by-level probability matrix per variable).
+#' @details The stage map for a variable depends only on the variables before
+#'          it, so taking a prefix of the tree order is enough for callers that
+#'          work with partial paths.
+#' @keywords internal
+sevt_flat <- function(object, vars) {
+  p <- length(vars)
+  stagemap <- vector("list", p)
+  probs <- vector("list", p)
+  for (j in seq_len(p)) {
+    v <- vars[j]
+    pv <- object$prob[[v]]
+    pm <- do.call(rbind, lapply(pv, as.numeric))
+    dimnames(pm) <- NULL
+    probs[[j]] <- pm
+    stagemap[[j]] <- if (j == 1) {
+      1L
+    } else {
+      match(as.character(object$stages[[v]]), names(pv))
+    }
+  }
+  list(ls = vapply(object$tree[vars], length, 1L),
+       stagemap = stagemap, probs = probs)
+}
+
+#' Class-conditional log-probabilities for fully observed rows
+#'
+#' Internal helper for \code{\link{predict.sevt}}.
+#' @param object an object of class \code{sevt} with fitted probabilities.
+#' @param newdata rows with no missing value among the predictors.
+#' @param class character, name of the variable being predicted.
+#' @param vars the model's variable names, in tree order.
+#' @return a matrix with one row per observation and one column per level of
+#'         \code{class}, holding normalised log-probabilities.
+#' @details Marshals the model into the flat arrays the compiled kernel walks:
+#'          level codes in tree order, the level count per variable, the
+#'          situation-to-stage map per variable, and a stage-by-level
+#'          probability matrix per variable. The kernel carries the situation
+#'          index down each path exactly as \code{\link{path_probability}}
+#'          does, for every row and every candidate class level in one call.
+#' @keywords internal
+predict_lp_fast <- function(object, newdata, class, vars) {
+  p <- length(vars)
+  cpos <- match(class, vars)
+  flat <- sevt_flat(object, vars)
+  stagemap <- flat$stagemap
+  probs <- flat$probs
+  codes <- matrix(1L, nrow = nrow(newdata), ncol = p)
+  for (j in seq_len(p)) {
+    if (j == cpos) next            # overwritten by each candidate class level
+    v <- vars[j]
+    codes[, j] <- match(as.character(newdata[[v]]), object$tree[[v]])
+  }
+  predict_lp_cpp(codes, flat$ls, stagemap, probs, cpos)
+}
+
 #' Predict method for staged event tree
 #'
 #' Predict class values from a staged event tree model.
@@ -79,23 +142,51 @@ predict.sevt <-
       newdata <- newdata[, vars]
       all_preds <- TRUE
     }
-    pred <- t(apply(newdata, MARGIN = 1, function(x) {
-      res <- array(
-        dim = c(length(object$tree[[class]])),
-        dimnames = list(object$tree[[class]])
-      )
-      for (cv in object$tree[[class]]) {
-        x[class] <- cv
-        if (!any(is.na(x)) && all_preds){
-          res[cv] <-
-            path_probability(object, x, log = TRUE)
-        } else {
-          res[cv] <- prob(object, x[!is.na(x), drop = FALSE], log = TRUE)
-        }
+    ## A row whose predictors are all present needs only a walk down the tree
+    ## per class level, which is what the compiled kernel does for every such
+    ## row in one call. Rows with a missing predictor still need the sum over
+    ## its completions that prob() performs, so they keep the original path.
+    cls_lvl <- object$tree[[class]]
+    if (all_preds) {
+      others <- setdiff(vars, class)
+      fast <- rowSums(is.na(newdata[, others, drop = FALSE])) == 0
+    } else {
+      fast <- rep(FALSE, nrow(newdata))
+    }
+    pred <- matrix(NA_real_, nrow = nrow(newdata), ncol = length(cls_lvl),
+                   dimnames = list(rownames(newdata), cls_lvl))
+    if (any(fast)) {
+      pred[fast, ] <- predict_lp_fast(object, newdata[fast, , drop = FALSE],
+                                      class, vars)
+    }
+    if (any(!fast)) {
+      ## These rows need prob() to sum over the levels of whatever they are
+      ## missing. They are grouped by which variables that is, so a group drops
+      ## the same columns and every one of its rows, for every candidate class
+      ## value, goes to prob() in a single call. Calling prob() once per row per
+      ## class value instead pays its setup -- flattening the model for the
+      ## kernel among it -- once per call rather than once per group.
+      slow <- which(!fast)
+      nd <- newdata[slow, , drop = FALSE]
+      namat <- is.na(nd)
+      namat[, class] <- FALSE     # the class column is supplied, never missing
+      pat <- apply(namat, 1, function(z) paste0(as.integer(z), collapse = ""))
+      for (g in split(seq_along(slow), pat)) {
+        keep <- !namat[g[1], ]
+        sub <- nd[g, keep, drop = FALSE]
+        sub[] <- lapply(sub, as.character)
+        big <- do.call(rbind, lapply(cls_lvl, function(cv) {
+          z <- sub
+          z[[class]] <- cv
+          z
+        }))
+        lp <- matrix(prob(object, big, log = TRUE),
+                     nrow = length(g), ncol = length(cls_lvl))
+        lp[is.nan(lp)] <- -Inf
+        ## normalise per row, as the per-row version did
+        pred[slow[g], ] <- lp - log(rowSums(exp(lp)))
       }
-      res[is.nan(res)] <- -Inf
-      return(res - log(sum(exp(res)))) ## normalize, that is conditional prob
-    }))
+    }
     if (prob) {
       if (log) {
         return(pred)

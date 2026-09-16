@@ -43,9 +43,22 @@ iterative joining of stages.
 For each variable the algorithm tries to join stages
 and moves to the best model that increases the score. When no
 increase is possible it moves to the next variable.
+
+The candidate merge is selected by log-likelihood alone, which is done in
+compiled code, and \code{score} is then evaluated once on that candidate to
+decide whether to accept it. This is possible because every pairwise merge
+changes the degrees of freedom by the same amount, so candidates differ only
+in their log-likelihood and any score that prefers a higher log-likelihood at
+equal complexity ranks them identically. Scores outside that class -- ones
+that inspect the stage structure itself rather than the fitted
+log-likelihood and dimension -- may select a different model than an
+exhaustive search over the score would.
 }
 \examples{
 DD <- generate_xor_dataset(p = 4, n = 100)
 model <- stages_bhc(full(DD), trace = 2)
 summary(model)
+
+## any score function can be used, at no cost to speed
+model2 <- stages_bhc(full(DD), score = function(x) -AIC(x))
 }

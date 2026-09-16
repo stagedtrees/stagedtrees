@@ -107,3 +107,56 @@ test_that("sevt_fit warns if no lambda is provided",{
                           "B" = c("b", "bb", "bbb")))
   expect_warning(mod <- sevt_fit(mod, sample_from(mod, 100)))
 })
+
+test_that("sevt_fit groups situations by stage without scanning per stage", {
+  # the probabilities must not depend on how situations are grouped; in
+  # particular stage order must follow unique(stages), not sorted order
+  set.seed(41)
+  D <- as.data.frame(lapply(1:4, function(i)
+    factor(sample(letters[1:3], 400, replace = TRUE))),
+    col.names = paste0("V", 1:4))
+  for (lam in c(0, 1)) {
+    m <- full(D, lambda = lam, join_unobserved = FALSE)
+    for (v in sevt_varnames(m)[-1]) {
+      expect_identical(names(m$prob[[v]]), unique(m$stages[[v]]))
+      # every stage's counts equal the column sums of its own situations
+      for (s in unique(m$stages[[v]])) {
+        ix <- m$stages[[v]] == s
+        raw <- if (sum(ix) > 1) apply(m$ctables[[v]][ix, ], 2, sum) else m$ctables[[v]][ix, ]
+        expect_equal(attr(m$prob[[v]][[s]], "n"), sum(raw))
+        expect_equal(as.numeric(m$prob[[v]][[s]]),
+                     as.numeric((raw + lam) / sum(raw + lam)))
+      }
+    }
+  }
+})
+
+test_that("sevt_fit keeps integer sample sizes in attr n", {
+  # attr(, "n") is summed from integer contingency tables; colSums would
+  # silently promote it to double
+  m <- full(generate_xor_dataset(p = 4, n = 200), lambda = 1)
+  for (v in sevt_varnames(m)[-1]) {
+    for (p in m$prob[[v]]) expect_type(attr(p, "n"), "integer")
+  }
+})
+
+test_that("expand_prob matches a row-by-row fill", {
+  set.seed(42)
+  D <- as.data.frame(lapply(1:4, function(i)
+    factor(sample(letters[1:3], 300, replace = TRUE))),
+    col.names = paste0("V", 1:4))
+  for (ju in c(TRUE, FALSE)) {
+    m <- full(D, lambda = 1, join_unobserved = ju)
+    got <- stagedtrees:::expand_prob(m)
+    vars <- names(m$tree)
+    dims <- vapply(m$tree, length, FUN.VALUE = 1)
+    for (i in 2:length(vars)) {
+      ref <- array(dim = c(prod(dims[1:(i - 1)]), dims[i]))
+      for (j in seq_len(dim(ref)[1])) {
+        ref[j, ] <- m$prob[[vars[i]]][[m$stages[[vars[i]]][j]]]
+      }
+      expect_equal(as.numeric(got[[vars[i]]]), as.numeric(ref))
+      expect_identical(dim(got[[vars[i]]]), dim(ref))
+    }
+  }
+})

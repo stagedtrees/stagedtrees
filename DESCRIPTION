@@ -38,6 +38,7 @@ Roxygen: list(markdown = TRUE)
 URL: https://github.com/stagedtrees/stagedtrees
 BugReports: https://github.com/stagedtrees/stagedtrees/issues
 Imports:
+    Rcpp,
     stats,
     graphics,
     cli,
@@ -50,6 +51,8 @@ Suggests:
     clue,
     igraph,
     fastcluster
+LinkingTo:
+    Rcpp
 Config/testthat/edition: 3
 Depends:
     R (>= 2.10)

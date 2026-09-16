@@ -42,6 +42,119 @@
    `character`, not `string`), it did not parse the `[A][B|A]` encoding
    produced by `as.character.parentslist`, and it returned an unnamed,
    unclassed list rather than a `parentslist` object.
+* `stages_bhc` is substantially faster and its `score` argument is unchanged:
+   any function is accepted, as before. The candidate merge is now chosen by
+   log-likelihood alone in compiled code, and `score` is evaluated once on
+   that candidate to accept or reject it. This is valid because every
+   pairwise merge changes the degrees of freedom by the same amount, so the
+   score cannot reorder the candidates. On 5000 observations over 3-level
+   variables the search takes 291.6s at six variables before the change and
+   0.41s after; seven variables did not complete within ten minutes before
+   and takes 8.2s now. The package now contains compiled code and requires
+   **Rcpp**.
+* `stages_hc` is dramatically faster and its `score` argument is unchanged.
+   It previously refit the model and recomputed the full log-likelihood for
+   every candidate move; the change each move causes is now computed in
+   closed form in compiled code. Because a move can add a stage, remove one,
+   or neither, candidates are grouped by their change in degrees of freedom
+   and `score` is evaluated on the best of each group -- at most three
+   evaluations per sweep instead of one per candidate. On 5000 observations
+   over 3-level variables the search takes 16.2s at four variables before the
+   change and 0.13s after; five variables did not complete within ten minutes
+   before and takes 1.0s now. The selected model is the same: over 36 models
+   spanning
+   seeds, smoothing and model shapes, the stage partition, log-likelihood and
+   degrees of freedom are identical. Stage *labels* can differ, since moves
+   are taken in a different order.
+* `sample_from` draws every observation sitting in the same stage with one
+   call instead of one call per observation, and carries the situation index
+   down the tree rather than recomputing it from each observation's path.
+   Drawing 20000 observations from an 8-variable model with 3 levels takes
+   3.84s before the change and 0.069s after. **This changes which values a
+   given seed produces**: the distribution is unchanged, but code relying on
+   the exact sample from a fixed seed will see different values.
+* `prob` no longer reads its query one cell at a time, and no longer builds a
+   grid of completions for observations that have nothing to complete.
+   Observations that do have missing values now have their completions
+   enumerated and evaluated in compiled code, rather than one at a time in R.
+* `predict` groups the observations that are missing a predictor by which
+   variables those are, and computes each group in one call rather than one
+   call per observation per class value.
+* the combined effect of all the changes in this release, measured end to end
+   against the previous one. Models are fitted to 2000 observations; queries
+   are 1000 rows of a 6-variable model with 3 levels. The per-change figures
+   elsewhere in these notes each compare against the state just before that
+   change, so they do not add up to these.
+
+   |                                       | before  | after  |
+   |---------------------------------------|---------|--------|
+   | `full()`, 10 variables, 4 levels      | 21.509s | 0.340s |
+   | `full()`, 11 variables, 4 levels       | 89.131s | 1.553s |
+   | `stages_hclust`, 7 variables           | 27.655s | 4.526s |
+   | `prob`, complete observations          | 1.148s  | 0.007s |
+   | `prob`, one variable missing           | 1.651s  | 0.009s |
+   | `prob`, two variables missing          | 3.371s  | 0.012s |
+   | `predict(prob = TRUE)`, complete       | 0.881s  | 0.002s |
+   | `predict()`, complete                  | 0.908s  | 0.016s |
+   | `predict()`, a fifth missing one       | 2.731s  | 0.025s |
+   | `predict()`, all missing one           | 10.035s | 0.048s |
+   | `sample_from`, 20000 draws, 8 variables| 11.833s | 0.076s |
+* `path_probability` carries the situation index down the path instead of
+   rebuilding it at every depth, which was quadratic in the number of
+   variables. `predict` on 1000 observations of a 6-variable model takes 0.29s
+   before and 0.14s after; the compiled path below then takes it further.
+* `make_ctables` computes the counts for each prefix of the variable order by
+   summing the next prefix over its last variable, rather than sweeping the
+   whole joint table once per prefix. `full()` on 2000 observations of 4-level
+   variables takes 13.2s at ten variables before the change and 0.57s after,
+   56.6s at eleven variables and 2.3s after; twelve variables, previously not
+   feasible, takes 9.1s.
+* `has_prob` compares the stored probability vectors' lengths with `lengths()`
+   rather than a nested `sapply` over every stage of every variable. It runs on
+   every `logLik` call, so a search evaluating a score per candidate paid it per
+   candidate: it was 36% of the runtime of `stages_hclust`.
+* `stages_hclust` assigns stages by looking each situation's stage up in the
+   clustering once, instead of scanning the whole situation vector once per
+   cluster, which was quadratic in the number of stages. With the `has_prob`
+   change, on 2000 observations of 3-level variables the default search takes
+   0.33s at five variables before and 0.16s after, 2.3s at six variables and
+   0.85s after, 18.4s at seven variables and 4.5s after.
+* `predict` is substantially faster for observations with no missing
+   predictor. The walk down the tree for every candidate class value is now
+   done in compiled code for all such rows in one call, while rows with a
+   missing predictor keep the previous path, since those require summing over
+   the missing variable's levels. On 1000 observations of a 6-variable model
+   with 3 levels, `predict(prob = TRUE)` takes 0.134s before the change and
+   0.0021s after. The default `predict()` call is slower than that figure
+   suggests, because turning the probabilities into class labels then
+   dominates it.
+* `predict` returned a transposed result when the class variable had a single
+   level: `apply` yields a vector rather than a matrix in that case, so
+   `prob = TRUE` gave a 1 by n matrix instead of n by 1, and `prob = FALSE`
+   collapsed the whole of `newdata` to a single value -- an integer index
+   rather than a class label. It now returns one prediction per observation.
+* `stages_hclust` no longer pays a one-off 0.125s cost on the first call in a
+   session. The check for whether **fastcluster** is available used
+   `rlang::is_installed`, which is that expensive the first time it runs;
+   `requireNamespace` costs 0.003s and loads the namespace that is used
+   immediately afterwards in any case. At four variables, where the whole
+   search takes 0.07s, this had tripled the cost of a first call.
+* internal speedups in `tree_idx` and `join_stages_unsafe`, which no longer
+   recompute values that are fixed for a given model. `sample_from` is about
+   twice as fast and `predict` about three times; `tree_idx` now reports an
+   informative error, instead of a cryptic one, when a path contains a value
+   which is not a level of the corresponding variable.
+* `find_stage` earns an optional `var` argument naming the variable the path
+   leads to, so callers looping over paths can hoist the variable names out
+   of the loop instead of having them recomputed on every call. `sample_from`
+   and `prob` do so, and additionally reuse the per-variable probability list
+   across samples: `sample_from` is about 13% faster and `predict` about 7%.
+* `sevt_fit` groups the situations of each variable in a single pass instead
+   of scanning the stages vector once per stage, which was quadratic when
+   stages are many, as in a full model. `expand_prob` builds its tables in one
+   vectorised step rather than a row at a time. Fitting is several times
+   faster: on 20000 observations over 8 variables with 4 levels, `full` goes
+   from about 4s to about 1s.
 * `write_tikz` has now `xlim` and `ylim` parameters, also an 
    `edge_options` argument.
 * Bug fixes (code review):

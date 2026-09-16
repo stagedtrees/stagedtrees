@@ -19,12 +19,34 @@ path_probability <-
     }
     # start computing the log probability with first variable
     l <- log(object$prob[[vs[1]]][[1]][x[1]])
-    if (length(x) > 1) {
-      for (i in 2:length(x)) {
-        # get corresponding stage
-        s <- find_stage(object, x[1:(i - 1)])
-        # and add log-prob
-        l <- l + log(object$prob[[vs[i]]][[s]][x[i]])
+    n <- length(x)
+    if (n > 1) {
+      tree <- object$tree
+      prob <- object$prob
+      stages <- object$stages
+      ## The situation index is a mixed-radix number with the last variable
+      ## varying fastest, so extending a path by one variable is one
+      ## multiply-add: idx_j = (idx_{j-1} - 1) * ls_j + m_j. Carrying it along
+      ## the walk replaces a find_stage() per depth, each of which had
+      ## tree_idx() rebuild the index from the start of the path and recompute
+      ## lengths(tree). That was quadratic in the path length: seven variables
+      ## cost 21 match() calls and six lengths() calls per path, where six and
+      ## one suffice.
+      v <- vs[[1]]
+      idx <- match(x[[1]], tree[[v]])
+      if (is.na(idx)) stop_unknown_level(x[[1]], v)
+      for (i in 2:n) {
+        vi <- vs[[i]]
+        st <- stages[[vi]]
+        s <- st[(idx - 1) %% length(st) + 1]
+        l <- l + log(prob[[vi]][[s]][x[i]])
+        if (i < n) {
+          m <- match(x[[i]], tree[[vi]])
+          ## tree_idx names the offending value and variable; match() alone
+          ## would return NA and let it travel silently into log()
+          if (is.na(m)) stop_unknown_level(x[[i]], vi)
+          idx <- (idx - 1) * length(tree[[vi]]) + m
+        }
       }
     }
     # return log prob or prob as requested
@@ -139,29 +161,79 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   var1 <- var[var %in% colnames(x)]
   # index of last variable that appears in x
   k <- which(var %in% var1[length(var1)])
-  res <- vapply(
-    seq_len(n),
-    FUN.VALUE = 1.0,
-    FUN = function(i) {
-      ll <- sapply(var[1:k], FUN = function(vv){
-        if (is.null(x[i, vv])){
-          return(object$tree[[vv]])
+  vk <- var[1:k]
+  ## Pull the query into a character matrix once. The loop below otherwise
+  ## reads x cell by cell, and `[.data.frame` dispatches, builds a one-row
+  ## frame and throws it away for every variable of every row: a third of this
+  ## function's time went there. A variable of the model that is absent from x
+  ## is left as NA, which is how the cell-by-cell version treated it -- x[i, vv]
+  ## returns NULL for a missing column, and both mean "unobserved".
+  xm <- matrix(NA_character_, nrow = n, ncol = length(vk),
+               dimnames = list(NULL, vk))
+  for (vv in intersect(vk, colnames(x))) xm[, vv] <- as.character(x[, vv])
+  lvls <- object$tree[vk]
+  nk <- length(vk)
+
+  ## Level codes. NA in `codes` means either a value to marginalise over or a
+  ## value that is not a level of its variable at all; the two are different
+  ## and only the first can be handed to the kernel.
+  codes <- matrix(NA_integer_, nrow = n, ncol = nk)
+  for (j in seq_len(nk)) codes[, j] <- match(xm[, j], lvls[[j]])
+  missing_val <- is.na(xm)
+  unknown_val <- is.na(codes) & !missing_val
+
+  res <- numeric(n)
+  ## A value that is not a level of its variable keeps the original path. That
+  ## path raises a named error when the value sits anywhere the situation index
+  ## depends on, and yields -Inf at the last variable, where it is only a name
+  ## lookup; reproducing that split in compiled code would be all cost and no
+  ## benefit for a case that should not arise.
+  odd <- which(rowSums(unknown_val) > 0)
+  for (i in odd) {
+    row <- xm[i, ]
+    mi <- missing_val[i, ]
+    ll <- as.list(row)
+    ll[mi] <- lvls[mi]
+    res[i] <- matrixStats::logSumExp(apply(
+      expand.grid(ll), MARGIN = 1,
+      FUN = function(xx) path_probability(object, as.character(xx), log = TRUE)
+    ), na.rm = TRUE)
+  }
+
+  rest <- if (length(odd) > 0) seq_len(n)[-odd] else seq_len(n)
+  if (length(rest) > 0) {
+    flat <- sevt_flat(object, vk)
+    ## Rows are grouped by which variables they are missing, so that one group
+    ## shares the same set of completions. Every completion of every row in the
+    ## group goes to the kernel in a single call, and the sum over a row's
+    ## completions is taken afterwards. The completions are laid out in
+    ## expand.grid's order -- first variable varying fastest -- because
+    ## logSumExp over the same values in a different order need not give the
+    ## same last bits.
+    pat <- apply(missing_val[rest, , drop = FALSE], 1, function(z)
+      paste0(as.integer(z), collapse = ""))
+    for (g in split(rest, pat)) {
+      mpos <- which(missing_val[g[1], ])
+      if (length(mpos) == 0) {
+        lp <- path_lp_cpp(codes[g, , drop = FALSE], flat$ls,
+                          flat$stagemap, flat$probs)
+        ## logSumExp of one term is that term, and of a lone NA is -Inf
+        res[g] <- ifelse(is.na(lp), -Inf, lp)
+      } else {
+        comb <- as.matrix(expand.grid(lapply(flat$ls[mpos], seq_len)))
+        ncomb <- nrow(comb)
+        blk <- codes[g, , drop = FALSE][rep(seq_along(g), each = ncomb), ,
+                                        drop = FALSE]
+        blk[, mpos] <- comb[rep(seq_len(ncomb), times = length(g)), ,
+                            drop = FALSE]
+        lp <- path_lp_cpp(blk, flat$ls, flat$stagemap, flat$probs)
+        for (t in seq_along(g)) {
+          res[g[t]] <- matrixStats::logSumExp(
+            lp[((t - 1) * ncomb + 1):(t * ncomb)], na.rm = TRUE)
         }
-        if(is.na(x[i, vv])){
-          return(object$tree[[vv]])
-        } else {
-          return(as.character(x[i, vv]))
-        }
-      }, simplify = FALSE)
-      matrixStats::logSumExp(apply(
-        expand.grid(ll),
-        MARGIN = 1,
-        FUN = function(xx) {
-          path_probability(object, as.character(xx), log = TRUE)
-        }
-      ), na.rm = TRUE)
+      }
     }
-  )
+  }
   res <- res - p1
   # NaN arises from log(0) - log(0), i.e. conditioning on a zero-probability
   # event. This is undefined; return NA per entry with a warning. na0 converts

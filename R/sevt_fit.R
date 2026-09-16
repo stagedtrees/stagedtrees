@@ -130,16 +130,22 @@ sevt_fit <- function(object,
   }
   if (length(scope) > 0){
     for (v in scope) {
-      stages <- unique(object$stages[[v]])
+      st <- object$stages[[v]]
+      stages <- unique(st)
+      ctv <- object$ctables[[v]]
+      lvls <- object$tree[[v]]
+      ## group the situations by stage in a single pass; scanning the stages
+      ## vector once per stage is quadratic when stages are many, which is
+      ## exactly the case for a full model
+      groups <- split(seq_along(st), factor(st, levels = stages))
       object$prob[[v]] <-
-        lapply(stages, function(s) {
-          ix <- object$stages[[v]] == s
-          if (sum(ix) > 1) {
-            tt <- apply(object$ctables[[v]][ix, ], MARGIN = 2, sum)
+        lapply(groups, function(ix) {
+          if (length(ix) > 1) {
+            tt <- apply(ctv[ix, ], MARGIN = 2, sum)
           } else {
-            tt <- object$ctables[[v]][ix, ]
+            tt <- ctv[ix, ]
           }
-          names(tt) <- object$tree[[v]]
+          names(tt) <- lvls
           n <- sum(tt) ## compute sample size
           tt <- (tt + lambda) ## smoothing
           tt <- tt / sum(tt) ## normalize

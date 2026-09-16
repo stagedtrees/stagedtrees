@@ -4,12 +4,20 @@
 \alias{find_stage}
 \title{Find the stage of the path}
 \usage{
-find_stage(object, path)
+find_stage(object, path, var = NULL)
 }
 \arguments{
 \item{object}{a staged event tree object.}
 
 \item{path}{vector of the path.}
+
+\item{var}{name of the variable the path leads to, that is the
+\code{length(path) + 1}-th variable of \code{object}. Optional;
+when supplied it is used directly instead of being derived from
+\code{object}, which saves recomputing the variable names on
+every call. Callers that invoke \code{find_stage} in a loop
+should hoist \code{\link{sevt_varnames}} out of the loop and
+pass the name.}
 }
 \value{
 the stage name corresponding of the path.
