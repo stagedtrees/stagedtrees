@@ -1,6 +1,6 @@
 #!/bin/sh
 # Benchmark stagedtrees across the three versions discussed in
-# paper/ai-assisted-maintenance.Rmd.
+# the manuscript at github.com/gherardovarando/agent_optim_stagedtrees-.
 #
 #   v0  state before this work began
 #   v1  after the defect fixes (PR #150, #139)

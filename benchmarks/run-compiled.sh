@@ -1,7 +1,8 @@
 #!/bin/sh
 # Measure the two search functions before and after the compiled selection
 # kernels, across model dimension. Produces benchmarks/results/compiled.csv,
-# which paper/ai-assisted-maintenance.Rmd reads.
+# which the manuscript at github.com/gherardovarando/agent_optim_stagedtrees-
+# reads.
 #
 #   rver  the last pure-R version (v1, after the defect fixes)
 #   cver  the version with the compiled kernels (v2)
