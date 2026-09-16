@@ -66,6 +66,31 @@
    seeds, smoothing and model shapes, the stage partition, log-likelihood and
    degrees of freedom are identical. Stage *labels* can differ, since moves
    are taken in a different order.
+* `prob` no longer reads its query one cell at a time, and no longer builds a
+   grid of completions for observations that have nothing to complete. Together
+   with the `path_probability` change below, computing 1000 probabilities from
+   a 6-variable model with 3 levels takes 0.91s before these changes and 0.04s
+   after.
+* `path_probability` carries the situation index down the path instead of
+   rebuilding it at every depth, which was quadratic in the number of
+   variables. `predict` on 1000 observations of a 6-variable model takes 0.29s
+   before and 0.14s after; the compiled path below then takes it further.
+* `make_ctables` computes the counts for each prefix of the variable order by
+   summing the next prefix over its last variable, rather than sweeping the
+   whole joint table once per prefix. `full()` on 2000 observations of 4-level
+   variables takes 13.2s at ten variables before the change and 0.57s after,
+   56.6s at eleven variables and 2.3s after; twelve variables, previously not
+   feasible, takes 9.1s.
+* `has_prob` compares the stored probability vectors' lengths with `lengths()`
+   rather than a nested `sapply` over every stage of every variable. It runs on
+   every `logLik` call, so a search evaluating a score per candidate paid it per
+   candidate: it was 36% of the runtime of `stages_hclust`.
+* `stages_hclust` assigns stages by looking each situation's stage up in the
+   clustering once, instead of scanning the whole situation vector once per
+   cluster, which was quadratic in the number of stages. With the `has_prob`
+   change, on 2000 observations of 3-level variables the default search takes
+   0.33s at five variables before and 0.16s after, 2.3s at six variables and
+   0.85s after, 18.4s at seven variables and 4.5s after.
 * `predict` is substantially faster for observations with no missing
    predictor. The walk down the tree for every candidate class value is now
    done in compiled code for all such rows in one call, while rows with a
