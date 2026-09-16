@@ -77,16 +77,20 @@
    grid of completions for observations that have nothing to complete.
    Observations that do have missing values now have their completions
    enumerated and evaluated in compiled code, rather than one at a time in R.
-   Computing 1000 probabilities from a 6-variable model with 3 levels takes
-   0.91s before these changes and 0.007s after when the observations are
-   complete, and 0.57s before and 0.010s after when each is missing one
-   variable.
 * `predict` groups the observations that are missing a predictor by which
    variables those are, and computes each group in one call rather than one
-   call per observation per class value. With a fifth of the observations
-   missing a predictor, `predict` on 1000 rows of a 6-variable model takes
-   0.57s before the change and 0.025s after; when all of them are missing one,
-   2.65s before and 0.051s after.
+   call per observation per class value.
+* the effect of these and the other changes below, measured end to end
+   against the previous release on 1000 rows of a 6-variable model with 3
+   levels fitted to 2000 observations:
+
+   |                                  | before | after  |
+   |----------------------------------|--------|--------|
+   | `prob`, complete observations    | 1.164s | 0.007s |
+   | `prob`, one variable missing     | 1.739s | 0.010s |
+   | `predict`, complete observations | 0.960s | 0.022s |
+   | `predict`, a fifth missing one   | 2.802s | 0.028s |
+   | `predict`, all missing one       | 9.886s | 0.058s |
 * `path_probability` carries the situation index down the path instead of
    rebuilding it at every depth, which was quadratic in the number of
    variables. `predict` on 1000 observations of a 6-variable model takes 0.29s
@@ -112,7 +116,10 @@
    done in compiled code for all such rows in one call, while rows with a
    missing predictor keep the previous path, since those require summing over
    the missing variable's levels. On 1000 observations of a 6-variable model
-   with 3 levels, `predict` takes 0.134s before the change and 0.0021s after.
+   with 3 levels, `predict(prob = TRUE)` takes 0.134s before the change and
+   0.0021s after. The default `predict()` call is slower than that figure
+   suggests, because turning the probabilities into class labels then
+   dominates it.
 * `predict` returned a transposed result when the class variable had a single
    level: `apply` yields a vector rather than a matrix in that case, so
    `prob = TRUE` gave a 1 by n matrix instead of n by 1, and `prob = FALSE`
