@@ -33,7 +33,6 @@ Description: Creates and fits staged event tree probability models,
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/stagedtrees/stagedtrees
 BugReports: https://github.com/stagedtrees/stagedtrees/issues
@@ -56,3 +55,4 @@ LinkingTo:
 Config/testthat/edition: 3
 Depends:
     R (>= 2.10)
+Config/roxygen2/version: 8.1.0

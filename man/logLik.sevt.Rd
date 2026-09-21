@@ -17,6 +17,11 @@ An object of class \code{\link{logLik}}.
 \description{
 Compute, or extract the log-likelihood of a staged event tree.
 }
+\details{
+The \code{df} attribute is computed by \code{\link{sevt_df}}.
+It counts all distinct stage labels, including those with zero
+observations; see \code{\link{join_unobserved}} for details.
+}
 \examples{
 data("PhDArticles")
 mod <- indep(PhDArticles)

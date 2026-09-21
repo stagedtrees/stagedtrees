@@ -111,32 +111,37 @@ export(stndnaming)
 export(subtree)
 export(topo_sort_parentslist)
 export(write_tikz)
-importFrom(grDevices,col2rgb)
-importFrom(grDevices,palette)
-importFrom(graphics,barplot)
-importFrom(graphics,lines)
-importFrom(graphics,plot.new)
-importFrom(graphics,plot.window)
-importFrom(graphics,points)
-importFrom(graphics,text)
-importFrom(graphics,title)
-importFrom(stats,AIC)
-importFrom(stats,BIC)
-importFrom(stats,complete.cases)
-importFrom(stats,confint)
-importFrom(stats,cutree)
-importFrom(stats,dist)
-importFrom(stats,ftable)
-importFrom(stats,hclust)
-importFrom(stats,kmeans)
-importFrom(stats,logLik)
-importFrom(stats,na.exclude)
-importFrom(stats,pchisq)
-importFrom(stats,predict)
-importFrom(stats,qchisq)
-importFrom(stats,rexp)
-importFrom(stats,runif)
-importFrom(stats,setNames)
-importFrom(utils,combn)
 importFrom(Rcpp,sourceCpp)
+importFrom(grDevices,
+  col2rgb,
+  palette
+)
+importFrom(graphics,
+  barplot,
+  lines,
+  plot.new,
+  plot.window,
+  points,
+  text,
+  title
+)
+importFrom(stats,
+  BIC,
+  complete.cases,
+  confint,
+  cutree,
+  dist,
+  ftable,
+  hclust,
+  kmeans,
+  logLik,
+  na.exclude,
+  pchisq,
+  predict,
+  qchisq,
+  rexp,
+  runif,
+  setNames
+)
+importFrom(utils,combn)
 useDynLib(stagedtrees, .registration = TRUE)
