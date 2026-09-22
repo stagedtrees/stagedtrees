@@ -17,9 +17,10 @@ in the order of \code{object}.}
 \value{
 a data frame with one row per violation, giving the context,
 the value of \code{treatment} which is not attainable in it,
-and the probability the model assigns to it (\code{0}, or
-\code{NA} if the context has no observations). A data frame
-with no rows means positivity holds.
+and the probability of the context itself, that is the share of
+the population the violation concerns. A data frame with no rows
+means positivity holds. A \code{context_probability} of zero
+marks a context which does not occur at all, see the details.
 }
 \description{
 Find the contexts where a treatment variable does not take all its
@@ -34,9 +35,18 @@ the values it never takes, so the corresponding potential outcome is
 not identified.
 
 The contexts are the situations of \code{treatment}, i.e. the
-combinations of the variables preceding it. Contexts which cannot
-occur are not reported: they are outside the population, rather than a
-part of it that the treatment never reaches.
+combinations of the variables preceding it. A value the model gives no
+probability at all, because the context has no observations, counts as
+unattainable just as an explicit zero does.
+
+The probability of the context separates two cases which are worth
+reading differently. A positive one is a strict violation: a part of
+the population which occurs, and never receives that value of the
+treatment. A zero one is a context which does not occur at all, so it
+weighs nothing in an average treatment effect and breaks no assumption
+about the population; but the model has no support there either, and
+whatever a staging or a prior later says about it is extrapolation
+rather than evidence.
 
 The assumption is checked on the probabilities of \code{object}, so
 which object it is given matters. On a model fitted with

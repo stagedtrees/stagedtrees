@@ -9,9 +9,10 @@
 #'                 in the order of \code{object}.
 #' @return a data frame with one row per violation, giving the context,
 #'         the value of \code{treatment} which is not attainable in it,
-#'         and the probability the model assigns to it (\code{0}, or
-#'         \code{NA} if the context has no observations). A data frame
-#'         with no rows means positivity holds.
+#'         and the probability of the context itself, that is the share of
+#'         the population the violation concerns. A data frame with no rows
+#'         means positivity holds. A \code{context_probability} of zero
+#'         marks a context which does not occur at all, see the details.
 #' @details
 #' Estimating the effect of \code{treatment} on \code{outcome} requires
 #' that every context which can occur may receive every value of the
@@ -21,9 +22,18 @@
 #' not identified.
 #'
 #' The contexts are the situations of \code{treatment}, i.e. the
-#' combinations of the variables preceding it. Contexts which cannot
-#' occur are not reported: they are outside the population, rather than a
-#' part of it that the treatment never reaches.
+#' combinations of the variables preceding it. A value the model gives no
+#' probability at all, because the context has no observations, counts as
+#' unattainable just as an explicit zero does.
+#'
+#' The probability of the context separates two cases which are worth
+#' reading differently. A positive one is a strict violation: a part of
+#' the population which occurs, and never receives that value of the
+#' treatment. A zero one is a context which does not occur at all, so it
+#' weighs nothing in an average treatment effect and breaks no assumption
+#' about the population; but the model has no support there either, and
+#' whatever a staging or a prior later says about it is extrapolation
+#' rather than evidence.
 #'
 #' The assumption is checked on the probabilities of \code{object}, so
 #' which object it is given matters. On a model fitted with
@@ -68,29 +78,26 @@ positivity <- function(object, treatment, outcome) {
   } else {
     data.frame(row.names = 1L)
   }
-  ## a context which cannot occur is not part of the population
-  reachable <- if (it > 1) {
-    p <- prob(object, ctx, na0 = FALSE)
-    is.na(p) | p > 0
-  } else {
-    TRUE
-  }
+  p_ctx <- if (it > 1) prob(object, ctx, na0 = FALSE) else 1
   stgs <- stages(object)[[treatment]]
 
-  res <- lapply(which(reachable), function(i) {
+  res <- lapply(seq_len(nrow(ctx)), function(i) {
     p <- object$prob[[treatment]][[stgs[i]]][lv]
     bad <- is.na(p) | p == 0
     if (!any(bad)) {
       return(NULL)
     }
-    cbind(ctx[i, , drop = FALSE],
-          data.frame(treatment = lv[bad], probability = as.numeric(p[bad]),
+    rows <- ctx[rep.int(i, sum(bad)), , drop = FALSE]
+    rownames(rows) <- NULL
+    cbind(rows,
+          data.frame(treatment = lv[bad], context_probability = p_ctx[[i]],
                      row.names = NULL, stringsAsFactors = FALSE))
   })
   res <- do.call(rbind, res)
   if (is.null(res)) {
     res <- cbind(ctx[0, , drop = FALSE],
-                 data.frame(treatment = character(0), probability = numeric(0)))
+                 data.frame(treatment = character(0),
+                            context_probability = numeric(0)))
   }
   names(res)[names(res) == "treatment"] <- treatment
   rownames(res) <- NULL
