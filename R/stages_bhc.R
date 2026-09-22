@@ -66,7 +66,7 @@ stages_bhc <-
           pv <- object$prob[[v]][stages]
           pm <- do.call(rbind, lapply(pv, as.numeric))
           nv <- vapply(pv, function(p) {
-            n <- attr(p, "n")
+            n <- attr(p, "n", exact = TRUE)
             if (is.null(n)) NA_real_ else as.numeric(n)
           }, FUN.VALUE = 1.0)
           ## pick the merge by log-likelihood (compiled, score-independent)

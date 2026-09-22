@@ -67,6 +67,9 @@ randomize_sevt <- function(object, treatment, p = NULL, ignore = object$name_uno
     p <- rep.int(1/kk, kk)
   }
   names(p) <- object$tree[[treatment]]
+  ## the randomized probabilities are set by design and estimated from
+  ## nothing, which is what the missing sample size records
+  attr(p, "n") <- NA
   tmp <- object$stages[[treatment]]
   object$stages[[treatment]][!(tmp %in% ignore)] <- "randomized"
   object$prob[[treatment]] <- c(list(randomized = p), object$prob[[treatment]][ignore])

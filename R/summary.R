@@ -22,7 +22,7 @@ summary.sevt <- function(object, ...) {
     npaths = 0, stringsAsFactors = FALSE
   )
   if (has_prob(object)) {
-    out[[vns[1]]][["sample.size"]] <- attr(object$prob[[vns[1]]][[1]], "n")
+    out[[vns[1]]][["sample.size"]] <- attr(object$prob[[vns[1]]][[1]], "n", exact = TRUE)
     out[[vns[1]]] <- cbind(
       out[[vns[1]]],
       t(as.data.frame(object$prob[[vns[1]]]))
@@ -40,8 +40,8 @@ summary.sevt <- function(object, ...) {
     }, FUN.VALUE = 1)
     if (has_prob(object)) {
       D[["sample.size"]] <- vapply(D$stage, function(s) {
-        ifelse(is.null(attr(object$prob[[v]][[s]], "n")),
-          NA, attr(object$prob[[v]][[s]], "n")
+        ifelse(is.null(attr(object$prob[[v]][[s]], "n", exact = TRUE)),
+          NA, attr(object$prob[[v]][[s]], "n", exact = TRUE)
         )
       }, FUN.VALUE = 1)
       if (nrow(D) <= 1) {

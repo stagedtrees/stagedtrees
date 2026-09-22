@@ -54,8 +54,8 @@ join_stages_unsafe <- function(object, var, s1, s2) {
   if (isFALSE(is.null(object$prob))) {
     p1 <- object$prob[[var]][[s1]]
     p2 <- object$prob[[var]][[s2]]
-    n2 <- attr(p2, "n")
-    n1 <- attr(p1, "n")
+    n2 <- attr(p2, "n", exact = TRUE)
+    n1 <- attr(p1, "n", exact = TRUE)
     if (is.null(n1) || is.na(n1)) n1 <- 1
     if (is.null(n2) || is.na(n2)) n2 <- 1
     if (is.null(object$lambda)) {
@@ -103,8 +103,8 @@ join_stages_unsafe <- function(object, var, s1, s2) {
 #' @return a numeric scalar, the change in log-likelihood.
 #' @keywords internal
 join_ll_delta <- function(p1, p2, lambda, k) {
-  n1 <- attr(p1, "n")
-  n2 <- attr(p2, "n")
+  n1 <- attr(p1, "n", exact = TRUE)
+  n2 <- attr(p2, "n", exact = TRUE)
   if (is.null(n1) || is.na(n1)) n1 <- 1
   if (is.null(n2) || is.na(n2)) n2 <- 1
   c1 <- p1

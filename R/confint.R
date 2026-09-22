@@ -90,7 +90,7 @@ confint.sevt <- function (object, parm, level = 0.95,
     k <- length(object$tree[[v]])
     for(s in stages) {
       p <- object$prob[[v]][[s]]
-      n <- attr(p, "n")
+      n <- attr(p, "n", exact = TRUE)
       n_stage <- p * (n + k * lambda) - lambda
       if (lambda > 0) p <- n_stage / n  #unbiased prob estimate
       if (method == "wald") {

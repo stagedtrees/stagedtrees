@@ -46,3 +46,9 @@ test_that("randomize_sevt records the call which produced the object", {
   expect_equal(r$call[[1]], as.name("randomize_sevt"))
   expect_output(print(r), "randomize_sevt")
 })
+
+test_that("randomize_sevt marks the randomized probabilities as estimated from nothing", {
+  m <- stages_bhc(full(Titanic))
+  r <- randomize_sevt(m, "Age")
+  expect_true(is.na(attr(r$prob$Age[["randomized"]], "n", exact = TRUE)))
+})
