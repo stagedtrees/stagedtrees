@@ -22,9 +22,12 @@ immediately following \code{treatment} in the order
 of \code{object}. Defaults to the last variable in
 the order of \code{object}.}
 
-\item{ignore}{name of stages of \code{outcome} which will not be
-re-staged, by default the stage of the unobserved
-situations.}
+\item{ignore}{name of the stages of \code{outcome} which are left as
+they are, by default the stage of the situations with no
+observations. Note that these are stages of
+\code{outcome}, the variable this function re-stages,
+and not of \code{treatment}. Use \code{ignore = NULL} to
+re-stage every situation of \code{outcome}.}
 }
 \value{
 an object of class \code{sevt}, equal to \code{object} except
@@ -49,9 +52,14 @@ treatment stage and a treatment value.
 
 Situations of \code{outcome} whose stage is listed in \code{ignore},
 by default the unobserved ones pooled by
-\code{\link{join_unobserved}}, keep their stage. Re-staging them would
-spread the situations with no observations across the new strata and
-produce strata with zero counts, and thus \code{NA} probabilities.
+\code{\link{join_unobserved}}, keep their stage. Such a situation has
+no observations of its own, so re-staging it would hand it the
+distribution of the stratum it lands in, estimated from the other
+contexts in that stratum. That is an extrapolation, and it is exactly
+what a stratification is for, but it is not something the data shows
+for that context; leaving these situations alone keeps their outcome
+distribution undefined, and \code{ignore = NULL} asks for the
+extrapolation instead.
 
 The new staging is assigned through the replacement method for
 \code{\link{stages}}, which detects that \code{object} is already

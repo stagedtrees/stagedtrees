@@ -27,8 +27,11 @@
    variable, for propensity-score stratification estimation of treatment
    effects. `treatment` and `outcome` default to the last two variables in
    the order of the model. As in `randomize_sevt`, the stages listed in
-   `ignore` (by default the unobserved ones) are not re-staged, which
-   avoids creating strata with no observations.
+   `ignore` (by default the unobserved ones) are not re-staged: a
+   situation with no observations would otherwise be given the
+   distribution of the stratum it lands in, which is an extrapolation
+   across the contexts of that stratum rather than something the data
+   shows for that one. Use `ignore = NULL` to ask for it.
 * BREAKING: `potential_outcomes` argument order is now
    `(object, treatment, outcome)`, matching `ps_stratify` and
    `randomize_sevt`. Calls using named arguments are unaffected; calls

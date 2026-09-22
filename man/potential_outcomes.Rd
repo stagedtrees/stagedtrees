@@ -20,7 +20,13 @@ the order of \code{object}.}
 
 \item{p}{the probabilities of treatment}
 
-\item{ignore}{name of stages to be ignored}
+\item{ignore}{name of the stages of \code{treatment} which are left as
+they are, by default the stage of the situations with no
+observations. Every other situation of \code{treatment}
+is moved to a single \code{"randomized"} stage carrying
+\code{p}, while these keep their own stage and
+probabilities. Use \code{ignore = NULL} to randomize the
+treatment in every situation.}
 }
 \value{
 a matrix with potential outcomes.

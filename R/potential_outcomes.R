@@ -49,7 +49,13 @@ potential_outcomes <- function(object, treatment = NULL, outcome = NULL){
 
 #' @rdname potential_outcomes
 #' @param p the probabilities of treatment
-#' @param ignore name of stages to be ignored
+#' @param ignore name of the stages of \code{treatment} which are left as
+#'                they are, by default the stage of the situations with no
+#'                observations. Every other situation of \code{treatment}
+#'                is moved to a single \code{"randomized"} stage carrying
+#'                \code{p}, while these keep their own stage and
+#'                probabilities. Use \code{ignore = NULL} to randomize the
+#'                treatment in every situation.
 #' @export
 randomize_sevt <- function(object, treatment, p = NULL, ignore = object$name_unobserved){
   check_scope(treatment, object)
