@@ -24,3 +24,9 @@ test_that("potential_outcomes return probabilities", {
     expect_lt(sum(abs(rowSums(po) - 1)), 1e-14)
   }
 })
+
+test_that("randomize_sevt marks the randomized probabilities as estimated from nothing", {
+  m <- stages_bhc(full(Titanic))
+  r <- randomize_sevt(m, "Age")
+  expect_true(is.na(attr(r$prob$Age[["randomized"]], "n", exact = TRUE)))
+})

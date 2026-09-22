@@ -1,5 +1,13 @@
 # dev
 
+* fixed `summary` and `confint` failing on a tree returned by
+   `randomize_sevt`. The sample size of a stage was read with
+   `attr(p, "n")`, which falls back to partial matching and returns the
+   `names` attribute when there is no `"n"`, so a probability vector
+   without a sample size reported its own level names as one. Every site
+   reading it now matches exactly, and `randomize_sevt` records `NA`,
+   since its probabilities are set by design rather than estimated.
+
 * BREAKING: `na0` now defaults to `FALSE` in `prob`. A situation with no
    observations carries no probability, and the old default supplied one it
    does not have, silently removing probability mass from any event that
