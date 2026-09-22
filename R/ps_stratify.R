@@ -11,6 +11,9 @@
 #'                 immediately following \code{treatment} in the order
 #'                 of \code{object}. Defaults to the last variable in
 #'                 the order of \code{object}.
+#' @param ignore name of stages of \code{outcome} which will not be
+#'                re-staged, by default the stage of the unobserved
+#'                situations.
 #' @return an object of class \code{sevt}, equal to \code{object} except
 #'         for the staging (and, consequently, the fitted probabilities)
 #'         of \code{outcome}.
@@ -24,6 +27,12 @@
 #' history, value taken by \code{treatment}). Two situations of
 #' \code{outcome} therefore share a stage exactly when they share both a
 #' treatment stage and a treatment value.
+#'
+#' Situations of \code{outcome} whose stage is listed in \code{ignore},
+#' by default the unobserved ones pooled by
+#' \code{\link{join_unobserved}}, keep their stage. Re-staging them would
+#' spread the situations with no observations across the new strata and
+#' produce strata with zero counts, and thus \code{NA} probabilities.
 #'
 #' The new staging is assigned through the replacement method for
 #' \code{\link{stages}}, which detects that \code{object} is already
@@ -52,7 +61,8 @@
 #' stages(model_ps)[["Survived"]]
 #' @seealso \code{\link{potential_outcomes}}, \code{\link{stages}}
 #' @export
-ps_stratify <- function(object, treatment = NULL, outcome = NULL) {
+ps_stratify <- function(object, treatment = NULL, outcome = NULL,
+                        ignore = object$name_unobserved) {
   check_sevt_prob(object)
   defaults <- default_treatment_outcome(treatment, outcome, object)
   treatment <- defaults$treatment
@@ -72,11 +82,15 @@ ps_stratify <- function(object, treatment = NULL, outcome = NULL) {
   lv <- object$tree[[treatment]]
   # stages() is used instead of object$stages, since the latter is NULL
   # when `treatment` is the first variable in the order.
-  st <- stages(object)[[treatment]]
+  stgs <- stages(object)
+  st <- stgs[[treatment]]
+  value <- paste(rep(st, each = length(lv)),
+                 rep(lv, times = length(st)),
+                 sep = ":")
+  keep <- stgs[[outcome]] %in% ignore
+  value[keep] <- stgs[[outcome]][keep]
   # stages<- detects that `object` is already fitted and refits `outcome`
   # on the spot, reusing the data and lambda cached in `object`.
-  stages(object)[outcome] <- paste(rep(st, each = length(lv)),
-                                   rep(lv, times = length(st)),
-                                   sep = ":")
+  stages(object)[outcome] <- value
   object
 }

@@ -21,6 +21,37 @@ test_that("ps_stratify defaults to the last two variables", {
   expect_equal(model_ps_default, model_ps_explicit)
 })
 
+test_that("ps_stratify keeps the stages listed in ignore", {
+  set.seed(3)
+  D <- data.frame(
+    X = sample(c("0", "1"), 300, TRUE),
+    TT = sample(c("a", "b"), 300, TRUE),
+    Y = sample(c("no", "yes"), 300, TRUE), stringsAsFactors = TRUE
+  )
+  # make (X = 1, TT = b) unobserved
+  D <- D[!(D$X == "1" & D$TT == "b"), ]
+  m <- join_unobserved(full(D, lambda = 0))
+  expect_true(m$name_unobserved %in% m$stages$Y)
+
+  m_ps <- ps_stratify(m, treatment = "TT", outcome = "Y")
+  # the unobserved situation keeps its stage, so it is not pooled into
+  # one of the new strata
+  expect_equal(m_ps$stages$Y, c("1:a", "1:b", "2:a", m$name_unobserved))
+  n_obs <- vapply(m_ps$prob$Y, function(p) attr(p, "n"), FUN.VALUE = 1)
+  expect_equal(names(which(n_obs == 0)), m$name_unobserved)
+
+  # ignore = NULL re-stages every situation
+  m_ps0 <- ps_stratify(m, treatment = "TT", outcome = "Y", ignore = NULL)
+  expect_equal(m_ps0$stages$Y, c("1:a", "1:b", "2:a", "2:b"))
+})
+
+test_that("ps_stratify is unaffected by ignore when nothing is unobserved", {
+  expect_equal(
+    ps_stratify(model, treatment = "Sex", outcome = "Age"),
+    ps_stratify(model, treatment = "Sex", outcome = "Age", ignore = NULL)
+  )
+})
+
 test_that("ps_stratify works when treatment is the first variable", {
   # the first variable has a NULL entry in object$stages, only the
   # stages() accessor reports its (single) stage

@@ -4,7 +4,12 @@
 \alias{ps_stratify}
 \title{Propensity-score stratification}
 \usage{
-ps_stratify(object, treatment = NULL, outcome = NULL)
+ps_stratify(
+  object,
+  treatment = NULL,
+  outcome = NULL,
+  ignore = object$name_unobserved
+)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
@@ -16,6 +21,10 @@ second-to-last variable in the order of \code{object}.}
 immediately following \code{treatment} in the order
 of \code{object}. Defaults to the last variable in
 the order of \code{object}.}
+
+\item{ignore}{name of stages of \code{outcome} which will not be
+re-staged, by default the stage of the unobserved
+situations.}
 }
 \value{
 an object of class \code{sevt}, equal to \code{object} except
@@ -37,6 +46,12 @@ built from the pair (propensity-score stage of its \code{treatment}
 history, value taken by \code{treatment}). Two situations of
 \code{outcome} therefore share a stage exactly when they share both a
 treatment stage and a treatment value.
+
+Situations of \code{outcome} whose stage is listed in \code{ignore},
+by default the unobserved ones pooled by
+\code{\link{join_unobserved}}, keep their stage. Re-staging them would
+spread the situations with no observations across the new strata and
+produce strata with zero counts, and thus \code{NA} probabilities.
 
 The new staging is assigned through the replacement method for
 \code{\link{stages}}, which detects that \code{object} is already
