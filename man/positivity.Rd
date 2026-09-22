@@ -15,14 +15,13 @@ positivity(object, treatment, outcome)
 in the order of \code{object}.}
 }
 \value{
-a data frame with one row per violation, giving the context,
-the value of \code{treatment} which is not attainable in it,
-and the probability of the context itself, that is the share of
-the population the violation concerns. A data frame with no rows
-means positivity holds. A \code{"*"} in place of a value of
-\code{treatment} means that no value at all is attainable in
-that context, and a \code{context_probability} of zero marks a
-context which does not occur, see the details.
+a data frame with one row per offending context, giving the
+context, the values of \code{treatment} which are not
+attainable in it, and the probability of the context itself,
+that is the share of the population the violation concerns. A
+data frame with no rows means positivity holds, and a
+\code{context_probability} of zero marks a context which does
+not occur, see the details.
 }
 \description{
 Find the contexts where a treatment variable does not take all its
@@ -49,8 +48,7 @@ weighs nothing in an average treatment effect and breaks no assumption
 about the population; but the model has no support there either, and
 whatever a staging or a prior later says about it is extrapolation
 rather than evidence. Such a context makes no value of the treatment
-attainable, so it is reported once, with \code{"*"} in place of a
-value, rather than once per value.
+attainable, and so lists all of them.
 
 The assumption is checked on the probabilities of \code{object}, so
 which object it is given matters. On a model fitted with
