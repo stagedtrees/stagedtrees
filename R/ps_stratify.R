@@ -70,7 +70,9 @@ ps_stratify <- function(object, treatment = NULL, outcome = NULL) {
     ))
   }
   lv <- object$tree[[treatment]]
-  st <- object$stages[[treatment]]
+  # stages() is used instead of object$stages, since the latter is NULL
+  # when `treatment` is the first variable in the order.
+  st <- stages(object)[[treatment]]
   # stages<- detects that `object` is already fitted and refits `outcome`
   # on the spot, reusing the data and lambda cached in `object`.
   stages(object)[outcome] <- paste(rep(st, each = length(lv)),

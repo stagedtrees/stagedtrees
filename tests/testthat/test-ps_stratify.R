@@ -21,6 +21,18 @@ test_that("ps_stratify defaults to the last two variables", {
   expect_equal(model_ps_default, model_ps_explicit)
 })
 
+test_that("ps_stratify works when treatment is the first variable", {
+  # the first variable has a NULL entry in object$stages, only the
+  # stages() accessor reports its (single) stage
+  model_ps <- ps_stratify(model, treatment = "Class", outcome = "Sex")
+  expect_true(is_fitted_sevt(model_ps))
+  expect_equal(
+    stages(model_ps)[["Sex"]],
+    paste("NA", model$tree[["Class"]], sep = ":")
+  )
+  expect_false(any(!is.finite(unlist(model_ps$prob$Sex))))
+})
+
 test_that("ps_stratify defaults need at least two variables", {
   m1 <- sevt_fit(
     sevt(list(A = c("a", "b")), full = TRUE),
