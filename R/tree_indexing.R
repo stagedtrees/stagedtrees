@@ -35,9 +35,9 @@ tree_idx <- function(path, tree, complete = FALSE) {
 
 #' @keywords internal
 #' @noRd
-stop_unknown_level <- function(value, var) {
+stop_unknown_level <- function(value, var, arg = "path") {
   cli::cli_abort(c(
-    "{.arg path} contains a value which is not a level of {.val {var}}.",
+    "{.arg {arg}} contains a value which is not a level of {.val {var}}.",
     "x" = "You've supplied {.val {value}}."
   ), call = NULL)
 }

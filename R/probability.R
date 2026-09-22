@@ -75,9 +75,17 @@ path_probability <-
 #' @param log logical, if \code{TRUE} log-probabilities are returned.
 #' @param na0 logical, if \code{NA} should be converted to 0. This
 #'            includes the \code{NA} probabilities of situations with no
-#'            observations: with \code{na0 = TRUE} they are summed over as
-#'            zeros, while with \code{na0 = FALSE} they propagate, and the
-#'            probability of any event they contribute to is \code{NA}.
+#'            observations: with \code{na0 = FALSE}, the default, they
+#'            propagate, and the probability of any event they contribute
+#'            to is \code{NA}; with \code{na0 = TRUE} they are summed over
+#'            as zeros instead.
+#'
+#'            A situation with no observations carries no probability, and
+#'            \code{na0 = TRUE} supplies one it does not have. That is only
+#'            sound where the situation cannot be reached anyway, which the
+#'            zero-dominance rule below already handles; elsewhere it
+#'            silently removes probability mass from the result, so it is
+#'            left to the caller to ask for.
 #' @return the probabilities to observe each observation in \code{x}, possibly
 #' conditional on the event(s) in \code{conditional_on}.
 #'
@@ -115,7 +123,7 @@ path_probability <-
 #' ## the above should be the same as
 #' summary(model)$stages.info$Age
 #' @export
-prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
+prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = FALSE) {
   check_sevt_prob(object)
   if (is.null(dim(x))) {
     x <- as.data.frame(t(x))
@@ -193,24 +201,16 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
   unknown_val <- is.na(codes) & !missing_val
 
   res <- numeric(n)
-  ## A value that is not a level of its variable keeps the original path. That
-  ## path raises a named error when the value sits anywhere the situation index
-  ## depends on, and yields -Inf at the last variable, where it is only a name
-  ## lookup; reproducing that split in compiled code would be all cost and no
-  ## benefit for a case that should not arise.
-  odd <- which(rowSums(unknown_val) > 0)
-  for (i in odd) {
-    row <- xm[i, ]
-    mi <- missing_val[i, ]
-    ll <- as.list(row)
-    ll[mi] <- lvls[mi]
-    res[i] <- matrixStats::logSumExp(apply(
-      expand.grid(ll), MARGIN = 1,
-      FUN = function(xx) path_probability(object, as.character(xx), log = TRUE)
-    ), na.rm = na0)
+  ## A value that is not a level of its variable is an error wherever it sits,
+  ## the last variable included. Reporting it here names the variable and the
+  ## value, and spares the kernel a case it cannot represent.
+  if (any(unknown_val)) {
+    j <- which(colSums(unknown_val) > 0)[1]
+    i1 <- which(unknown_val[, j])[1]
+    stop_unknown_level(xm[i1, j], vk[j], arg = "x")
   }
 
-  rest <- if (length(odd) > 0) seq_len(n)[-odd] else seq_len(n)
+  rest <- seq_len(n)
   if (length(rest) > 0) {
     flat <- sevt_flat(object, vk)
     ## Rows are grouped by which variables they are missing, so that one group
