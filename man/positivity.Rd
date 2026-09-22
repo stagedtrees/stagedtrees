@@ -19,8 +19,10 @@ a data frame with one row per violation, giving the context,
 the value of \code{treatment} which is not attainable in it,
 and the probability of the context itself, that is the share of
 the population the violation concerns. A data frame with no rows
-means positivity holds. A \code{context_probability} of zero
-marks a context which does not occur at all, see the details.
+means positivity holds. A \code{"*"} in place of a value of
+\code{treatment} means that no value at all is attainable in
+that context, and a \code{context_probability} of zero marks a
+context which does not occur, see the details.
 }
 \description{
 Find the contexts where a treatment variable does not take all its
@@ -46,7 +48,9 @@ treatment. A zero one is a context which does not occur at all, so it
 weighs nothing in an average treatment effect and breaks no assumption
 about the population; but the model has no support there either, and
 whatever a staging or a prior later says about it is extrapolation
-rather than evidence.
+rather than evidence. Such a context makes no value of the treatment
+attainable, so it is reported once, with \code{"*"} in place of a
+value, rather than once per value.
 
 The assumption is checked on the probabilities of \code{object}, so
 which object it is given matters. On a model fitted with

@@ -51,13 +51,13 @@ test_that("a context which does not occur is reported with probability zero", {
   m <- full(d, lambda = 0)
 
   ## the model has no probabilities at all there, so every value of the
-  ## treatment is unattainable, and the context weighs nothing
+  ## treatment is unattainable: one row with "*", not one per value
   viol <- positivity(m, "TT", "Y")
-  expect_equal(nrow(viol), 2)
-  expect_equal(unique(viol$A), "a2")
-  expect_equal(unique(viol$B), "b2")
-  expect_setequal(viol$TT, c("t1", "t2"))
-  expect_equal(viol$context_probability, c(0, 0))
+  expect_equal(nrow(viol), 1)
+  expect_equal(viol$A, "a2")
+  expect_equal(viol$B, "b2")
+  expect_equal(viol$TT, "*")
+  expect_equal(viol$context_probability, 0)
 
   ## a staging which covers the context gives it probabilities, and then
   ## there is nothing left for positivity to report on this model
