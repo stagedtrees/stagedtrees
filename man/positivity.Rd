@@ -2,9 +2,12 @@
 % Please edit documentation in R/positivity.R
 \name{positivity}
 \alias{positivity}
+\alias{print.sevt.positivity}
 \title{Positivity violations}
 \usage{
-positivity(object, treatment, outcome)
+positivity(object, treatment, outcome, ignore = object$name_unobserved)
+
+\method{print}{sevt.positivity}(x, ...)
 }
 \arguments{
 \item{object}{an object of class \code{sevt} with probabilities.}
@@ -13,6 +16,16 @@ positivity(object, treatment, outcome)
 
 \item{outcome}{the outcome variable, which must follow \code{treatment}
 in the order of \code{object}.}
+
+\item{ignore}{name of the stages of \code{treatment} whose contexts are
+left out of the table, by default the stage of the
+unobserved situations. How many were left out is
+reported when the result is printed.}
+
+\item{x}{an object of class \code{sevt.positivity}, as returned by
+\code{positivity}.}
+
+\item{...}{additional arguments passed to \code{print.data.frame}.}
 }
 \value{
 a data frame with one row per offending context, giving the
@@ -48,7 +61,10 @@ weighs nothing in an average treatment effect and breaks no assumption
 about the population; but the model has no support there either, and
 whatever a staging or a prior later says about it is extrapolation
 rather than evidence. Such a context makes no value of the treatment
-attainable, and so lists all of them.
+attainable, and so lists all of them. These are the contexts
+\code{ignore} leaves out by default, as the situations with no
+observations are the ones pooled into the unobserved stage; pass
+\code{ignore = NULL} to see them.
 
 The assumption is checked on the probabilities of \code{object}, so
 which object it is given matters. On a model fitted with

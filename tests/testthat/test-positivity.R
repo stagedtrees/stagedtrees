@@ -50,19 +50,41 @@ test_that("a context which does not occur is reported with probability zero", {
   d <- d[!(d$A == "a2" & d$B == "b2"), ]   # this context never occurs
   m <- full(d, lambda = 0)
 
+  ## such a context sits in the unobserved stage, which ignore leaves out
+  expect_equal(nrow(positivity(m, "TT", "Y")), 0)
+  expect_equal(attr(positivity(m, "TT", "Y"), "n_ignored"), 1)
+
   ## the model has no probabilities at all there, so every value of the
   ## treatment is unattainable: one row for the context, listing them
-  viol <- positivity(m, "TT", "Y")
+  viol <- positivity(m, "TT", "Y", ignore = NULL)
   expect_equal(nrow(viol), 1)
   expect_equal(viol$A, "a2")
   expect_equal(viol$B, "b2")
   expect_equal(viol$TT, "t1, t2")
   expect_equal(viol$context_probability, 0)
+  expect_equal(attr(viol, "n_ignored"), 0)
 
   ## a staging which covers the context gives it probabilities, and then
   ## there is nothing left for positivity to report on this model
   stages(m)["TT"] <- "pooled"
   expect_equal(nrow(positivity(m, "TT", "Y")), 0)
+})
+
+test_that("positivity says how many contexts ignore left out", {
+  set.seed(7)
+  d <- data.frame(
+    A = factor(sample(c("a1", "a2"), 600, TRUE)),
+    B = factor(sample(c("b1", "b2", "b3"), 600, TRUE)),
+    TT = factor(sample(c("t1", "t2"), 600, TRUE)),
+    Y = factor(sample(c("n", "y"), 600, TRUE))
+  )
+  m <- full(d[!(d$A == "a2" & d$B %in% c("b2", "b3")), ], lambda = 0)
+  expect_equal(attr(positivity(m, "TT", "Y"), "n_ignored"), 2)
+  expect_output(print(positivity(m, "TT", "Y")), "No positivity violations")
+  expect_message(print(positivity(m, "TT", "Y")), "ignore = NULL")
+  expect_message(print(positivity(m, "TT", "Y")), "2 contexts")
+  ## nothing to report when they are all shown
+  expect_no_message(print(positivity(m, "TT", "Y", ignore = NULL)))
 })
 
 test_that("positivity works when treatment is the first variable", {

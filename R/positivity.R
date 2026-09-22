@@ -7,6 +7,10 @@
 #' @param treatment the treatment variable.
 #' @param outcome the outcome variable, which must follow \code{treatment}
 #'                 in the order of \code{object}.
+#' @param ignore name of the stages of \code{treatment} whose contexts are
+#'                left out of the table, by default the stage of the
+#'                unobserved situations. How many were left out is
+#'                reported when the result is printed.
 #' @return a data frame with one row per offending context, giving the
 #'         context, the values of \code{treatment} which are not
 #'         attainable in it, and the probability of the context itself,
@@ -35,7 +39,10 @@
 #' about the population; but the model has no support there either, and
 #' whatever a staging or a prior later says about it is extrapolation
 #' rather than evidence. Such a context makes no value of the treatment
-#' attainable, and so lists all of them.
+#' attainable, and so lists all of them. These are the contexts
+#' \code{ignore} leaves out by default, as the situations with no
+#' observations are the ones pooled into the unobserved stage; pass
+#' \code{ignore = NULL} to see them.
 #'
 #' The assumption is checked on the probabilities of \code{object}, so
 #' which object it is given matters. On a model fitted with
@@ -58,7 +65,8 @@
 #'            treatment = "Age", outcome = "Survived")
 #' @seealso \code{\link{potential_outcomes}}, \code{\link{ps_stratify}}
 #' @export
-positivity <- function(object, treatment, outcome) {
+positivity <- function(object, treatment, outcome,
+                       ignore = object$name_unobserved) {
   check_sevt_prob(object)
   check_scope(c(treatment, outcome), object)
   vars <- sevt_varnames(object)
@@ -83,7 +91,7 @@ positivity <- function(object, treatment, outcome) {
   p_ctx <- if (it > 1) prob(object, ctx, na0 = FALSE) else 1
   stgs <- stages(object)[[treatment]]
 
-  res <- lapply(seq_len(nrow(ctx)), function(i) {
+  viol <- lapply(seq_len(nrow(ctx)), function(i) {
     p <- object$prob[[treatment]][[stgs[i]]][lv]
     bad <- is.na(p) | p == 0
     if (!any(bad)) {
@@ -96,7 +104,9 @@ positivity <- function(object, treatment, outcome) {
                      context_probability = p_ctx[[i]],
                      row.names = NULL, stringsAsFactors = FALSE))
   })
-  res <- do.call(rbind, res)
+  found <- !vapply(viol, is.null, TRUE)
+  hidden <- found & (stgs %in% ignore)
+  res <- do.call(rbind, viol[found & !hidden])
   if (is.null(res)) {
     res <- cbind(ctx[0, , drop = FALSE],
                  data.frame(treatment = character(0),
@@ -104,5 +114,31 @@ positivity <- function(object, treatment, outcome) {
   }
   names(res)[names(res) == "treatment"] <- treatment
   rownames(res) <- NULL
+  attr(res, "n_ignored") <- sum(hidden)
+  attr(res, "ignore") <- ignore
+  class(res) <- c("sevt.positivity", "data.frame")
   res
+}
+
+#' @rdname positivity
+#' @param x an object of class \code{sevt.positivity}, as returned by
+#'          \code{positivity}.
+#' @param ... additional arguments passed to \code{print.data.frame}.
+#' @export
+print.sevt.positivity <- function(x, ...) {
+  n <- attr(x, "n_ignored")
+  ig <- attr(x, "ignore")
+  if (nrow(x) == 0) {
+    cat("No positivity violations.\n")
+  } else {
+    print(as.data.frame(x), ...)
+  }
+  if (isTRUE(n > 0)) {
+    cli::cli_alert_info(
+      "{n} context{?s} whose stage is {.val {ig}} {cli::qty(n)}{?is/are}
+       not shown. Use {.code ignore = NULL} to include
+       {cli::qty(n)}{?it/them}."
+    )
+  }
+  invisible(x)
 }
