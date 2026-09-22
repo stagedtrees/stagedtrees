@@ -162,11 +162,11 @@ test_that("a model variable absent from x is treated as unobserved", {
 })
 
 test_that("a fully observed path through an unobserved stage reduces to -Inf", {
-  ## The row loop reduces each row with logSumExp(..., na.rm = TRUE). An
-  ## unobserved situation carries NA probabilities, so path_probability()
-  ## returns NA for a path through it, and na.rm turns that into -Inf. A short
-  ## path returning the log-probability directly would yield NA instead, which
-  ## na0 = FALSE would then preserve all the way out.
+  ## An unobserved situation carries NA probabilities, but the path below is
+  ## already unreachable at B: P(y | a) is exactly zero. A zero factor
+  ## dominates an unknown one, so the path is -Inf and not NA, whatever na0
+  ## asks for. See the companion test for a path that is reachable and whose
+  ## last factor alone is unknown.
   set.seed(23)
   n <- 300
   d <- data.frame(
@@ -182,9 +182,9 @@ test_that("a fully observed path through an unobserved stage reduces to -Inf", {
   q <- data.frame(A = factor("a", c("a", "b")),
                   B = factor("y", c("x", "y")),
                   C = factor("p", c("p", "q")))
-  ## the path itself is NA ...
-  expect_true(is.na(stagedtrees:::path_probability(m, c("a", "y", "p"), log = TRUE)))
-  ## ... but prob() reports -Inf on the log scale and 0 on the natural one,
+  ## the zero factor P(y | a) dominates the unknown one ...
+  expect_equal(stagedtrees:::path_probability(m, c("a", "y", "p"), log = TRUE), -Inf)
+  ## ... so prob() reports -Inf on the log scale and 0 on the natural one,
   ## whether or not na0 is asked to convert NAs
   expect_equal(as.vector(prob(m, q, log = TRUE, na0 = FALSE)), -Inf)
   expect_equal(as.vector(prob(m, q, log = TRUE, na0 = TRUE)), -Inf)
@@ -193,6 +193,36 @@ test_that("a fully observed path through an unobserved stage reduces to -Inf", {
     expect_false(is.na(got))
     expect_equal(as.vector(got), 0)
   }
+})
+
+test_that("na0 = FALSE propagates NA once randomisation makes a situation reachable", {
+  ## In observed data an unobserved situation is also unreachable, so the zero
+  ## factor above always dominates. Randomising the treatment is what gives a
+  ## never-observed history positive probability, and then the unknown outcome
+  ## distribution genuinely matters: treating it as zero loses probability
+  ## mass silently, which is what na0 = FALSE must avoid.
+  set.seed(23)
+  n <- 400
+  d <- data.frame(
+    X = factor(sample(c("0", "1"), n, TRUE)),
+    TT = factor(sample(c("a", "b"), n, TRUE)),
+    Y = factor(sample(c("no", "yes"), n, TRUE))
+  )
+  d <- d[!(d$X == "1" & d$TT == "b"), ]  # Y never observed after (1, b)
+  m <- full(d, lambda = 0, join_unobserved = TRUE)
+  expect_true(m$name_unobserved %in% as.character(stages(m)$Y))
+
+  r <- randomize_sevt(m, "TT")           # (1, b) now has positive probability
+  yy <- data.frame(Y = factor(c("no", "yes"), levels(d$Y)))
+
+  ## na0 = FALSE reports the unknown honestly
+  expect_true(all(is.na(prob(r, yy, conditional_on = c(TT = "b"), na0 = FALSE))))
+
+  ## na0 = TRUE keeps the documented convert-to-zero reading, and that is
+  ## exactly where the probability mass goes missing
+  p0 <- prob(r, yy, conditional_on = c(TT = "b"), na0 = TRUE)
+  expect_false(any(is.na(p0)))
+  expect_lt(sum(p0), 1)
 })
 
 ## path_probability carries the situation index along the walk rather than

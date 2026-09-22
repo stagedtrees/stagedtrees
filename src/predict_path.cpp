@@ -161,7 +161,11 @@ NumericVector path_lp_cpp(IntegerMatrix codes, IntegerVector ls,
       else lp += std::log(pv);
       idx = (j == 0) ? lev : (idx - 1) * ls[j] + lev;
     }
-    out[i] = na ? NA_REAL : (nan ? R_NaN : lp);
+    // A zero factor dominates an unknown one: probabilities are bounded by 1,
+    // so 0 * unknown = 0. Without this, a path that is unreachable because an
+    // earlier situation has probability zero would be reported as NA merely
+    // because a later, never-observed situation has no probability attached.
+    out[i] = std::isinf(lp) ? lp : (na ? NA_REAL : (nan ? R_NaN : lp));
   }
   return out;
 }

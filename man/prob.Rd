@@ -15,7 +15,11 @@ prob(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE)
 
 \item{log}{logical, if \code{TRUE} log-probabilities are returned.}
 
-\item{na0}{logical, if \code{NA} should be converted to 0.}
+\item{na0}{logical, if \code{NA} should be converted to 0. This
+includes the \code{NA} probabilities of situations with no
+observations: with \code{na0 = TRUE} they are summed over as
+zeros, while with \code{na0 = FALSE} they propagate, and the
+probability of any event they contribute to is \code{NA}.}
 }
 \value{
 the probabilities to observe each observation in \code{x}, possibly
