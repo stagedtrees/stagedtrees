@@ -5,16 +5,16 @@
 \alias{randomize_sevt}
 \title{Potential Outcomes}
 \usage{
-potential_outcomes(object, outcome, treatment)
+potential_outcomes(object, treatment, outcome)
 
 randomize_sevt(object, treatment, p = NULL, ignore = object$name_unobserved)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
 
-\item{outcome}{the outcome variable.}
-
 \item{treatment}{the treatment variable.}
+
+\item{outcome}{the outcome variable.}
 
 \item{p}{the probabilities of treatment}
 
@@ -40,5 +40,5 @@ staged event tree associated with a randomized experiment over
 }
 \examples{
 model <- stages_bhc(full(Titanic))
-potential_outcomes(model, "Survived", "Class")
+potential_outcomes(model, "Class", "Survived")
 }

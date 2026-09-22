@@ -5,6 +5,11 @@
    variable, for propensity-score stratification estimation of treatment
    effects. `treatment` and `outcome` default to the last two variables in
    the order of the model.
+* BREAKING: `potential_outcomes` argument order is now
+   `(object, treatment, outcome)`, matching `ps_stratify` and
+   `randomize_sevt`. Calls using named arguments are unaffected; calls
+   relying on positional matching of `outcome`/`treatment` need to be
+   updated.
 * possible to skip checks in development.
 * `hamming_stages` earns a new argument `FUN` which specify how to aggregate 
    across variables. The default `FUN = sum` produces the standard hamming 
