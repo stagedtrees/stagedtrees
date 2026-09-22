@@ -1,5 +1,14 @@
 # dev
 
+* `prob` now honours `na0 = FALSE`. The `NA` probabilities of situations
+   with no observations were treated as zero whatever `na0` asked for, so
+   an event that could only be reached through such a situation silently
+   lost probability mass instead of being reported as unknown. This was
+   visible in `potential_outcomes`, whose rows could sum to less than one
+   when randomizing the treatment gave a never-observed history positive
+   probability. A zero factor still dominates an unknown one, so paths that
+   are unreachable because an earlier situation has probability zero are
+   still reported as zero, not `NA`.
 * new function `ps_stratify` to rebuild the staging of an outcome variable
    from the propensity-score stratification already induced by a treatment
    variable, for propensity-score stratification estimation of treatment

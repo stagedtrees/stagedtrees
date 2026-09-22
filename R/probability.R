@@ -18,7 +18,10 @@ path_probability <-
       x <- x[vs]
     }
     # start computing the log probability with first variable
-    l <- log(object$prob[[vs[1]]][[1]][x[1]])
+    p1 <- object$prob[[vs[1]]][[1]][x[1]]
+    ## a zero factor dominates an unknown one, see path_lp_cpp
+    zero <- isTRUE(p1 == 0)
+    l <- log(p1)
     n <- length(x)
     if (n > 1) {
       tree <- object$tree
@@ -39,7 +42,9 @@ path_probability <-
         vi <- vs[[i]]
         st <- stages[[vi]]
         s <- st[(idx - 1) %% length(st) + 1]
-        l <- l + log(prob[[vi]][[s]][x[i]])
+        pi <- prob[[vi]][[s]][x[i]]
+        zero <- zero || isTRUE(pi == 0)
+        l <- l + log(pi)
         if (i < n) {
           m <- match(x[[i]], tree[[vi]])
           ## tree_idx names the offending value and variable; match() alone
@@ -49,6 +54,7 @@ path_probability <-
         }
       }
     }
+    if (zero) l <- -Inf
     # return log prob or prob as requested
     if (log) {
       return(l)
@@ -67,7 +73,11 @@ path_probability <-
 #' @param x the vector or data.frame of observations.
 #' @param conditional_on named vector, the conditioning event.
 #' @param log logical, if \code{TRUE} log-probabilities are returned.
-#' @param na0 logical, if \code{NA} should be converted to 0.
+#' @param na0 logical, if \code{NA} should be converted to 0. This
+#'            includes the \code{NA} probabilities of situations with no
+#'            observations: with \code{na0 = TRUE} they are summed over as
+#'            zeros, while with \code{na0 = FALSE} they propagate, and the
+#'            probability of any event they contribute to is \code{NA}.
 #' @return the probabilities to observe each observation in \code{x}, possibly
 #' conditional on the event(s) in \code{conditional_on}.
 #'
@@ -197,7 +207,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
     res[i] <- matrixStats::logSumExp(apply(
       expand.grid(ll), MARGIN = 1,
       FUN = function(xx) path_probability(object, as.character(xx), log = TRUE)
-    ), na.rm = TRUE)
+    ), na.rm = na0)
   }
 
   rest <- if (length(odd) > 0) seq_len(n)[-odd] else seq_len(n)
@@ -217,8 +227,10 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
       if (length(mpos) == 0) {
         lp <- path_lp_cpp(codes[g, , drop = FALSE], flat$ls,
                           flat$stagemap, flat$probs)
-        ## logSumExp of one term is that term, and of a lone NA is -Inf
-        res[g] <- ifelse(is.na(lp), -Inf, lp)
+        ## logSumExp of one term is that term, and of a lone NA is -Inf,
+        ## which is the `na0 = TRUE` reading of it; with `na0 = FALSE` the
+        ## NA is kept so that it propagates to the caller.
+        res[g] <- if (na0) ifelse(is.na(lp), -Inf, lp) else lp
       } else {
         comb <- as.matrix(expand.grid(lapply(flat$ls[mpos], seq_len)))
         ncomb <- nrow(comb)
@@ -229,7 +241,7 @@ prob <- function(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE) {
         lp <- path_lp_cpp(blk, flat$ls, flat$stagemap, flat$probs)
         for (t in seq_along(g)) {
           res[g[t]] <- matrixStats::logSumExp(
-            lp[((t - 1) * ncomb + 1):(t * ncomb)], na.rm = TRUE)
+            lp[((t - 1) * ncomb + 1):(t * ncomb)], na.rm = na0)
         }
       }
     }
