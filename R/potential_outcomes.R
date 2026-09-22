@@ -4,10 +4,13 @@
 #' the treatment variable on the given model.
 #'
 #' @param object a fitted object of class \code{sevt}.
-#' @param treatment the treatment variable. Defaults to the
-#'                   second-to-last variable in the order of \code{object}.
-#' @param outcome the outcome variable. Defaults to the last variable in
-#'                 the order of \code{object}.
+#' @param treatment the treatment variable. Defaults to the variable
+#'                   preceding \code{outcome}, or to the second-to-last
+#'                   variable of \code{object} if \code{outcome} is not
+#'                   given either.
+#' @param outcome the outcome variable. Defaults to the variable following
+#'                 \code{treatment}, or to the last variable of
+#'                 \code{object} if \code{treatment} is not given either.
 #' @return a matrix with potential outcomes.
 #' @details
 #' The \code{potential_outcome} function _randomize_

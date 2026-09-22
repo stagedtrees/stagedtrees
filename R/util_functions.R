@@ -49,8 +49,34 @@ default_treatment_outcome <- function(treatment, outcome, object) {
         "x" = "{.arg object} only has variable{?s} {.val {order}}."
       ))
     }
-    if (is.null(treatment)) treatment <- order[n - 1]
-    if (is.null(outcome)) outcome <- order[n]
+    ## each one is filled in next to the other, so that supplying one of
+    ## them moves the other rather than leaving it at the end of the order
+    if (is.null(treatment) && is.null(outcome)) {
+      treatment <- order[n - 1]
+      outcome <- order[n]
+    } else if (is.null(outcome)) {
+      it <- which(order == treatment)
+      if (length(it) == 1 && it == n) {
+        cli::cli_abort(c(
+          "{.arg outcome} must be given when {.arg treatment} is the last
+          variable of {.arg object}.",
+          "x" = "{.val {treatment}} is last in {.val {order}}, so no
+                 variable follows it."
+        ))
+      }
+      outcome <- order[it + 1]
+    } else {
+      io <- which(order == outcome)
+      if (length(io) == 1 && io == 1) {
+        cli::cli_abort(c(
+          "{.arg treatment} must be given when {.arg outcome} is the first
+          variable of {.arg object}.",
+          "x" = "{.val {outcome}} is first in {.val {order}}, so no
+                 variable precedes it."
+        ))
+      }
+      treatment <- order[io - 1]
+    }
   }
   list(treatment = treatment, outcome = outcome)
 }

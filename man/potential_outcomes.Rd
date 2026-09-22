@@ -12,11 +12,14 @@ randomize_sevt(object, treatment, p = NULL, ignore = object$name_unobserved)
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
 
-\item{treatment}{the treatment variable. Defaults to the
-second-to-last variable in the order of \code{object}.}
+\item{treatment}{the treatment variable. Defaults to the variable
+preceding \code{outcome}, or to the second-to-last
+variable of \code{object} if \code{outcome} is not
+given either.}
 
-\item{outcome}{the outcome variable. Defaults to the last variable in
-the order of \code{object}.}
+\item{outcome}{the outcome variable. Defaults to the variable following
+\code{treatment}, or to the last variable of
+\code{object} if \code{treatment} is not given either.}
 
 \item{p}{the probabilities of treatment}
 

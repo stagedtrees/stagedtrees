@@ -90,3 +90,17 @@ test_that("ps_stratify checks that variables are in scope", {
   expect_error(ps_stratify(model, treatment = "Sex", outcome = "NotAVar"))
   expect_error(ps_stratify(model, treatment = "NotAVar", outcome = "Age"))
 })
+
+test_that("ps_stratify pairs a given variable with its neighbour", {
+  ## supplying either one alone must give the same model
+  expect_equal(
+    ps_stratify(model, treatment = "Sex"),
+    ps_stratify(model, treatment = "Sex", outcome = "Age")
+  )
+  expect_equal(
+    ps_stratify(model, outcome = "Age"),
+    ps_stratify(model, treatment = "Sex", outcome = "Age")
+  )
+  expect_error(ps_stratify(model, treatment = "Survived"), "last")
+  expect_error(ps_stratify(model, outcome = "Class"), "first")
+})

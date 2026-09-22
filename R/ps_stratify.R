@@ -5,12 +5,15 @@
 #' by a treatment variable.
 #'
 #' @param object a fitted object of class \code{sevt}.
-#' @param treatment the treatment variable. Defaults to the
-#'                   second-to-last variable in the order of \code{object}.
+#' @param treatment the treatment variable. Defaults to the variable
+#'                   preceding \code{outcome}, or to the second-to-last
+#'                   variable of \code{object} if \code{outcome} is not
+#'                   given either.
 #' @param outcome the outcome variable. It must be the variable
 #'                 immediately following \code{treatment} in the order
-#'                 of \code{object}. Defaults to the last variable in
-#'                 the order of \code{object}.
+#'                 of \code{object}. Defaults to the variable following
+#'                 \code{treatment}, or to the last variable of
+#'                 \code{object} if \code{treatment} is not given either.
 #' @param ignore name of the stages of \code{outcome} which are left as
 #'                they are, by default the stage of the situations with no
 #'                observations. Note that these are stages of

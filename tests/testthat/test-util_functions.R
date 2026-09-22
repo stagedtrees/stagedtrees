@@ -13,18 +13,43 @@ test_that("uni_idx works as expected", {
 
 
 test_that("default_treatment_outcome fills in the last two variables", {
-  model <- full(Titanic)
+  model <- full(Titanic)  # Class, Sex, Age, Survived
   expect_equal(
     stagedtrees:::default_treatment_outcome(NULL, NULL, model),
     list(treatment = "Age", outcome = "Survived")
   )
+})
+
+test_that("default_treatment_outcome fills in next to the given variable", {
+  model <- full(Titanic)
+  ## the missing one is taken next to the one supplied, not from the end
+  ## of the order, which would pair "Sex" with "Survived" and would make
+  ## "Age" its own treatment
   expect_equal(
     stagedtrees:::default_treatment_outcome("Sex", NULL, model),
-    list(treatment = "Sex", outcome = "Survived")
+    list(treatment = "Sex", outcome = "Age")
   )
   expect_equal(
-    stagedtrees:::default_treatment_outcome(NULL, "Class", model),
-    list(treatment = "Age", outcome = "Class")
+    stagedtrees:::default_treatment_outcome(NULL, "Age", model),
+    list(treatment = "Sex", outcome = "Age")
+  )
+  expect_equal(
+    stagedtrees:::default_treatment_outcome(NULL, "Survived", model),
+    list(treatment = "Age", outcome = "Survived")
+  )
+})
+
+test_that("default_treatment_outcome errors when there is no neighbour", {
+  model <- full(Titanic)
+  expect_error(
+    stagedtrees:::default_treatment_outcome("Survived", NULL, model), "last"
+  )
+  expect_error(
+    stagedtrees:::default_treatment_outcome(NULL, "Class", model), "first"
+  )
+  ## an unknown variable is left to the caller's own check_scope()
+  expect_equal(
+    stagedtrees:::default_treatment_outcome("Nope", NULL, model)$treatment, "Nope"
   )
 })
 
