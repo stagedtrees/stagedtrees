@@ -180,7 +180,10 @@ predict.sevt <-
           z[[class]] <- cv
           z
         }))
-        lp <- matrix(prob(object, big, log = TRUE),
+        ## na0 = TRUE: a class value whose probability is undefined cannot be
+        ## ranked against the others, and scoring it as zero keeps it from
+        ## being predicted, which is what this did before na0 changed default.
+        lp <- matrix(prob(object, big, log = TRUE, na0 = TRUE),
                      nrow = length(g), ncol = length(cls_lvl))
         lp[is.nan(lp)] <- -Inf
         ## normalise per row, as the per-row version did
