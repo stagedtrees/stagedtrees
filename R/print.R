@@ -21,6 +21,9 @@ print.sevt <- function(x, ..., max = 5) {
     ifelse(is_fitted_sevt(x), "(fitted)", ""), "\n"
     )
   cat(tree_string(x$tree, max = max), "\n")
+  if (!is.null(x$call)) {
+    cat("Call: ", deparse(x$call), "\n")
+  }
   if (!is.null(x$ll)) {
     print(x$ll)
   }

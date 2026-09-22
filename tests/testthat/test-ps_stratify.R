@@ -118,4 +118,5 @@ test_that("ps_stratify records the call which produced the object", {
   ## and it replaces the call of the search which found the staging
   expect_equal(model$call[[1]], as.name("stages_bhc"))
   expect_output(print(summary(ps)), "ps_stratify")
+  expect_output(print(ps), "ps_stratify")
 })

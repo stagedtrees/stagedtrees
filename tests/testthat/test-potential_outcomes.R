@@ -44,4 +44,5 @@ test_that("randomize_sevt records the call which produced the object", {
   m <- stages_bhc(full(Titanic))
   r <- randomize_sevt(m, "Age")
   expect_equal(r$call[[1]], as.name("randomize_sevt"))
+  expect_output(print(r), "randomize_sevt")
 })
