@@ -82,6 +82,6 @@ stages_kmeans <- function(object,
     object <- sevt_fit(object, scope = v, compute_logLik = FALSE)
   }
   object$ll <- logLik(object)
-  object$call <- match.call()
+  object <- record_call(object, match.call())
   return(object)
 }

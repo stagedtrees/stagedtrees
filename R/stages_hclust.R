@@ -180,7 +180,7 @@ stages_hclust <-
       }
 
     }
-    object$call <- match.call()
+    object <- record_call(object, match.call())
     object$scores <- scores
     return(object)
   }

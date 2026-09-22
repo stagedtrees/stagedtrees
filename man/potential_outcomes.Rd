@@ -5,20 +5,31 @@
 \alias{randomize_sevt}
 \title{Potential Outcomes}
 \usage{
-potential_outcomes(object, outcome, treatment)
+potential_outcomes(object, treatment = NULL, outcome = NULL)
 
 randomize_sevt(object, treatment, p = NULL, ignore = object$name_unobserved)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
 
-\item{outcome}{the outcome variable.}
+\item{treatment}{the treatment variable. Defaults to the variable
+preceding \code{outcome}, or to the second-to-last
+variable of \code{object} if \code{outcome} is not
+given either.}
 
-\item{treatment}{the treatment variable.}
+\item{outcome}{the outcome variable. Defaults to the variable following
+\code{treatment}, or to the last variable of
+\code{object} if \code{treatment} is not given either.}
 
 \item{p}{the probabilities of treatment}
 
-\item{ignore}{name of stages to be ignored}
+\item{ignore}{name of the stages of \code{treatment} which are left as
+they are, by default the stage of the situations with no
+observations. Every other situation of \code{treatment}
+is moved to a single \code{"randomized"} stage carrying
+\code{p}, while these keep their own stage and
+probabilities. Use \code{ignore = NULL} to randomize the
+treatment in every situation.}
 }
 \value{
 a matrix with potential outcomes.
@@ -40,5 +51,11 @@ staged event tree associated with a randomized experiment over
 }
 \examples{
 model <- stages_bhc(full(Titanic))
-potential_outcomes(model, "Survived", "Class")
+potential_outcomes(model, "Class", "Survived")
+
+# using the default treatment/outcome, the last two variables in the
+# order of `model`. A prior is used here because no crew member was a
+# child, so at lambda = 0 the effect of "Age" is not identified and the
+# potential outcomes under "Child" are NA, see `positivity()`
+potential_outcomes(stages_bhc(full(Titanic, lambda = 1)))
 }

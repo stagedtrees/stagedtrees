@@ -89,7 +89,7 @@ stages_fbhc <-
     if (trace > 0) {
       cli::cli_text("fast HC done")
     }
-    object$call <- match.call()
+    object <- record_call(object, match.call())
     object$score <- list(value = now_score, f = score)
     return(object)
   }

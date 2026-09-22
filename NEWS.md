@@ -1,5 +1,13 @@
 # dev
 
+* new function `positivity` which reports the contexts where a treatment
+   variable does not take all its values with positive probability, the
+   positivity (or overlap) assumption required to estimate a treatment
+   effect. It is checked on the probabilities of the object it is given,
+   so it can be used on the data before a staging is searched, with
+   `full(data, lambda = 0)`, as well as on a fitted model: staging the
+   treatment and smoothing with `lambda > 0` both give positive
+   probability to values a context never takes.
 * fixed `summary` and `confint` failing on a tree returned by
    `randomize_sevt`. The sample size of a stage was read with
    `attr(p, "n")`, which falls back to partial matching and returns the
@@ -34,7 +42,18 @@
    from the propensity-score stratification already induced by a treatment
    variable, for propensity-score stratification estimation of treatment
    effects. `treatment` and `outcome` default to the last two variables in
-   the order of the model.
+   the order of the model. As in `randomize_sevt`, the stages listed in
+   `ignore` (by default the unobserved ones) are not re-staged: a
+   situation with no observations would otherwise be given the
+   distribution of the stratum it lands in, which is an extrapolation
+   across the contexts of that stratum rather than something the data
+   shows for that one. Use `ignore = NULL` to ask for it.
+* BREAKING: `potential_outcomes` argument order is now
+   `(object, treatment, outcome)`, matching `ps_stratify` and
+   `randomize_sevt`. Calls using named arguments are unaffected; calls
+   relying on positional matching of `outcome`/`treatment` need to be
+   updated. `treatment` and `outcome` also gain the same default as
+   `ps_stratify`: the last two variables in the order of the model.
 * possible to skip checks in development.
 * `hamming_stages` earns a new argument `FUN` which specify how to aggregate 
    across variables. The default `FUN = sum` produces the standard hamming 

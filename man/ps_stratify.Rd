@@ -4,18 +4,33 @@
 \alias{ps_stratify}
 \title{Propensity-score stratification}
 \usage{
-ps_stratify(object, treatment = NULL, outcome = NULL)
+ps_stratify(
+  object,
+  treatment = NULL,
+  outcome = NULL,
+  ignore = object$name_unobserved
+)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
 
-\item{treatment}{the treatment variable. Defaults to the
-second-to-last variable in the order of \code{object}.}
+\item{treatment}{the treatment variable. Defaults to the variable
+preceding \code{outcome}, or to the second-to-last
+variable of \code{object} if \code{outcome} is not
+given either.}
 
 \item{outcome}{the outcome variable. It must be the variable
 immediately following \code{treatment} in the order
-of \code{object}. Defaults to the last variable in
-the order of \code{object}.}
+of \code{object}. Defaults to the variable following
+\code{treatment}, or to the last variable of
+\code{object} if \code{treatment} is not given either.}
+
+\item{ignore}{name of the stages of \code{outcome} which are left as
+they are, by default the stage of the situations with no
+observations. Note that these are stages of
+\code{outcome}, the variable this function re-stages,
+and not of \code{treatment}. Use \code{ignore = NULL} to
+re-stage every situation of \code{outcome}.}
 }
 \value{
 an object of class \code{sevt}, equal to \code{object} except
@@ -37,6 +52,18 @@ built from the pair (propensity-score stage of its \code{treatment}
 history, value taken by \code{treatment}). Two situations of
 \code{outcome} therefore share a stage exactly when they share both a
 treatment stage and a treatment value.
+
+Situations of \code{outcome} whose stage is listed in \code{ignore},
+by default the unobserved ones pooled by
+\code{\link{join_unobserved}}, keep their stage. Such a situation has
+no observations of its own, so re-staging it would hand it the
+distribution of the stratum it lands in, estimated from the other
+contexts in that stratum. That is an extrapolation, and it is exactly
+what a stratification is for, but it is not something the data shows
+for that context; leaving these situations alone keeps their outcome
+distribution undefined, and \code{ignore = NULL} asks for the
+extrapolation instead. Which contexts these are, and how much of the
+population they account for, is reported by \code{\link{positivity}}.
 
 The new staging is assigned through the replacement method for
 \code{\link{stages}}, which detects that \code{object} is already
@@ -65,5 +92,6 @@ Varando G., Leonelli M., Cerdà-Bautista J., Sitokonstantinou V., Camps-Valls G.
 \url{https://arxiv.org/abs/2509.26265}
 }
 \seealso{
-\code{\link{potential_outcomes}}, \code{\link{stages}}
+\code{\link{potential_outcomes}}, \code{\link{positivity}},
+\code{\link{stages}}
 }
