@@ -5,16 +5,18 @@
 \alias{randomize_sevt}
 \title{Potential Outcomes}
 \usage{
-potential_outcomes(object, treatment, outcome)
+potential_outcomes(object, treatment = NULL, outcome = NULL)
 
 randomize_sevt(object, treatment, p = NULL, ignore = object$name_unobserved)
 }
 \arguments{
 \item{object}{a fitted object of class \code{sevt}.}
 
-\item{treatment}{the treatment variable.}
+\item{treatment}{the treatment variable. Defaults to the
+second-to-last variable in the order of \code{object}.}
 
-\item{outcome}{the outcome variable.}
+\item{outcome}{the outcome variable. Defaults to the last variable in
+the order of \code{object}.}
 
 \item{p}{the probabilities of treatment}
 
@@ -41,4 +43,8 @@ staged event tree associated with a randomized experiment over
 \examples{
 model <- stages_bhc(full(Titanic))
 potential_outcomes(model, "Class", "Survived")
+
+# using the default treatment/outcome, the last two variables in the order
+# of `model` (here, "Age" and "Survived")
+potential_outcomes(model)
 }

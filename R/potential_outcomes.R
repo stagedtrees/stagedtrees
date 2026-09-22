@@ -4,8 +4,10 @@
 #' the treatment variable on the given model.
 #'
 #' @param object a fitted object of class \code{sevt}.
-#' @param treatment the treatment variable.
-#' @param outcome the outcome variable.
+#' @param treatment the treatment variable. Defaults to the
+#'                   second-to-last variable in the order of \code{object}.
+#' @param outcome the outcome variable. Defaults to the last variable in
+#'                 the order of \code{object}.
 #' @return a matrix with potential outcomes.
 #' @details
 #' The \code{potential_outcome} function _randomize_
@@ -21,9 +23,16 @@
 #' @examples
 #' model <- stages_bhc(full(Titanic))
 #' potential_outcomes(model, "Class", "Survived")
+#'
+#' # using the default treatment/outcome, the last two variables in the order
+#' # of `model` (here, "Age" and "Survived")
+#' potential_outcomes(model)
 #' @export
-potential_outcomes <- function(object, treatment, outcome){
+potential_outcomes <- function(object, treatment = NULL, outcome = NULL){
   check_sevt_prob(object)
+  defaults <- default_treatment_outcome(treatment, outcome, object)
+  treatment <- defaults$treatment
+  outcome <- defaults$outcome
   check_scope(c(outcome, treatment), object)
   object0 <- randomize_sevt(object, treatment)
   xx <- c(NA)

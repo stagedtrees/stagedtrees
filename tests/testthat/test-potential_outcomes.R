@@ -24,3 +24,18 @@ test_that("potential_outcomes return probabilities", {
     expect_lt(sum(abs(rowSums(po) - 1)), 1e-14)
   }
 })
+
+test_that("potential_outcomes defaults to the last two variables", {
+  model <- random_sevt(model0, q = 0)
+  po_default <- potential_outcomes(model)
+  po_explicit <- potential_outcomes(model, treatment = "TT", outcome = "Y")
+  expect_equal(po_default, po_explicit)
+})
+
+test_that("potential_outcomes defaults need at least two variables", {
+  m1 <- sevt_fit(
+    sevt(list(A = c("a", "b")), full = TRUE),
+    data.frame(A = c("a", "b", "a", "b")), lambda = 0
+  )
+  expect_error(potential_outcomes(m1))
+})

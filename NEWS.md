@@ -9,7 +9,8 @@
    `(object, treatment, outcome)`, matching `ps_stratify` and
    `randomize_sevt`. Calls using named arguments are unaffected; calls
    relying on positional matching of `outcome`/`treatment` need to be
-   updated.
+   updated. `treatment` and `outcome` also gain the same default as
+   `ps_stratify`: the last two variables in the order of the model.
 * possible to skip checks in development.
 * `hamming_stages` earns a new argument `FUN` which specify how to aggregate 
    across variables. The default `FUN = sum` produces the standard hamming 

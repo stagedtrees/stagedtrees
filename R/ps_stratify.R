@@ -54,20 +54,11 @@
 #' @export
 ps_stratify <- function(object, treatment = NULL, outcome = NULL) {
   check_sevt_prob(object)
-  order <- sevt_varnames(object)
-  n <- length(order)
-  if (is.null(treatment) || is.null(outcome)) {
-    if (n < 2) {
-      cli::cli_abort(c(
-        "{.arg object} must have at least two variables to infer default
-        {.arg treatment} and {.arg outcome}.",
-        "x" = "{.arg object} only has variable{?s} {.val {order}}."
-      ))
-    }
-  }
-  if (is.null(treatment)) treatment <- order[n - 1]
-  if (is.null(outcome)) outcome <- order[n]
+  defaults <- default_treatment_outcome(treatment, outcome, object)
+  treatment <- defaults$treatment
+  outcome <- defaults$outcome
   check_scope(c(treatment, outcome), object)
+  order <- sevt_varnames(object)
   it <- which(order == treatment)
   io <- which(order == outcome)
   if (io != it + 1) {

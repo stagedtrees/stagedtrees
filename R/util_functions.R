@@ -29,6 +29,32 @@ uni_idx <- function(x, sep = "_") {
   return(x)
 }
 
+#' Default treatment and outcome variables
+#'
+#' Fill in missing \code{treatment}/\code{outcome} arguments with the
+#' second-to-last and last variables in the order of \code{object}.
+#' @param treatment the treatment variable, or \code{NULL}.
+#' @param outcome the outcome variable, or \code{NULL}.
+#' @param object a fitted object of class \code{sevt}.
+#' @return a list with components \code{treatment} and \code{outcome}.
+#' @keywords internal
+default_treatment_outcome <- function(treatment, outcome, object) {
+  if (is.null(treatment) || is.null(outcome)) {
+    order <- sevt_varnames(object)
+    n <- length(order)
+    if (n < 2) {
+      cli::cli_abort(c(
+        "{.arg object} must have at least two variables to infer default
+        {.arg treatment} and {.arg outcome}.",
+        "x" = "{.arg object} only has variable{?s} {.val {order}}."
+      ))
+    }
+    if (is.null(treatment)) treatment <- order[n - 1]
+    if (is.null(outcome)) outcome <- order[n]
+  }
+  list(treatment = treatment, outcome = outcome)
+}
+
 #' Find maximum value
 #'
 #' @param x numerical, the log-probabilities.

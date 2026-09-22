@@ -12,6 +12,31 @@ test_that("uni_idx works as expected", {
 })
 
 
+test_that("default_treatment_outcome fills in the last two variables", {
+  model <- full(Titanic)
+  expect_equal(
+    stagedtrees:::default_treatment_outcome(NULL, NULL, model),
+    list(treatment = "Age", outcome = "Survived")
+  )
+  expect_equal(
+    stagedtrees:::default_treatment_outcome("Sex", NULL, model),
+    list(treatment = "Sex", outcome = "Survived")
+  )
+  expect_equal(
+    stagedtrees:::default_treatment_outcome(NULL, "Class", model),
+    list(treatment = "Age", outcome = "Class")
+  )
+})
+
+test_that("default_treatment_outcome requires at least two variables", {
+  m1 <- sevt_fit(
+    sevt(list(A = c("a", "b")), full = TRUE),
+    data.frame(A = c("a", "b", "a", "b")), lambda = 0
+  )
+  expect_error(stagedtrees:::default_treatment_outcome(NULL, NULL, m1))
+})
+
+
 test_that("which_class", {
   D <- factor("D", c("A", "B", "C", "D", "E"))
   A <- factor("A", c("A", "B", "C", "D", "E"))
