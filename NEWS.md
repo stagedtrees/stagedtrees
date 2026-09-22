@@ -8,7 +8,6 @@
    `full(data, lambda = 0)`, as well as on a fitted model: staging the
    treatment and smoothing with `lambda > 0` both give positive
    probability to values a context never takes.
-
 * BREAKING: `na0` now defaults to `FALSE` in `prob`. A situation with no
    observations carries no probability, and the old default supplied one it
    does not have, silently removing probability mass from any event that

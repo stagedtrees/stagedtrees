@@ -59,7 +59,8 @@ contexts in that stratum. That is an extrapolation, and it is exactly
 what a stratification is for, but it is not something the data shows
 for that context; leaving these situations alone keeps their outcome
 distribution undefined, and \code{ignore = NULL} asks for the
-extrapolation instead.
+extrapolation instead. Which contexts these are, and how much of the
+population they account for, is reported by \code{\link{positivity}}.
 
 The new staging is assigned through the replacement method for
 \code{\link{stages}}, which detects that \code{object} is already
@@ -88,5 +89,6 @@ Varando G., Leonelli M., Cerdà-Bautista J., Sitokonstantinou V., Camps-Valls G.
 \url{https://arxiv.org/abs/2509.26265}
 }
 \seealso{
-\code{\link{potential_outcomes}}, \code{\link{stages}}
+\code{\link{potential_outcomes}}, \code{\link{positivity}},
+\code{\link{stages}}
 }

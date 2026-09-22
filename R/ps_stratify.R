@@ -40,7 +40,8 @@
 #' what a stratification is for, but it is not something the data shows
 #' for that context; leaving these situations alone keeps their outcome
 #' distribution undefined, and \code{ignore = NULL} asks for the
-#' extrapolation instead.
+#' extrapolation instead. Which contexts these are, and how much of the
+#' population they account for, is reported by \code{\link{positivity}}.
 #'
 #' The new staging is assigned through the replacement method for
 #' \code{\link{stages}}, which detects that \code{object} is already
@@ -67,7 +68,8 @@
 #' # equivalent, since treatment/outcome default to the last two variables
 #' model_ps <- ps_stratify(model)
 #' stages(model_ps)[["Survived"]]
-#' @seealso \code{\link{potential_outcomes}}, \code{\link{stages}}
+#' @seealso \code{\link{potential_outcomes}}, \code{\link{positivity}},
+#'          \code{\link{stages}}
 #' @export
 ps_stratify <- function(object, treatment = NULL, outcome = NULL,
                         ignore = object$name_unobserved) {
