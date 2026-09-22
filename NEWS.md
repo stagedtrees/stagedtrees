@@ -1,5 +1,18 @@
 # dev
 
+* BREAKING: `na0` now defaults to `FALSE` in `prob`. A situation with no
+   observations carries no probability, and the old default supplied one it
+   does not have, silently removing probability mass from any event that
+   could be reached through it. Asking for that reading is now explicit.
+   Since paths that are unreachable because an earlier situation has
+   probability zero are reported as zero anyway, this changes the result
+   only where a probability is genuinely undefined. `predict` keeps the
+   previous reading, since a class value whose probability is undefined
+   cannot be ranked against the others.
+* BREAKING: a value which is not a level of its variable is an error in
+   `prob` wherever it appears. At the last variable of the query it was
+   silently reported as a probability of zero, while every other position
+   already raised an error.
 * `prob` now honours `na0 = FALSE`. The `NA` probabilities of situations
    with no observations were treated as zero whatever `na0` asked for, so
    an event that could only be reached through such a situation silently

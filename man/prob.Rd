@@ -4,7 +4,7 @@
 \alias{prob}
 \title{Probabilities for a staged event tree}
 \usage{
-prob(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE)
+prob(object, x, conditional_on = NULL, log = FALSE, na0 = FALSE)
 }
 \arguments{
 \item{object}{an object of class \code{sevt} with probabilities.}
@@ -17,9 +17,18 @@ prob(object, x, conditional_on = NULL, log = FALSE, na0 = TRUE)
 
 \item{na0}{logical, if \code{NA} should be converted to 0. This
 includes the \code{NA} probabilities of situations with no
-observations: with \code{na0 = TRUE} they are summed over as
-zeros, while with \code{na0 = FALSE} they propagate, and the
-probability of any event they contribute to is \code{NA}.}
+observations: with \code{na0 = FALSE}, the default, they
+propagate, and the probability of any event they contribute
+to is \code{NA}; with \code{na0 = TRUE} they are summed over
+as zeros instead.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       A situation with no observations carries no probability, and
+       \code{na0 = TRUE} supplies one it does not have. That is only
+       sound where the situation cannot be reached anyway, which the
+       zero-dominance rule below already handles; elsewhere it
+       silently removes probability mass from the result, so it is
+       left to the caller to ask for.
+}\if{html}{\out{</div>}}}
 }
 \value{
 the probabilities to observe each observation in \code{x}, possibly

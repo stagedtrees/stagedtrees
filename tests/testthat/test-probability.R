@@ -351,9 +351,7 @@ test_that("several missing variables are marginalised jointly", {
   expect_equal(as.vector(prob(m, q)), explicit)
 })
 
-test_that("a value that is not a level errors where the index needs it", {
-  ## these rows keep the original path rather than going to the kernel, so the
-  ## split between an error and -Inf has to be preserved exactly
+test_that("a value that is not a level errors, wherever it sits", {
   set.seed(63)
   d <- data.frame(
     A = factor(sample(c("a", "b"), 200, TRUE)),
@@ -365,9 +363,35 @@ test_that("a value that is not a level errors where the index needs it", {
   expect_error(prob(m, q("zz", "x", "p")), "A")
   expect_error(prob(m, q("a", "zz", "p")), "B")
   expect_error(prob(m, q("zz", NA, "p")), "A")
-  ## the last variable is only a name lookup, so an unknown value is -Inf there
-  expect_equal(as.vector(prob(m, q("a", "x", "zz"), log = TRUE)), -Inf)
-  expect_equal(as.vector(prob(m, q("a", NA, "zz"), log = TRUE)), -Inf)
+  ## the last variable is only a name lookup, where an unknown value used to
+  ## come back as a probability of zero rather than as the mistake it is
+  expect_error(prob(m, q("a", "x", "zz")), "C")
+  expect_error(prob(m, q("a", NA, "zz")), "C")
+  ## path_probability() keeps its documented "does not check the path"
+  ## contract; prob() screens the query before it gets there
+  expect_true(is.na(stagedtrees:::path_probability(m, c("a", "x", "zz"))))
+})
+
+test_that("na0 defaults to FALSE, so an undefined probability is not invented", {
+  set.seed(23)
+  n <- 400
+  d <- data.frame(
+    X = factor(sample(c("0", "1"), n, TRUE)),
+    TT = factor(sample(c("a", "b"), n, TRUE)),
+    Y = factor(sample(c("no", "yes"), n, TRUE))
+  )
+  d <- d[!(d$X == "1" & d$TT == "b"), ]
+  m <- full(d, lambda = 0, join_unobserved = TRUE)
+  r <- randomize_sevt(m, "TT")
+  yy <- data.frame(Y = factor(c("no", "yes"), levels(d$Y)))
+
+  ## the default now reports the unknown instead of scoring it as zero
+  expect_true(all(is.na(prob(r, yy, conditional_on = c(TT = "b")))))
+  expect_equal(
+    prob(r, yy, conditional_on = c(TT = "b")),
+    prob(r, yy, conditional_on = c(TT = "b"), na0 = FALSE)
+  )
+  expect_false(any(is.na(prob(r, yy, conditional_on = c(TT = "b"), na0 = TRUE))))
 })
 
 test_that("completions are summed in expand.grid order", {
