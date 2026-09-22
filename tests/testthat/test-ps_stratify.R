@@ -1,5 +1,12 @@
 model <- stages_bhc(full(Titanic))
 
+## $call records the call that produced the object, so two models built by
+## different but equivalent calls differ only there
+no_call <- function(x) {
+  x$call <- NULL
+  x
+}
+
 test_that("ps_stratify builds one stage per treatment-stage/value pair", {
   model_ps <- ps_stratify(model, treatment = "Sex", outcome = "Age")
   expect_true(is_fitted_sevt(model_ps))
@@ -18,7 +25,7 @@ test_that("ps_stratify builds one stage per treatment-stage/value pair", {
 test_that("ps_stratify defaults to the last two variables", {
   model_ps_default <- ps_stratify(model)
   model_ps_explicit <- ps_stratify(model, treatment = "Age", outcome = "Survived")
-  expect_equal(model_ps_default, model_ps_explicit)
+  expect_equal(no_call(model_ps_default), no_call(model_ps_explicit))
 })
 
 test_that("ps_stratify keeps the stages listed in ignore", {
@@ -47,8 +54,8 @@ test_that("ps_stratify keeps the stages listed in ignore", {
 
 test_that("ps_stratify is unaffected by ignore when nothing is unobserved", {
   expect_equal(
-    ps_stratify(model, treatment = "Sex", outcome = "Age"),
-    ps_stratify(model, treatment = "Sex", outcome = "Age", ignore = NULL)
+    no_call(ps_stratify(model, treatment = "Sex", outcome = "Age")),
+    no_call(ps_stratify(model, treatment = "Sex", outcome = "Age", ignore = NULL))
   )
 })
 
@@ -94,13 +101,21 @@ test_that("ps_stratify checks that variables are in scope", {
 test_that("ps_stratify pairs a given variable with its neighbour", {
   ## supplying either one alone must give the same model
   expect_equal(
-    ps_stratify(model, treatment = "Sex"),
-    ps_stratify(model, treatment = "Sex", outcome = "Age")
+    no_call(ps_stratify(model, treatment = "Sex")),
+    no_call(ps_stratify(model, treatment = "Sex", outcome = "Age"))
   )
   expect_equal(
-    ps_stratify(model, outcome = "Age"),
-    ps_stratify(model, treatment = "Sex", outcome = "Age")
+    no_call(ps_stratify(model, outcome = "Age")),
+    no_call(ps_stratify(model, treatment = "Sex", outcome = "Age"))
   )
   expect_error(ps_stratify(model, treatment = "Survived"), "last")
   expect_error(ps_stratify(model, outcome = "Class"), "first")
+})
+
+test_that("ps_stratify records the call which produced the object", {
+  ps <- ps_stratify(model, treatment = "Sex", outcome = "Age")
+  expect_equal(ps$call[[1]], as.name("ps_stratify"))
+  ## and it replaces the call of the search which found the staging
+  expect_equal(model$call[[1]], as.name("stages_bhc"))
+  expect_output(print(summary(ps)), "ps_stratify")
 })

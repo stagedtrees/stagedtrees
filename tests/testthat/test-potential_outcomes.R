@@ -39,3 +39,9 @@ test_that("potential_outcomes defaults need at least two variables", {
   )
   expect_error(potential_outcomes(m1))
 })
+
+test_that("randomize_sevt records the call which produced the object", {
+  m <- stages_bhc(full(Titanic))
+  r <- randomize_sevt(m, "Age")
+  expect_equal(r$call[[1]], as.name("randomize_sevt"))
+})
