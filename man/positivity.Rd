@@ -19,8 +19,14 @@ in the order of \code{object}.}
 
 \item{ignore}{name of the stages of \code{treatment} whose contexts are
 left out of the table, by default the stage of the
-unobserved situations. How many were left out is
-reported when the result is printed.}
+situations with no observations. Note that these are
+stages of \code{treatment}, the variable whose values
+must be attainable, and not of \code{outcome}. A context
+with no observations attains no value of the treatment
+at all, so it would be reported every time while
+breaking no assumption about the population; use
+\code{ignore = NULL} to see these as well. How many were
+left out is reported when the result is printed.}
 
 \item{x}{an object of class \code{sevt.positivity}, as returned by
 \code{positivity}.}
