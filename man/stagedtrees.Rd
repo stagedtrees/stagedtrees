@@ -102,6 +102,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Gherardo Varando \email{gherardo.varando@gmail.com} (\href{https://orcid.org/0000-0002-6708-1103}{ORCID})
   \item Federico Carli
   \item Manuele Leonelli (\href{https://orcid.org/0000-0002-2562-5192}{ORCID})
   \item Eva Riccomagno

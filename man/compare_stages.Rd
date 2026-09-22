@@ -36,8 +36,12 @@ One of: \code{"naive"},
 
 \item{FUN}{a function that is used to aggregate the Hamming distance
 for each variable. The default \code{sum} produces
-the traditional Hamming distance.  Use \code{mean}
-to obtain the normalized Hamming distance.}
+the traditional Hamming distance (range: 0 to total number of
+non-root situations). Use \code{mean} to obtain a per-variable
+normalised Hamming distance: each variable contributes a value
+in \eqn{[0, 1]}, and these are summed across variables, so the
+result lies in \eqn{[0, p-1]} where \eqn{p} is the number of
+variables.}
 }
 \value{
 \code{compare_stages}: if \code{return_tree = FALSE}, logical: \code{TRUE} if the two
@@ -45,9 +49,10 @@ models are exactly equal, otherwise \code{FALSE}.
 Else if \code{return_tree = TRUE}, the differences between
 the two trees, according to the selected \code{method}.
 
-\code{hamming_stages}: if \code{return_tree = FALSE}, integer, the minimum
-number of situations where the stage should be changed to obtain the same
-models. If \code{return_tree = TRUE} a stages-like structure showing which
+\code{hamming_stages}: if \code{return_tree = FALSE}, a numeric value
+summarising the minimum number of situations where the stage should be changed
+to obtain equivalent models (aggregated via \code{FUN}, see above).
+If \code{return_tree = TRUE} a stages-like structure showing which
 situations should be modified to obtain the same models.
 
 \code{diff_stages}: a stages-like structure marking the situations belonging

@@ -50,6 +50,8 @@
 #'  * Rename a stage \code{\link{rename_stage}}
 #'
 #' @name stagedtrees
+#' @useDynLib stagedtrees, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
 #' @references
 #' Collazo R. A., Görgen C. and Smith J. Q.
 #' Chain event graphs. CRC Press, 2018.

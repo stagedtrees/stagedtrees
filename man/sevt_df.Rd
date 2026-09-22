@@ -15,3 +15,15 @@ integer, degrees of freedom of the staged event tree.
 \description{
 Return the number of parameters of the model.
 }
+\details{
+The degrees of freedom equal
+\eqn{\sum_v |\text{stages}_v| \times (k_v - 1)}, where the sum runs over
+all variables, \eqn{|\text{stages}_v|} is the number of distinct stage
+labels for variable \eqn{v} (1 for the root), and \eqn{k_v} is the number
+of levels of \eqn{v}. Stages with zero observations are still counted
+(the df is a property of the model, not of the sample); see
+\code{\link{join_unobserved}} to merge them before fitting.
+}
+\seealso{
+\code{\link{logLik.sevt}}
+}

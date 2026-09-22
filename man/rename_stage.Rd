@@ -16,14 +16,15 @@ rename_stage(object, var, stage, new)
 \item{new}{new name for the stage.}
 }
 \value{
-a staged event tree object where stages \code{stage}
-have been renamed to \code{new}.
+a staged event tree object where stage \code{stage} has been
+renamed to \code{new}.
 }
 \description{
 Change the name of a stage in a staged event tree.
 }
 \details{
-No internal checks are performed and as side effect
-stages can be joined, if e.g. \code{new} is equal to the name
-of a stage for variable \code{var}.
+Renames a stage without merging. If \code{new} already exists
+as a stage for variable \code{var}, an error is raised because renaming
+onto an existing stage would silently overwrite its probability vector
+with incorrect values. To merge two stages use \code{\link{join_stages}}.
 }
