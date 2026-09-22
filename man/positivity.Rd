@@ -87,10 +87,15 @@ checking positivity before the staging is searched.
 ## no crew member was a child, in either sex
 positivity(full(Titanic, lambda = 0), treatment = "Age", outcome = "Survived")
 
-## staging can make a violation disappear, by borrowing from the
-## other contexts of the same stage
-positivity(stages_bhc(full(Titanic, lambda = 0)),
-           treatment = "Age", outcome = "Survived")
+## a staging which puts the crew together with the other classes makes
+## the violation disappear, by borrowing from contexts which did have
+## children: the model is then positive where the data is silent
+model <- full(Titanic, lambda = 0)
+stages(model)["Age"] <- "pooled"
+positivity(model, treatment = "Age", outcome = "Survived")
+
+## a prior does the same
+positivity(full(Titanic, lambda = 1), treatment = "Age", outcome = "Survived")
 }
 \seealso{
 \code{\link{potential_outcomes}}, \code{\link{ps_stratify}}

@@ -53,7 +53,9 @@ staged event tree associated with a randomized experiment over
 model <- stages_bhc(full(Titanic))
 potential_outcomes(model, "Class", "Survived")
 
-# using the default treatment/outcome, the last two variables in the order
-# of `model` (here, "Age" and "Survived")
-potential_outcomes(model)
+# using the default treatment/outcome, the last two variables in the
+# order of `model`. A prior is used here because no crew member was a
+# child, so at lambda = 0 the effect of "Age" is not identified and the
+# potential outcomes under "Child" are NA, see `positivity()`
+potential_outcomes(stages_bhc(full(Titanic, lambda = 1)))
 }

@@ -27,9 +27,11 @@
 #' model <- stages_bhc(full(Titanic))
 #' potential_outcomes(model, "Class", "Survived")
 #'
-#' # using the default treatment/outcome, the last two variables in the order
-#' # of `model` (here, "Age" and "Survived")
-#' potential_outcomes(model)
+#' # using the default treatment/outcome, the last two variables in the
+#' # order of `model`. A prior is used here because no crew member was a
+#' # child, so at lambda = 0 the effect of "Age" is not identified and the
+#' # potential outcomes under "Child" are NA, see `positivity()`
+#' potential_outcomes(stages_bhc(full(Titanic, lambda = 1)))
 #' @export
 potential_outcomes <- function(object, treatment = NULL, outcome = NULL){
   check_sevt_prob(object)
@@ -71,7 +73,11 @@ randomize_sevt <- function(object, treatment, p = NULL, ignore = object$name_uno
   ## nothing, which is what the missing sample size records
   attr(p, "n") <- NA
   tmp <- object$stages[[treatment]]
-  object$stages[[treatment]][!(tmp %in% ignore)] <- "randomized"
+  ## the first variable has a single situation and no stages entry, which
+  ## assigning into would turn into character(0)
+  if (!is.null(tmp)) {
+    object$stages[[treatment]][!(tmp %in% ignore)] <- "randomized"
+  }
   object$prob[[treatment]] <- c(list(randomized = p), object$prob[[treatment]][ignore])
   object$prob[[treatment]] <- object$prob[[treatment]][!is.na(names(object$prob[[treatment]]))]
   ## the returned tree is the one of a randomized experiment, not a model

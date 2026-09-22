@@ -100,3 +100,34 @@ test_that("positivity checks its arguments", {
   expect_error(positivity(sevt(list(A = c("a", "b"), B = c("x", "y")),
                                full = TRUE), "A", "B"))  # no probabilities
 })
+
+test_that("positivity finds a violation of the first variable", {
+  ## the single stage of the first variable is stored under its own name and
+  ## not under the "NA" that stages() reports, so looking it up by that name
+  ## silently found nothing and every such context passed as fine
+  set.seed(1)
+  d <- data.frame(
+    A = factor(sample(c("a1", "a2"), 200, TRUE), levels = c("a1", "a2", "a3")),
+    Y = factor(sample(c("n", "y"), 200, TRUE))
+  )
+  m <- full(d, lambda = 0)
+  expect_equal(unname(m$prob$A[[1]][["a3"]]), 0)
+  viol <- positivity(m, "A", "Y")
+  expect_equal(nrow(viol), 1)
+  expect_equal(viol$A, "a3")
+  expect_equal(viol$context_probability, 1)
+})
+
+test_that("positivity keeps a context variable named like the treatment column", {
+  set.seed(1)
+  d <- data.frame(
+    treatment = factor(sample(c("a1", "a2"), 400, TRUE)),
+    TT = factor(sample(c("t1", "t2"), 400, TRUE)),
+    Y = factor(sample(c("n", "y"), 400, TRUE))
+  )
+  d <- d[!(d$treatment == "a2" & d$TT == "t2"), ]
+  viol <- positivity(full(d, lambda = 0), "TT", "Y")
+  expect_named(viol, c("treatment", "TT", "context_probability"))
+  expect_equal(viol$treatment, "a2")
+  expect_equal(viol$TT, "t2")
+})

@@ -65,10 +65,15 @@
 #' ## no crew member was a child, in either sex
 #' positivity(full(Titanic, lambda = 0), treatment = "Age", outcome = "Survived")
 #'
-#' ## staging can make a violation disappear, by borrowing from the
-#' ## other contexts of the same stage
-#' positivity(stages_bhc(full(Titanic, lambda = 0)),
-#'            treatment = "Age", outcome = "Survived")
+#' ## a staging which puts the crew together with the other classes makes
+#' ## the violation disappear, by borrowing from contexts which did have
+#' ## children: the model is then positive where the data is silent
+#' model <- full(Titanic, lambda = 0)
+#' stages(model)["Age"] <- "pooled"
+#' positivity(model, treatment = "Age", outcome = "Survived")
+#'
+#' ## a prior does the same
+#' positivity(full(Titanic, lambda = 1), treatment = "Age", outcome = "Survived")
 #' @seealso \code{\link{potential_outcomes}}, \code{\link{ps_stratify}}
 #' @export
 positivity <- function(object, treatment, outcome,
@@ -98,27 +103,35 @@ positivity <- function(object, treatment, outcome,
   stgs <- stages(object)[[treatment]]
 
   viol <- lapply(seq_len(nrow(ctx)), function(i) {
-    p <- object$prob[[treatment]][[stgs[i]]][lv]
+    ## the single stage of the first variable is stored under its own name,
+    ## which is not the "NA" that stages() reports for it, so it is taken by
+    ## position instead
+    p <- if (it == 1L) {
+      object$prob[[treatment]][[1L]][lv]
+    } else {
+      object$prob[[treatment]][[stgs[i]]][lv]
+    }
     bad <- is.na(p) | p == 0
     if (!any(bad)) {
       return(NULL)
     }
     rows <- ctx[i, , drop = FALSE]
     rownames(rows) <- NULL
-    cbind(rows,
-          data.frame(treatment = paste(lv[bad], collapse = ", "),
-                     context_probability = p_ctx[[i]],
-                     row.names = NULL, stringsAsFactors = FALSE))
+    cbind(rows, stats::setNames(
+      data.frame(paste(lv[bad], collapse = ", "), p_ctx[[i]],
+                 row.names = NULL, stringsAsFactors = FALSE),
+      c(treatment, "context_probability")
+    ))
   })
   found <- !vapply(viol, is.null, TRUE)
   hidden <- found & (stgs %in% ignore)
   res <- do.call(rbind, viol[found & !hidden])
   if (is.null(res)) {
-    res <- cbind(ctx[0, , drop = FALSE],
-                 data.frame(treatment = character(0),
-                            context_probability = numeric(0)))
+    res <- cbind(ctx[0, , drop = FALSE], stats::setNames(
+      data.frame(character(0), numeric(0)),
+      c(treatment, "context_probability")
+    ))
   }
-  names(res)[names(res) == "treatment"] <- treatment
   rownames(res) <- NULL
   attr(res, "n_ignored") <- sum(hidden)
   attr(res, "ignore") <- ignore
