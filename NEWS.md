@@ -1,5 +1,10 @@
 # dev
 
+* new function `ps_stratify` to rebuild the staging of an outcome variable
+   from the propensity-score stratification already induced by a treatment
+   variable, for propensity-score stratification estimation of treatment
+   effects. `treatment` and `outcome` default to the last two variables in
+   the order of the model.
 * possible to skip checks in development.
 * `hamming_stages` earns a new argument `FUN` which specify how to aggregate 
    across variables. The default `FUN = sum` produces the standard hamming 
