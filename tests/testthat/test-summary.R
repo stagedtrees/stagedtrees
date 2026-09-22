@@ -58,3 +58,19 @@ test_that("summary.sevt is printed", {
 
 
 })
+
+test_that("the sample size is read exactly, not by partial matching", {
+  ## attr(x, "n") matches the "names" attribute when there is no "n", so a
+  ## probability vector without a sample size reported its own level names
+  ## as one, and every arithmetic on it failed
+  p <- c(Child = 0.5, Adult = 0.5)
+  expect_equal(attr(p, "n"), c("Child", "Adult"))
+  expect_null(attr(p, "n", exact = TRUE))
+
+  m <- stages_bhc(full(Titanic))
+  r <- randomize_sevt(m, "Age")
+  expect_silent(s <- summary(r))
+  expect_true(is.na(s$stages.info$Age$sample.size))
+  expect_silent(ci <- confint(r, "Age"))
+  expect_true(all(is.na(ci)))
+})
