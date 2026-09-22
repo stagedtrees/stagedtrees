@@ -81,6 +81,26 @@ default_treatment_outcome <- function(treatment, outcome, object) {
   list(treatment = treatment, outcome = outcome)
 }
 
+#' Record a call in a staged event tree
+#'
+#' Store the call which produced \code{object} in its \code{call} field,
+#' and append it to the \code{calls} field.
+#' @param object an object of class \code{sevt}.
+#' @param call the call to record, normally \code{match.call()} evaluated
+#'             in the function which is recording it.
+#' @return \code{object} with \code{call} and \code{calls} updated.
+#' @details Only the functions which build a staging or rebuild one record
+#'          a call, so \code{calls} is the list of those, and not a
+#'          history of everything an object has been through: fitting,
+#'          replacing stages directly, or taking a subtree leave no trace
+#'          in it.
+#' @keywords internal
+record_call <- function(object, call) {
+  object$calls <- c(object$calls, list(call))
+  object$call <- call
+  object
+}
+
 #' Find maximum value
 #'
 #' @param x numerical, the log-probabilities.

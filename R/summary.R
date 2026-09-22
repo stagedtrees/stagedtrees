@@ -54,6 +54,7 @@ summary.sevt <- function(object, ...) {
   }
   out <- list(stages.info = out)
   out$call <- object$call
+  out$calls <- object$calls
   out$ll <- object$ll
   out$lambda <- object$lambda
   class(out) <- "summary.sevt"
@@ -66,7 +67,12 @@ summary.sevt <- function(object, ...) {
 #'            information is printed.
 #' @export
 print.summary.sevt <- function(x, max = 10, ...) {
-  if (!is.null(x$call)) {
+  ## the calls are listed oldest first, so the staging which was searched
+  ## comes before whatever rebuilt it
+  if (length(x$calls) > 1L) {
+    cat("Calls: \n")
+    for (cl in x$calls) print(cl)
+  } else if (!is.null(x$call)) {
     cat("Call: \n")
     print(x$call)
   }

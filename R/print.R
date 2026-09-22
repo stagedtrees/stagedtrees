@@ -22,7 +22,10 @@ print.sevt <- function(x, ..., max = 5) {
     )
   cat(tree_string(x$tree, max = max), "\n")
   if (!is.null(x$call)) {
-    cat("Call: ", deparse(x$call), "\n")
+    ## only the last one, the earlier calls are listed by summary()
+    n_before <- length(x$calls) - 1L
+    cat("Call: ", deparse(x$call),
+        if (n_before > 0L) paste0("(after ", n_before, " more)"), "\n")
   }
   if (!is.null(x$ll)) {
     print(x$ll)

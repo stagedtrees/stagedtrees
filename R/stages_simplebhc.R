@@ -110,7 +110,7 @@ stages_simplebhc <- function(object,
       now_score <- temp_score
     }
   }
-  object$call <- match.call()
+  object <- record_call(object, match.call())
   object$score <- list(value = now_score, f = score)
   return(object)
 }

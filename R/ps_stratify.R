@@ -107,6 +107,6 @@ ps_stratify <- function(object, treatment = NULL, outcome = NULL,
   stages(object)[outcome] <- value
   ## the returned tree carries a staging built to estimate an effect, not
   ## one searched on the data, and the call is what says so
-  object$call <- match.call()
+  object <- record_call(object, match.call())
   object
 }

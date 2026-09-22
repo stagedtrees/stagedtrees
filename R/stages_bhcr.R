@@ -61,7 +61,7 @@ stages_bhcr <-
     if (trace > 0) {
       cli::cli_text("backward HC random done after {iter} iteration")
     }
-    object$call <- match.call()
+    object <- record_call(object, match.call())
     object$score <- list(value = now_score, f = score)
     return(object)
   }

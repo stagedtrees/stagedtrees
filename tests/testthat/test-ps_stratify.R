@@ -1,9 +1,10 @@
 model <- stages_bhc(full(Titanic))
 
-## $call records the call that produced the object, so two models built by
+## the call fields record what produced the object, so two models built by
 ## different but equivalent calls differ only there
 no_call <- function(x) {
   x$call <- NULL
+  x$calls <- NULL
   x
 }
 

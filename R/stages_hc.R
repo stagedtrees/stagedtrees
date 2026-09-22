@@ -116,6 +116,6 @@ stages_hc <- function(object,
   if (trace > 0) {
     cli::cli_text("HC done")
   }
-  object$call <- match.call()
+  object <- record_call(object, match.call())
   return(object)
 }

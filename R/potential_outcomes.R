@@ -73,6 +73,6 @@ randomize_sevt <- function(object, treatment, p = NULL, ignore = object$name_uno
   object$prob[[treatment]] <- object$prob[[treatment]][!is.na(names(object$prob[[treatment]]))]
   ## the returned tree is the one of a randomized experiment, not a model
   ## fitted to the data, and the call is what says so
-  object$call <- match.call()
+  object <- record_call(object, match.call())
   return(object)
 }

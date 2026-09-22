@@ -74,3 +74,30 @@ test_that("which_class", {
     c("A", "B", "C", "D", "E")
   ), !!A)
 })
+
+test_that("record_call keeps the chain and the latest call", {
+  m <- full(Titanic)
+  expect_null(m$calls)
+  m1 <- stagedtrees:::record_call(m, quote(f(x)))
+  expect_equal(m1$call, quote(f(x)))
+  expect_equal(m1$calls, list(quote(f(x))))
+  m2 <- stagedtrees:::record_call(m1, quote(g(y)))
+  expect_equal(m2$call, quote(g(y)))
+  ## oldest first, so the search which found the staging comes first
+  expect_equal(m2$calls, list(quote(f(x)), quote(g(y))))
+})
+
+test_that("the chain records what built a staging and what rebuilt it", {
+  mod <- stages_bhc(full(Titanic))
+  ps <- ps_stratify(mod)
+  expect_equal(length(mod$calls), 1)
+  expect_equal(length(ps$calls), 2)
+  expect_equal(vapply(ps$calls, function(x) deparse(x[[1]]), ""),
+               c("stages_bhc", "ps_stratify"))
+  ## print shows the last one and says how many came before
+  expect_output(print(ps), "ps_stratify")
+  expect_output(print(ps), "after 1 more")
+  ## summary lists them all
+  expect_output(print(summary(ps)), "stages_bhc")
+  expect_output(print(summary(ps)), "ps_stratify")
+})
