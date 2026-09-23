@@ -11,6 +11,9 @@
    how much of the population they account for, and `separate_arms` splits
    the stages responsible, leaving the rest of the staging alone. The
    staging built by `ps_stratify` separates the arms by construction.
+* `ps_stratify` now requires the data and not only the probabilities. It
+   replaces a staging through `stages<-`, which refits, and on an object
+   carrying probabilities but no `ctables` that erased them instead.
 
 * new function `positivity` which reports the contexts where a treatment
    variable does not take all its values with positive probability, the

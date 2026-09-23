@@ -113,3 +113,78 @@ test_that("arm_separation and separate_arms check their arguments", {
   expect_error(arm_separation(m, "NotAVar", "Survived"))
   expect_error(separate_arms(m, "NotAVar", "Survived"))
 })
+
+test_that("separate_arms needs the data, not only the probabilities", {
+  ## the staging is replaced through stages<-, which refits; on an object
+  ## with no ctables that branch erases the probabilities instead
+  m <- random_sevt(list(X = c("a", "b"), TT = c("0", "1"), Y = c("n", "y")))
+  s <- stages(m)[["Y"]]
+  s[1:2] <- "tied"
+  m$stages$Y <- s
+  expect_error(separate_arms(m, "TT", "Y"), "ctables")
+})
+
+test_that("separate_arms never merges situations while refining", {
+  ## the new name of a split situation must not land on a stage which is
+  ## kept: ps_stratify mints names with the same ":" convention
+  m <- full(Titanic, lambda = 1)
+  s <- stages(m)[["Survived"]]
+  s[1:2] <- "1"              # the tied arms of (1st, Male)
+  s[c(5, 7)] <- "1:Child"    # a kept stage whose name the split would take
+  stages(m)["Survived"] <- s
+
+  ms <- separate_arms(m, "Age", "Survived")
+  after <- stages(ms)[["Survived"]]
+  expect_equal(nrow(arm_separation(ms, "Age", "Survived")), 0)
+  expect_false(after[1] == after[5])
+  expect_equal(after[5], after[7])   # the kept stage is untouched
+  expect_gt(length(unique(after)), length(unique(s)))
+})
+
+test_that("separate_arms reports a split which leaves an arm with no data", {
+  set.seed(3)
+  d <- data.frame(
+    X = factor(sample(c("0", "1"), 300, TRUE)),
+    TT = factor(sample(c("a", "b"), 300, TRUE)),
+    Y = factor(sample(c("n", "y"), 300, TRUE))
+  )
+  d <- d[!(d$X == "1" & d$TT == "b"), ]
+  m <- join_unobserved(full(d, lambda = 0))
+  s <- stages(m)[["Y"]]
+  s[3:4] <- "pooled"
+  stages(m)["Y"] <- s
+
+  expect_warning(ms <- separate_arms(m, "TT", "Y"), "no observations")
+  ## the empty half joins the unobserved stage rather than posing as a
+  ## regular one with NA probabilities
+  expect_true(m$name_unobserved %in% stages(ms)[["Y"]])
+  regular <- setdiff(names(ms$prob$Y), m$name_unobserved)
+  expect_false(any(vapply(regular, function(n) any(is.na(ms$prob$Y[[n]])), TRUE)))
+})
+
+test_that("arm_separation takes the same defaults as separate_arms", {
+  m <- stages_bhc(full(Titanic, lambda = 1))
+  expect_equal(
+    as.data.frame(arm_separation(m)),
+    as.data.frame(arm_separation(m, treatment = "Age", outcome = "Survived"))
+  )
+})
+
+test_that("arm_separation counts the ties it hides, not the contexts", {
+  set.seed(3)
+  d <- data.frame(
+    X = factor(sample(c("0", "1"), 300, TRUE)),
+    TT = factor(sample(c("a", "b"), 300, TRUE)),
+    Y = factor(sample(c("n", "y"), 300, TRUE))
+  )
+  d <- d[!(d$X == "1" & d$TT == "b"), ]
+  m <- join_unobserved(full(d, lambda = 0))
+  s <- stages(m)[["Y"]]
+  s[3:4] <- m$name_unobserved
+  stages(m)["Y"] <- s
+  v <- arm_separation(m, "TT", "Y")
+  expect_equal(attr(v, "n_ignored"), 1)
+  ## and the print does not claim a separation it has not checked
+  expect_output(print(v), "outside the ignored stages")
+  expect_message(print(v), "not shown")
+})

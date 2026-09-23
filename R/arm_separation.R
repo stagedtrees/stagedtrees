@@ -71,9 +71,12 @@ arm_index <- function(object, treatment, outcome) {
 #' @seealso \code{\link{separate_arms}}, \code{\link{positivity}},
 #'          \code{\link{ps_stratify}}
 #' @export
-arm_separation <- function(object, treatment, outcome,
+arm_separation <- function(object, treatment = NULL, outcome = NULL,
                            ignore = object$name_unobserved) {
   check_sevt_prob(object)
+  defaults <- default_treatment_outcome(treatment, outcome, object)
+  treatment <- defaults$treatment
+  outcome <- defaults$outcome
   check_scope(c(treatment, outcome), object)
   vars <- sevt_varnames(object)
   it <- which(vars == treatment)
@@ -97,29 +100,31 @@ arm_separation <- function(object, treatment, outcome,
   rownames(ctx) <- NULL
   p_ctx <- if (ncol(ctx) > 0) prob(object, ctx, na0 = FALSE) else 1
 
-  res <- lapply(seq_len(nrow(ctx)), function(i) {
-    here <- which(ai$context == ai$context[ai$arm == 1][i])
+  ## one pass over the situations, grouped by context, rather than a scan
+  ## of them all for each context in turn
+  by_ctx <- split(seq_along(ai$context), ai$context)
+  by_ctx <- by_ctx[match(ai$context[ai$arm == 1], names(by_ctx))]
+
+  hidden <- 0L
+  res <- lapply(seq_along(by_ctx), function(i) {
+    here <- by_ctx[[i]]
     s <- stgs[here]
     tied <- unique(s[duplicated(s)])
+    hidden <<- hidden + sum(tied %in% ignore)
     tied <- tied[!(tied %in% ignore)]
     if (length(tied) == 0) {
       return(NULL)
     }
-    do.call(rbind, lapply(tied, function(tt) {
-      rows <- ctx[i, , drop = FALSE]
-      rownames(rows) <- NULL
-      cbind(rows, stats::setNames(
-        data.frame(paste(lv[ai$arm[here][s == tt]], collapse = ", "), tt,
-                   p_ctx[[i]], row.names = NULL, stringsAsFactors = FALSE),
-        c(treatment, "stage", "context_probability")
-      ))
-    }))
+    rows <- ctx[rep.int(i, length(tied)), , drop = FALSE]
+    rownames(rows) <- NULL
+    cbind(rows, stats::setNames(
+      data.frame(
+        vapply(tied, function(tt) paste(lv[ai$arm[here][s == tt]],
+                                        collapse = ", "), ""),
+        tied, p_ctx[[i]], row.names = NULL, stringsAsFactors = FALSE),
+      c(treatment, "stage", "context_probability")
+    ))
   })
-  hidden <- vapply(seq_len(nrow(ctx)), function(i) {
-    here <- which(ai$context == ai$context[ai$arm == 1][i])
-    s <- stgs[here]
-    sum(unique(s[duplicated(s)]) %in% ignore)
-  }, 1L)
 
   out <- do.call(rbind, res)
   if (is.null(out)) {
@@ -129,7 +134,7 @@ arm_separation <- function(object, treatment, outcome,
     ))
   }
   rownames(out) <- NULL
-  attr(out, "n_ignored") <- sum(hidden)
+  attr(out, "n_ignored") <- hidden
   attr(out, "ignore") <- ignore
   class(out) <- c("sevt.armsep", "data.frame")
   out
@@ -142,15 +147,17 @@ arm_separation <- function(object, treatment, outcome,
 print.sevt.armsep <- function(x, ...) {
   n <- attr(x, "n_ignored")
   ig <- attr(x, "ignore")
-  if (nrow(x) == 0) {
+  if (nrow(x) > 0) {
+    print(as.data.frame(x), ...)
+  } else if (!isTRUE(n > 0)) {
     cat("The treatment arms are separated in every context.\n")
   } else {
-    print(as.data.frame(x), ...)
+    cat("The treatment arms are separated outside the ignored stages.\n")
   }
   if (isTRUE(n > 0)) {
     cli::cli_alert_info(
-      "{n} context{?s} sharing the stage {.val {ig}} {cli::qty(n)}{?is/are}
-       not shown. Use {.code ignore = NULL} to include {cli::qty(n)}{?it/them}."
+      "{n} tie{?s} in the stage {.val {ig}} {cli::qty(n)}{?is/are} not shown.
+       Use {.code ignore = NULL} to include {cli::qty(n)}{?it/them}."
     )
   }
   invisible(x)
@@ -197,7 +204,9 @@ print.sevt.armsep <- function(x, ...) {
 #' @export
 separate_arms <- function(object, treatment = NULL, outcome = NULL,
                           ignore = object$name_unobserved) {
-  check_sevt_prob(object)
+  ## the staging is replaced through `stages<-`, which refits from the data,
+  ## and erases the probabilities of an object which carries none
+  check_sevt_fit(object)
   defaults <- default_treatment_outcome(treatment, outcome, object)
   treatment <- defaults$treatment
   outcome <- defaults$outcome
@@ -219,13 +228,49 @@ separate_arms <- function(object, treatment = NULL, outcome = NULL,
   ## only the stages holding two arms of one context need splitting: a stage
   ## may hold different arms of different contexts without stating anything
   ## about an effect, and splitting it would cost observations for nothing
-  tied <- unique(unlist(lapply(unique(ai$context), function(cc) {
-    s <- stgs[ai$context == cc]
+  tied <- unique(unlist(lapply(split(seq_along(ai$context), ai$context),
+                               function(here) {
+    s <- stgs[here]
     unique(s[duplicated(s)])
   })))
-  split <- stgs %in% setdiff(tied, ignore)
+  todo <- stgs %in% setdiff(tied, ignore)
   value <- stgs
-  value[split] <- paste(stgs[split], lv[ai$arm][split], sep = ":")
+  if (any(todo)) {
+    ## the new names must not land on a stage which is kept, nor two of them
+    ## on each other: a refinement which merged situations would be worse
+    ## than the tie it removes
+    pair <- paste(stgs[todo], lv[ai$arm][todo], sep = "\r")
+    sep <- ":"
+    repeat {
+      new <- paste(stgs[todo], lv[ai$arm][todo], sep = sep)
+      if (!any(new %in% stgs[!todo]) &&
+          length(unique(new)) == length(unique(pair))) {
+        break
+      }
+      sep <- paste0(sep, ":")
+    }
+    value[todo] <- new
+    ## a split can leave an arm with no observations of its own; such a stage
+    ## carries no probabilities, and belongs with the unobserved ones
+    n_sit <- rowSums(as.matrix(object$ctables[[outcome]]))
+    n_new <- tapply(n_sit, value, sum)
+    empty <- names(n_new)[n_new == 0 & names(n_new) %in% new]
+    if (length(empty) > 0) {
+      cli::cli_warn(c(
+        "Separating the arms left {length(empty)} stage{?s} with no
+         observations.",
+        "i" = if (is.null(object$name_unobserved)) {
+          "Their probabilities are {.val NA}."
+        } else {
+          "{?It/They} joined the {.val {object$name_unobserved}} stage."
+        },
+        "i" = "See {.fun stagedtrees::positivity} for the contexts concerned."
+      ))
+      if (!is.null(object$name_unobserved)) {
+        value[value %in% empty] <- object$name_unobserved
+      }
+    }
+  }
   stages(object)[outcome] <- value
   object <- record_call(object, match.call())
   object

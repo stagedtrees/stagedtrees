@@ -5,7 +5,12 @@
 \alias{print.sevt.armsep}
 \title{Situations which differ only in the treatment}
 \usage{
-arm_separation(object, treatment, outcome, ignore = object$name_unobserved)
+arm_separation(
+  object,
+  treatment = NULL,
+  outcome = NULL,
+  ignore = object$name_unobserved
+)
 
 \method{print}{sevt.armsep}(x, ...)
 }
