@@ -76,7 +76,7 @@
 #' @export
 ps_stratify <- function(object, treatment = NULL, outcome = NULL,
                         ignore = object$name_unobserved) {
-  check_sevt_prob(object)
+  check_sevt_fit(object)
   defaults <- default_treatment_outcome(treatment, outcome, object)
   treatment <- defaults$treatment
   outcome <- defaults$outcome
