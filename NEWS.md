@@ -11,10 +11,6 @@
    how much of the population they account for, and `separate_arms` splits
    the stages responsible, leaving the rest of the staging alone. The
    staging built by `ps_stratify` separates the arms by construction.
-* `ps_stratify` now requires the data and not only the probabilities. It
-   replaces a staging through `stages<-`, which refits, and on an object
-   carrying probabilities but no `ctables` that erased them instead.
-
 * new function `positivity` which reports the contexts where a treatment
    variable does not take all its values with positive probability, the
    positivity (or overlap) assumption required to estimate a treatment
@@ -30,7 +26,6 @@
    without a sample size reported its own level names as one. Every site
    reading it now matches exactly, and `randomize_sevt` records `NA`,
    since its probabilities are set by design rather than estimated.
-
 * BREAKING: `na0` now defaults to `FALSE` in `prob`. A situation with no
    observations carries no probability, and the old default supplied one it
    does not have, silently removing probability mass from any event that
@@ -62,7 +57,8 @@
    situation with no observations would otherwise be given the
    distribution of the stratum it lands in, which is an extrapolation
    across the contexts of that stratum rather than something the data
-   shows for that one. Use `ignore = NULL` to ask for it.
+   shows for that one. Use `ignore = NULL` to ask for it. It needs the
+   data and not only the probabilities, since it refits the outcome.
 * BREAKING: `potential_outcomes` argument order is now
    `(object, treatment, outcome)`, matching `ps_stratify` and
    `randomize_sevt`. Calls using named arguments are unaffected; calls
