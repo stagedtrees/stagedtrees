@@ -1,5 +1,17 @@
 # dev
 
+* new functions `arm_separation` and `separate_arms`. Two situations of an
+   outcome which differ only in the value taken by the treatment describe
+   the same history under two treatments, so a stage holding both states
+   that the treatment has no effect in that context, whatever the data
+   says afterwards. A structure search merges them whenever their
+   estimated probabilities are close, which is reasonable when the staging
+   describes a joint distribution and not when it is used to estimate an
+   effect. `arm_separation` reports the contexts where this happens and
+   how much of the population they account for, and `separate_arms` splits
+   the stages responsible, leaving the rest of the staging alone. The
+   staging built by `ps_stratify` separates the arms by construction.
+
 * new function `positivity` which reports the contexts where a treatment
    variable does not take all its values with positive probability, the
    positivity (or overlap) assumption required to estimate a treatment
