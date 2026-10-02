@@ -27,6 +27,17 @@ test_that("plot should accept col = 'stages' ", {
   expect_silent(plot(mod, col = "stages"))
 })
 
+test_that("col = 'stages' errors when stage names are not colors", {
+  m <- stages_bhc(full(Titanic, lambda = 1))
+  expect_error(plot(separate_arms(m, "Age", "Survived"), col = "stages"),
+               "must be valid colors")
+  s <- m$stages$Survived[2]
+  expect_error(make_stages_col(rename_stage(m, "Survived", s, "high"),
+                               "stages"),
+               "high")
+  expect_silent(plot(rename_stage(m, "Survived", s, "red"), col = "stages"))
+})
+
 
 test_that("plot should accept col = function() ", {
   expect_silent(plot(mod, col = function(s) {

@@ -1,5 +1,11 @@
 # dev
 
+* `col = "stages"` (in `plot`, `barplot`, `write_tikz` and the plot of
+   `ceg` objects) now fails with an informative error when a stage name is
+   not a valid color, as with the names built by `separate_arms` and
+   `ps_stratify` (e.g. `"4:Child"`), instead of the low-level "invalid
+   color" error from `points`.
+
 * new functions `arm_separation` and `separate_arms`. Two situations of an
    outcome which differ only in the value taken by the treatment describe
    the same history under two treatments, so a stage holding both states
