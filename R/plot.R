@@ -369,6 +369,26 @@ make_stages_col <- function(x, col = NULL,
         names(stages) <- stages
         return(stages)
       }, simplify = FALSE)
+      ## palette indices given as strings (including "0", which graphics
+      ## accept but col2rgb rejects) or any name col2rgb understands
+      all_stages <- unique(unlist(col, use.names = FALSE))
+      not_col <- all_stages[!vapply(all_stages, function(s) {
+        grepl("^[0-9]+$", s) || tryCatch({
+          grDevices::col2rgb(s)
+          TRUE
+        }, error = function(e) FALSE)
+      }, FUN.VALUE = logical(1))]
+      if (length(not_col) > 0) {
+        cli::cli_abort(c(
+          "With {.code col = \"stages\"} the stage names are used as colors,
+          so they must be valid colors.",
+          "x" = "{cli::qty(length(not_col))}Stage name{?s} {.val {not_col}}
+          {?is/are} not {?a/} valid color{?s}.",
+          "i" = "Use {.code col = NULL} for the default coloring, or rename
+          the stages with {.fun stagedtrees::rename_stage} or
+          {.fun stagedtrees::stndnaming}."
+        ))
+      }
     } else if (startsWith(col, "classic")){
       isclassic <- col == "classic"
       col <- sapply(nms[2:d], function(vv) {
