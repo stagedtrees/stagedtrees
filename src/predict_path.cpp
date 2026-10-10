@@ -14,9 +14,14 @@ using namespace Rcpp;
 // does: idx_j = (idx_{j-1} - 1) * ls_j + m_j, and the stage is looked up with
 // the same ((idx - 1) %% nstage) + 1 wrap that find_stage applies.
 //
+// A zero factor dominates an unknown one, as in path_lp_cpp and
+// path_probability: a candidate whose path is already unreachable (-Inf)
+// stays -Inf even if a later stage is unobserved (NA probabilities). Only a
+// reachable path through such a stage is NA.
+//
 // Two R behaviours are reproduced deliberately rather than improved on:
-//   * res[is.nan(res)] <- -Inf converts NaN but NOT NA, so an unobserved stage
-//     (NA probabilities) leaves NA in the output and it propagates.
+//   * res[is.nan(res)] <- -Inf converts NaN but NOT NA, so a reachable path
+//     through an unobserved stage leaves NA in the output and it propagates.
 //   * normalisation is res - log(sum(exp(res))), computed naively with no
 //     max-subtraction. A stabilised form would differ in the last bits and in
 //     the all -Inf case, which R turns into NaN.
@@ -81,7 +86,8 @@ NumericMatrix predict_lp_cpp(IntegerMatrix codes, IntegerVector ls,
         else { lp += std::log(pv); }
         idx = (j == 0) ? lev : (idx - 1) * ls[j] + lev;
       }
-      if (na) out(i, c - 1) = NA_REAL;
+      if (std::isinf(lp)) out(i, c - 1) = lp;   // zero factor dominates
+      else if (na) out(i, c - 1) = NA_REAL;
       else if (nan) out(i, c - 1) = R_NaN;
       else out(i, c - 1) = lp;
     }

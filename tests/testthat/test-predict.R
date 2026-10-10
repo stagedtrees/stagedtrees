@@ -176,3 +176,37 @@ test_that("rows missing different variables are grouped without mixing them up",
   ## agree with the same oracle
   expect_equal(unname(got[c(3, 5, 6, 8, 10), ]), unname(want[c(3, 5, 6, 8, 10), ]))
 })
+
+test_that("a candidate that is unreachable before an unobserved stage gets zero, not NA", {
+  ## The class value y has probability zero after a, and the path then goes
+  ## through the unobserved situation (a, y) of C, whose probabilities are NA
+  ## with lambda = 0. A zero factor dominates an unknown one, as in prob(), so
+  ## y must get probability zero instead of turning every candidate into NA.
+  ## This used to leave hard EM (sevt_fit_em) unable to impute such cells.
+  set.seed(23)
+  n <- 300
+  d <- data.frame(
+    A = factor(sample(c("a", "b"), n, TRUE)),
+    B = factor(sample(c("x", "y"), n, TRUE)),
+    C = factor(sample(c("p", "q"), n, TRUE))
+  )
+  d <- d[!(d$A == "a" & d$B == "y"), ]   # situation (a, y) never occurs
+  m <- full(d, lambda = 0, join_unobserved = TRUE)
+  expect_true(all(is.na(m$prob$C[[m$name_unobserved]])))
+
+  q <- data.frame(A = factor(c("a", "b"), c("a", "b")),
+                  B = factor(c("x", "x"), c("x", "y")),
+                  C = factor(c("p", "q"), c("p", "q")))
+  pr <- predict(m, newdata = q, class = "B", prob = TRUE)
+  expect_false(any(is.na(pr)))
+  expect_equal(unname(pr[1, ]), c(1, 0))
+  expect_equal(rowSums(pr), c(1, 1), ignore_attr = TRUE)
+  expect_identical(as.character(predict(m, newdata = q, class = "B"))[1], "x")
+
+  ## the oracle is prob(), which already applies the rule
+  want <- vapply(c("x", "y"), function(b) {
+    qq <- q[2, ]; qq$B <- factor(b, c("x", "y"))
+    as.vector(prob(m, qq))
+  }, 1.0)
+  expect_equal(unname(pr[2, ]), unname(want / sum(want)))
+})
