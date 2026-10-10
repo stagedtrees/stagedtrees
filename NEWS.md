@@ -1,5 +1,13 @@
 # dev
 
+* fixed `predict` returning `NA` for every class value when one candidate
+   was unreachable (probability zero) and its path then went through a
+   situation with no observations, whose probabilities are `NA` with
+   `lambda = 0`. `0 * NA` gave `NA`, and the `NA` spoiled the normalisation
+   of the other candidates too. A zero factor now dominates an unknown one,
+   as it already did in `prob`. Because `sevt_fit_em` imputes with
+   `predict`, hard EM used to leave such cells missing in every iteration.
+
 * `col = "stages"` (in `plot`, `barplot`, `write_tikz` and the plot of
    `ceg` objects) now fails with an informative error when a stage name is
    not a valid color, as with the names built by `separate_arms` and
