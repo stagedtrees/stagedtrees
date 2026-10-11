@@ -8,9 +8,6 @@ on:
 
 name: test-coverage
 
-env:
-   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
@@ -26,17 +23,31 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr
+          extra-packages: any::covr, any::xml2
           needs: coverage
 
       - name: Test coverage
         run: |
-          covr::codecov(
+          cov <- covr::package_coverage(
             quiet = FALSE,
             clean = FALSE,
-            install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package")
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
           )
+          print(cov)
+          covr::to_cobertura(cov)
         shell: Rscript {0}
+
+      # covr::codecov() posts to Codecov's legacy upload endpoint, which
+      # rejected the repository token with a 400 on every push to main.
+      # The official action uses the current upload API and reports errors.
+      - uses: codecov/codecov-action@v5
+        with:
+          # Fail if error if not on PR, or if on PR and token is given
+          fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
+          files: ./cobertura.xml
+          plugins: noop
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Show testthat output
         if: always()
